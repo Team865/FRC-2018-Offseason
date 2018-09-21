@@ -1,4 +1,4 @@
-package ca.warp7.frc.construct;
+package ca.warp7.frc.robot;
 
 public interface IConstructCallback<C> {
 	void onInitWithConstruct(ConstructRobot<C> robot);

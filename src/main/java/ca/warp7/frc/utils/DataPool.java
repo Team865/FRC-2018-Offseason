@@ -1,4 +1,4 @@
-package ca.warp7.frc;
+package ca.warp7.frc.utils;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;

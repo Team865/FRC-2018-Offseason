@@ -1,8 +1,8 @@
-package ca.warp7.frc2018;
+package ca.warp7.frc2017;
 
-import ca.warp7.frc.construct.Pins;
-import ca.warp7.frc2018.subsystems.Compressors;
-import ca.warp7.frc2018.subsystems.Drive;
+import ca.warp7.frc.utils.Pins;
+import ca.warp7.frc2017.subsystems.Compressor_;
+import ca.warp7.frc2017.subsystems.Drive;
 
 /**
  * Static variables that maps the robot and includes constants
@@ -11,7 +11,7 @@ import ca.warp7.frc2018.subsystems.Drive;
 public class Mapping {
 	public static class Subsystems {
 		public static Drive drive;
-		public static Compressors compressors;
+		public static Compressor_ compressor;
 	}
 
 	public static class RIO {

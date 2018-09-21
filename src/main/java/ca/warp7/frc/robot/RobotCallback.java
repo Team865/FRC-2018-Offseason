@@ -1,4 +1,6 @@
-package ca.warp7.frc.construct;
+package ca.warp7.frc.robot;
+
+import ca.warp7.frc.utils.Pins;
 
 public abstract class RobotCallback<C>
 		extends ConstructRobot<C>

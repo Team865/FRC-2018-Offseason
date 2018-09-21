@@ -1,9 +1,9 @@
-package ca.warp7.frc.construct;
+package ca.warp7.frc.utils;
 
 public class Pins {
 	private final int[] mPins;
 
-	Pins(int[] pins) {
+	public Pins(int[] pins) {
 		if (pins.length <= 0) throw new AssertionError();
 		mPins = pins;
 	}

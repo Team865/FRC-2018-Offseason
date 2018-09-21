@@ -1,4 +1,4 @@
-package ca.warp7.frc.drive;
+package ca.warp7.frc.utils;
 
 import edu.wpi.first.wpilibj.SpeedController;
 

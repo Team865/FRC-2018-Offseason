@@ -1,13 +1,13 @@
-package ca.warp7.frc2018.controller;
+package ca.warp7.frc2017.controls;
 
-import ca.warp7.frc.drive.UnitController;
+import ca.warp7.frc.controls.UnitController;
 
-import static ca.warp7.frc.drive.ControllerState.DOWN;
-import static ca.warp7.frc.drive.ControllerState.PRESSED;
+import static ca.warp7.frc.controls.ControllerState.DOWN;
+import static ca.warp7.frc.controls.ControllerState.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
-public class SingleRemote implements IController {
+public class SingleRemote implements IControlsInterface {
 
 	private final UnitController mDriver;
 

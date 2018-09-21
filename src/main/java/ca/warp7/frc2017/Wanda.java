@@ -1,15 +1,15 @@
-package ca.warp7.frc2018;
+package ca.warp7.frc2017;
 
-import ca.warp7.frc.construct.RobotCallback;
-import ca.warp7.frc2018.Mapping.DriveConstants;
-import ca.warp7.frc2018.Mapping.RIO;
-import ca.warp7.frc2018.controller.IController;
-import ca.warp7.frc2018.controller.SingleRemote;
+import ca.warp7.frc.robot.RobotCallback;
+import ca.warp7.frc2017.Mapping.DriveConstants;
+import ca.warp7.frc2017.Mapping.RIO;
+import ca.warp7.frc2017.controls.IControlsInterface;
+import ca.warp7.frc2017.controls.SingleRemote;
 
-import static ca.warp7.frc2018.Mapping.Subsystems.compressors;
-import static ca.warp7.frc2018.Mapping.Subsystems.drive;
+import static ca.warp7.frc2017.Mapping.Subsystems.compressor;
+import static ca.warp7.frc2017.Mapping.Subsystems.drive;
 
-public class Wanda extends RobotCallback<IController> {
+public class Wanda extends RobotCallback<IControlsInterface> {
 
 	@Override
 	public void onInit() {
@@ -20,12 +20,12 @@ public class Wanda extends RobotCallback<IController> {
 
 	@Override
 	public void onTeleopInit() {
-		compressors.setClosedLoop(!getDriverStation().isFMSAttached());
+		compressor.setClosedLoop(!getDriverStation().isFMSAttached());
 	}
 
 	@Override
-	public void onTeleopPeriodic(IController remote) {
-		if (remote.compressorShouldSwitch()) compressors.toggleClosedLoop();
+	public void onTeleopPeriodic(IControlsInterface remote) {
+		if (remote.compressorShouldSwitch()) compressor.toggleClosedLoop();
 		drive.setReversed(remote.driveShouldReverse());
 		drive.setShift(remote.driveShouldShift());
 		drive.cheesyDrive(remote);

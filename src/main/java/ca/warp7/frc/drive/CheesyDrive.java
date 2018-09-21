@@ -1,6 +1,6 @@
 package ca.warp7.frc.drive;
 
-import ca.warp7.frc.MathUtil;
+import ca.warp7.frc.utils.MathUtil;
 
 public class CheesyDrive {
 

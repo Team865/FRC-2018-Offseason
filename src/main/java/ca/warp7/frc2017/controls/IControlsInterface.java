@@ -1,8 +1,8 @@
-package ca.warp7.frc2018.controller;
+package ca.warp7.frc2017.controls;
 
 import ca.warp7.frc.drive.ICheesyDriveController;
 
-public interface IController extends ICheesyDriveController {
+public interface IControlsInterface extends ICheesyDriveController {
 	boolean compressorShouldSwitch();
 
 	boolean driveShouldShift();

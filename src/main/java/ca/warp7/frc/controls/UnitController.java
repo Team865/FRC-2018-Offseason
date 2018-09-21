@@ -1,10 +1,11 @@
-package ca.warp7.frc.drive;
+package ca.warp7.frc.controls;
 
+import ca.warp7.frc.controls.ControllerState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
-import static ca.warp7.frc.drive.ControllerState.*;
+import static ca.warp7.frc.controls.ControllerState.*;
 
 /*
 An add-on interface to the WPILib's XboxController that

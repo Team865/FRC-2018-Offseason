@@ -1,18 +1,18 @@
-package ca.warp7.frc2018.subsystems;
+package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.Helper;
-import ca.warp7.frc.MathUtil;
-import ca.warp7.frc.construct.ISubsystem;
+import ca.warp7.frc.utils.Hardware;
+import ca.warp7.frc.utils.MathUtil;
+import ca.warp7.frc.robot.ISubsystem;
 import ca.warp7.frc.drive.CheesyDrive;
 import ca.warp7.frc.drive.ICheesyDriveController;
 import ca.warp7.frc.drive.IDriveSignalReceiver;
-import ca.warp7.frc.drive.MotorGroup;
+import ca.warp7.frc.utils.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 
-import static ca.warp7.frc2018.Mapping.DriveConstants.*;
-import static ca.warp7.frc2018.Mapping.RIO.*;
+import static ca.warp7.frc2017.Mapping.DriveConstants.*;
+import static ca.warp7.frc2017.Mapping.RIO.*;
 import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 
@@ -20,16 +20,24 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	private static final double kRampIntervals = 6.0;
 
-	private boolean mDriveReversed = false;
-	private double mLeftRamp = 0.0;
-	private double mRightRamp = 0.0;
+	private static class InternalState {
+		boolean reversed = false;
+		double leftRamp = 0.0;
+		double rightRamp = 0.0;
+	}
 
+	private InternalState mState = new InternalState();
 	private CheesyDrive mCheesyDrive;
 	private MotorGroup mLeftMotors;
 	private MotorGroup mRightMotors;
 	private Encoder mLeftEncoder;
 	private Encoder mRightEncoder;
 	private Solenoid mShifter;
+
+	@Override
+	public Object getState() {
+		return mState;
+	}
 
 	@Override
 	public void onInit() {
@@ -40,11 +48,11 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mRightMotors = new MotorGroup(VictorSP.class, driveRightPins.array());
 		mRightMotors.setInverted(true);
 
-		mLeftEncoder = Helper.encoder(driveLeftEncoderChannels, false, k4X);
+		mLeftEncoder = Hardware.encoder(driveLeftEncoderChannels, false, k4X);
 		mLeftEncoder.setReverseDirection(true);
 		mLeftEncoder.setDistancePerPulse(inchesPerTick);
 
-		mRightEncoder = Helper.encoder(driveRightEncoderChannels, false, k4X);
+		mRightEncoder = Hardware.encoder(driveRightEncoderChannels, false, k4X);
 		mRightEncoder.setReverseDirection(false);
 		mRightEncoder.setDistancePerPulse(inchesPerTick);
 
@@ -60,14 +68,14 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	@Override
 	public void onDrive(double leftDemand, double rightDemand) {
-		if (mDriveReversed) {
+		if (mState.reversed) {
 			leftDemand = leftDemand * -1;
 			rightDemand = rightDemand * -1;
 		}
-		mLeftRamp += (leftDemand - mLeftRamp) / kRampIntervals;
-		mRightRamp += (rightDemand - mRightRamp) / kRampIntervals;
-		double leftSpeed = MathUtil.limit(mLeftRamp, speedLimit);
-		double rightSpeed = MathUtil.limit(mRightRamp, speedLimit);
+		mState.leftRamp += (leftDemand - mState.leftRamp) / kRampIntervals;
+		mState.rightRamp += (rightDemand - mState.rightRamp) / kRampIntervals;
+		double leftSpeed = MathUtil.limit(mState.leftRamp, speedLimit);
+		double rightSpeed = MathUtil.limit(mState.rightRamp, speedLimit);
 		mLeftMotors.set(leftSpeed * leftDriftOffset);
 		mRightMotors.set(rightSpeed * rightDriftOffset);
 	}
@@ -81,6 +89,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	}
 
 	public void setReversed(boolean reversed) {
-		mDriveReversed = reversed;
+		mState.reversed = reversed;
 	}
 }
