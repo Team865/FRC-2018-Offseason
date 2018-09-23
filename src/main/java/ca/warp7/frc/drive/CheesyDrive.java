@@ -1,6 +1,6 @@
 package ca.warp7.frc.drive;
 
-import ca.warp7.frc.utils.MathUtil;
+import ca.warp7.frc.utils.Limit;
 
 public class CheesyDrive {
 
@@ -28,7 +28,7 @@ public class CheesyDrive {
 	private double mOldWheel = 0;
 	private IDriveSignalReceiver mReceiver;
 
-	public void setSignalReceiver(IDriveSignalReceiver receiver) {
+	public void setDriveSignalReceiver(IDriveSignalReceiver receiver) {
 		mReceiver = receiver;
 	}
 
@@ -60,7 +60,7 @@ public class CheesyDrive {
 			if (Math.abs(throttle) < 0.2) {
 				double alpha = .1f;
 				mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
-						(alpha * MathUtil.limit(wheel, 1.0) * 5);
+						(alpha * Limit.limit(wheel, 1.0) * 5);
 			}
 			overPower = -wheel * .75;
 			angularPower = -wheel * 1;
@@ -68,7 +68,7 @@ public class CheesyDrive {
 			if (Math.abs(throttle) < 0.2) {
 				double alpha = .1f;
 				mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
-						(alpha * MathUtil.limit(wheel, 1.0) * 5);
+						(alpha * Limit.limit(wheel, 1.0) * 5);
 			}
 			overPower = 1;
 			angularPower = -wheel * 1;

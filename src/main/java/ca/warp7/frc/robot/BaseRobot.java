@@ -3,9 +3,12 @@ package ca.warp7.frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
-public abstract class ConstructRobot<C> extends IterativeRobot {
-	private SystemMapper mMapper;
-	private IConstructCallback<C> mCallback;
+import java.util.List;
+
+public abstract class BaseRobot<C> extends IterativeRobot {
+
+	private List<ISubsystem> mSubsystems;
+	private IRobotCallback<C> mCallback;
 	private Class<?> mMappingClass;
 	private C mController;
 
@@ -14,15 +17,16 @@ public abstract class ConstructRobot<C> extends IterativeRobot {
 	}
 
 	private void resetSubsystems() {
-		mMapper.resetSubsystems();
+		mSubsystems.forEach(ISubsystem::onReset);
 	}
 
 	private void initSubsystems() {
-		mMapper.initMappingAndSubsystems();
+		mCallback.onSetMapping();
+		mSubsystems.forEach(ISubsystem::onInit);
 		resetSubsystems();
 	}
 
-	void callback(IConstructCallback<C> callback) {
+	void setCallback(IRobotCallback<C> callback) {
 		mCallback = callback;
 	}
 
@@ -41,9 +45,10 @@ public abstract class ConstructRobot<C> extends IterativeRobot {
 
 	@Override
 	public void robotInit() {
-		mCallback.onInitWithConstruct(this);
+		mCallback.onInitWithBaseRobot(this);
 		System.out.println(" (a.k.a " + getRobotName() + ")");
-		mMapper = new SystemMapper(mMappingClass, mCallback);
+		Class<?> subsystemsClass = Inspector.getSubsystemsClass(mMappingClass);
+		mSubsystems = Inspector.createSubsystems(subsystemsClass);
 		initSubsystems();
 	}
 

@@ -10,14 +10,14 @@ import java.util.ArrayList;
 public class DataPool {
 	
 	private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("data");
-	private static final ArrayList<DataPool> allPools = new ArrayList<>();
+	private static final ArrayList<DataPool> sDataPools = new ArrayList<>();
 	private final ArrayList<Object> mData;
 	private final ArrayList<String> mKeys;
 	private final String mName;
 
 	
 	public DataPool(String name) {
-		allPools.add(this);
+		sDataPools.add(this);
 		mData = new ArrayList<>();
 		mKeys = new ArrayList<>();
 		this.mName = name;
@@ -54,9 +54,9 @@ public class DataPool {
 	}
 
 	public static void collectAllData() {
-		if (allPools.isEmpty())
+		if (sDataPools.isEmpty())
 			return;
-		for (DataPool pool : allPools) {
+		for (DataPool pool : sDataPools) {
 			if (!pool.mData.isEmpty()) {
 				NetworkTable poolTable = table.getSubTable(pool.mName);
 				for (int i = 0; i < pool.mData.size(); i++) {

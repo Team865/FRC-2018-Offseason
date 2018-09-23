@@ -3,11 +3,11 @@ package ca.warp7.frc.robot;
 import ca.warp7.frc.utils.Pins;
 
 public abstract class RobotCallback<C>
-		extends ConstructRobot<C>
-		implements IConstructCallback<C> {
+		extends BaseRobot<C>
+		implements IRobotCallback<C> {
 
 	public RobotCallback() {
-		callback(this);
+		setCallback(this);
 	}
 
 	protected Pins pins(int... n){
@@ -25,7 +25,7 @@ public abstract class RobotCallback<C>
 	protected abstract void onInit();
 
 	@Override
-	public void onInitWithConstruct(ConstructRobot<C> robot) {
+	public void onInitWithBaseRobot(BaseRobot<C> robot) {
 		onInit();
 	}
 }

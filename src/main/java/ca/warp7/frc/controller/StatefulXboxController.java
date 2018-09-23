@@ -1,11 +1,10 @@
-package ca.warp7.frc.controls;
+package ca.warp7.frc.controller;
 
-import ca.warp7.frc.controls.ControllerState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
-import static ca.warp7.frc.controls.ControllerState.*;
+import static ca.warp7.frc.controller.ControllerState.*;
 
 /*
 An add-on interface to the WPILib's XboxController that
@@ -14,13 +13,13 @@ maps to XboxController and all return a ControllerState
  */
 
 @SuppressWarnings("unused")
-public class UnitController {
+public class StatefulXboxController {
 
 	private XboxController mInnerController;
 
 	// Tracked Controller States
 	// The following are boolean values of previous state that are used in conjunction
-	// with the current state to determine if a button is UP, DOWN, PRESSED, or RELEASED
+	// with the current state to determine if a button is KEPT_UP, HELD_DOWN, PRESSED, or RELEASED
 
 	private boolean mAButton, mBButton, mXButton, mYButton = false;
 	private boolean mLeftBumper, mRightBumper = false;
@@ -29,13 +28,13 @@ public class UnitController {
 	private boolean mStartButton, mBackButton = false;
 	private int mDirectionalPad = -1;
 
-	public UnitController(int port) {
+	public StatefulXboxController(int port) {
 		mInnerController = new XboxController(port);
 	}
 
 	private ControllerState compareBooleanState(boolean previous_state, boolean new_state) {
 		return new_state != previous_state ? new_state ?
-				PRESSED : RELEASED : new_state ? DOWN : UP;
+				PRESSED : RELEASED : new_state ? HELD_DOWN : KEPT_UP;
 	}
 
 	public ControllerState getAButton() {
@@ -118,7 +117,7 @@ public class UnitController {
 		int new_state = mInnerController.getPOV(0);
 		mDirectionalPad = new_state;
 		return new_state != previous_state ? new_state == value ?
-				PRESSED : RELEASED : new_state == value ? DOWN : UP;
+				PRESSED : RELEASED : new_state == value ? HELD_DOWN : KEPT_UP;
 	}
 
 	public void setRumble(RumbleType type, double d) {

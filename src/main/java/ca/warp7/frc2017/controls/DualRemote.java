@@ -2,17 +2,18 @@ package ca.warp7.frc2017.controls;
 
 import ca.warp7.frc.controller.StatefulXboxController;
 
-import static ca.warp7.frc.controller.ControllerState.HELD_DOWN;
-import static ca.warp7.frc.controller.ControllerState.PRESSED;
+import static ca.warp7.frc.controller.ControllerState.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
-public class SingleRemote implements IControlsInterface {
+public class DualRemote implements IControlsInterface {
 
 	private final StatefulXboxController mDriver;
+	private final StatefulXboxController mOperator;
 
-	public SingleRemote(int driverPort) {
+	public DualRemote(int driverPort, int operatorPort) {
 		mDriver = new StatefulXboxController(driverPort);
+		mOperator = new StatefulXboxController(operatorPort);
 	}
 
 	@Override
@@ -52,21 +53,26 @@ public class SingleRemote implements IControlsInterface {
 
 	@Override
 	public ShooterMode getShooterMode() {
+		if (mOperator.getBButton() == HELD_DOWN) {
+			return ShooterMode.RPM_1;
+		} else if (mOperator.getTrigger(kLeft) == HELD_DOWN) {
+			return ShooterMode.RPM_2;
+		}
 		return ShooterMode.NONE;
 	}
 
 	@Override
 	public boolean hopperShouldReverse() {
-		return false;
+		return mOperator.getDpad(90) == HELD_DOWN;
 	}
 
 	@Override
 	public boolean shooterShouldShoot() {
-		return false;
+		return mOperator.getAButton() == HELD_DOWN;
 	}
 
 	@Override
 	public boolean shooterShouldStop() {
-		return false;
+		return mOperator.getAButton() == KEPT_UP;
 	}
 }

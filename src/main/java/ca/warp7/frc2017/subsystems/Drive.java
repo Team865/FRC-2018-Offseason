@@ -1,11 +1,11 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.utils.Hardware;
-import ca.warp7.frc.utils.MathUtil;
-import ca.warp7.frc.robot.ISubsystem;
 import ca.warp7.frc.drive.CheesyDrive;
 import ca.warp7.frc.drive.ICheesyDriveController;
 import ca.warp7.frc.drive.IDriveSignalReceiver;
+import ca.warp7.frc.robot.ISubsystem;
+import ca.warp7.frc.utils.Hardware;
+import ca.warp7.frc.utils.Limit;
 import ca.warp7.frc.utils.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -42,7 +42,7 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	@Override
 	public void onInit() {
 		mCheesyDrive = new CheesyDrive();
-		mCheesyDrive.setSignalReceiver(this);
+		mCheesyDrive.setDriveSignalReceiver(this);
 
 		mLeftMotors = new MotorGroup(VictorSP.class, driveLeftPins.array());
 		mRightMotors = new MotorGroup(VictorSP.class, driveRightPins.array());
@@ -67,15 +67,15 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 
 	@Override
-	public void onDrive(double leftDemand, double rightDemand) {
+	public void onDrive(double leftPowerDemand, double rightPowerDemand) {
 		if (mState.reversed) {
-			leftDemand = leftDemand * -1;
-			rightDemand = rightDemand * -1;
+			leftPowerDemand = leftPowerDemand * -1;
+			rightPowerDemand = rightPowerDemand * -1;
 		}
-		mState.leftRamp += (leftDemand - mState.leftRamp) / kRampIntervals;
-		mState.rightRamp += (rightDemand - mState.rightRamp) / kRampIntervals;
-		double leftSpeed = MathUtil.limit(mState.leftRamp, speedLimit);
-		double rightSpeed = MathUtil.limit(mState.rightRamp, speedLimit);
+		mState.leftRamp += (leftPowerDemand - mState.leftRamp) / kRampIntervals;
+		mState.rightRamp += (rightPowerDemand - mState.rightRamp) / kRampIntervals;
+		double leftSpeed = Limit.limit(mState.leftRamp, speedLimit);
+		double rightSpeed = Limit.limit(mState.rightRamp, speedLimit);
 		mLeftMotors.set(leftSpeed * leftDriftOffset);
 		mRightMotors.set(rightSpeed * rightDriftOffset);
 	}

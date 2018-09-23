@@ -3,11 +3,10 @@ package ca.warp7.frc2017;
 import ca.warp7.frc.robot.RobotCallback;
 import ca.warp7.frc2017.Mapping.DriveConstants;
 import ca.warp7.frc2017.Mapping.RIO;
+import ca.warp7.frc2017.controls.DualRemote;
 import ca.warp7.frc2017.controls.IControlsInterface;
-import ca.warp7.frc2017.controls.SingleRemote;
 
-import static ca.warp7.frc2017.Mapping.Subsystems.compressor;
-import static ca.warp7.frc2017.Mapping.Subsystems.drive;
+import static ca.warp7.frc2017.Mapping.Subsystems.*;
 
 public class Wanda extends RobotCallback<IControlsInterface> {
 
@@ -15,7 +14,7 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 	public void onInit() {
 		System.out.print("Hello me is robit!");
 		setMappingClass(Mapping.class);
-		setController(new SingleRemote(0));
+		setController(new DualRemote(0, 1));
 	}
 
 	@Override
@@ -24,11 +23,41 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 	}
 
 	@Override
-	public void onTeleopPeriodic(IControlsInterface remote) {
-		if (remote.compressorShouldSwitch()) compressor.toggleClosedLoop();
-		drive.setReversed(remote.driveShouldReverse());
-		drive.setShift(remote.driveShouldShift());
-		drive.cheesyDrive(remote);
+	public void onTeleopPeriodic(IControlsInterface control) {
+		// Compressor
+		if (control.compressorShouldSwitch()) compressor.toggleClosedLoop();
+		// Drive
+		drive.setReversed(control.driveShouldReverse());
+		drive.setShift(control.driveShouldShift());
+		drive.cheesyDrive(control);
+		//Shooter
+		switch (control.getShooterMode()) {
+			case RPM_1:
+				shooter.setRPM(4425);
+			case RPM_2:
+				shooter.setRPM(4450);
+			case NONE:
+				shooter.setRPM(0);
+		}
+		if (control.hopperShouldReverse()) {
+			shooter.setHopperSpeed(-1.0);
+			shooter.setIntakeSpeed(1.0);
+			shooter.setTowerSpeed(0.0);
+		} else if (control.shooterShouldShoot()) {
+			shooter.setHopperSpeed(1.0);
+			shooter.setIntakeSpeed(1.0);
+			if (shooter.withinRange(25) && shooter.getSetPoint() > 0.0) {
+				shooter.setTowerSpeed(1.0);
+			} else if (shooter.getSensor()) {
+				shooter.setTowerSpeed(0.5);
+			} else {
+				shooter.setTowerSpeed(0.0);
+			}
+		} else if (control.shooterShouldStop()) {
+			shooter.setIntakeSpeed(0.0);
+			shooter.setHopperSpeed(0.0);
+			shooter.setTowerSpeed(0.0);
+		}
 	}
 
 	@Override
