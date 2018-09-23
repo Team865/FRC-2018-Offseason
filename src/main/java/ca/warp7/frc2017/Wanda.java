@@ -1,18 +1,18 @@
 package ca.warp7.frc2017;
 
-import ca.warp7.frc.robot.RobotCallback;
-import ca.warp7.frc2017.Mapping.DriveConstants;
-import ca.warp7.frc2017.Mapping.RIO;
+import ca.warp7.frc.RobotCallback;
 import ca.warp7.frc2017.controls.DualRemote;
 import ca.warp7.frc2017.controls.IControlsInterface;
 
+import static ca.warp7.frc2017.Mapping.DriveConstants.*;
+import static ca.warp7.frc2017.Mapping.RIO.*;
 import static ca.warp7.frc2017.Mapping.Subsystems.*;
 
 public class Wanda extends RobotCallback<IControlsInterface> {
 
 	@Override
 	public void onInit() {
-		System.out.print("Hello me is robit!");
+		System.out.println("Hello me is robit!");
 		setMappingClass(Mapping.class);
 		setController(new DualRemote(0, 1));
 	}
@@ -25,16 +25,20 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 	@Override
 	public void onTeleopPeriodic(IControlsInterface control) {
 		// Compressor
-		if (control.compressorShouldSwitch()) compressor.toggleClosedLoop();
+		if (control.compressorShouldSwitch()) {
+			compressor.toggleClosedLoop();
+		}
+
 		// Drive
 		drive.setReversed(control.driveShouldReverse());
 		drive.setShift(control.driveShouldShift());
 		drive.cheesyDrive(control);
+
 		//Shooter
 		switch (control.getShooterMode()) {
-			case RPM_1:
+			case RPM_4425:
 				shooter.setRPM(4425);
-			case RPM_2:
+			case RPM_4450:
 				shooter.setRPM(4450);
 			case NONE:
 				shooter.setRPM(0);
@@ -63,18 +67,25 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 	@Override
 	public void onSetMapping() {
 		// Pins
-		RIO.driveLeftPins = pins(2, 3);
-		RIO.driveLeftPins = pins(2, 3);
-		RIO.driveRightPins = pins(0, 1);
-		RIO.driveLeftEncoderChannels = channels(0, 1);
-		RIO.driveRightEncoderChannels = channels(2, 3);
-		RIO.driveShifterPins = pin(1);
-		RIO.compressorPin = pin(0);
+		compressorPin = pin(0);
+
+		driveLeftPins = pins(2, 3);
+		driveLeftPins = pins(2, 3);
+		driveRightPins = pins(0, 1);
+		driveLeftEncoderChannels = channels(0, 1);
+		driveRightEncoderChannels = channels(2, 3);
+		driveShifterPins = pin(1);
+
+		hopperSpinPins = pin(7);
+		towerSpinPins = pin(6);
+		intakeSpinPins = pin(8);
+		shooterSlave = pin(0);
+		shooterMaster = pin(1);
 
 		// Drive constants
-		DriveConstants.inchesPerTick = (4 * Math.PI) / 1024;
-		DriveConstants.leftDriftOffset = 1.0;
-		DriveConstants.rightDriftOffset = 1.0;
-		DriveConstants.speedLimit = 0.99;
+		inchesPerTick = (4 * Math.PI) / 1024;
+		leftDriftOffset = 1.0;
+		rightDriftOffset = 1.0;
+		speedLimit = 0.99;
 	}
 }

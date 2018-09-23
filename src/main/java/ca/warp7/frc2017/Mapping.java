@@ -28,6 +28,7 @@ public class Mapping {
 		public static Pins towerSpinPins;
 		public static Pins intakeSpinPins;
 		public static Pins photoSensorPin;
+
 		public static Pins shooterMaster;
 		public static Pins shooterSlave;
 	}

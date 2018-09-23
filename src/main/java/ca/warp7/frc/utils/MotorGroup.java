@@ -25,8 +25,8 @@ public class MotorGroup implements SpeedController {
 		}
 	}
 
-	public MotorGroup(Class<?> type, int... pins) {
-		this(pins, type);
+	public MotorGroup(Class<?> type, Pins pins) {
+		this(pins.array(), type);
 	}
 
 	@Override

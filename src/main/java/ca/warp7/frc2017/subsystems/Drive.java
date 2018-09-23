@@ -1,9 +1,9 @@
 package ca.warp7.frc2017.subsystems;
 
+import ca.warp7.frc.ISubsystem;
 import ca.warp7.frc.drive.CheesyDrive;
 import ca.warp7.frc.drive.ICheesyDriveController;
 import ca.warp7.frc.drive.IDriveSignalReceiver;
-import ca.warp7.frc.robot.ISubsystem;
 import ca.warp7.frc.utils.Hardware;
 import ca.warp7.frc.utils.Limit;
 import ca.warp7.frc.utils.MotorGroup;
@@ -44,15 +44,15 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mCheesyDrive = new CheesyDrive();
 		mCheesyDrive.setDriveSignalReceiver(this);
 
-		mLeftMotors = new MotorGroup(VictorSP.class, driveLeftPins.array());
-		mRightMotors = new MotorGroup(VictorSP.class, driveRightPins.array());
+		mLeftMotors = new MotorGroup(VictorSP.class, driveLeftPins);
+		mRightMotors = new MotorGroup(VictorSP.class, driveRightPins);
 		mRightMotors.setInverted(true);
 
-		mLeftEncoder = Hardware.encoder(driveLeftEncoderChannels, false, k4X);
+		mLeftEncoder = Hardware.new_encoder(driveLeftEncoderChannels, false, k4X);
 		mLeftEncoder.setReverseDirection(true);
 		mLeftEncoder.setDistancePerPulse(inchesPerTick);
 
-		mRightEncoder = Hardware.encoder(driveRightEncoderChannels, false, k4X);
+		mRightEncoder = Hardware.new_encoder(driveRightEncoderChannels, false, k4X);
 		mRightEncoder.setReverseDirection(false);
 		mRightEncoder.setDistancePerPulse(inchesPerTick);
 

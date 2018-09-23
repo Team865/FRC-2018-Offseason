@@ -54,9 +54,9 @@ public class DualRemote implements IControlsInterface {
 	@Override
 	public ShooterMode getShooterMode() {
 		if (mOperator.getBButton() == HELD_DOWN) {
-			return ShooterMode.RPM_1;
+			return ShooterMode.RPM_4425;
 		} else if (mOperator.getTrigger(kLeft) == HELD_DOWN) {
-			return ShooterMode.RPM_2;
+			return ShooterMode.RPM_4450;
 		}
 		return ShooterMode.NONE;
 	}

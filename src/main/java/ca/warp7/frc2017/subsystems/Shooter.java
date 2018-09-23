@@ -1,7 +1,7 @@
 package ca.warp7.frc2017.subsystems;
 
 
-import ca.warp7.frc.robot.ISubsystem;
+import ca.warp7.frc.ISubsystem;
 import ca.warp7.frc.utils.MotorGroup;
 import ca.warp7.frc2017.Mapping.RIO;
 import com.ctre.CANTalon;
@@ -10,6 +10,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
 
+@SuppressWarnings("deprecation")
 public class Shooter implements ISubsystem {
 
 	private MotorGroup mHopperSpin;
@@ -26,10 +27,10 @@ public class Shooter implements ISubsystem {
 
 	@Override
 	public void onInit() {
-		mHopperSpin = new MotorGroup(VictorSP.class, RIO.hopperSpinPins.array());
+		mHopperSpin = new MotorGroup(VictorSP.class, RIO.hopperSpinPins);
 		mHopperSpin.setInverted(true);
-		mTowerSpin = new MotorGroup(VictorSP.class, RIO.towerSpinPins.array());
-		mIntake = new MotorGroup(VictorSP.class, RIO.intakeSpinPins.array());
+		mTowerSpin = new MotorGroup(VictorSP.class, RIO.towerSpinPins);
+		mIntake = new MotorGroup(VictorSP.class, RIO.intakeSpinPins);
 		mPhotoSensor = new DigitalInput(RIO.photoSensorPin.first());
 
 		mSlaveTalon = new CANTalon(RIO.shooterSlave.first());
@@ -56,9 +57,7 @@ public class Shooter implements ISubsystem {
 
 	@Override
 	public void onReset() {
-
 	}
-
 
 	public void setRPM(double targetSpeed) {
 		if (targetSpeed > 0) {

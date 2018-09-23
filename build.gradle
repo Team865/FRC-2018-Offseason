@@ -8,30 +8,28 @@ plugins {
 }
 
 def TEAM = 865
-def WANDA_CLASS = "ca.warp7.frc2017.Wanda"
-def ROBOT_CLASS = WANDA_CLASS
-
+def ROBOT_CLASS_WANDA = "ca.warp7.frc2017.Wanda"
+def ROBOT_CLASS = ROBOT_CLASS_WANDA
 
 deploy {
     targets {
         target("roborio", RoboRIO) {
-            // Team can be overridden by command line, for use with VSCode
-            team = getTeamOrDefault(TEAM)
+            team = TEAM
         }
     }
     artifacts {
         artifact('frcJava', FRCJavaArtifact) {
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
-            // Debug can be overridden by command line, for use with VSCode
-            debug = getDebugOrDefault(false)
+            debug = false
         }
     }
 }
 
 dependencies {
     compile wpilib()
-    //compile ctre()
     compile ctreLegacy()
+    compile ctre()
     compile navx()
 }
 

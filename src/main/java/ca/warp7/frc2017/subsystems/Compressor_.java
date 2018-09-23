@@ -1,6 +1,6 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.robot.ISubsystem;
+import ca.warp7.frc.ISubsystem;
 import edu.wpi.first.wpilibj.Compressor;
 
 import static ca.warp7.frc2017.Mapping.RIO.compressorPin;
@@ -21,7 +21,7 @@ public class Compressor_ implements ISubsystem {
 
 	@Override
 	public void onInit() {
-		mCompressor = new Compressor(compressorPin.get(0));
+		mCompressor = new Compressor(compressorPin.first());
 	}
 
 	@Override
