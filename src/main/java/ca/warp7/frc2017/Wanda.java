@@ -32,7 +32,7 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 	}
 
 	@Override
-	public void onSetupMapping() {
+	public void onSetMapping() {
 		// Pins
 		RIO.driveLeftPins = pins(2, 3);
 		RIO.driveLeftPins = pins(2, 3);

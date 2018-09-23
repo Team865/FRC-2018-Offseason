@@ -35,7 +35,7 @@ class SystemMapper {
 	}
 
 	void initMappingAndSubsystems(){
-		mCallback.onSetupMapping();
+		mCallback.onSetMapping();
 		mSubsystems.forEach(ISubsystem::onInit);
 	}
 

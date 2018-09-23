@@ -30,7 +30,8 @@ deploy {
 
 dependencies {
     compile wpilib()
-    compile ctre()
+    //compile ctre()
+    compile ctreLegacy()
     compile navx()
 }
 
