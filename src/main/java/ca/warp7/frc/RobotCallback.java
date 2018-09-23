@@ -1,6 +1,6 @@
 package ca.warp7.frc;
 
-public abstract class RobotCallback<C> extends BaseRobot<C> implements BaseRobot.ICallback<C> {
+public abstract class RobotCallback<C> extends Robot<C> implements Robot.ICallback<C> {
 
 	public RobotCallback() {
 		super();
@@ -10,7 +10,7 @@ public abstract class RobotCallback<C> extends BaseRobot<C> implements BaseRobot
 	protected abstract void onInit();
 
 	@Override
-	public void onInit(BaseRobot<C> robot) {
+	public void onInit(Robot<C> robot) {
 		onInit();
 	}
 }

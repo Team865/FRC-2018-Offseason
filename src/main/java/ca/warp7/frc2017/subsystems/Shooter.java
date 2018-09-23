@@ -57,6 +57,7 @@ public class Shooter implements ISubsystem {
 
 	@Override
 	public void onReset() {
+		stop();
 	}
 
 	public void setRPM(double targetSpeed) {

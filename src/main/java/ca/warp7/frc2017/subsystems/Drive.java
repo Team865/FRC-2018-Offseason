@@ -61,6 +61,8 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	@Override
 	public void onReset() {
+		mLeftMotors.set(0);
+		mRightMotors.set(0);
 		mLeftEncoder.reset();
 		mRightEncoder.reset();
 	}

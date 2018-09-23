@@ -9,14 +9,15 @@ import ca.warp7.frc2017.subsystems.Shooter;
  * Static variables that maps the robot and includes constants
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class Mapping {
-	public static class Subsystems {
+public final class Mapping {
+
+	public static final class Subsystems {
 		public static Drive drive;
 		public static Compressor_ compressor;
 		public static Shooter shooter;
 	}
 
-	public static class RIO {
+	public static final class RIO {
 		public static Pins driveLeftPins;
 		public static Pins driveRightPins;
 		public static Pins driveLeftEncoderChannels;
@@ -33,7 +34,7 @@ public class Mapping {
 		public static Pins shooterSlave;
 	}
 
-	public static class DriveConstants {
+	public static final class DriveConstants {
 		public static double leftDriftOffset;
 		public static double rightDriftOffset;
 		public static double inchesPerTick;

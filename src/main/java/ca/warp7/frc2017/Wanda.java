@@ -8,34 +8,35 @@ import static ca.warp7.frc2017.Mapping.DriveConstants.*;
 import static ca.warp7.frc2017.Mapping.RIO.*;
 import static ca.warp7.frc2017.Mapping.Subsystems.*;
 
-public class Wanda extends RobotCallback<IControlsInterface> {
+public final class Wanda extends RobotCallback<IControlsInterface> {
 
 	@Override
 	public void onInit() {
 		System.out.println("Hello me is robit!");
+		setLoopDelta(WAIT_FOR_DRIVER_STATION);
 		setMappingClass(Mapping.class);
 		setController(new DualRemote(0, 1));
 	}
 
 	@Override
 	public void onTeleopInit() {
-		compressor.setClosedLoop(!getDriverStation().isFMSAttached());
+		compressor.setClosedLoop(isFMSAttached());
 	}
 
 	@Override
-	public void onTeleopPeriodic(IControlsInterface control) {
+	public void onTeleopPeriodic(IControlsInterface controller) {
 		// Compressor
-		if (control.compressorShouldSwitch()) {
+		if (controller.compressorShouldSwitch()) {
 			compressor.toggleClosedLoop();
 		}
 
 		// Drive
-		drive.setReversed(control.driveShouldReverse());
-		drive.setShift(control.driveShouldShift());
-		drive.cheesyDrive(control);
+		drive.setReversed(controller.driveShouldReverse());
+		drive.setShift(controller.driveShouldShift());
+		drive.cheesyDrive(controller);
 
 		//Shooter
-		switch (control.getShooterMode()) {
+		switch (controller.getShooterMode()) {
 			case RPM_4425:
 				shooter.setRPM(4425);
 			case RPM_4450:
@@ -43,11 +44,11 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 			case NONE:
 				shooter.setRPM(0);
 		}
-		if (control.hopperShouldReverse()) {
+		if (controller.hopperShouldReverse()) {
 			shooter.setHopperSpeed(-1.0);
 			shooter.setIntakeSpeed(1.0);
 			shooter.setTowerSpeed(0.0);
-		} else if (control.shooterShouldShoot()) {
+		} else if (controller.shooterShouldShoot()) {
 			shooter.setHopperSpeed(1.0);
 			shooter.setIntakeSpeed(1.0);
 			if (shooter.withinRange(25) && shooter.getSetPoint() > 0.0) {
@@ -57,7 +58,7 @@ public class Wanda extends RobotCallback<IControlsInterface> {
 			} else {
 				shooter.setTowerSpeed(0.0);
 			}
-		} else if (control.shooterShouldStop()) {
+		} else if (controller.shooterShouldStop()) {
 			shooter.setIntakeSpeed(0.0);
 			shooter.setHopperSpeed(0.0);
 			shooter.setTowerSpeed(0.0);
