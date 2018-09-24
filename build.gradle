@@ -28,8 +28,11 @@ deploy {
 
 dependencies {
     compile wpilib()
-    compile ctreLegacy()
-    compile ctre()
+    if (ROBOT_CLASS == ROBOT_CLASS_WANDA){
+        compile ctreLegacy()
+    } else {
+        compile ctre()
+    }
     compile navx()
 }
 

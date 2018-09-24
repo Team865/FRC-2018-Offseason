@@ -1,4 +1,4 @@
-package ca.warp7.frc.drive;
+package ca.warp7.frc;
 
 import ca.warp7.frc.utils.Limit;
 
@@ -32,7 +32,7 @@ public class CheesyDrive {
 		mReceiver = receiver;
 	}
 
-	public void driveWithController(ICheesyDriveController driver) {
+	public void driveWithController(IControls driver) {
 		drive(driver.getWheel(), driver.getThrottle(), driver.shouldQuickTurn(), driver.shouldAltQuickTurn());
 	}
 
@@ -97,6 +97,17 @@ public class CheesyDrive {
 			rightPwm = -1;
 		}
 
+		System.err.println(leftPwm + " " + rightPwm);
 		mReceiver.onDrive(leftPwm, rightPwm);
+	}
+
+	public interface IControls {
+		double getWheel();
+
+		double getThrottle();
+
+		boolean shouldQuickTurn();
+
+		boolean shouldAltQuickTurn();
 	}
 }

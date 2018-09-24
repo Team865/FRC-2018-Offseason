@@ -1,10 +1,8 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.ISubsystem;
-import ca.warp7.frc.drive.CheesyDrive;
-import ca.warp7.frc.drive.ICheesyDriveController;
-import ca.warp7.frc.drive.IDriveSignalReceiver;
-import ca.warp7.frc.utils.Hardware;
+import ca.warp7.frc.CheesyDrive;
+import ca.warp7.frc.IDriveSignalReceiver;
+import ca.warp7.frc.Robot;
 import ca.warp7.frc.utils.Limit;
 import ca.warp7.frc.utils.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
@@ -16,7 +14,7 @@ import static ca.warp7.frc2017.Mapping.RIO.*;
 import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 
-public class Drive implements ISubsystem, IDriveSignalReceiver {
+public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 
 	private static final double kRampIntervals = 6.0;
 
@@ -41,6 +39,8 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	@Override
 	public void onInit() {
+		//utils.getStateObserver().register(this);
+
 		mCheesyDrive = new CheesyDrive();
 		mCheesyDrive.setDriveSignalReceiver(this);
 
@@ -48,11 +48,11 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mRightMotors = new MotorGroup(VictorSP.class, driveRightPins);
 		mRightMotors.setInverted(true);
 
-		mLeftEncoder = Hardware.new_encoder(driveLeftEncoderChannels, false, k4X);
+		mLeftEncoder = Robot.encoderFromPins(driveLeftEncoderChannels, false, k4X);
 		mLeftEncoder.setReverseDirection(true);
 		mLeftEncoder.setDistancePerPulse(inchesPerTick);
 
-		mRightEncoder = Hardware.new_encoder(driveRightEncoderChannels, false, k4X);
+		mRightEncoder = Robot.encoderFromPins(driveRightEncoderChannels, false, k4X);
 		mRightEncoder.setReverseDirection(false);
 		mRightEncoder.setDistancePerPulse(inchesPerTick);
 
@@ -82,7 +82,7 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mRightMotors.set(rightSpeed * rightDriftOffset);
 	}
 
-	public void cheesyDrive(ICheesyDriveController driver) {
+	public void cheesyDrive(CheesyDrive.IControls driver) {
 		mCheesyDrive.driveWithController(driver);
 	}
 

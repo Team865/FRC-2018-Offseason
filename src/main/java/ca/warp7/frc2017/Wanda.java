@@ -1,6 +1,6 @@
 package ca.warp7.frc2017;
 
-import ca.warp7.frc.RobotCallback;
+import ca.warp7.frc.Robot;
 import ca.warp7.frc2017.controls.DualRemote;
 import ca.warp7.frc2017.controls.IControlsInterface;
 
@@ -8,7 +8,7 @@ import static ca.warp7.frc2017.Mapping.DriveConstants.*;
 import static ca.warp7.frc2017.Mapping.RIO.*;
 import static ca.warp7.frc2017.Mapping.Subsystems.*;
 
-public final class Wanda extends RobotCallback<IControlsInterface> {
+public final class Wanda extends Robot.Callback<IControlsInterface> {
 
 	@Override
 	public void onInit() {
@@ -24,7 +24,9 @@ public final class Wanda extends RobotCallback<IControlsInterface> {
 	}
 
 	@Override
-	public void onTeleopPeriodic(IControlsInterface controller) {
+	public void onTeleopPeriodic(IControlsInterface controller_) {
+		DualRemote controller = (DualRemote) controller_;
+
 		// Compressor
 		if (controller.compressorShouldSwitch()) {
 			compressor.toggleClosedLoop();
@@ -80,6 +82,7 @@ public final class Wanda extends RobotCallback<IControlsInterface> {
 		hopperSpinPins = pin(7);
 		towerSpinPins = pin(6);
 		intakeSpinPins = pin(8);
+		photoSensorPin = pin(9);
 		shooterSlave = pin(0);
 		shooterMaster = pin(1);
 

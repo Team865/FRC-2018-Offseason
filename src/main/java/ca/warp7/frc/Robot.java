@@ -1,7 +1,8 @@
 package ca.warp7.frc;
 
-import ca.warp7.frc.utils.Pins;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.hal.HAL;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//@SuppressWarnings("unused")
 public abstract class Robot<C> extends IterativeRobot {
 	private double mLoopDelta;
 	private boolean mOverrideLoopDisabled;
@@ -20,6 +22,9 @@ public abstract class Robot<C> extends IterativeRobot {
 	private Class<?> mMappingClass;
 	private C mController;
 	private DriverStation mDriverStation;
+	private Utilities mUtils;
+	private StateObserver mStateObserver;
+	private Map<String, Object> mObservedObjects;
 	private ReflectedMaps mStateMaps;
 
 	protected static final double WAIT_FOR_DRIVER_STATION = 0;
@@ -39,9 +44,20 @@ public abstract class Robot<C> extends IterativeRobot {
 		mCallback = callback;
 	}
 
-	@SuppressWarnings("unused")
 	protected void disableOverrideLoop() {
 		this.mOverrideLoopDisabled = true;
+	}
+
+	protected boolean isFMSAttached() {
+		return mDriverStation.isFMSAttached();
+	}
+
+	protected void setController(C controller) {
+		mController = controller;
+	}
+
+	public static Encoder encoderFromPins(Pins pins, boolean reverse, EncodingType encodingType) {
+		return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
 	}
 
 	protected static Pins pins(int... n) {
@@ -56,12 +72,24 @@ public abstract class Robot<C> extends IterativeRobot {
 		return pins(n);
 	}
 
-	protected boolean isFMSAttached() {
-		return mDriverStation.isFMSAttached();
-	}
+	public static class Pins {
+		private final int[] mPinsArray;
 
-	protected void setController(C controller) {
-		mController = controller;
+		Pins(int[] pins) {
+			mPinsArray = pins;
+		}
+
+		int get(int index) {
+			return mPinsArray[index];
+		}
+
+		public int first() {
+			return mPinsArray[0];
+		}
+
+		public int[] array() {
+			return mPinsArray;
+		}
 	}
 
 	interface ICallback<C> {
@@ -74,55 +102,72 @@ public abstract class Robot<C> extends IterativeRobot {
 		void onTeleopPeriodic(C controller);
 	}
 
+	public interface ISubsystem {
+		Object getState();
+
+		void onInit();
+
+		void onReset();
+	}
+
+	public abstract static class Callback<C> extends Robot<C> implements ICallback<C> {
+		public Callback() {
+			super();
+			setCallback(this);
+		}
+
+		@Override
+		public void onInit(Robot<C> robot) {
+			onInit();
+		}
+
+		protected abstract void onInit();
+	}
+
+	public class Utilities {
+
+		public String getRobotName() {
+			return getRobotClassName();
+		}
+
+		public void print(Object object) {
+			System.out.println(object);
+		}
+
+		public Robot<C> getRobot() {
+			return Robot.this;
+		}
+
+		public DriverStation getDriverStation() {
+			return mDriverStation;
+		}
+
+		public StateObserver getStateObserver() {
+			return mStateObserver;
+		}
+	}
+
+	private static final double kUnassignedLoopDelta = -1;
+	private static final double kMaxDelta = 1;
+
 	Robot() {
 		super();
 		mOverrideLoopDisabled = false;
-		mLoopDelta = -1;
+		mLoopDelta = kUnassignedLoopDelta;
+		mUtils = new Utilities();
 		mStateMaps = new ReflectedMaps();
+		mObservedObjects = new HashMap<>();
+		mStateObserver = new StateObserver();
 		mDriverStation = m_ds;
 	}
 
-	private static class Inspector {
-
-		private static List<ISubsystem> createSubsystems(Class<?> subsystemsClass) {
-			List<ISubsystem> subsystems = new ArrayList<>();
-			if (subsystemsClass != null) {
-				Field[] subsystemsClassFields = subsystemsClass.getFields();
-				for (Field subsystemClassField : subsystemsClassFields) {
-					if (ISubsystem.class.isAssignableFrom(subsystemClassField.getType())) {
-						try {
-							Class subsystemType = subsystemClassField.getType();
-							ISubsystem instance = (ISubsystem) subsystemType.newInstance();
-							subsystems.add(instance);
-							subsystemClassField.set(null, instance);
-						} catch (IllegalAccessException | InstantiationException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			return subsystems;
-		}
-
-		private static Class<?> getSubsystemsClass(Class<?> mappingClass) {
-			for (Class mappingSubclass : mappingClass.getClasses()) {
-				if (mappingSubclass.getSimpleName().equals("Subsystems")) {
-					return mappingSubclass;
-				}
-			}
-			return null;
-		}
-	}
-
-	private static class Observer {
+	private static class _NativeObserver {
 		private static void start() {
 			HAL.observeUserProgramStarting();
 		}
 	}
 
 	private static class ReflectedMaps {
-
-
 		private Map<String, Map<String, String>> mInnerMap;
 
 		private ReflectedMaps() {
@@ -135,29 +180,85 @@ public abstract class Robot<C> extends IterativeRobot {
 			}
 			return mInnerMap.get(name);
 		}
-
 	}
 
-	private void updateStateMaps() {
-		for (ISubsystem subsystem : mSubsystems) {
-			String subsystemsName = subsystem.getClass().getSimpleName();
-			Map<String, String> subsystemStateMap = mStateMaps.getMap(subsystemsName);
-			Object subsystemState = subsystem.getState();
-			Class<?> stateClass = subsystemState.getClass();
-			Field[] stateFields = stateClass.getDeclaredFields();
-			for (Field stateField : stateFields) {
-				stateField.setAccessible(true);
-				try {
-					String fieldValue = stateField.get(subsystemState).toString();
-					subsystemStateMap.put(stateField.getName(), fieldValue);
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+	public class StateObserver {
+		private void updateStateMaps() {
+			for (ISubsystem subsystem : mSubsystems) {
+				String subsystemsName = subsystem.getClass().getSimpleName();
+				Map<String, String> subsystemStateMap = mStateMaps.getMap(subsystemsName);
+				Object subsystemState = subsystem.getState();
+				if (subsystemState != null) {
+					Class<?> stateClass = subsystemState.getClass();
+					Field[] stateFields = stateClass.getDeclaredFields();
+					for (Field stateField : stateFields) {
+						stateField.setAccessible(true);
+						try {
+							String fieldValue = stateField.get(subsystemState).toString();
+							subsystemStateMap.put(stateField.getName(), fieldValue);
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+
+		private void register(String name, Object object) {
+			mObservedObjects.put(name, object);
+		}
+
+		public void register(ISubsystem subsystem) {
+			register(subsystem.getClass().getName(), subsystem.getState());
+		}
+
+		private void registerAllSubsystems() {
+			mSubsystems.forEach(this::register);
+		}
+
+		private void clearObserved() {
+			mObservedObjects.clear();
+		}
+	}
+
+	private Class<?> getInspectedSubsystemsClass() {
+		for (Class mappingSubclass : mMappingClass.getClasses()) {
+			if (mappingSubclass.getSimpleName().equals("Subsystems")) {
+				return mappingSubclass;
+			}
+		}
+		return null;
+	}
+
+	private void createLazySubsystems(Class<?> subsystemsClass) {
+		mSubsystems = new ArrayList<>();
+		if (subsystemsClass != null) {
+			Field[] subsystemsClassFields = subsystemsClass.getFields();
+			for (Field subsystemClassField : subsystemsClassFields) {
+				if (ISubsystem.class.isAssignableFrom(subsystemClassField.getType())) {
+					try {
+						Class subsystemType = subsystemClassField.getType();
+						ISubsystem instance = (ISubsystem) subsystemType.newInstance();
+						mSubsystems.add(instance);
+						subsystemClassField.set(null, instance);
+					} catch (IllegalAccessException | InstantiationException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 	}
 
-	private String getRobotName() {
+	private void setUtilsInstance() {
+		try {
+			Field utilsField = mMappingClass.getField("utils");
+			utilsField.set(null, mUtils);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String getRobotClassName() {
 		return getClass().getSimpleName();
 	}
 
@@ -165,30 +266,30 @@ public abstract class Robot<C> extends IterativeRobot {
 		mSubsystems.forEach(ISubsystem::onReset);
 	}
 
-	private void initSubsystems() {
+	private boolean isInitialSetupDone() {
+		return mLoopDelta != kUnassignedLoopDelta && mCallback != null && mMappingClass != null;
+	}
+
+	private void callbackInit() {
+		System.out.print("(" + getRobotClassName() + ") ");
+		mCallback.onInit(this);
+	}
+
+	private void systemsInit() {
+		setUtilsInstance();
+		Class<?> subsystemsClass = getInspectedSubsystemsClass();
+		createLazySubsystems(subsystemsClass);
 		mCallback.onSetMapping();
 		mSubsystems.forEach(ISubsystem::onInit);
 		resetSubsystems();
-	}
-
-	private void lazySubsystems() {
-		Class<?> subsystemsClass = Inspector.getSubsystemsClass(mMappingClass);
-		mSubsystems = Inspector.createSubsystems(subsystemsClass);
-		initSubsystems();
-	}
-
-	private void realInit() {
-		System.out.print("(" + getRobotName() + ") ");
-		mCallback.onInit(this);
-		lazySubsystems();
-		updateStateMaps();
+		mStateObserver.updateStateMaps();
 	}
 
 	private void mainLoop() {
 		super.loopFunc();
 	}
 
-	private void waitingLoop() {
+	private void iterativeLoop() {
 		while (!Thread.interrupted()) {
 			mDriverStation.waitForData();
 			mainLoop();
@@ -203,21 +304,17 @@ public abstract class Robot<C> extends IterativeRobot {
 		while (!Thread.interrupted()) {
 			try {
 				Thread.sleep(kMaxMilliseconds);
-			} catch (InterruptedException ex) {
+			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
 		}
 	}
 
-	private boolean checkSetup() {
-		return mLoopDelta != -1 && mCallback != null && mMappingClass != null;
-	}
-
-	private void overrideCompetition() {
+	private void overrideStartCompetition() {
 		robotInit();
-		Observer.start();
-		if (mLoopDelta <= 0 || mLoopDelta > 1) {
-			waitingLoop();
+		_NativeObserver.start();
+		if (mLoopDelta <= 0 || mLoopDelta > kMaxDelta) {
+			iterativeLoop();
 		} else {
 			timedLoop();
 		}
@@ -225,20 +322,21 @@ public abstract class Robot<C> extends IterativeRobot {
 
 	@Override
 	public void startCompetition() {
-		if (checkSetup()) {
+		callbackInit();
+		if (isInitialSetupDone()) {
 			if (mOverrideLoopDisabled) {
 				super.startCompetition();
 			} else {
-				overrideCompetition();
+				overrideStartCompetition();
 			}
 		} else {
-			DriverStation.reportError("Robot not set up", false);
+			System.err.println("Robot not set up");
 		}
 	}
 
 	@Override
 	public void robotInit() {
-		realInit();
+		systemsInit();
 	}
 
 	@Override

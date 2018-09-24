@@ -1,5 +1,6 @@
 package ca.warp7.frc.utils;
 
+import ca.warp7.frc.Robot;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,18 +15,14 @@ public class MotorGroup implements SpeedController {
 		for (int i = 0; i < pins.length; i++) {
 			try {
 				mMotors[i] = (SpeedController) type.getConstructor(Integer.TYPE).newInstance(pins[i]);
-			} catch (NoSuchMethodException
-					| SecurityException
-					| InstantiationException
-					| IllegalAccessException
-					| IllegalArgumentException
-					| InvocationTargetException e) {
+			} catch (NoSuchMethodException | InstantiationException
+					| IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public MotorGroup(Class<?> type, Pins pins) {
+	public MotorGroup(Class<?> type, Robot.Pins pins) {
 		this(pins.array(), type);
 	}
 

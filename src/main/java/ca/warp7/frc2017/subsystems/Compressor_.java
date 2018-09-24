@@ -1,11 +1,11 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.ISubsystem;
+import ca.warp7.frc.Robot;
 import edu.wpi.first.wpilibj.Compressor;
 
 import static ca.warp7.frc2017.Mapping.RIO.compressorPin;
 
-public class Compressor_ implements ISubsystem {
+public class Compressor_ implements Robot.ISubsystem {
 
 	private static class InternalState {
 		boolean closedLoop = false;

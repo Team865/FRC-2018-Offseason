@@ -1,8 +1,8 @@
 package ca.warp7.frc2017.controls;
 
-import ca.warp7.frc.drive.ICheesyDriveController;
+import ca.warp7.frc.CheesyDrive;
 
-public interface IControlsInterface extends ICheesyDriveController {
+public interface IControlsInterface extends CheesyDrive.IControls {
 	enum ShooterMode {
 		RPM_4425, RPM_4450, NONE
 	}
