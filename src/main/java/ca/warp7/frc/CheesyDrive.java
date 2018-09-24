@@ -1,6 +1,6 @@
 package ca.warp7.frc;
 
-import ca.warp7.frc.utils.Limit;
+import static ca.warp7.frc.utils.Limit.limit;
 
 public class CheesyDrive {
 
@@ -8,7 +8,7 @@ public class CheesyDrive {
 		return Math.abs(n) < 0.18 ? 0 : (n - (0.18 * Math.signum(n))) * 1.22;
 	}
 
-	private static double wrap_accumulator(double accumulator) {
+	private static double wrapAccumulator(double accumulator) {
 		if (accumulator > 1) {
 			accumulator -= 1;
 		} else if (accumulator < -1) {
@@ -19,9 +19,9 @@ public class CheesyDrive {
 		return accumulator;
 	}
 
-	private static double sinScale(double val, double non_linearity, int passes, double lim) {
-		double scaled = lim * Math.sin(Math.PI / 2 * non_linearity * val) / Math.sin(Math.PI / 2 * non_linearity);
-		return passes == 1 ? scaled : sinScale(scaled, non_linearity, passes - 1, lim);
+	private static double sinScale(double val, double nonLinearity, int passes, double lim) {
+		double scaled = lim * Math.sin(Math.PI / 2 * nonLinearity * val) / Math.sin(Math.PI / 2 * nonLinearity);
+		return passes == 1 ? scaled : sinScale(scaled, nonLinearity, passes - 1, lim);
 	}
 
 	private double mQuickStopAccumulator = 0;
@@ -60,7 +60,7 @@ public class CheesyDrive {
 			if (Math.abs(throttle) < 0.2) {
 				double alpha = .1f;
 				mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
-						(alpha * Limit.limit(wheel, 1.0) * 5);
+						(alpha * limit(wheel, 1.0) * 5);
 			}
 			overPower = -wheel * .75;
 			angularPower = -wheel * 1;
@@ -68,7 +68,7 @@ public class CheesyDrive {
 			if (Math.abs(throttle) < 0.2) {
 				double alpha = .1f;
 				mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
-						(alpha * Limit.limit(wheel, 1.0) * 5);
+						(alpha * limit(wheel, 1.0) * 5);
 			}
 			overPower = 1;
 			angularPower = -wheel * 1;
@@ -76,7 +76,7 @@ public class CheesyDrive {
 			overPower = 0;
 			double sensitivity = .9;
 			angularPower = throttle * wheel * sensitivity - mQuickStopAccumulator;
-			mQuickStopAccumulator = wrap_accumulator(mQuickStopAccumulator);
+			mQuickStopAccumulator = wrapAccumulator(mQuickStopAccumulator);
 		}
 
 		rightPwm = leftPwm = throttle;
@@ -97,7 +97,6 @@ public class CheesyDrive {
 			rightPwm = -1;
 		}
 
-		System.err.println(leftPwm + " " + rightPwm);
 		mReceiver.onDrive(leftPwm, rightPwm);
 	}
 

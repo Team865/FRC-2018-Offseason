@@ -26,6 +26,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	private StateObserver mStateObserver;
 	private Map<String, Object> mObservedObjects;
 	private ReflectedMaps mStateMaps;
+	private Notifier mMainLoopNotifier;
 
 	protected static final double WAIT_FOR_DRIVER_STATION = 0;
 
@@ -158,6 +159,7 @@ public abstract class Robot<C> extends IterativeRobot {
 		mStateMaps = new ReflectedMaps();
 		mObservedObjects = new HashMap<>();
 		mStateObserver = new StateObserver();
+		mMainLoopNotifier = new Notifier(this::mainLoop);
 		mDriverStation = m_ds;
 	}
 
@@ -299,8 +301,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	private static final int kMaxMilliseconds = 1000 * 60 * 60 * 24;
 
 	private void timedLoop() {
-		Notifier loop = new Notifier(this::mainLoop);
-		loop.startPeriodic(mLoopDelta);
+		mMainLoopNotifier.startPeriodic(mLoopDelta);
 		while (!Thread.interrupted()) {
 			try {
 				Thread.sleep(kMaxMilliseconds);

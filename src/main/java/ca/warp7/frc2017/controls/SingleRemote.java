@@ -1,6 +1,6 @@
 package ca.warp7.frc2017.controls;
 
-import ca.warp7.frc.controller.StatefulXboxController;
+import ca.warp7.frc.controller.XboxControllerV2;
 
 import static ca.warp7.frc.controller.ControllerState.HELD_DOWN;
 import static ca.warp7.frc.controller.ControllerState.PRESSED;
@@ -9,20 +9,20 @@ import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
 public class SingleRemote implements IControlsInterface {
 
-	private final StatefulXboxController mDriver;
+	private final XboxControllerV2 mDriver;
 
 	public SingleRemote(int driverPort) {
-		mDriver = new StatefulXboxController(driverPort);
+		mDriver = new XboxControllerV2(driverPort);
 	}
 
 	@Override
 	public double getWheel() {
-		return mDriver.getX(kLeft);
+		return -mDriver.getX(kRight);
 	}
 
 	@Override
 	public double getThrottle() {
-		return mDriver.getY(kRight);
+		return mDriver.getY(kLeft);
 	}
 
 	@Override
