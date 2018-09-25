@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public abstract class Robot<C> extends IterativeRobot {
 	private double mLoopDelta;
 	private boolean mOverrideLoopDisabled;
@@ -22,11 +22,18 @@ public abstract class Robot<C> extends IterativeRobot {
 	private Class<?> mMappingClass;
 	private C mController;
 	private DriverStation mDriverStation;
-	private Utilities mUtils;
+	private Utils mUtils;
 	private StateObserver mStateObserver;
 	private Map<String, Object> mObservedObjects;
-	private ReflectedMaps mStateMaps;
+	private ReflectedMaps mObjectStateMaps;
 	private Notifier mMainLoopNotifier;
+
+	@SuppressWarnings("WeakerAccess")
+	public static Robot.Utils utils;
+
+	private static final int kMaxMilliseconds = 1000 * 60 * 60 * 24;
+	private static final double kUnassignedLoopDelta = -1;
+	private static final double kMaxLoopDelta = 1;
 
 	protected static final double WAIT_FOR_DRIVER_STATION = 0;
 
@@ -125,7 +132,7 @@ public abstract class Robot<C> extends IterativeRobot {
 		protected abstract void onInit();
 	}
 
-	public class Utilities {
+	public class Utils {
 
 		public String getRobotName() {
 			return getRobotClassName();
@@ -148,15 +155,13 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
-	private static final double kUnassignedLoopDelta = -1;
-	private static final double kMaxDelta = 1;
 
 	Robot() {
 		super();
 		mOverrideLoopDisabled = false;
 		mLoopDelta = kUnassignedLoopDelta;
-		mUtils = new Utilities();
-		mStateMaps = new ReflectedMaps();
+		mUtils = new Utils();
+		mObjectStateMaps = new ReflectedMaps();
 		mObservedObjects = new HashMap<>();
 		mStateObserver = new StateObserver();
 		mMainLoopNotifier = new Notifier(this::mainLoop);
@@ -184,41 +189,41 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public class StateObserver {
-		private void updateStateMaps() {
-			for (ISubsystem subsystem : mSubsystems) {
-				String subsystemsName = subsystem.getClass().getSimpleName();
-				Map<String, String> subsystemStateMap = mStateMaps.getMap(subsystemsName);
-				Object subsystemState = subsystem.getState();
-				if (subsystemState != null) {
-					Class<?> stateClass = subsystemState.getClass();
-					Field[] stateFields = stateClass.getDeclaredFields();
-					for (Field stateField : stateFields) {
-						stateField.setAccessible(true);
-						try {
-							String fieldValue = stateField.get(subsystemState).toString();
-							subsystemStateMap.put(stateField.getName(), fieldValue);
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						}
+		private void updateObjectStateMaps() {
+			for (String objectName : mObservedObjects.keySet()) {
+				Object observedObject = mObservedObjects.get(objectName);
+				Map<String, String> objectStateMap = mObjectStateMaps.getMap(objectName);
+				Class<?> stateClass = observedObject.getClass();
+				Field[] stateFields = stateClass.getDeclaredFields();
+				for (Field stateField : stateFields) {
+					stateField.setAccessible(true);
+					try {
+						String fieldValue = stateField.get(observedObject).toString();
+						objectStateMap.put(stateField.getName(), fieldValue);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
 					}
 				}
 			}
 		}
 
 		private void register(String name, Object object) {
-			mObservedObjects.put(name, object);
+			if (object != null) {
+				mObservedObjects.put(name, object);
+			}
 		}
 
 		public void register(ISubsystem subsystem) {
-			register(subsystem.getClass().getName(), subsystem.getState());
+			register(subsystem.getClass().getSimpleName(), subsystem.getState());
 		}
 
-		private void registerAllSubsystems() {
+		public void registerAllSubsystems() {
 			mSubsystems.forEach(this::register);
 		}
 
-		private void clearObserved() {
+		public void clearObserved() {
 			mObservedObjects.clear();
 		}
 	}
@@ -251,15 +256,6 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
-	private void setUtilsInstance() {
-		try {
-			Field utilsField = mMappingClass.getField("utils");
-			utilsField.set(null, mUtils);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private String getRobotClassName() {
 		return getClass().getSimpleName();
 	}
@@ -278,13 +274,13 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	private void systemsInit() {
-		setUtilsInstance();
+		utils = mUtils;
 		Class<?> subsystemsClass = getInspectedSubsystemsClass();
 		createLazySubsystems(subsystemsClass);
 		mCallback.onSetMapping();
 		mSubsystems.forEach(ISubsystem::onInit);
 		resetSubsystems();
-		mStateObserver.updateStateMaps();
+		mStateObserver.updateObjectStateMaps();
 	}
 
 	private void mainLoop() {
@@ -297,8 +293,6 @@ public abstract class Robot<C> extends IterativeRobot {
 			mainLoop();
 		}
 	}
-
-	private static final int kMaxMilliseconds = 1000 * 60 * 60 * 24;
 
 	private void timedLoop() {
 		mMainLoopNotifier.startPeriodic(mLoopDelta);
@@ -314,7 +308,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	private void overrideStartCompetition() {
 		robotInit();
 		_NativeObserver.start();
-		if (mLoopDelta <= 0 || mLoopDelta > kMaxDelta) {
+		if (mLoopDelta <= 0 || mLoopDelta > kMaxLoopDelta) {
 			iterativeLoop();
 		} else {
 			timedLoop();

@@ -1,9 +1,8 @@
 package ca.warp7.frc2017;
 
-import ca.warp7.frc.Robot;
 import ca.warp7.frc.Robot.Pins;
-import ca.warp7.frc2017.subsystems.Compressor_;
 import ca.warp7.frc2017.subsystems.Drive;
+import ca.warp7.frc2017.subsystems.Pneumatics;
 import ca.warp7.frc2017.subsystems.Shooter;
 
 /**
@@ -11,11 +10,9 @@ import ca.warp7.frc2017.subsystems.Shooter;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Mapping {
-	public static Robot.Utilities utils;
-
 	public static final class Subsystems {
 		public static Drive drive;
-		public static Compressor_ compressor;
+		public static Pneumatics compressor;
 		public static Shooter shooter;
 	}
 

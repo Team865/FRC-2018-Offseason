@@ -20,7 +20,7 @@ public final class Wanda extends Robot.Callback<IControlsInterface> {
 
 	@Override
 	public void onTeleopInit() {
-		compressor.setClosedLoop(isFMSAttached());
+		compressor.setClosedLoop(true);
 	}
 
 	@Override

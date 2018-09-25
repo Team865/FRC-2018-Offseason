@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Compressor;
 
 import static ca.warp7.frc2017.Mapping.RIO.compressorPin;
 
-public class Compressor_ implements Robot.ISubsystem {
+public class Pneumatics implements Robot.ISubsystem {
 
 	private static class InternalState {
 		boolean closedLoop = false;

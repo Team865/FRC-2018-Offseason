@@ -28,8 +28,8 @@ public class XboxControllerV2 {
 	private boolean mStartButton, mBackButton = false;
 	private int mDirectionalPad = -1;
 
-	public XboxControllerV2(int port) {
-		mInnerController = new XboxController(port);
+	public XboxControllerV2(int portNumber) {
+		mInnerController = new XboxController(portNumber);
 	}
 
 	private ControllerState compareBooleanState(boolean previousState, boolean newState) {
