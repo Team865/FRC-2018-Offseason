@@ -8,13 +8,12 @@ import static ca.warp7.frc2017.Mapping.DriveConstants.*;
 import static ca.warp7.frc2017.Mapping.RIO.*;
 import static ca.warp7.frc2017.Mapping.Subsystems.*;
 
-public final class Wanda extends Robot.Callback<IControlsInterface> {
-
+public final class Wanda extends Robot.Main<IControlsInterface> {
 	@Override
 	public void onInit() {
 		System.out.println("Hello me is robit!");
-		setLoopDelta(WAIT_FOR_DRIVER_STATION);
-		setMappingClass(Mapping.class);
+		setMainLoopDelta(WAIT_FOR_DRIVER_STATION);
+		setMapping(Mapping.class);
 		setController(new DualRemote(0, 1));
 	}
 

@@ -6,7 +6,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class DataPool {
 	
 	private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("data");

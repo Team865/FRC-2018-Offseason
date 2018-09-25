@@ -2,53 +2,17 @@ package ca.warp7.frc2017.controls;
 
 import ca.warp7.frc.controller.XboxControllerV2;
 
-import static ca.warp7.frc.controller.ControllerState.*;
+import static ca.warp7.frc.controller.ControllerState.HELD_DOWN;
+import static ca.warp7.frc.controller.ControllerState.KEPT_UP;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
-import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
-public class DualRemote implements IControlsInterface {
+public class DualRemote extends SingleRemote {
 
-	private final XboxControllerV2 mDriver;
 	private final XboxControllerV2 mOperator;
 
 	public DualRemote(int driverPort, int operatorPort) {
-		mDriver = new XboxControllerV2(driverPort);
+		super(driverPort);
 		mOperator = new XboxControllerV2(operatorPort);
-	}
-
-	@Override
-	public double getWheel() {
-		return -mDriver.getX(kRight);
-	}
-
-	@Override
-	public double getThrottle() {
-		return mDriver.getY(kLeft);
-	}
-
-	@Override
-	public boolean shouldQuickTurn() {
-		return mDriver.getBumper(kLeft) == HELD_DOWN;
-	}
-
-	@Override
-	public boolean shouldAltQuickTurn() {
-		return false;
-	}
-
-	@Override
-	public boolean driveShouldReverse() {
-		return mDriver.getStickButton(kRight) == PRESSED;
-	}
-
-	@Override
-	public boolean driveShouldShift() {
-		return mDriver.getBumper(kRight) == HELD_DOWN;
-	}
-
-	@Override
-	public boolean compressorShouldSwitch() {
-		return mDriver.getBackButton() == PRESSED;
 	}
 
 	@Override

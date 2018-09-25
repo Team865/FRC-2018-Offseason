@@ -13,7 +13,6 @@ import static ca.warp7.frc2017.Mapping.DriveConstants.*;
 import static ca.warp7.frc2017.Mapping.RIO.*;
 import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
-
 public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 
 	private static final double kRampIntervals = 6.0;
@@ -57,12 +56,11 @@ public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 		mRightEncoder.setDistancePerPulse(inchesPerTick);
 
 		mShifter = new Solenoid(driveShifterPins.first());
+		mShifter.set(false);
 	}
 
 	@Override
 	public void onReset() {
-		mLeftMotors.set(0);
-		mRightMotors.set(0);
 		mLeftEncoder.reset();
 		mRightEncoder.reset();
 	}
@@ -83,11 +81,14 @@ public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 	}
 
 	public void cheesyDrive(CheesyDrive.IControls driver) {
-		mCheesyDrive.driveWithController(driver);
+		mCheesyDrive.feedForward(driver);
 	}
 
 	public void setShift(boolean shift) {
-		mShifter.set(shift);
+		if (shift) {
+			if (!mShifter.get()) mShifter.set(true);
+			else if (mShifter.get()) mShifter.set(false);
+		}
 	}
 
 	public void setReversed(boolean reversed) {

@@ -32,12 +32,12 @@ public class CheesyDrive {
 		mReceiver = receiver;
 	}
 
-	public void driveWithController(IControls driver) {
-		drive(driver.getWheel(), driver.getThrottle(), driver.shouldQuickTurn(), driver.shouldAltQuickTurn());
+	public void feedForward(IControls driver) {
+		feedForward(driver.getWheel(), driver.getThrottle(), driver.shouldQuickTurn(), driver.shouldAltQuickTurn());
 	}
 
 	@SuppressWarnings("SameParameterValue")
-	private void drive(double wheel, double throttle, boolean quickTurn, boolean altQuickTurn) {
+	private void feedForward(double wheel, double throttle, boolean quickTurn, boolean altQuickTurn) {
 		double rightPwm;
 		double leftPwm;
 		double negInertiaScalar;

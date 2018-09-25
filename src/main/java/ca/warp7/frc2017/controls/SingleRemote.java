@@ -7,6 +7,7 @@ import static ca.warp7.frc.controller.ControllerState.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
+@SuppressWarnings("WeakerAccess")
 public class SingleRemote implements IControlsInterface {
 
 	private final XboxControllerV2 mDriver;
@@ -42,13 +43,15 @@ public class SingleRemote implements IControlsInterface {
 
 	@Override
 	public boolean driveShouldShift() {
-		return mDriver.getBumper(kRight) == HELD_DOWN;
+		return mDriver.getBumper(kRight) != HELD_DOWN;
 	}
 
 	@Override
 	public boolean compressorShouldSwitch() {
 		return mDriver.getBackButton() == PRESSED;
 	}
+
+	// Unimplemented Methods
 
 	@Override
 	public ShooterMode getShooterMode() {

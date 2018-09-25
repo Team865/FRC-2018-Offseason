@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.hal.HAL;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,9 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static edu.wpi.first.wpilibj.hal.HAL.observeUserProgramStarting;
+
 @SuppressWarnings("unused")
 public abstract class Robot<C> extends IterativeRobot {
-	private double mLoopDelta;
+	private double mMainLoopDelta;
 	private boolean mOverrideLoopDisabled;
 	private List<ISubsystem> mSubsystems;
 	private ICallback<C> mCallback;
@@ -25,6 +26,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	private Utils mUtils;
 	private StateObserver mStateObserver;
 	private Map<String, Object> mObservedObjects;
+	private Map<String, Field[]> mObservedFieldsCache;
 	private ReflectedMaps mObjectStateMaps;
 	private Notifier mMainLoopNotifier;
 
@@ -38,22 +40,17 @@ public abstract class Robot<C> extends IterativeRobot {
 	protected static final double WAIT_FOR_DRIVER_STATION = 0;
 
 	@SuppressWarnings("SameParameterValue")
-	protected void setLoopDelta(double loopDelta) {
-		this.mLoopDelta = loopDelta;
+	protected void setMainLoopDelta(double loopDelta) {
+		this.mMainLoopDelta = loopDelta;
 	}
 
 	@SuppressWarnings("SameParameterValue")
-	protected void setMappingClass(Class<?> mappingClass) {
+	protected void setMapping(Class<?> mappingClass) {
 		mMappingClass = mappingClass;
 	}
 
-	@SuppressWarnings("WeakerAccess")
-	protected void setCallback(ICallback<C> callback) {
-		mCallback = callback;
-	}
-
 	protected void disableOverrideLoop() {
-		this.mOverrideLoopDisabled = true;
+		mOverrideLoopDisabled = true;
 	}
 
 	protected boolean isFMSAttached() {
@@ -118,8 +115,8 @@ public abstract class Robot<C> extends IterativeRobot {
 		void onReset();
 	}
 
-	public abstract static class Callback<C> extends Robot<C> implements ICallback<C> {
-		public Callback() {
+	public abstract static class Main<C> extends Robot<C> implements ICallback<C> {
+		public Main() {
 			super();
 			setCallback(this);
 		}
@@ -155,33 +152,14 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
-
-	Robot() {
-		super();
-		mOverrideLoopDisabled = false;
-		mLoopDelta = kUnassignedLoopDelta;
-		mUtils = new Utils();
-		mObjectStateMaps = new ReflectedMaps();
-		mObservedObjects = new HashMap<>();
-		mStateObserver = new StateObserver();
-		mMainLoopNotifier = new Notifier(this::mainLoop);
-		mDriverStation = m_ds;
-	}
-
-	private static class _NativeObserver {
-		private static void start() {
-			HAL.observeUserProgramStarting();
-		}
-	}
-
 	private static class ReflectedMaps {
-		private Map<String, Map<String, String>> mInnerMap;
+		private Map<String, Map<String, Object>> mInnerMap;
 
 		private ReflectedMaps() {
 			mInnerMap = new HashMap<>();
 		}
 
-		private Map<String, String> getMap(String name) {
+		private Map<String, Object> getMap(String name) {
 			if (!mInnerMap.containsKey(name)) {
 				mInnerMap.put(name, new HashMap<>());
 			}
@@ -194,13 +172,18 @@ public abstract class Robot<C> extends IterativeRobot {
 		private void updateObjectStateMaps() {
 			for (String objectName : mObservedObjects.keySet()) {
 				Object observedObject = mObservedObjects.get(objectName);
-				Map<String, String> objectStateMap = mObjectStateMaps.getMap(objectName);
-				Class<?> stateClass = observedObject.getClass();
-				Field[] stateFields = stateClass.getDeclaredFields();
-				for (Field stateField : stateFields) {
-					stateField.setAccessible(true);
+				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
+				if (!mObservedFieldsCache.containsKey(objectName)) {
+					Class<?> stateClass = observedObject.getClass();
+					Field[] stateFields = stateClass.getDeclaredFields();
+					for (Field stateField : stateFields) {
+						stateField.setAccessible(true);
+					}
+					mObservedFieldsCache.put(objectName, stateFields);
+				}
+				for (Field stateField : mObservedFieldsCache.get(objectName)) {
 					try {
-						String fieldValue = stateField.get(observedObject).toString();
+						Object fieldValue = stateField.get(observedObject);
 						objectStateMap.put(stateField.getName(), fieldValue);
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
@@ -224,8 +207,26 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 
 		public void clearObserved() {
+			mObservedFieldsCache.clear();
 			mObservedObjects.clear();
 		}
+	}
+
+	Robot() {
+		super();
+		mOverrideLoopDisabled = false;
+		mMainLoopDelta = kUnassignedLoopDelta;
+		mUtils = new Utils();
+		mObjectStateMaps = new ReflectedMaps();
+		mObservedObjects = new HashMap<>();
+		mObservedFieldsCache = new HashMap<>();
+		mStateObserver = new StateObserver();
+		mMainLoopNotifier = new Notifier(this::mainLoop);
+		mDriverStation = m_ds;
+	}
+
+	void setCallback(ICallback<C> callback) {
+		mCallback = callback;
 	}
 
 	private Class<?> getInspectedSubsystemsClass() {
@@ -265,7 +266,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	private boolean isInitialSetupDone() {
-		return mLoopDelta != kUnassignedLoopDelta && mCallback != null && mMappingClass != null;
+		return mMainLoopDelta != kUnassignedLoopDelta && mCallback != null && mMappingClass != null;
 	}
 
 	private void callbackInit() {
@@ -295,7 +296,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	private void timedLoop() {
-		mMainLoopNotifier.startPeriodic(mLoopDelta);
+		mMainLoopNotifier.startPeriodic(mMainLoopDelta);
 		while (!Thread.interrupted()) {
 			try {
 				Thread.sleep(kMaxMilliseconds);
@@ -307,8 +308,8 @@ public abstract class Robot<C> extends IterativeRobot {
 
 	private void overrideStartCompetition() {
 		robotInit();
-		_NativeObserver.start();
-		if (mLoopDelta <= 0 || mLoopDelta > kMaxLoopDelta) {
+		observeUserProgramStarting();
+		if (mMainLoopDelta <= 0 || mMainLoopDelta > kMaxLoopDelta) {
 			iterativeLoop();
 		} else {
 			timedLoop();
