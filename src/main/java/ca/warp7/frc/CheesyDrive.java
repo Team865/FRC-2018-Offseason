@@ -24,8 +24,12 @@ public class CheesyDrive {
 		return passes == 1 ? scaled : sinScale(scaled, nonLinearity, passes - 1, lim);
 	}
 
-	private double mQuickStopAccumulator = 0;
-	private double mOldWheel = 0;
+	private static class InternalState {
+		private double quickStopAccumulator = 0;
+		private double oldWheel = 0;
+	}
+
+	private InternalState mState = new InternalState();
 	private IDriveSignalReceiver mReceiver;
 
 	public void setDriveSignalReceiver(IDriveSignalReceiver receiver) {
@@ -48,8 +52,8 @@ public class CheesyDrive {
 		wheel = deadBand(wheel);
 		throttle = deadBand(throttle);
 
-		negInertia = wheel - mOldWheel;
-		mOldWheel = wheel;
+		negInertia = wheel - mState.oldWheel;
+		mState.oldWheel = wheel;
 
 		wheel = sinScale(wheel, 0.9f, 1, 0.9f);
 		negInertiaScalar = wheel * negInertia > 0 ? 2.5f : Math.abs(wheel) > .65 ? 6 : 4;
@@ -59,7 +63,7 @@ public class CheesyDrive {
 		if (altQuickTurn) {
 			if (Math.abs(throttle) < 0.2) {
 				double alpha = .1f;
-				mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
+				mState.quickStopAccumulator = ((1 - alpha) * mState.quickStopAccumulator) +
 						(alpha * limit(wheel, 1.0) * 5);
 			}
 			overPower = -wheel * .75;
@@ -67,7 +71,7 @@ public class CheesyDrive {
 		} else if (quickTurn) {
 			if (Math.abs(throttle) < 0.2) {
 				double alpha = .1f;
-				mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
+				mState.quickStopAccumulator = ((1 - alpha) * mState.quickStopAccumulator) +
 						(alpha * limit(wheel, 1.0) * 5);
 			}
 			overPower = 1;
@@ -75,8 +79,8 @@ public class CheesyDrive {
 		} else {
 			overPower = 0;
 			double sensitivity = .9;
-			angularPower = throttle * wheel * sensitivity - mQuickStopAccumulator;
-			mQuickStopAccumulator = wrapAccumulator(mQuickStopAccumulator);
+			angularPower = throttle * wheel * sensitivity - mState.quickStopAccumulator;
+			mState.quickStopAccumulator = wrapAccumulator(mState.quickStopAccumulator);
 		}
 
 		rightPwm = leftPwm = throttle;

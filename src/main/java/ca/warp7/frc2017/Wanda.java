@@ -13,13 +13,13 @@ public final class Wanda extends Robot.Main<IControlsInterface> {
 	public void onInit() {
 		System.out.println("Hello me is robit!");
 		setMainLoopDelta(WAIT_FOR_DRIVER_STATION);
-		setMapping(Mapping.class);
 		setController(new DualRemote(0, 1));
 	}
 
 	@Override
 	public void onTeleopInit() {
 		compressor.setClosedLoop(true);
+		Robot.utils.getStateObserver().registerAllSubsystems();
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public final class Wanda extends Robot.Main<IControlsInterface> {
 	}
 
 	@Override
-	public void onSetMapping() {
+	public void onConfigureMapping() {
 		// Pins
 		compressorPin = pin(0);
 

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -14,123 +15,31 @@ import java.util.Map;
 
 import static edu.wpi.first.wpilibj.hal.HAL.observeUserProgramStarting;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SameParameterValue", "WeakerAccess"})
 public abstract class Robot<C> extends IterativeRobot {
-	private double mMainLoopDelta;
-	private boolean mOverrideLoopDisabled;
-	private List<ISubsystem> mSubsystems;
-	private ICallback<C> mCallback;
-	private Class<?> mMappingClass;
-	private C mController;
-	private DriverStation mDriverStation;
-	private Utils mUtils;
-	private StateObserver mStateObserver;
-	private Map<String, Object> mObservedObjects;
-	private Map<String, Field[]> mObservedFieldsCache;
-	private ReflectedMaps mObjectStateMaps;
-	private Notifier mMainLoopNotifier;
-
-	@SuppressWarnings("WeakerAccess")
 	public static Robot.Utils utils;
 
-	private static final int kMaxMilliseconds = 1000 * 60 * 60 * 24;
-	private static final double kUnassignedLoopDelta = -1;
-	private static final double kMaxLoopDelta = 1;
-
-	protected static final double WAIT_FOR_DRIVER_STATION = 0;
-
-	@SuppressWarnings("SameParameterValue")
-	protected void setMainLoopDelta(double loopDelta) {
-		this.mMainLoopDelta = loopDelta;
-	}
-
-	@SuppressWarnings("SameParameterValue")
-	protected void setMapping(Class<?> mappingClass) {
-		mMappingClass = mappingClass;
-	}
-
-	protected void disableOverrideLoop() {
-		mOverrideLoopDisabled = true;
-	}
-
-	protected boolean isFMSAttached() {
-		return mDriverStation.isFMSAttached();
-	}
-
-	protected void setController(C controller) {
-		mController = controller;
-	}
-
-	public static Encoder encoderFromPins(Pins pins, boolean reverse, EncodingType encodingType) {
-		return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
-	}
-
-	protected static Pins pins(int... n) {
-		return new Pins(n);
-	}
-
-	protected static Pins channels(int... n) {
-		return pins(n);
-	}
-
-	protected static Pins pin(int n) {
-		return pins(n);
-	}
-
-	public static class Pins {
-		private final int[] mPinsArray;
-
-		Pins(int[] pins) {
-			mPinsArray = pins;
-		}
-
-		int get(int index) {
-			return mPinsArray[index];
-		}
-
-		public int first() {
-			return mPinsArray[0];
-		}
-
-		public int[] array() {
-			return mPinsArray;
-		}
-	}
-
-	interface ICallback<C> {
+	public interface ICallback<C> {
 		void onInit(Robot<C> robot);
 
-		void onSetMapping();
+		void onConfigureMapping();
 
 		void onTeleopInit();
 
 		void onTeleopPeriodic(C controller);
 	}
 
-	public interface ISubsystem {
+	public interface IStateOwner {
 		Object getState();
+	}
 
+	public interface ISubsystem extends IStateOwner {
 		void onInit();
 
 		void onReset();
 	}
 
-	public abstract static class Main<C> extends Robot<C> implements ICallback<C> {
-		public Main() {
-			super();
-			setCallback(this);
-		}
-
-		@Override
-		public void onInit(Robot<C> robot) {
-			onInit();
-		}
-
-		protected abstract void onInit();
-	}
-
 	public class Utils {
-
 		public String getRobotName() {
 			return getRobotClassName();
 		}
@@ -152,24 +61,8 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
-	private static class ReflectedMaps {
-		private Map<String, Map<String, Object>> mInnerMap;
-
-		private ReflectedMaps() {
-			mInnerMap = new HashMap<>();
-		}
-
-		private Map<String, Object> getMap(String name) {
-			if (!mInnerMap.containsKey(name)) {
-				mInnerMap.put(name, new HashMap<>());
-			}
-			return mInnerMap.get(name);
-		}
-	}
-
-	@SuppressWarnings("WeakerAccess")
 	public class StateObserver {
-		private void updateObjectStateMaps() {
+		private void updateObjectStates() {
 			for (String objectName : mObservedObjects.keySet()) {
 				Object observedObject = mObservedObjects.get(objectName);
 				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
@@ -192,23 +85,156 @@ public abstract class Robot<C> extends IterativeRobot {
 			}
 		}
 
-		private void register(String name, Object object) {
-			if (object != null) {
-				mObservedObjects.put(name, object);
+		public void sendStates() {
+			for (String objectName : mObservedObjects.keySet()) {
+				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
+				for (String fieldName : objectStateMap.keySet()) {
+					String entryKey = objectName + "." + fieldName;
+					Object value = objectStateMap.get(fieldName);
+					if (value instanceof Number) {
+						SmartDashboard.putNumber(entryKey, ((Number) value).doubleValue());
+					} else if (value instanceof Boolean) {
+						SmartDashboard.putBoolean(entryKey, (Boolean) value);
+					} else {
+						SmartDashboard.putString(entryKey, String.valueOf(value));
+					}
+				}
 			}
 		}
 
-		public void register(ISubsystem subsystem) {
-			register(subsystem.getClass().getSimpleName(), subsystem.getState());
+		public void register(IStateOwner stateOwner) {
+			if (stateOwner != null) {
+				mObservedObjects.put(stateOwner.getClass().getSimpleName(), stateOwner.getState());
+			}
 		}
 
 		public void registerAllSubsystems() {
 			mSubsystems.forEach(this::register);
 		}
 
-		public void clearObserved() {
+		public void clearAll() {
+			for (String objectName : mObservedObjects.keySet()) {
+				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
+				for (String fieldName : objectStateMap.keySet()) {
+					SmartDashboard.delete(objectName + "." + fieldName);
+				}
+			}
 			mObservedFieldsCache.clear();
 			mObservedObjects.clear();
+			mObjectStateMaps.clear();
+		}
+	}
+
+	public abstract static class Main<C> extends _Mask<C> {
+		public Main() {
+			super();
+			setCallback(this);
+		}
+	}
+
+	public static class Pins {
+		private final int[] mPinsArray;
+
+		Pins(int[] pins) {
+			mPinsArray = pins;
+		}
+
+		int get(int index) {
+			return mPinsArray[index];
+		}
+
+		public int first() {
+			return mPinsArray[0];
+		}
+
+		public int[] array() {
+			return mPinsArray;
+		}
+	}
+
+	public static Encoder encoderFromPins(Pins pins, boolean reverse, EncodingType encodingType) {
+		return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
+	}
+
+	protected static final double WAIT_FOR_DRIVER_STATION = 0;
+
+	protected void setMainLoopDelta(double loopDelta) {
+		mMainLoopDelta = loopDelta;
+	}
+
+	protected void setMapping(Class<?> mappingClass) {
+		mMappingClass = mappingClass;
+	}
+
+	protected void disableOverrideLoop() {
+		mOverrideLoopDisabled = true;
+	}
+
+	protected boolean isFMSAttached() {
+		return mDriverStation.isFMSAttached();
+	}
+
+	protected void setController(C controller) {
+		mController = controller;
+	}
+
+	protected static Pins pins(int... n) {
+		return new Pins(n);
+	}
+
+	protected static Pins channels(int... n) {
+		return pins(n);
+	}
+
+	protected static Pins pin(int n) {
+		return pins(n);
+	}
+
+	private double mMainLoopDelta;
+	private boolean mOverrideLoopDisabled;
+	private List<ISubsystem> mSubsystems;
+	private ICallback<C> mCallback;
+	private Class<?> mMappingClass;
+	private C mController;
+	private DriverStation mDriverStation;
+	private Utils mUtils;
+	private StateObserver mStateObserver;
+	private Map<String, Object> mObservedObjects;
+	private Map<String, Field[]> mObservedFieldsCache;
+	private ReflectedMaps mObjectStateMaps;
+	private Notifier mMainLoopNotifier;
+	private static final int kMaxMilliseconds = 1000 * 60 * 60 * 24;
+	private static final double kUnassignedLoopDelta = -1;
+	private static final double kMaxLoopDelta = 1;
+	private static final String kSubsystemsClassName = "Subsystems";
+	private static final String kMappingClassPostfix = ".Mapping";
+
+	private abstract static class _Mask<C> extends Robot<C> implements ICallback<C> {
+		@Override
+		public void onInit(Robot<C> robot) {
+			onInit();
+		}
+
+		protected abstract void onInit();
+	}
+
+
+	private static class ReflectedMaps {
+		private Map<String, Map<String, Object>> mInnerMap;
+
+		private ReflectedMaps() {
+			mInnerMap = new HashMap<>();
+		}
+
+		private Map<String, Object> getMap(String name) {
+			if (!mInnerMap.containsKey(name)) {
+				mInnerMap.put(name, new HashMap<>());
+			}
+			return mInnerMap.get(name);
+		}
+
+		private void clear() {
+			mInnerMap.clear();
 		}
 	}
 
@@ -229,16 +255,26 @@ public abstract class Robot<C> extends IterativeRobot {
 		mCallback = callback;
 	}
 
-	private Class<?> getInspectedSubsystemsClass() {
+	private Class<?> reflectMappingClass() {
+		String mappingClassName = getClass().getPackage().getName() + kMappingClassPostfix;
+		try {
+			return Class.forName(mappingClassName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private Class<?> reflectSubsystemsClass() {
 		for (Class mappingSubclass : mMappingClass.getClasses()) {
-			if (mappingSubclass.getSimpleName().equals("Subsystems")) {
+			if (mappingSubclass.getSimpleName().equals(kSubsystemsClassName)) {
 				return mappingSubclass;
 			}
 		}
 		return null;
 	}
 
-	private void createLazySubsystems(Class<?> subsystemsClass) {
+	private void createReflectedSubsystems(Class<?> subsystemsClass) {
 		mSubsystems = new ArrayList<>();
 		if (subsystemsClass != null) {
 			Field[] subsystemsClassFields = subsystemsClass.getFields();
@@ -271,17 +307,21 @@ public abstract class Robot<C> extends IterativeRobot {
 
 	private void callbackInit() {
 		System.out.print("(" + getRobotClassName() + ") ");
+		Class<?> mappingClass = reflectMappingClass();
+		if (mappingClass != null) {
+			setMapping(mappingClass);
+		}
 		mCallback.onInit(this);
 	}
 
 	private void systemsInit() {
 		utils = mUtils;
-		Class<?> subsystemsClass = getInspectedSubsystemsClass();
-		createLazySubsystems(subsystemsClass);
-		mCallback.onSetMapping();
+		Class<?> subsystemsClass = reflectSubsystemsClass();
+		createReflectedSubsystems(subsystemsClass);
+		mCallback.onConfigureMapping();
 		mSubsystems.forEach(ISubsystem::onInit);
 		resetSubsystems();
-		mStateObserver.updateObjectStateMaps();
+		mStateObserver.updateObjectStates();
 	}
 
 	private void mainLoop() {
@@ -369,6 +409,8 @@ public abstract class Robot<C> extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		mCallback.onTeleopPeriodic(mController);
+		mStateObserver.updateObjectStates();
+		mStateObserver.sendStates();
 	}
 
 	@Override

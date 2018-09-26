@@ -38,8 +38,6 @@ public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 
 	@Override
 	public void onInit() {
-		//utils.getStateObserver().register(this);
-
 		mCheesyDrive = new CheesyDrive();
 		mCheesyDrive.setDriveSignalReceiver(this);
 

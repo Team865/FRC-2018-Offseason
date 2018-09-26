@@ -8,12 +8,11 @@ import ca.warp7.frc2017.subsystems.Shooter;
 /**
  * Static variables that maps the robot and includes constants
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Mapping {
-	public static final class Subsystems {
-		public static Drive drive;
-		public static Pneumatics compressor;
-		public static Shooter shooter;
+	static final class Subsystems {
+		static Drive drive;
+		static Pneumatics compressor;
+		static Shooter shooter;
 	}
 
 	public static final class RIO {
