@@ -11,7 +11,7 @@ public class Pneumatics implements Robot.ISubsystem {
 		boolean closedLoop = false;
 	}
 
-	private InternalState mState = new InternalState();
+	private final InternalState mState = new InternalState();
 	private Compressor mCompressor;
 
 	@Override
@@ -25,20 +25,26 @@ public class Pneumatics implements Robot.ISubsystem {
 	}
 
 	@Override
-	public void onReset() {
+	public synchronized void onReset() {
 	}
 
-	public void setClosedLoop(boolean on){
-		mState.closedLoop = on;
-		update();
+	public synchronized void setClosedLoop(boolean on) {
+		synchronized (mState) {
+			mState.closedLoop = on;
+			update();
+		}
 	}
 
-	public void toggleClosedLoop(){
-		mState.closedLoop = !mState.closedLoop;
-		update();
+	public synchronized void toggleClosedLoop() {
+		synchronized (mState) {
+			mState.closedLoop = !mState.closedLoop;
+			update();
+		}
 	}
 
-	private void update(){
-		mCompressor.setClosedLoopControl(mState.closedLoop);
+	private synchronized void update() {
+		synchronized (mState) {
+			mCompressor.setClosedLoopControl(mState.closedLoop);
+		}
 	}
 }

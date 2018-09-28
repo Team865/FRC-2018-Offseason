@@ -1,23 +1,31 @@
 package ca.warp7.frc;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import static ca.warp7.frc.ControllerState.*;
 import static edu.wpi.first.wpilibj.hal.HAL.observeUserProgramStarting;
 
 @SuppressWarnings({"unused", "SameParameterValue", "WeakerAccess"})
 public abstract class Robot<C> extends IterativeRobot {
 	public static Robot.Utils utils;
+
+	public interface IStateOwner {
+		Object getState();
+	}
+
+	public interface ISubsystem extends IStateOwner {
+		void onInit();
+
+		void onReset();
+	}
 
 	public interface ICallback<C> {
 		void onInit(Robot<C> robot);
@@ -29,14 +37,12 @@ public abstract class Robot<C> extends IterativeRobot {
 		void onTeleopPeriodic(C controller);
 	}
 
-	public interface IStateOwner {
-		Object getState();
-	}
+	public interface ILoop {
+		void onStart();
 
-	public interface ISubsystem extends IStateOwner {
-		void onInit();
+		void onLoop();
 
-		void onReset();
+		void onStop();
 	}
 
 	public class Utils {
@@ -62,49 +68,15 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	public class StateObserver {
-		private void updateObjectStates() {
-			for (String objectName : mObservedObjects.keySet()) {
-				Object observedObject = mObservedObjects.get(objectName);
-				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
-				if (!mObservedFieldsCache.containsKey(objectName)) {
-					Class<?> stateClass = observedObject.getClass();
-					Field[] stateFields = stateClass.getDeclaredFields();
-					for (Field stateField : stateFields) {
-						stateField.setAccessible(true);
-					}
-					mObservedFieldsCache.put(objectName, stateFields);
-				}
-				for (Field stateField : mObservedFieldsCache.get(objectName)) {
-					try {
-						Object fieldValue = stateField.get(observedObject);
-						objectStateMap.put(stateField.getName(), fieldValue);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+		public void observeAndSendStates() {
+			mLockedObservers.forEach(LockedObserver::observeAndSendStates);
 		}
 
-		public void sendStates() {
-			for (String objectName : mObservedObjects.keySet()) {
-				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
-				for (String fieldName : objectStateMap.keySet()) {
-					String entryKey = objectName + "." + fieldName;
-					Object value = objectStateMap.get(fieldName);
-					if (value instanceof Number) {
-						SmartDashboard.putNumber(entryKey, ((Number) value).doubleValue());
-					} else if (value instanceof Boolean) {
-						SmartDashboard.putBoolean(entryKey, (Boolean) value);
-					} else {
-						SmartDashboard.putString(entryKey, String.valueOf(value));
-					}
-				}
-			}
-		}
-
-		public void register(IStateOwner stateOwner) {
-			if (stateOwner != null) {
-				mObservedObjects.put(stateOwner.getClass().getSimpleName(), stateOwner.getState());
+		public void register(IStateOwner owner) {
+			if (owner != null) {
+				LockedObserver observer;
+				observer = new LockedObserver(owner.getClass().getSimpleName(), owner.getState());
+				mLockedObservers.add(observer);
 			}
 		}
 
@@ -113,15 +85,8 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 
 		public void clearAll() {
-			for (String objectName : mObservedObjects.keySet()) {
-				Map<String, Object> objectStateMap = mObjectStateMaps.getMap(objectName);
-				for (String fieldName : objectStateMap.keySet()) {
-					SmartDashboard.delete(objectName + "." + fieldName);
-				}
-			}
-			mObservedFieldsCache.clear();
-			mObservedObjects.clear();
-			mObjectStateMaps.clear();
+			mLockedObservers.forEach(LockedObserver::clear);
+			mLockedObservers.clear();
 		}
 	}
 
@@ -152,14 +117,133 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
+	public static class XboxController {
+		private edu.wpi.first.wpilibj.XboxController mInnerController;
+
+		private boolean mAButton;
+		private boolean mBButton;
+		private boolean mXButton;
+		private boolean mYButton;
+		private boolean mLeftBumper;
+		private boolean mRightBumper;
+		private boolean mLeftTrigger;
+		private boolean mRightTrigger;
+		private boolean mLeftStickButton;
+		private boolean mRightStickButton;
+		private boolean mStartButton;
+		private boolean mBackButton;
+		private int mDirectionalPad = -1;
+
+		public XboxController(int portNumber) {
+			mInnerController = new edu.wpi.first.wpilibj.XboxController(portNumber);
+		}
+
+		private ControllerState compareBooleanState(boolean previousState, boolean newState) {
+			return newState != previousState ? newState ? PRESSED : RELEASED : newState ? HELD_DOWN : KEPT_UP;
+		}
+
+		public ControllerState getAButton() {
+			boolean previousState = this.mAButton;
+			boolean newState = mInnerController.getAButton();
+			this.mAButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getBButton() {
+			boolean previousState = mBButton;
+			boolean newState = mInnerController.getBButton();
+			this.mBButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getXButton() {
+			boolean previousState = mXButton;
+			boolean newState = mInnerController.getXButton();
+			mXButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getYButton() {
+			boolean previousState = mYButton;
+			boolean newState = mInnerController.getYButton();
+			mYButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getBumper(Hand h) {
+			boolean previousState = h == Hand.kLeft ? mLeftBumper : mRightBumper;
+			boolean newState = mInnerController.getBumper(h);
+			if (h == Hand.kLeft)
+				mLeftBumper = newState;
+			else
+				mRightBumper = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getTrigger(Hand h) {
+			boolean previousState = h == Hand.kLeft ? mLeftTrigger : mRightTrigger;
+			boolean newState = mInnerController.getTriggerAxis(h) >= 0.5;
+			if (h == Hand.kLeft)
+				mLeftTrigger = newState;
+			else
+				mRightTrigger = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getStickButton(Hand h) {
+			boolean previousState = h == Hand.kLeft ?
+					mLeftStickButton : mRightStickButton;
+			boolean newState = mInnerController.getStickButton(h);
+			if (h == Hand.kLeft)
+				mLeftStickButton = newState;
+			else
+				mRightStickButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getStartButton() {
+			boolean previousState = mStartButton;
+			boolean newState = mInnerController.getStartButton();
+			mStartButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getBackButton() {
+			boolean previousState = mBackButton;
+			boolean newState = mInnerController.getBackButton();
+			mBackButton = newState;
+			return compareBooleanState(previousState, newState);
+		}
+
+		public ControllerState getDpad(int value) {
+			int previousState = mDirectionalPad;
+			int newState = mInnerController.getPOV(0);
+			mDirectionalPad = newState;
+			return newState != previousState ? newState == value ?
+					PRESSED : RELEASED : newState == value ? HELD_DOWN : KEPT_UP;
+		}
+
+		public void setRumble(RumbleType type, double d) {
+			mInnerController.setRumble(type, d);
+		}
+
+		public double getX(Hand hand) {
+			return mInnerController.getX(hand);
+		}
+
+		public double getY(Hand hand) {
+			return mInnerController.getY(hand);
+		}
+	}
+
 	public static Encoder encoderFromPins(Pins pins, boolean reverse, EncodingType encodingType) {
 		return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
 	}
 
 	protected static final double WAIT_FOR_DRIVER_STATION = 0;
 
-	protected void setMainLoopDelta(double loopDelta) {
-		mMainLoopDelta = loopDelta;
+	protected void setControlLoopDelta(double loopDelta) {
+		mControlLoopDelta = loopDelta;
 	}
 
 	protected void setMapping(Class<?> mappingClass) {
@@ -190,26 +274,28 @@ public abstract class Robot<C> extends IterativeRobot {
 		return pins(n);
 	}
 
-	private double mMainLoopDelta;
-	private boolean mOverrideLoopDisabled;
-	private List<ISubsystem> mSubsystems;
-	private ICallback<C> mCallback;
-	private Class<?> mMappingClass;
-	private C mController;
-	private DriverStation mDriverStation;
-	private Utils mUtils;
-	private StateObserver mStateObserver;
-	private Map<String, Object> mObservedObjects;
-	private Map<String, Field[]> mObservedFieldsCache;
-	private ReflectedMaps mObjectStateMaps;
-	private Notifier mMainLoopNotifier;
+	private static final String kSubsystemsClassName = "Subsystems";
+	private static final String kMappingClassPostfix = ".Mapping";
 	private static final int kMaxMilliseconds = 1000 * 60 * 60 * 24;
 	private static final double kUnassignedLoopDelta = -1;
 	private static final double kMaxLoopDelta = 1;
-	private static final String kSubsystemsClassName = "Subsystems";
-	private static final String kMappingClassPostfix = ".Mapping";
+	private double mControlLoopDelta;
+	private boolean mOverrideLoopDisabled;
+	private Utils mUtils;
+	private C mController;
+	private ICallback<C> mCallback;
+	private Class<?> mMappingClass;
+	private List<ISubsystem> mSubsystems;
+	private DriverStation mDriverStation;
+	private StateObserver mStateObserver;
+	private List<LockedObserver> mLockedObservers;
+	private Notifier mControlLoopNotifier;
 
 	private abstract static class _Mask<C> extends Robot<C> implements ICallback<C> {
+		public _Mask() {
+			super();
+		}
+
 		@Override
 		public void onInit(Robot<C> robot) {
 			onInit();
@@ -218,37 +304,133 @@ public abstract class Robot<C> extends IterativeRobot {
 		protected abstract void onInit();
 	}
 
+	private class LockedObserver {
+		private final Object mStateObject;
+		private final String mStateObjectName;
+		private final Field[] mCachedFields;
 
-	private static class ReflectedMaps {
-		private Map<String, Map<String, Object>> mInnerMap;
-
-		private ReflectedMaps() {
-			mInnerMap = new HashMap<>();
-		}
-
-		private Map<String, Object> getMap(String name) {
-			if (!mInnerMap.containsKey(name)) {
-				mInnerMap.put(name, new HashMap<>());
+		public LockedObserver(String name, Object object) {
+			mStateObjectName = name;
+			mStateObject = object;
+			synchronized (mStateObject) {
+				mCachedFields = mStateObject.getClass().getDeclaredFields();
+				for (Field field : mCachedFields) {
+					field.setAccessible(true);
+				}
 			}
-			return mInnerMap.get(name);
 		}
 
-		private void clear() {
-			mInnerMap.clear();
+		public void observeAndSendStates() {
+			synchronized (mStateObject) {
+				for (Field stateField : mCachedFields) {
+					try {
+						String fieldName = stateField.getName();
+						Object value = stateField.get(mStateObject);
+						String entryKey = mStateObjectName + "." + fieldName;
+						if (value instanceof Number) {
+							SmartDashboard.putNumber(entryKey, ((Number) value).doubleValue());
+						} else if (value instanceof Boolean) {
+							SmartDashboard.putBoolean(entryKey, (Boolean) value);
+						} else {
+							SmartDashboard.putString(entryKey, String.valueOf(value));
+						}
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		public void clear() {
+			for (Field stateField : mCachedFields) {
+				String fieldName = stateField.getName();
+				String entryKey = mStateObjectName + "." + fieldName;
+				SmartDashboard.delete(entryKey);
+			}
+		}
+	}
+
+	private class Looper {
+		private final Notifier mNotifier;
+		private final List<ILoop> mLoops;
+		private final Object mTaskRunningLock;
+
+		private boolean mIsRunning;
+		private double mTimestamp = 0;
+		private double mMeasuredDelta = 0;
+		private double mPeriod;
+
+		private final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					synchronized (mTaskRunningLock) {
+						if (mIsRunning) {
+							double now = Timer.getFPGATimestamp();
+							for (ILoop loop : mLoops) {
+								loop.onLoop();
+							}
+							mMeasuredDelta = now - mTimestamp;
+							mTimestamp = now;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		public Looper(double delta) {
+			mTaskRunningLock = new Object();
+			mNotifier = new Notifier(runnable);
+			mIsRunning = false;
+			mLoops = new ArrayList<>();
+			mPeriod = delta;
+		}
+
+		public synchronized void register(ILoop loop) {
+			synchronized (mTaskRunningLock) {
+				mLoops.add(loop);
+			}
+		}
+
+		public synchronized void start() {
+			if (!mIsRunning) {
+				synchronized (mTaskRunningLock) {
+					mTimestamp = Timer.getFPGATimestamp();
+					for (ILoop loop : mLoops) {
+						loop.onStart();
+					}
+					mIsRunning = true;
+				}
+				mNotifier.startPeriodic(0);
+			}
+		}
+
+		public synchronized void stop() {
+			if (mIsRunning) {
+				mNotifier.stop();
+				synchronized (mTaskRunningLock) {
+					mIsRunning = false;
+					for (ILoop loop : mLoops) {
+						loop.onStop();
+					}
+				}
+			}
 		}
 	}
 
 	Robot() {
 		super();
-		mOverrideLoopDisabled = false;
-		mMainLoopDelta = kUnassignedLoopDelta;
 		mUtils = new Utils();
-		mObjectStateMaps = new ReflectedMaps();
-		mObservedObjects = new HashMap<>();
-		mObservedFieldsCache = new HashMap<>();
+		mOverrideLoopDisabled = false;
+		mControlLoopDelta = kUnassignedLoopDelta;
+		mOverrideLoopDisabled = false;
 		mStateObserver = new StateObserver();
-		mMainLoopNotifier = new Notifier(this::mainLoop);
+		mSubsystems = new ArrayList<>();
+		mLockedObservers = new ArrayList<>();
 		mDriverStation = m_ds;
+		mControlLoopNotifier = new Notifier(this::mainLoop);
 	}
 
 	void setCallback(ICallback<C> callback) {
@@ -275,7 +457,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	private void createReflectedSubsystems(Class<?> subsystemsClass) {
-		mSubsystems = new ArrayList<>();
+		mSubsystems.clear();
 		if (subsystemsClass != null) {
 			Field[] subsystemsClassFields = subsystemsClass.getFields();
 			for (Field subsystemClassField : subsystemsClassFields) {
@@ -302,7 +484,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	private boolean isInitialSetupDone() {
-		return mMainLoopDelta != kUnassignedLoopDelta && mCallback != null && mMappingClass != null;
+		return mControlLoopDelta != kUnassignedLoopDelta && mCallback != null && mMappingClass != null;
 	}
 
 	private void callbackInit() {
@@ -316,12 +498,11 @@ public abstract class Robot<C> extends IterativeRobot {
 
 	private void systemsInit() {
 		utils = mUtils;
-		Class<?> subsystemsClass = reflectSubsystemsClass();
-		createReflectedSubsystems(subsystemsClass);
+		createReflectedSubsystems(reflectSubsystemsClass());
 		mCallback.onConfigureMapping();
 		mSubsystems.forEach(ISubsystem::onInit);
 		resetSubsystems();
-		mStateObserver.updateObjectStates();
+		mStateObserver.observeAndSendStates();
 	}
 
 	private void mainLoop() {
@@ -336,7 +517,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	}
 
 	private void timedLoop() {
-		mMainLoopNotifier.startPeriodic(mMainLoopDelta);
+		mControlLoopNotifier.startPeriodic(mControlLoopDelta);
 		while (!Thread.interrupted()) {
 			try {
 				Thread.sleep(kMaxMilliseconds);
@@ -349,7 +530,7 @@ public abstract class Robot<C> extends IterativeRobot {
 	private void overrideStartCompetition() {
 		robotInit();
 		observeUserProgramStarting();
-		if (mMainLoopDelta <= 0 || mMainLoopDelta > kMaxLoopDelta) {
+		if (mControlLoopDelta <= 0 || mControlLoopDelta > kMaxLoopDelta) {
 			iterativeLoop();
 		} else {
 			timedLoop();
@@ -409,8 +590,8 @@ public abstract class Robot<C> extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		mCallback.onTeleopPeriodic(mController);
-		mStateObserver.updateObjectStates();
-		mStateObserver.sendStates();
+		mStateObserver.observeAndSendStates();
+		mStateObserver.observeAndSendStates();
 	}
 
 	@Override

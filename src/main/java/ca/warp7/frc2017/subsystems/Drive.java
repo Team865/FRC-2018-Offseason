@@ -1,10 +1,6 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.CheesyDrive;
-import ca.warp7.frc.IDriveSignalReceiver;
-import ca.warp7.frc.Robot;
-import ca.warp7.frc.utils.Limit;
-import ca.warp7.frc.utils.MotorGroup;
+import ca.warp7.frc.*;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
@@ -23,7 +19,8 @@ public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 		double rightRamp = 0.0;
 	}
 
-	private InternalState mState = new InternalState();
+	private final InternalState mState = new InternalState();
+
 	private CheesyDrive mCheesyDrive;
 	private MotorGroup mLeftMotors;
 	private MotorGroup mRightMotors;
@@ -58,38 +55,41 @@ public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 	}
 
 	@Override
-	public void onReset() {
+	public synchronized void onReset() {
 		mLeftEncoder.reset();
 		mRightEncoder.reset();
 	}
 
-
 	@Override
-	public void onDrive(double leftPowerDemand, double rightPowerDemand) {
-		if (mState.reversed) {
-			leftPowerDemand = leftPowerDemand * -1;
-			rightPowerDemand = rightPowerDemand * -1;
+	public synchronized void onDrive(double leftPowerDemand, double rightPowerDemand) {
+		synchronized (mState) {
+			if (mState.reversed) {
+				leftPowerDemand = leftPowerDemand * -1;
+				rightPowerDemand = rightPowerDemand * -1;
+			}
+			mState.leftRamp += (leftPowerDemand - mState.leftRamp) / kRampIntervals;
+			mState.rightRamp += (rightPowerDemand - mState.rightRamp) / kRampIntervals;
+			double leftSpeed = Limit.limit(mState.leftRamp, speedLimit);
+			double rightSpeed = Limit.limit(mState.rightRamp, speedLimit);
+			mLeftMotors.set(leftSpeed * leftDriftOffset);
+			mRightMotors.set(rightSpeed * rightDriftOffset);
 		}
-		mState.leftRamp += (leftPowerDemand - mState.leftRamp) / kRampIntervals;
-		mState.rightRamp += (rightPowerDemand - mState.rightRamp) / kRampIntervals;
-		double leftSpeed = Limit.limit(mState.leftRamp, speedLimit);
-		double rightSpeed = Limit.limit(mState.rightRamp, speedLimit);
-		mLeftMotors.set(leftSpeed * leftDriftOffset);
-		mRightMotors.set(rightSpeed * rightDriftOffset);
 	}
 
 	public void cheesyDrive(CheesyDrive.IControls driver) {
 		mCheesyDrive.feedForward(driver);
 	}
 
-	public void setShift(boolean shift) {
+	public synchronized void setShift(boolean shift) {
 		if (shift) {
 			if (!mShifter.get()) mShifter.set(true);
 			else if (mShifter.get()) mShifter.set(false);
 		}
 	}
 
-	public void setReversed(boolean reversed) {
-		mState.reversed = reversed;
+	public synchronized void setReversed(boolean reversed) {
+		synchronized (mState) {
+			mState.reversed = reversed;
+		}
 	}
 }

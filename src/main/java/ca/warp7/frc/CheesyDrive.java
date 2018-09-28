@@ -1,6 +1,6 @@
 package ca.warp7.frc;
 
-import static ca.warp7.frc.utils.Limit.limit;
+import static ca.warp7.frc.Limit.limit;
 
 public class CheesyDrive {
 

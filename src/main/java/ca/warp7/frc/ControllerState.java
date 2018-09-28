@@ -1,4 +1,4 @@
-package ca.warp7.frc.controller;
+package ca.warp7.frc;
 
 public enum ControllerState {
 	KEPT_UP,

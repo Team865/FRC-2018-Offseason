@@ -1,8 +1,8 @@
 package ca.warp7.frc2017.subsystems;
 
 
+import ca.warp7.frc.MotorGroup;
 import ca.warp7.frc.Robot;
-import ca.warp7.frc.utils.MotorGroup;
 import ca.warp7.frc2017.Mapping.RIO;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.VictorSP;
 
 @SuppressWarnings("deprecation")
 public class Shooter implements Robot.ISubsystem {
-
 	private MotorGroup mHopperSpin;
 	private MotorGroup mTowerSpin;
 	private MotorGroup mIntake;
@@ -56,11 +55,11 @@ public class Shooter implements Robot.ISubsystem {
 	}
 
 	@Override
-	public void onReset() {
+	public synchronized void onReset() {
 		stop();
 	}
 
-	public void setRPM(double targetSpeed) {
+	public synchronized void setRPM(double targetSpeed) {
 		if (targetSpeed > 0) {
 			mMasterTalon.enable();
 			mSlaveTalon.enable();
@@ -81,30 +80,30 @@ public class Shooter implements Robot.ISubsystem {
 		return Math.abs(speed - setPoint) < allowableError;
 	}
 
-	private void stop() {
+	private synchronized void stop() {
 		mMasterTalon.disable();
 		mSlaveTalon.disable();
 		mMasterTalon.set(0);
 		mSlaveTalon.set(mMasterTalon.getDeviceID());
 	}
 
-	public void setHopperSpeed(double speed) {
+	public synchronized void setHopperSpeed(double speed) {
 		mHopperSpin.set(speed);
 	}
 
-	public void setTowerSpeed(double speed) {
+	public synchronized void setTowerSpeed(double speed) {
 		mTowerSpin.set(speed);
 	}
 
-	public void setIntakeSpeed(double speed) {
+	public synchronized void setIntakeSpeed(double speed) {
 		mIntake.set(speed);
 	}
 
-	public boolean getSensor() {
+	public synchronized boolean getSensor() {
 		return mPhotoSensor.get();
 	}
 
-	public double getSetPoint() {
+	public synchronized double getSetPoint() {
 		return mMasterTalon.isEnabled() ? mMasterTalon.getSetpoint() : 0.0;
 	}
 }

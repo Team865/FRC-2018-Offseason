@@ -1,19 +1,19 @@
 package ca.warp7.frc2017.controls;
 
-import ca.warp7.frc.controller.XboxControllerV2;
+import ca.warp7.frc.Robot;
 
-import static ca.warp7.frc.controller.ControllerState.HELD_DOWN;
-import static ca.warp7.frc.controller.ControllerState.PRESSED;
+import static ca.warp7.frc.ControllerState.HELD_DOWN;
+import static ca.warp7.frc.ControllerState.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
 @SuppressWarnings("WeakerAccess")
 public class SingleRemote implements IControlsInterface {
 
-	private final XboxControllerV2 mDriver;
+	private final Robot.XboxController mDriver;
 
 	public SingleRemote(int driverPort) {
-		mDriver = new XboxControllerV2(driverPort);
+		mDriver = new Robot.XboxController(driverPort);
 	}
 
 	@Override

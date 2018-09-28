@@ -1,6 +1,5 @@
-package ca.warp7.frc.utils;
+package ca.warp7.frc;
 
-import ca.warp7.frc.Robot;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import java.lang.reflect.InvocationTargetException;

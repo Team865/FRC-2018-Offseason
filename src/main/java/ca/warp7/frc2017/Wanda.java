@@ -12,7 +12,7 @@ public final class Wanda extends Robot.Main<IControlsInterface> {
 	@Override
 	public void onInit() {
 		System.out.println("Hello me is robit!");
-		setMainLoopDelta(WAIT_FOR_DRIVER_STATION);
+		setControlLoopDelta(WAIT_FOR_DRIVER_STATION);
 		setController(new DualRemote(0, 1));
 	}
 

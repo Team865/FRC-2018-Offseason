@@ -1,18 +1,18 @@
 package ca.warp7.frc2017.controls;
 
-import ca.warp7.frc.controller.XboxControllerV2;
+import ca.warp7.frc.Robot;
 
-import static ca.warp7.frc.controller.ControllerState.HELD_DOWN;
-import static ca.warp7.frc.controller.ControllerState.KEPT_UP;
+import static ca.warp7.frc.ControllerState.HELD_DOWN;
+import static ca.warp7.frc.ControllerState.KEPT_UP;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
 public class DualRemote extends SingleRemote {
 
-	private final XboxControllerV2 mOperator;
+	private final Robot.XboxController mOperator;
 
 	public DualRemote(int driverPort, int operatorPort) {
 		super(driverPort);
-		mOperator = new XboxControllerV2(operatorPort);
+		mOperator = new Robot.XboxController(operatorPort);
 	}
 
 	@Override
