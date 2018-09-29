@@ -61,16 +61,16 @@ public class Drive implements Robot.ISubsystem, IDriveSignalReceiver {
 	}
 
 	@Override
-	public synchronized void onDrive(double leftPowerDemand, double rightPowerDemand) {
+	public synchronized void onDriveSpeedDemand(double leftSpeedDemand, double rightSpeedDemand) {
 		synchronized (mState) {
 			if (mState.reversed) {
-				leftPowerDemand = leftPowerDemand * -1;
-				rightPowerDemand = rightPowerDemand * -1;
+				leftSpeedDemand = leftSpeedDemand * -1;
+				rightSpeedDemand = rightSpeedDemand * -1;
 			}
-			mState.leftRamp += (leftPowerDemand - mState.leftRamp) / kRampIntervals;
-			mState.rightRamp += (rightPowerDemand - mState.rightRamp) / kRampIntervals;
-			double leftSpeed = Limit.limit(mState.leftRamp, speedLimit);
-			double rightSpeed = Limit.limit(mState.rightRamp, speedLimit);
+			mState.leftRamp += (leftSpeedDemand - mState.leftRamp) / kRampIntervals;
+			mState.rightRamp += (rightSpeedDemand - mState.rightRamp) / kRampIntervals;
+			double leftSpeed = Functions.limit(mState.leftRamp, speedLimit);
+			double rightSpeed = Functions.limit(mState.rightRamp, speedLimit);
 			mLeftMotors.set(leftSpeed * leftDriftOffset);
 			mRightMotors.set(rightSpeed * rightDriftOffset);
 		}

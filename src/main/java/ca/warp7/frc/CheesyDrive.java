@@ -1,6 +1,6 @@
 package ca.warp7.frc;
 
-import static ca.warp7.frc.Limit.limit;
+import static ca.warp7.frc.Functions.limit;
 
 public class CheesyDrive {
 
@@ -101,7 +101,7 @@ public class CheesyDrive {
 			rightPwm = -1;
 		}
 
-		mReceiver.onDrive(leftPwm, rightPwm);
+		mReceiver.onDriveSpeedDemand(leftPwm, rightPwm);
 	}
 
 	public interface IControls {

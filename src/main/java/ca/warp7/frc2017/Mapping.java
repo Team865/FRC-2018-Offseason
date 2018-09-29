@@ -10,9 +10,9 @@ import ca.warp7.frc2017.subsystems.Shooter;
  */
 public final class Mapping {
 	static final class Subsystems {
-		static Drive drive;
-		static Pneumatics compressor;
-		static Shooter shooter;
+		static final Drive drive = new Drive();
+		static final Pneumatics pneumatics = new Pneumatics();
+		static final Shooter shooter = new Shooter();
 	}
 
 	public static final class RIO {
