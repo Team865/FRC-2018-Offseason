@@ -1,37 +1,51 @@
 package ca.warp7.frc;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ca.warp7.frc.ControllerState.*;
 
-@SuppressWarnings({"unused", "SameParameterValue", "WeakerAccess"})
 public abstract class Robot<C> extends IterativeRobot {
+
 	public static Robot.Utils utils;
 
-	public interface IStateOwner {
-		Object getState();
+	public enum StateType {
+		INPUT, CURRENT
 	}
 
-	public interface ISubsystem extends IStateOwner {
-		void onInit();
+	public interface ISubsystem {
+		void onConstruct();
 
-		void onReset();
+		void onDisabledReset();
+
+		void onInputLoop();
+
+		void onOutputLoop();
+
+		void onUpdateState();
+
+		void onReportState();
 	}
 
 	public interface ICallback<C> {
-		void onInit(Robot<C> robot);
+		void onConstruct(Robot<C> robot);
 
 		void onTeleopInit();
 
-		void onTeleopPeriodic(C controller);
+		void onControllerInput(C controller);
 	}
 
 	public interface ILoop {
@@ -44,47 +58,21 @@ public abstract class Robot<C> extends IterativeRobot {
 
 	@SuppressWarnings("unused")
 	public class Utils {
-		public String getRobotName() {
-			return getRobotClassName();
-		}
-
 		public void print(Object object) {
-			System.out.println(object);
+			mObservationAccumulator.print(object);
 		}
 
-		public Robot<C> getRobot() {
-			return Robot.this;
+		public void println(Object object) {
+			mObservationAccumulator.print(object);
+			mObservationAccumulator.print("\n");
 		}
 
-		public DriverStation getDriverStation() {
-			return mDriverStation;
+		public void reportState(Object owner, StateType stateType, Object state) {
+			mObservationAccumulator.reportState(owner, stateType, state);
 		}
 
-		public StateObserver getStateObserver() {
-			return mStateObserver;
-		}
-	}
-
-	public class StateObserver {
-		public void observeAndSendStates() {
-			mLockedObservers.forEach(LockedObserver::observeAndSendStates);
-		}
-
-		public void register(IStateOwner owner) {
-			if (owner != null) {
-				LockedObserver observer;
-				observer = new LockedObserver(owner.getClass().getSimpleName(), owner.getState());
-				mLockedObservers.add(observer);
-			}
-		}
-
-		public void registerAllSubsystems() {
-			mSubsystems.forEach(this::register);
-		}
-
-		public void clearAll() {
-			mLockedObservers.forEach(LockedObserver::clear);
-			mLockedObservers.clear();
+		public LoopsManager getLoopsManager() {
+			return mLoopsManager;
 		}
 	}
 
@@ -92,27 +80,6 @@ public abstract class Robot<C> extends IterativeRobot {
 		public Main() {
 			super();
 			setCallback(this);
-		}
-	}
-
-	public static class SimpleLoop implements ILoop {
-		private Runnable mLoopFunction;
-
-		public SimpleLoop(Runnable loopFunction) {
-			mLoopFunction = loopFunction;
-		}
-
-		@Override
-		public void onStart() {
-		}
-
-		@Override
-		public void onLoop() {
-			mLoopFunction.run();
-		}
-
-		@Override
-		public void onStop() {
 		}
 	}
 
@@ -131,11 +98,12 @@ public abstract class Robot<C> extends IterativeRobot {
 			return mPinsArray[0];
 		}
 
-		public int[] array() {
+		int[] array() {
 			return mPinsArray;
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public static class XboxController {
 		private edu.wpi.first.wpilibj.XboxController mInnerController;
 		private boolean mAButton;
@@ -254,8 +222,31 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
-	public static Encoder encoderFromPins(Pins pins, boolean reverse, EncodingType encodingType) {
-		return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
+	public class LoopsManager {
+		void addInitialLoops() {
+			mStateObservationLooper.registerStartLoop(mStateReportingLoop);
+			mStateObservationLooper.registerLoop(mStateSenderLoop);
+			mInputLooper.registerStartLoop(mSystemInputLoop);
+			mStateChangeLooper.registerLoop(mSystemStateUpdateLoop);
+			mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
+		}
+
+		void registerControllerLoop() {
+			mInputLooper.registerFinalLoop(mControllerInputLoop);
+		}
+
+		void robotInit() {
+			mStateObservationLooper.startLoops();
+		}
+
+		void disable() {
+			mInputLooper.registerFinalLoop(null); // remove controller input
+			mStateChangeLooper.stopLoops();
+		}
+
+		void enable() {
+			mStateChangeLooper.startLoops();
+		}
 	}
 
 	public static Pins pins(int... n) {
@@ -270,6 +261,74 @@ public abstract class Robot<C> extends IterativeRobot {
 		return pins(n);
 	}
 
+	public static Encoder encoderFromPins(Pins pins, boolean reverse, EncodingType encodingType) {
+		return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
+	}
+
+	@Override
+	public void robotInit() {
+		logRobotState("Started");
+		robotSystemsInit();
+		mLoopsManager.robotInit();
+	}
+
+	@Override
+	public void disabledInit() {
+		logRobotState("Disabled");
+		mLoopsManager.disable();
+		mSubsystemsIterator.resetAll();
+	}
+
+	@Override
+	public void autonomousInit() {
+		logRobotState("Auto");
+		mLoopsManager.enable();
+	}
+
+	@Override
+	public void teleopInit() {
+		logRobotState("Teleop");
+		mLoopsManager.enable();
+		mLoopsManager.registerControllerLoop();
+		mCallback.onTeleopInit();
+	}
+
+	@Override
+	public void testInit() {
+		logRobotState("Test");
+	}
+
+	@Override
+	public void robotPeriodic() {
+	}
+
+	@Override
+	public void disabledPeriodic() {
+	}
+
+	@Override
+	public void autonomousPeriodic() {
+	}
+
+	@Override
+	public void teleopPeriodic() {
+	}
+
+	@Override
+	public void testPeriodic() {
+	}
+
+	@Override
+	public void startCompetition() {
+		beginConstruction();
+		if (mCallback != null && mMappingClass != null) {
+			super.startCompetition();
+		} else {
+			System.err.println("Robot not set up");
+		}
+	}
+
+	@SuppressWarnings("WeakerAccess")
 	protected void setMapping(Class<?> mappingClass) {
 		mMappingClass = mappingClass;
 	}
@@ -278,14 +337,19 @@ public abstract class Robot<C> extends IterativeRobot {
 		mController = controller;
 	}
 
+	@SuppressWarnings("unused")
 	protected boolean isFMSAttached() {
 		return mDriverStation.isFMSAttached();
 	}
 
 	private static final String kSubsystemsClassName = "Subsystems";
-	private static final String kMappingClassPostfix = ".Mapping";
+	private static final String kMappingClassPostfix = ".mapping.Mapping";
 	private static final double kObservationLooperDelta = 0.5;
+	private static final double kStateChangeLooperDelta = 0.02;
+	private static final double kInputLooperDelta = 0.02;
+	private static final int kMaxPrintLength = 255;
 
+	private int mPrintCounter;
 	private String mLoggedRobotState;
 	private Utils mUtils;
 	private C mController;
@@ -293,101 +357,189 @@ public abstract class Robot<C> extends IterativeRobot {
 	private Class<?> mMappingClass;
 	private List<ISubsystem> mSubsystems;
 	private DriverStation mDriverStation;
-	private StateObserver mStateObserver;
-	private List<LockedObserver> mLockedObservers;
-	private ILoop mStateObservationLoop;
-	private Looper mObservationLooper;
+	private ObservationAccumulator mObservationAccumulator;
+	private PrintStream mAccumulatedPrinter;
+	private List<StateObserver> mStateObservers;
+	private SubsystemsIterator mSubsystemsIterator;
 	private LoopsManager mLoopsManager;
+	private Looper mStateObservationLooper;
+	private Looper mInputLooper;
+	private Looper mStateChangeLooper;
+	private ILoop mStateReportingLoop; // Loop asking each system to report its state
+	private ILoop mStateSenderLoop; // Loop that sends data to the driver station
+	private ILoop mSystemInputLoop; // Loop asking each system to read sensor values
+	private ILoop mControllerInputLoop; // Loop asking the callback to process the controller input
+	private ILoop mSystemStateUpdateLoop; // Look asking each system to modify its current state based on its input
+	private ILoop mSystemOutputLoop; // Loop asking each system to perform its output
 
 	Robot() {
 		super();
+		mPrintCounter = 0;
 		mDriverStation = DriverStation.getInstance();
 		mUtils = new Utils();
-		mStateObserver = new StateObserver();
+		mObservationAccumulator = new ObservationAccumulator();
+		mStateObservers = new ArrayList<>();
 		mSubsystems = new ArrayList<>();
-		mLockedObservers = new ArrayList<>();
-		mStateObservationLoop = new SimpleLoop(mStateObserver::observeAndSendStates);
-		mObservationLooper = new Looper(kObservationLooperDelta);
+		mSubsystemsIterator = new SubsystemsIterator();
 		mLoopsManager = new LoopsManager();
+		mStateObservationLooper = new Looper(kObservationLooperDelta);
+		mAccumulatedPrinter = new PrintStream(System.out, false);
+		mStateChangeLooper = new Looper(kStateChangeLooperDelta);
+		mInputLooper = new Looper(kInputLooperDelta);
+		mStateReportingLoop = new SimpleLoop(mSubsystemsIterator::reportAll);
+		mStateSenderLoop = new SimpleLoop(mObservationAccumulator::sendAllStates);
+		mSystemInputLoop = new SimpleLoop(mSubsystemsIterator::inputAll);
+		mControllerInputLoop = new SimpleLoop(this::onControllerInput);
+		mSystemOutputLoop = new SimpleLoop(mSubsystemsIterator::outputAll);
+		mSystemStateUpdateLoop = new SimpleLoop(mSubsystemsIterator::updateAll);
 	}
 
-	private abstract static class _Mask<C> extends Robot<C> implements ICallback<C> {
-		_Mask() {
-			super();
+	private class ObservationAccumulator {
+		synchronized void reportState(Object owner, StateType stateType, Object state) {
+			String prefix = resolveStatePrefix(owner, stateType);
+			boolean foundCachedObserver = false;
+			for (StateObserver observer : mStateObservers) {
+				if (observer.isSameAs(state)) {
+					observer.updateData();
+					foundCachedObserver = true;
+				}
+			}
+			if (!foundCachedObserver) {
+				StateObserver observer = new StateObserver(prefix, state);
+				observer.updateData();
+				mStateObservers.add(observer);
+			}
+		}
+
+		synchronized void print(Object object) {
+			String value = String.valueOf(object);
+			if (mPrintCounter <= kMaxPrintLength) {
+				mPrintCounter += value.length();
+				mAccumulatedPrinter.print(value);
+			}
+		}
+
+		synchronized void sendAllStates() {
+			mStateObservers.forEach(StateObserver::updateSmartDashboard);
+			if (mPrintCounter > kMaxPrintLength) {
+				DriverStation.reportError("Printing has exceeded the limit", false);
+			}
+			mPrintCounter = 0;
+			mAccumulatedPrinter.flush();
+		}
+
+		private String resolveStatePrefix(Object owner, StateType stateType) {
+			String prefix = owner.getClass().getSimpleName();
+			if (stateType == StateType.INPUT) {
+				return prefix.concat(".in");
+			}
+			return prefix.concat(".");
+		}
+	}
+
+	private static class StateObserver {
+		private final Object mObservedObject;
+		private final String mObservedPrefix;
+		private final Field[] mCachedFields;
+		private Map<String, Object> mObservedMap;
+
+		StateObserver(String prefix, Object object) {
+			mObservedPrefix = prefix;
+			mObservedObject = object;
+			mCachedFields = mObservedObject.getClass().getDeclaredFields();
+			mObservedMap = new HashMap<>();
+			for (Field field : mCachedFields) {
+				field.setAccessible(true);
+			}
+		}
+
+		boolean isSameAs(Object other) {
+			return mObservedObject == other;
+		}
+
+		void updateData() {
+			for (Field stateField : mCachedFields) {
+				try {
+					String fieldName = stateField.getName();
+					Object value = stateField.get(mObservedObject);
+					String entryKey = mObservedPrefix + "." + fieldName;
+					mObservedMap.put(entryKey, value);
+
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		void updateSmartDashboard() {
+			for (String entryKey : mObservedMap.keySet()) {
+				Object value = mObservedMap.get(entryKey);
+				if (value instanceof Number) {
+					SmartDashboard.putNumber(entryKey, ((Number) value).doubleValue());
+				} else if (value instanceof Boolean) {
+					SmartDashboard.putBoolean(entryKey, (Boolean) value);
+				} else {
+					SmartDashboard.putString(entryKey, String.valueOf(value));
+				}
+			}
+		}
+	}
+
+	private class SubsystemsIterator {
+		void constructAll() {
+			mSubsystems.forEach(ISubsystem::onConstruct);
+		}
+
+		void resetAll() {
+			mSubsystems.forEach(ISubsystem::onDisabledReset);
+		}
+
+		void outputAll() {
+			mSubsystems.forEach(ISubsystem::onOutputLoop);
+		}
+
+		void inputAll() {
+			mSubsystems.forEach(ISubsystem::onInputLoop);
+		}
+
+		void reportAll() {
+			mSubsystems.forEach(ISubsystem::onReportState);
+		}
+
+		void updateAll() {
+			mSubsystems.forEach(ISubsystem::onUpdateState);
+		}
+	}
+
+	private static class SimpleLoop implements ILoop {
+		private Runnable mLoopFunction;
+
+		SimpleLoop(Runnable loopFunction) {
+			mLoopFunction = loopFunction;
 		}
 
 		@Override
-		public void onInit(Robot<C> robot) {
-			onInit();
+		public void onStart() {
 		}
 
-		protected abstract void onInit();
-	}
-
-	private class LockedObserver {
-		private final Object mStateObject;
-		private final String mStateObjectName;
-		private final Field[] mCachedFields;
-
-		LockedObserver(String name, Object object) {
-			mStateObjectName = name;
-			mStateObject = object;
-			synchronized (mStateObject) {
-				mCachedFields = mStateObject.getClass().getDeclaredFields();
-				for (Field field : mCachedFields) {
-					field.setAccessible(true);
-				}
-			}
+		@Override
+		public void onLoop() {
+			mLoopFunction.run();
 		}
 
-		void observeAndSendStates() {
-			synchronized (mStateObject) {
-				for (Field stateField : mCachedFields) {
-					try {
-						String fieldName = stateField.getName();
-						Object value = stateField.get(mStateObject);
-						String entryKey = mStateObjectName + "." + fieldName;
-						if (value instanceof Number) {
-							SmartDashboard.putNumber(entryKey, ((Number) value).doubleValue());
-						} else if (value instanceof Boolean) {
-							SmartDashboard.putBoolean(entryKey, (Boolean) value);
-						} else {
-							SmartDashboard.putString(entryKey, String.valueOf(value));
-						}
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-		void clear() {
-			for (Field stateField : mCachedFields) {
-				String fieldName = stateField.getName();
-				String entryKey = mStateObjectName + "." + fieldName;
-				SmartDashboard.delete(entryKey);
-			}
-		}
-	}
-
-	private class LoopsManager {
-		void robotInit() {
-			mObservationLooper.startLoops();
-		}
-
-		void disable() {
-
+		@Override
+		public void onStop() {
 		}
 	}
 
 	private static class Looper {
 		private final Notifier mNotifier;
 		private final List<ILoop> mLoops;
+		private ILoop mStartLoop;
+		private ILoop mFinalLoop;
 		private final Object mTaskRunningLock;
 
 		private boolean mIsRunning;
-		private double mTimestamp = 0;
-		private double mMeasuredDelta = 0;
 		private double mPeriod;
 
 		private final Runnable runnable = new Runnable() {
@@ -396,12 +548,9 @@ public abstract class Robot<C> extends IterativeRobot {
 				try {
 					synchronized (mTaskRunningLock) {
 						if (mIsRunning) {
-							double now = Timer.getFPGATimestamp();
-							for (ILoop loop : mLoops) {
-								loop.onLoop();
-							}
-							mMeasuredDelta = now - mTimestamp;
-							mTimestamp = now;
+							if (mStartLoop != null) mStartLoop.onLoop();
+							mLoops.forEach(ILoop::onLoop);
+							if (mFinalLoop != null) mFinalLoop.onLoop();
 						}
 					}
 				} catch (Exception e) {
@@ -418,22 +567,33 @@ public abstract class Robot<C> extends IterativeRobot {
 			mPeriod = delta;
 		}
 
-		public synchronized void registerLoop(ILoop loop) {
+		synchronized void registerLoop(ILoop loop) {
 			synchronized (mTaskRunningLock) {
 				mLoops.add(loop);
+			}
+		}
+
+		synchronized void registerStartLoop(ILoop startLoop) {
+			synchronized (mTaskRunningLock) {
+				mStartLoop = startLoop;
+			}
+		}
+
+		synchronized void registerFinalLoop(ILoop finalLoop) {
+			synchronized (mTaskRunningLock) {
+				mFinalLoop = finalLoop;
 			}
 		}
 
 		synchronized void startLoops() {
 			if (!mIsRunning) {
 				synchronized (mTaskRunningLock) {
-					mTimestamp = Timer.getFPGATimestamp();
-					for (ILoop loop : mLoops) {
-						loop.onStart();
-					}
+					if (mStartLoop != null) mStartLoop.onStart();
+					mLoops.forEach(ILoop::onStart);
+					if (mFinalLoop != null) mFinalLoop.onStart();
 					mIsRunning = true;
 				}
-				mNotifier.startPeriodic(0);
+				mNotifier.startPeriodic(mPeriod);
 			}
 		}
 
@@ -442,16 +602,49 @@ public abstract class Robot<C> extends IterativeRobot {
 				mNotifier.stop();
 				synchronized (mTaskRunningLock) {
 					mIsRunning = false;
-					for (ILoop loop : mLoops) {
-						loop.onStop();
-					}
+					if (mStartLoop != null) mStartLoop.onStop();
+					mLoops.forEach(ILoop::onStop);
+					if (mFinalLoop != null) mFinalLoop.onStop();
 				}
 			}
 		}
 	}
 
+	private abstract static class _Mask<C> extends Robot<C> implements ICallback<C> {
+		_Mask() {
+			super();
+		}
+
+		@Override
+		public void onConstruct(Robot<C> robot) {
+			onConstruct();
+		}
+
+		protected abstract void onConstruct();
+	}
+
 	void setCallback(ICallback<C> callback) {
 		mCallback = callback;
+	}
+
+	private void onControllerInput() {
+		mCallback.onControllerInput(mController);
+	}
+
+	private void beginConstruction() {
+		printPrefix();
+		Class<?> mappingClass = reflectMappingClass();
+		if (mappingClass != null) {
+			setMapping(mappingClass);
+		}
+		mCallback.onConstruct(this);
+	}
+
+	private void robotSystemsInit() {
+		utils = mUtils;
+		createReflectedSubsystems(reflectSubsystemsClass());
+		mSubsystemsIterator.constructAll();
+		mLoopsManager.addInitialLoops();
 	}
 
 	private Class<?> reflectMappingClass() {
@@ -497,33 +690,8 @@ public abstract class Robot<C> extends IterativeRobot {
 		}
 	}
 
-	private String getRobotClassName() {
-		return getClass().getSimpleName();
-	}
-
-	private boolean isInitialSetupDone() {
-		return mCallback != null && mMappingClass != null;
-	}
-
 	private void printPrefix() {
-		System.out.print("(" + getRobotClassName() + ") ");
-	}
-
-	private void initCallback() {
-		printPrefix();
-		Class<?> mappingClass = reflectMappingClass();
-		if (mappingClass != null) {
-			setMapping(mappingClass);
-		}
-		mCallback.onInit(this);
-	}
-
-	private void robotSystemsInit() {
-		utils = mUtils;
-		createReflectedSubsystems(reflectSubsystemsClass());
-		mSubsystems.forEach(ISubsystem::onInit);
-		mSubsystems.forEach(ISubsystem::onReset);
-		mObservationLooper.registerLoop(mStateObservationLoop);
+		System.out.print("(" + getClass().getSimpleName() + ") ");
 	}
 
 	private void logRobotState(String state) {
@@ -534,67 +702,5 @@ public abstract class Robot<C> extends IterativeRobot {
 		SmartDashboard.putString("Robot State", state);
 		printPrefix();
 		System.out.println("Robot State: " + state);
-	}
-
-	@Override
-	public void startCompetition() {
-		initCallback();
-		if (isInitialSetupDone()) {
-			super.startCompetition();
-		} else {
-			System.err.println("Robot not set up");
-		}
-	}
-
-	@Override
-	public void robotInit() {
-		logRobotState("Started");
-		robotSystemsInit();
-		mLoopsManager.robotInit();
-	}
-
-	@Override
-	public void disabledInit() {
-		logRobotState("Disabled");
-		mSubsystems.forEach(ISubsystem::onReset);
-		mLoopsManager.disable();
-	}
-
-	@Override
-	public void autonomousInit() {
-		logRobotState("Auto");
-	}
-
-	@Override
-	public void teleopInit() {
-		logRobotState("Teleop");
-		mSubsystems.forEach(ISubsystem::onReset);
-		mCallback.onTeleopInit();
-	}
-
-	@Override
-	public void testInit() {
-		logRobotState("Test");
-	}
-
-	@Override
-	public void robotPeriodic() {
-	}
-
-	@Override
-	public void disabledPeriodic() {
-	}
-
-	@Override
-	public void autonomousPeriodic() {
-	}
-
-	@Override
-	public void teleopPeriodic() {
-		mCallback.onTeleopPeriodic(mController);
-	}
-
-	@Override
-	public void testPeriodic() {
 	}
 }

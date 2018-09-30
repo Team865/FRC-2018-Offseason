@@ -1,4 +1,4 @@
-package ca.warp7.frc2017;
+package ca.warp7.frc2017.mapping;
 
 import ca.warp7.frc.Robot.Pins;
 import ca.warp7.frc2017.subsystems.Drive;
@@ -9,10 +9,10 @@ import ca.warp7.frc2017.subsystems.Shooter;
  * Static variables that maps the robot and includes constants
  */
 public final class Mapping {
-	static final class Subsystems {
-		static final Drive drive = new Drive();
-		static final Pneumatics pneumatics = new Pneumatics();
-		static final Shooter shooter = new Shooter();
+	public static final class Subsystems {
+		public static final Drive drive = new Drive();
+		public static final Pneumatics pneumatics = new Pneumatics();
+		public static final Shooter shooter = new Shooter();
 	}
 
 	public static final class RIO {

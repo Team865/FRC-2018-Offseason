@@ -1,11 +1,11 @@
-package ca.warp7.frc2017;
+package ca.warp7.frc2017.mapping;
 
 import static ca.warp7.frc.Robot.*;
-import static ca.warp7.frc2017.Mapping.DriveConstants.*;
-import static ca.warp7.frc2017.Mapping.RIO.*;
+import static ca.warp7.frc2017.mapping.Mapping.DriveConstants.*;
+import static ca.warp7.frc2017.mapping.Mapping.RIO.*;
 
-class DefaultMapping {
-	static void configure() {
+public class DefaultMapping {
+	public static void configure() {
 		// Pins
 		compressorPin = pin(0);
 

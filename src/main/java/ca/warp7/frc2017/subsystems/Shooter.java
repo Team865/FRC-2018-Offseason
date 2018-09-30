@@ -3,7 +3,7 @@ package ca.warp7.frc2017.subsystems;
 
 import ca.warp7.frc.MotorGroup;
 import ca.warp7.frc.Robot;
-import ca.warp7.frc2017.Mapping.RIO;
+import ca.warp7.frc2017.mapping.Mapping.RIO;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
@@ -20,12 +20,7 @@ public class Shooter implements Robot.ISubsystem {
 	private DigitalInput mPhotoSensor;
 
 	@Override
-	public Object getState() {
-		return null;
-	}
-
-	@Override
-	public void onInit() {
+	public void onConstruct() {
 		mHopperSpin = new MotorGroup(VictorSP.class, RIO.hopperSpinPins);
 		mHopperSpin.setInverted(true);
 		mTowerSpin = new MotorGroup(VictorSP.class, RIO.towerSpinPins);
@@ -55,8 +50,27 @@ public class Shooter implements Robot.ISubsystem {
 	}
 
 	@Override
-	public synchronized void onReset() {
+	public synchronized void onDisabledReset() {
 		stop();
+	}
+
+	@Override
+	public void onInputLoop() {
+
+	}
+
+	@Override
+	public void onOutputLoop() {
+
+	}
+
+	@Override
+	public void onUpdateState() {
+	}
+
+	@Override
+	public void onReportState() {
+
 	}
 
 	public synchronized void setRPM(double targetSpeed) {

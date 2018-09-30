@@ -3,13 +3,14 @@ package ca.warp7.frc2017;
 import ca.warp7.frc.Robot;
 import ca.warp7.frc2017.controls.DualRemote;
 import ca.warp7.frc2017.controls.IControlsInterface;
+import ca.warp7.frc2017.mapping.DefaultMapping;
 
-import static ca.warp7.frc2017.Mapping.Subsystems.*;
+import static ca.warp7.frc2017.mapping.Mapping.Subsystems.*;
 
 public final class Wanda extends Robot.Main<IControlsInterface> {
 
 	@Override
-	public void onInit() {
+	public void onConstruct() {
 		System.out.println("Hello me is robit!");
 		setController(new DualRemote(0, 1));
 		DefaultMapping.configure();
@@ -17,12 +18,12 @@ public final class Wanda extends Robot.Main<IControlsInterface> {
 
 	@Override
 	public void onTeleopInit() {
+		// Start the compressor
 		pneumatics.setClosedLoop(true);
-		Robot.utils.getStateObserver().registerAllSubsystems();
 	}
 
 	@Override
-	public void onTeleopPeriodic(IControlsInterface controller) {
+	public void onControllerInput(IControlsInterface controller) {
 
 		// driver BACK button PRESSED
 		if (controller.compressorShouldSwitch()) {
