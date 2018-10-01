@@ -1,8 +1,8 @@
 package ca.warp7.frc2017.subsystems;
 
 
-import ca.warp7.frc.MotorGroup;
-import ca.warp7.frc.Robot;
+import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.wpi_wrappers.MotorGroup;
 import ca.warp7.frc2017.mapping.Mapping.RIO;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
 
 @SuppressWarnings("deprecation")
-public class Shooter implements Robot.ISubsystem {
+public class Shooter implements ISubsystem {
 	private MotorGroup mHopperSpin;
 	private MotorGroup mTowerSpin;
 	private MotorGroup mIntake;

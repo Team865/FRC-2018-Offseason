@@ -1,18 +1,27 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.*;
-import ca.warp7.frc.CheesyDrive.IControls;
+import ca.warp7.frc.annotation.InputStateModifier;
+import ca.warp7.frc.annotation.SystemCurrentState;
+import ca.warp7.frc.annotation.SystemInputState;
+import ca.warp7.frc.cheesy_drive.CheesyDrive;
+import ca.warp7.frc.cheesy_drive.ICheesyDriveInout;
+import ca.warp7.frc.cheesy_drive.IDriveSignalReceiver;
+import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.core.Robot;
+import ca.warp7.frc.math.PID;
+import ca.warp7.frc.math.PIDValues;
+import ca.warp7.frc.wpi_wrappers.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 
-import static ca.warp7.frc.Functions.limit;
-import static ca.warp7.frc.Robot.utils;
+import static ca.warp7.frc.core.Robot.utils;
+import static ca.warp7.frc.math.Functions.limit;
 import static ca.warp7.frc2017.mapping.Mapping.DriveConstants.*;
 import static ca.warp7.frc2017.mapping.Mapping.RIO.*;
 import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
-public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
+public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	private static class InputState {
 		boolean shouldReverse;
@@ -36,7 +45,9 @@ public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
 		PID.CurrentState rightPID = new PID.CurrentState();
 	}
 
+	@SystemInputState
 	private final InputState mInputState = new InputState();
+	@SystemCurrentState
 	private final CurrentState mCurrentState = new CurrentState();
 
 	private static final double kRampIntervals = 4.0;
@@ -73,7 +84,6 @@ public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
 	public synchronized void onDisabledReset() {
 		mLeftEncoder.reset();
 		mRightEncoder.reset();
-
 		mInputState.demandedRightSpeed = 0.0;
 		mInputState.demandedLeftSpeed = 0.0;
 		mInputState.shouldBeginOpenLoop = false;
@@ -82,15 +92,6 @@ public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
 		mInputState.shouldReverse = false;
 		mInputState.leftPIDInput.reset();
 		mInputState.rightPIDInput.reset();
-
-		mCurrentState.isReversed = false;
-		mCurrentState.isShifted = false;
-		mCurrentState.isOpenLoop = false;
-		mCurrentState.isPIDLoop = false;
-		mCurrentState.leftSpeed = 0.0;
-		mCurrentState.rightSpeed = 0.0;
-		mCurrentState.leftPID.reset();
-		mCurrentState.rightPID.reset();
 	}
 
 	@Override
@@ -119,6 +120,9 @@ public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
 			mCurrentState.isPIDLoop = false;
 		} else if (mInputState.shouldBeginPIDLoop && !mCurrentState.isPIDLoop) {
 			mCurrentState.isPIDLoop = true;
+			mCurrentState.isOpenLoop = false;
+		} else {
+			mCurrentState.isPIDLoop = false;
 			mCurrentState.isOpenLoop = false;
 		}
 
@@ -152,13 +156,13 @@ public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
 	}
 
 	@Override
-	public synchronized void demandDriveSpeed(double leftSpeedDemand, double rightSpeedDemand) {
+	public synchronized void setDemandedDriveSpeed(double leftSpeedDemand, double rightSpeedDemand) {
 		mInputState.demandedLeftSpeed = leftSpeedDemand;
 		mInputState.demandedRightSpeed = rightSpeedDemand;
 	}
 
 	@InputStateModifier
-	public synchronized void cheesyDrive(IControls driver) {
+	public synchronized void cheesyDrive(ICheesyDriveInout driver) {
 		mInputState.shouldBeginOpenLoop = true;
 		mInputState.shouldBeginPIDLoop = false;
 		mCheesyDrive.setInputsFromControls(driver);
@@ -169,11 +173,11 @@ public class Drive implements Robot.ISubsystem, IDriveSpeedReceiver {
 	public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
 		mInputState.shouldBeginOpenLoop = true;
 		mInputState.shouldBeginPIDLoop = false;
-		demandDriveSpeed(leftSpeedDemand, rightSpeedDemand);
+		setDemandedDriveSpeed(leftSpeedDemand, rightSpeedDemand);
 	}
 
 	@InputStateModifier
-	public synchronized void setPIDTargetDistance(PID.Values pidValues, double targetDistance) {
+	public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
 		mInputState.shouldBeginOpenLoop = false;
 		mInputState.shouldBeginPIDLoop = true;
 		mInputState.leftPIDInput.setPID(pidValues).setTargetValue(targetDistance);

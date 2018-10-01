@@ -1,4 +1,4 @@
-package ca.warp7.frc;
+package ca.warp7.frc.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

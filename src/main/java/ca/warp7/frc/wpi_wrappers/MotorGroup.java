@@ -1,10 +1,14 @@
-package ca.warp7.frc;
+package ca.warp7.frc.wpi_wrappers;
 
+import ca.warp7.frc.core.Robot;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import java.lang.reflect.InvocationTargetException;
 
+import static java.util.Arrays.stream;
+
 public class MotorGroup implements SpeedController {
+
 	private SpeedController[] mMotors;
 	private boolean mInverted;
 
@@ -27,16 +31,12 @@ public class MotorGroup implements SpeedController {
 
 	@Override
 	public void set(double speed) {
-		for (SpeedController motor : mMotors) {
-			motor.set(speed);
-		}
+		stream(mMotors).forEach(motor -> motor.set(speed));
 	}
 
 	@Override
 	public void pidWrite(double output) {
-		for (SpeedController motor : mMotors) {
-			motor.pidWrite(output);
-		}
+		stream(mMotors).forEach(motor -> motor.pidWrite(output));
 	}
 
 	@Override
@@ -47,16 +47,8 @@ public class MotorGroup implements SpeedController {
 	@Override
 	public void setInverted(boolean isInverted) {
 		this.mInverted = isInverted;
-		for (SpeedController motor : mMotors) {
-			motor.setInverted(isInverted);
-		}
+		for (SpeedController motor : mMotors) motor.setInverted(isInverted);
 	}
-
-	// THIS IS DANGEROUS.
-	/*
-	 * public void setInverted(int index, boolean mInverted) {
-	 * mMotors[index].setInverted(mInverted); }
-	 */
 
 	@Override
 	public boolean getInverted() {
@@ -65,15 +57,11 @@ public class MotorGroup implements SpeedController {
 
 	@Override
 	public void disable() {
-		for (SpeedController motor : mMotors) {
-			motor.disable();
-		}
+		stream(mMotors).forEach(SpeedController::disable);
 	}
 
 	@Override
 	public void stopMotor() {
-		for (SpeedController motor : mMotors) {
-			motor.stopMotor();
-		}
+		stream(mMotors).forEach(SpeedController::stopMotor);
 	}
 }

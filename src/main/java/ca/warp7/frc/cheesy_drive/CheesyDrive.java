@@ -1,6 +1,6 @@
-package ca.warp7.frc;
+package ca.warp7.frc.cheesy_drive;
 
-import static ca.warp7.frc.Functions.limit;
+import static ca.warp7.frc.math.Functions.limit;
 
 public class CheesyDrive {
 
@@ -19,7 +19,7 @@ public class CheesyDrive {
 	private InputState mInputState = new InputState();
 	private CurrentState mCurrentState = new CurrentState();
 
-	private IDriveSpeedReceiver mReceiver;
+	private IDriveSignalReceiver mReceiver;
 
 	private static double deadBand(double n) {
 		return Math.abs(n) < 0.18 ? 0 : (n - (0.18 * Math.signum(n))) * 1.22;
@@ -41,11 +41,11 @@ public class CheesyDrive {
 		return passes == 1 ? scaled : sinScale(scaled, nonLinearity, passes - 1, lim);
 	}
 
-	public void setDriveSignalReceiver(IDriveSpeedReceiver receiver) {
+	public void setDriveSignalReceiver(IDriveSignalReceiver receiver) {
 		mReceiver = receiver;
 	}
 
-	public void setInputsFromControls(IControls controls) {
+	public void setInputsFromControls(ICheesyDriveInout controls) {
 		mInputState.wheel = controls.getWheel();
 		mInputState.throttle = controls.getThrottle();
 		mInputState.quickTurn = controls.shouldQuickTurn();
@@ -114,16 +114,7 @@ public class CheesyDrive {
 			rightPwm = -1;
 		}
 
-		mReceiver.demandDriveSpeed(leftPwm, rightPwm);
+		mReceiver.setDemandedDriveSpeed(leftPwm, rightPwm);
 	}
 
-	public interface IControls {
-		double getWheel();
-
-		double getThrottle();
-
-		boolean shouldQuickTurn();
-
-		boolean shouldAltQuickTurn();
-	}
 }

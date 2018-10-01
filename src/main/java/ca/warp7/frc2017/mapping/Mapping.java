@@ -1,6 +1,6 @@
 package ca.warp7.frc2017.mapping;
 
-import ca.warp7.frc.Robot.Pins;
+import ca.warp7.frc.core.Robot.Pins;
 import ca.warp7.frc2017.subsystems.Drive;
 import ca.warp7.frc2017.subsystems.Pneumatics;
 import ca.warp7.frc2017.subsystems.Shooter;
@@ -9,6 +9,8 @@ import ca.warp7.frc2017.subsystems.Shooter;
  * Static variables that maps the robot and includes constants
  */
 public final class Mapping {
+
+	@SuppressWarnings("WeakerAccess")
 	public static final class Subsystems {
 		public static final Drive drive = new Drive();
 		public static final Pneumatics pneumatics = new Pneumatics();

@@ -1,6 +1,6 @@
 package ca.warp7.frc2017.mapping;
 
-import static ca.warp7.frc.Robot.*;
+import static ca.warp7.frc.core.Robot.*;
 import static ca.warp7.frc2017.mapping.Mapping.DriveConstants.*;
 import static ca.warp7.frc2017.mapping.Mapping.RIO.*;
 

@@ -1,17 +1,24 @@
 package ca.warp7.frc2017.subsystems;
 
-import ca.warp7.frc.Robot;
+import ca.warp7.frc.annotation.InputStateModifier;
+import ca.warp7.frc.core.ISubsystem;
 import edu.wpi.first.wpilibj.Compressor;
 
 import static ca.warp7.frc2017.mapping.Mapping.RIO.compressorPin;
 
-public class Pneumatics implements Robot.ISubsystem {
+public class Pneumatics implements ISubsystem {
 
-	private static class InternalState {
-		boolean closedLoop = false;
+	private static class InputState {
+		boolean shouldCloseLoop;
 	}
 
-	private final InternalState mState = new InternalState();
+	private static class CurrentState {
+		boolean isClosedLoop;
+	}
+
+	private final InputState mInputState = new InputState();
+	private final CurrentState mCurrentState = new CurrentState();
+
 	private Compressor mCompressor;
 
 	@Override
@@ -21,21 +28,22 @@ public class Pneumatics implements Robot.ISubsystem {
 
 	@Override
 	public synchronized void onDisabledReset() {
+		mInputState.shouldCloseLoop = false;
+		mCurrentState.isClosedLoop = false;
 	}
 
 	@Override
 	public void onInputLoop() {
-
 	}
 
 	@Override
 	public void onOutputLoop() {
-
+		mCompressor.setClosedLoopControl(mCurrentState.isClosedLoop);
 	}
 
 	@Override
 	public void onUpdateState() {
-
+		mCurrentState.isClosedLoop = mInputState.shouldCloseLoop;
 	}
 
 	@Override
@@ -43,23 +51,13 @@ public class Pneumatics implements Robot.ISubsystem {
 
 	}
 
+	@InputStateModifier
 	public synchronized void setClosedLoop(boolean on) {
-		synchronized (mState) {
-			mState.closedLoop = on;
-			update();
-		}
+		mInputState.shouldCloseLoop = on;
 	}
 
+	@InputStateModifier
 	public synchronized void toggleClosedLoop() {
-		synchronized (mState) {
-			mState.closedLoop = !mState.closedLoop;
-			update();
-		}
-	}
-
-	private synchronized void update() {
-		synchronized (mState) {
-			mCompressor.setClosedLoopControl(mState.closedLoop);
-		}
+		mInputState.shouldCloseLoop = !mCurrentState.isClosedLoop;
 	}
 }

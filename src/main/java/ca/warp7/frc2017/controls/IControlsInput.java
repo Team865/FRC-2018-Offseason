@@ -1,11 +1,8 @@
 package ca.warp7.frc2017.controls;
 
-import ca.warp7.frc.CheesyDrive;
+import ca.warp7.frc.cheesy_drive.ICheesyDriveInout;
 
-public interface IControlsInterface extends CheesyDrive.IControls {
-	enum ShooterMode {
-		RPM_4425, RPM_4450, NONE
-	}
+public interface IControlsInput extends ICheesyDriveInout {
 
 	boolean compressorShouldSwitch();
 
