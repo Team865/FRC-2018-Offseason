@@ -7,8 +7,12 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2018.06.21"
 }
 
+repositories {
+    mavenCentral()
+}
+
 def TEAM = 865
-def ROBOT_CLASS_WANDA = "ca.warp7.frc2017.Wanda"
+def ROBOT_CLASS_WANDA = "ca.warp7.frc_2017_v2.Wanda"
 def ROBOT_CLASS = ROBOT_CLASS_WANDA
 
 deploy {
@@ -34,6 +38,7 @@ dependencies {
         compile ctre()
     }
     compile navx()
+    //compile "org.la4j:la4j:+" // Linear Algebra Library
 }
 
 jar {

@@ -1,8 +1,11 @@
-package ca.warp7.frc2017.mapping;
+package ca.warp7.frc_2017_v2.mapping;
 
-import static ca.warp7.frc.core.Robot.*;
-import static ca.warp7.frc2017.mapping.Mapping.DriveConstants.*;
-import static ca.warp7.frc2017.mapping.Mapping.RIO.*;
+import ca.warp7.frc.math.PIDValues;
+
+import static ca.warp7.frc.core.RobotUtils.*;
+import static ca.warp7.frc_2017_v2.mapping.Mapping.DriveConstants.*;
+import static ca.warp7.frc_2017_v2.mapping.Mapping.PID.uniformDrivePID;
+import static ca.warp7.frc_2017_v2.mapping.Mapping.RIO.*;
 
 public class DefaultMapping {
 	public static void configure() {
@@ -28,5 +31,8 @@ public class DefaultMapping {
 		leftDriftOffset = 1.0;
 		rightDriftOffset = 1.0;
 		speedLimit = 0.99;
+
+		// PID
+		uniformDrivePID = new PIDValues(0, 0, 0);
 	}
 }

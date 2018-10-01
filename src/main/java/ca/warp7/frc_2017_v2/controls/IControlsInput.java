@@ -1,8 +1,8 @@
-package ca.warp7.frc2017.controls;
+package ca.warp7.frc_2017_v2.controls;
 
-import ca.warp7.frc.cheesy_drive.ICheesyDriveInout;
+import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
 
-public interface IControlsInput extends ICheesyDriveInout {
+public interface IControlsInput extends ICheesyDriveInput {
 
 	boolean compressorShouldSwitch();
 

@@ -1,6 +1,6 @@
 package ca.warp7.frc.wpi_wrappers;
 
-import ca.warp7.frc.core.Robot;
+import ca.warp7.frc.core.Pins;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +25,7 @@ public class MotorGroup implements SpeedController {
 		}
 	}
 
-	public MotorGroup(Class<?> type, Robot.Pins pins) {
+	public MotorGroup(Class<?> type, Pins pins) {
 		this(pins.array(), type);
 	}
 

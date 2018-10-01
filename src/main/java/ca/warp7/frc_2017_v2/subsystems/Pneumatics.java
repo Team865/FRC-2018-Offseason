@@ -1,10 +1,11 @@
-package ca.warp7.frc2017.subsystems;
+package ca.warp7.frc_2017_v2.subsystems;
 
 import ca.warp7.frc.annotation.InputStateModifier;
+import ca.warp7.frc.annotation.SystemStateUpdator;
 import ca.warp7.frc.core.ISubsystem;
 import edu.wpi.first.wpilibj.Compressor;
 
-import static ca.warp7.frc2017.mapping.Mapping.RIO.compressorPin;
+import static ca.warp7.frc_2017_v2.mapping.Mapping.RIO.compressorPin;
 
 public class Pneumatics implements ISubsystem {
 
@@ -42,6 +43,7 @@ public class Pneumatics implements ISubsystem {
 	}
 
 	@Override
+	@SystemStateUpdator
 	public void onUpdateState() {
 		mCurrentState.isClosedLoop = mInputState.shouldCloseLoop;
 	}

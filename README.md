@@ -38,4 +38,3 @@ Tasks > embeddedTools > deploy.
 
 All tasks can also all be ran from pure command
 line. See [GradleRIO docs](https://github.com/wpilibsuite/GradleRIO)
-```

@@ -1,6 +1,6 @@
 package ca.warp7.frc.cheesy_drive;
 
-public interface ICheesyDriveInout {
+public interface ICheesyDriveInput {
 	double getWheel();
 
 	double getThrottle();

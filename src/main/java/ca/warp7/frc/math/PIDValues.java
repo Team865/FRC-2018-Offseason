@@ -12,4 +12,8 @@ public class PIDValues {
 		D = d;
 		F = f;
 	}
+
+	public PIDValues(double p, double i, double d) {
+		this(p, i, d, 0);
+	}
 }

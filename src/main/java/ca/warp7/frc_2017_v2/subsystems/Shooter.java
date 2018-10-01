@@ -1,9 +1,9 @@
-package ca.warp7.frc2017.subsystems;
+package ca.warp7.frc_2017_v2.subsystems;
 
 
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.wpi_wrappers.MotorGroup;
-import ca.warp7.frc2017.mapping.Mapping.RIO;
+import ca.warp7.frc_2017_v2.mapping.Mapping.RIO;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;

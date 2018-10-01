@@ -1,9 +1,10 @@
-package ca.warp7.frc2017.mapping;
+package ca.warp7.frc_2017_v2.mapping;
 
-import ca.warp7.frc.core.Robot.Pins;
-import ca.warp7.frc2017.subsystems.Drive;
-import ca.warp7.frc2017.subsystems.Pneumatics;
-import ca.warp7.frc2017.subsystems.Shooter;
+import ca.warp7.frc.core.Pins;
+import ca.warp7.frc.math.PIDValues;
+import ca.warp7.frc_2017_v2.subsystems.Drive;
+import ca.warp7.frc_2017_v2.subsystems.Pneumatics;
+import ca.warp7.frc_2017_v2.subsystems.Shooter;
 
 /**
  * Static variables that maps the robot and includes constants
@@ -32,6 +33,10 @@ public final class Mapping {
 
 		public static Pins shooterMaster;
 		public static Pins shooterSlave;
+	}
+
+	public static final class PID {
+		public static PIDValues uniformDrivePID;
 	}
 
 	public static final class DriveConstants {

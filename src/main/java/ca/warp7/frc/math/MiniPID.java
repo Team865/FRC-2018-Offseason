@@ -33,7 +33,7 @@ Changes made: inspection fixes, no significant change
  * See http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-direction/improving-the-beginners-pid-introduction
  */
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class MiniPID {
 
 	//**********************************

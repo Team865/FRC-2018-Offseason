@@ -1,5 +1,10 @@
 package ca.warp7.frc.cheesy_drive;
 
+import ca.warp7.frc.annotation.InputStateModifier;
+import ca.warp7.frc.annotation.SystemCurrentState;
+import ca.warp7.frc.annotation.SystemInputState;
+import ca.warp7.frc.annotation.SystemStateUpdator;
+
 import static ca.warp7.frc.math.Functions.limit;
 
 public class CheesyDrive {
@@ -16,7 +21,9 @@ public class CheesyDrive {
 		private double oldWheel = 0;
 	}
 
+	@SystemInputState
 	private InputState mInputState = new InputState();
+	@SystemCurrentState
 	private CurrentState mCurrentState = new CurrentState();
 
 	private IDriveSignalReceiver mReceiver;
@@ -45,13 +52,15 @@ public class CheesyDrive {
 		mReceiver = receiver;
 	}
 
-	public void setInputsFromControls(ICheesyDriveInout controls) {
+	@InputStateModifier
+	public void setInputsFromControls(ICheesyDriveInput controls) {
 		mInputState.wheel = controls.getWheel();
 		mInputState.throttle = controls.getThrottle();
 		mInputState.quickTurn = controls.shouldQuickTurn();
 		mInputState.altQuickTurn = controls.shouldAltQuickTurn();
 	}
 
+	@SystemStateUpdator
 	public void calculateFeed() {
 		double rightPwm;
 		double leftPwm;

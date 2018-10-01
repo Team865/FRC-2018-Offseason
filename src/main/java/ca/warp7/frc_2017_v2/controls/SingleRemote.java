@@ -1,4 +1,4 @@
-package ca.warp7.frc2017.controls;
+package ca.warp7.frc_2017_v2.controls;
 
 import ca.warp7.frc.wpi_wrappers.XboxController;
 
