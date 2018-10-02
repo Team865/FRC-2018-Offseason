@@ -1,5 +1,6 @@
 package ca.warp7.frc.math;
 
+@SuppressWarnings("WeakerAccess")
 public class PIDValues {
 	double P;
 	double I;
@@ -15,5 +16,10 @@ public class PIDValues {
 
 	public PIDValues(double p, double i, double d) {
 		this(p, i, d, 0);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("P: %s,I: %s,D: %s,F: %s", P, I, D, F);
 	}
 }

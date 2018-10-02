@@ -27,7 +27,7 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	private static class InputState {
 		boolean shouldReverse;
-		boolean shouldShift;
+		boolean shouldSolenoidBeOnForShifter;
 		boolean shouldBeginOpenLoop;
 		boolean shouldBeginPIDLoop;
 		double demandedLeftSpeed;
@@ -40,7 +40,7 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	private static class CurrentState {
 		boolean isReversed;
-		boolean isShifted;
+		boolean isSolenoidOnForShifter;
 		boolean isOpenLoop;
 		boolean isPIDLoop;
 		double leftSpeed;
@@ -54,7 +54,7 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	@SystemCurrentState
 	private final CurrentState mCurrentState = new CurrentState();
 
-	private static final double kRampIntervals = 4.0;
+	private static final double kRampIntervals = 6.0;
 
 	private CheesyDrive mCheesyDrive;
 	private MotorGroup mLeftMotors;
@@ -93,7 +93,7 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mInputState.shouldBeginPIDLoop = false;
 		mInputState.measuredLeftDistance = 0.0;
 		mInputState.measuredRightDistance = 0.0;
-		mInputState.shouldShift = false;
+		mInputState.shouldSolenoidBeOnForShifter = false;
 		mInputState.shouldReverse = false;
 		mInputState.leftPIDInput.reset();
 		mInputState.rightPIDInput.reset();
@@ -114,28 +114,36 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mLeftMotors.set(limit(limitedLeft * leftDriftOffset, speedLimit));
 		mRightMotors.set(limit(limitedRight * rightDriftOffset, speedLimit));
 
-		if (mCurrentState.isShifted) {
-			if (!mShifter.get()) mShifter.set(true);
-			else if (mShifter.get()) mShifter.set(false);
+		if (mCurrentState.isSolenoidOnForShifter) {
+			if (!mShifter.get()) {
+				mShifter.set(true);
+			}
+		} else if (mShifter.get()) {
+			mShifter.set(false);
 		}
+
 	}
 
 	@SystemStateUpdator
 	@Override
 	public synchronized void onUpdateState() {
-		if (mInputState.shouldBeginOpenLoop && !mCurrentState.isOpenLoop) {
-			mCurrentState.isOpenLoop = true;
-			mCurrentState.isPIDLoop = false;
-		} else if (mInputState.shouldBeginPIDLoop && !mCurrentState.isPIDLoop) {
-			mCurrentState.isPIDLoop = true;
-			mCurrentState.isOpenLoop = false;
+		if (mInputState.shouldBeginOpenLoop) {
+			if (!mCurrentState.isOpenLoop) {
+				mCurrentState.isOpenLoop = true;
+				mCurrentState.isPIDLoop = false;
+			}
+		} else if (mInputState.shouldBeginPIDLoop) {
+			if (!mCurrentState.isPIDLoop) {
+				mCurrentState.isOpenLoop = false;
+				mCurrentState.isPIDLoop = true;
+			}
 		} else {
 			mCurrentState.isPIDLoop = false;
 			mCurrentState.isOpenLoop = false;
 		}
 
 		mCurrentState.isReversed = mInputState.shouldReverse;
-		mCurrentState.isShifted = mInputState.shouldShift;
+		mCurrentState.isSolenoidOnForShifter = mInputState.shouldSolenoidBeOnForShifter;
 
 		if (mCurrentState.isOpenLoop) {
 
@@ -193,8 +201,8 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	}
 
 	@InputStateModifier
-	public synchronized void setShift(boolean shift) {
-		mInputState.shouldShift = shift;
+	public synchronized void setShift(boolean shouldSolenoidBeOnForShifter) {
+		mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
 	}
 
 	@InputStateModifier

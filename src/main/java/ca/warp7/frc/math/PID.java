@@ -41,6 +41,11 @@ public class PID {
 			targetValue = 0;
 			setPID(0, 0, 0, 0);
 		}
+
+		@Override
+		public String toString() {
+			return String.format("P: %s,  I: %s,  D: %s,  F: %s", P, I, D, F);
+		}
 	}
 
 	public static class CurrentState {
@@ -57,6 +62,11 @@ public class PID {
 
 		public void reset() {
 			mStateHandler.reset();
+		}
+
+		@Override
+		public String toString() {
+			return "MiniPID State";
 		}
 	}
 

@@ -7,7 +7,7 @@ import static ca.warp7.frc_2017_v2.mapping.Mapping.DriveConstants.*;
 import static ca.warp7.frc_2017_v2.mapping.Mapping.PID.uniformDrivePID;
 import static ca.warp7.frc_2017_v2.mapping.Mapping.RIO.*;
 
-public class DefaultMapping {
+public class MappingDefault {
 	public static void configure() {
 		// Pins
 		compressorPin = pin(0);
@@ -17,7 +17,7 @@ public class DefaultMapping {
 		driveRightPins = pins(0, 1);
 		driveLeftEncoderChannels = channels(0, 1);
 		driveRightEncoderChannels = channels(2, 3);
-		driveShifterPins = pin(1);
+		driveShifterPins = pin(5);
 
 		hopperSpinPins = pin(7);
 		towerSpinPins = pin(6);

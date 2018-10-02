@@ -1,4 +1,4 @@
-package ca.warp7.frc.core;
+package ca.warp7.frc.wpi_wrappers;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * Gets rid of the overload messages in IterativeRobot
  */
 
-abstract class _LocalIterativeRobot extends IterativeRobot {
+public abstract class LocalIterativeRobot extends IterativeRobot {
 
 	@Override
 	public void robotInit() {

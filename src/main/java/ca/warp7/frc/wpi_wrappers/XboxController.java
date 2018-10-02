@@ -6,7 +6,7 @@ import static ca.warp7.frc.wpi_wrappers.ControllerState.*;
 
 @SuppressWarnings("unused")
 public class XboxController {
-	private _LocalXboxController mInnerController;
+	private LocalXboxController mInnerController;
 	private boolean mAButton;
 	private boolean mBButton;
 	private boolean mXButton;
@@ -22,7 +22,7 @@ public class XboxController {
 	private int mDirectionalPad = -1;
 
 	public XboxController(int portNumber) {
-		mInnerController = new _LocalXboxController(portNumber);
+		mInnerController = new LocalXboxController(portNumber);
 	}
 
 	private ControllerState compareBooleanState(boolean previousState, boolean newState) {

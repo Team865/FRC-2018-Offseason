@@ -1,4 +1,6 @@
 package ca.warp7.frc.core;
 
-public class AutonomousMode {
+@SuppressWarnings("WeakerAccess")
+public abstract class AutonomousMode {
+	abstract void routine();
 }

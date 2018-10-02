@@ -1,5 +1,6 @@
 package ca.warp7.frc.core;
 
+import ca.warp7.frc.wpi_wrappers.LocalIterativeRobot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * as well as keeping track of the system's state
  */
 
-public abstract class Robot extends _LocalIterativeRobot {
+public abstract class Robot extends LocalIterativeRobot {
 
 	@Override
 	public void robotInit() {
@@ -38,8 +39,8 @@ public abstract class Robot extends _LocalIterativeRobot {
 	@Override
 	public void teleopInit() {
 		logRobotState("Teleop");
-		mLoopsManager.enable();
 		mLoopsManager.registerControllerLoop();
+		mLoopsManager.enable();
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public abstract class Robot extends _LocalIterativeRobot {
 
 	public static Robot.InternalUtils utils;
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused", "WeakerAccess"})
 	public class InternalUtils {
 		public void print(Object object) {
 			mObservationAccumulator.print(object);
@@ -63,6 +64,11 @@ public abstract class Robot extends _LocalIterativeRobot {
 		public void println(Object object) {
 			mObservationAccumulator.print(object);
 			mObservationAccumulator.print("\n");
+		}
+
+		public void prefixedPrintln(Object object) {
+			mObservationAccumulator.print(getPrefix());
+			println(object);
 		}
 
 		public PrintStream getPrintStream() {
@@ -84,7 +90,9 @@ public abstract class Robot extends _LocalIterativeRobot {
 		mOIRunnable = operatorInput;
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	protected void setAutonomousMode(AutonomousMode mode) {
+		mAutonomousMode = mode;
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -95,8 +103,8 @@ public abstract class Robot extends _LocalIterativeRobot {
 	private static final String kSubsystemsClassName = "Subsystems";
 	private static final String kMappingClassPostfix = ".mapping.Mapping";
 	private static final double kObservationLooperDelta = 0.5;
-	private static final double kStateChangeLooperDelta = 0.02;
 	private static final double kInputLooperDelta = 0.02;
+	private static final double kStateChangeLooperDelta = 0.02;
 	private static final int kMaxPrintLength = 255;
 
 	private int mPrintCounter;
@@ -105,6 +113,7 @@ public abstract class Robot extends _LocalIterativeRobot {
 	private Runnable mOIRunnable;
 	private Class<?> mMappingClass;
 	private List<ISubsystem> mSubsystems;
+	private AutonomousMode mAutonomousMode;
 	private ObservationAccumulator mObservationAccumulator;
 	private PrintStream mAccumulatedPrinter;
 	private List<StateObserver> mStateObservers;
@@ -118,7 +127,7 @@ public abstract class Robot extends _LocalIterativeRobot {
 	private ILoop mStateSenderLoop; // Loop that sends data to the driver station
 	private ILoop mSystemInputLoop; // Loop asking each system to read sensor values
 	private ILoop mControllerInputLoop; // Loop asking the callback to process the controller input
-	private ILoop mSystemStateUpdateLoop; // Look asking each system to modify its current state based on its input
+	private ILoop mStateUpdaterLoop; // Look asking each system to modify its current state based on its input
 	private ILoop mSystemOutputLoop; // Loop asking each system to perform its output
 
 	protected Robot() {
@@ -127,6 +136,7 @@ public abstract class Robot extends _LocalIterativeRobot {
 		mUtils = new InternalUtils();
 		mObservationAccumulator = new ObservationAccumulator();
 		mStateObservers = new ArrayList<>();
+		mAutonomousMode = null;
 		mSubsystems = new ArrayList<>();
 		mSubsystemsIterator = new SubsystemsIterator();
 		mSystemsReflector = new SystemsReflector();
@@ -135,12 +145,12 @@ public abstract class Robot extends _LocalIterativeRobot {
 		mAccumulatedPrinter = new PrintStream(System.out, false);
 		mStateChangeLooper = new Looper(kStateChangeLooperDelta);
 		mInputLooper = new Looper(kInputLooperDelta);
-		mStateReportingLoop = new SimpleLoop(mSubsystemsIterator::reportAll);
-		mStateSenderLoop = new SimpleLoop(mObservationAccumulator::sendAllStates);
-		mSystemInputLoop = new SimpleLoop(mSubsystemsIterator::inputAll);
-		mControllerInputLoop = new SimpleLoop(this::onExecuteOI);
-		mSystemOutputLoop = new SimpleLoop(mSubsystemsIterator::outputAll);
-		mSystemStateUpdateLoop = new SimpleLoop(mSubsystemsIterator::updateAll);
+		mStateReportingLoop = new SimpleLoop("State Reporting", mSubsystemsIterator::reportAll);
+		mStateSenderLoop = new SimpleLoop("State Sender", mObservationAccumulator::sendAllStates);
+		mSystemInputLoop = new SimpleLoop("System Input", mSubsystemsIterator::inputAll);
+		mControllerInputLoop = new SimpleLoop("Controller Input", this::onExecuteOI);
+		mSystemOutputLoop = new SimpleLoop("System Output", mSubsystemsIterator::outputAll);
+		mStateUpdaterLoop = new SimpleLoop("State Updater", mSubsystemsIterator::updateAll);
 	}
 
 	private class LoopsManager {
@@ -148,7 +158,7 @@ public abstract class Robot extends _LocalIterativeRobot {
 			mStateObservationLooper.registerStartLoop(mStateReportingLoop);
 			mStateObservationLooper.registerLoop(mStateSenderLoop);
 			mInputLooper.registerStartLoop(mSystemInputLoop);
-			mStateChangeLooper.registerLoop(mSystemStateUpdateLoop);
+			mStateChangeLooper.registerLoop(mStateUpdaterLoop);
 			mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
 		}
 
@@ -163,9 +173,11 @@ public abstract class Robot extends _LocalIterativeRobot {
 		void disable() {
 			mInputLooper.registerFinalLoop(null);
 			mStateChangeLooper.stopLoops();
+			mInputLooper.stopLoops();
 		}
 
 		void enable() {
+			mInputLooper.startLoops();
 			mStateChangeLooper.startLoops();
 		}
 	}
@@ -209,22 +221,20 @@ public abstract class Robot extends _LocalIterativeRobot {
 			if (stateType == StateType.INPUT) {
 				return prefix.concat(".in");
 			}
-			return prefix.concat(".");
+			return prefix;
 		}
 	}
 
 	private class SystemsReflector {
-
 		private Class<?> getMappingClass() {
-			String mappingClassName = getClass().getPackage().getName() + kMappingClassPostfix;
+			String mappingClassName = getPackageName() + kMappingClassPostfix;
 			try {
 				return Class.forName(mappingClassName);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				System.out.println("Mapping class not found");
 				return null;
 			}
 		}
-
 
 		private Class<?> reflectSubsystemsClass() {
 			for (Class mappingSubclass : mMappingClass.getClasses()) {
@@ -234,7 +244,6 @@ public abstract class Robot extends _LocalIterativeRobot {
 			}
 			return null;
 		}
-
 
 		private void createReflectedSubsystems(Class<?> subsystemsClass) {
 			mSubsystems.clear();
@@ -287,11 +296,17 @@ public abstract class Robot extends _LocalIterativeRobot {
 		}
 	}
 
-
-	private void printPrefix() {
-		System.out.print("(" + getClass().getSimpleName() + ") ");
+	private String getPackageName() {
+		return getClass().getPackage().getName();
 	}
 
+	private String getPrefix() {
+		return "(" + getClass().getSimpleName() + ") ";
+	}
+
+	private void printPrefix() {
+		System.out.print(getPrefix());
+	}
 
 	private void onExecuteOI() {
 		mOIRunnable.run();
