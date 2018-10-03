@@ -1,4 +1,4 @@
-package ca.warp7.frc.core;
+package ca.warp7.frc.action_graph;
 
 /**
  * An interface that describes an iterative action. It is run by an autonomous action, called by the
@@ -7,7 +7,7 @@ package ca.warp7.frc.core;
  * @author Team 254, modified by Team 865
  */
 
-public interface IAutoAction {
+public interface IAction {
 	/**
 	 * Run code once when the action is started, for set up
 	 */

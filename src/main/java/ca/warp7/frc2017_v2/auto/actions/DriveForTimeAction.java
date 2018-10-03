@@ -1,11 +1,11 @@
-package ca.warp7.frc_2017v2.auto.actions;
+package ca.warp7.frc2017_v2.auto.actions;
 
-import ca.warp7.frc.core.IAutoAction;
+import ca.warp7.frc.action_graph.IAction;
 import edu.wpi.first.wpilibj.Timer;
 
-import static ca.warp7.frc_2017v2.constants.RobotMap.Subsystems.drive;
+import static ca.warp7.frc2017_v2.constants.RobotMap.Subsystems.drive;
 
-public class DriveForTimeAction implements IAutoAction {
+public class DriveForTimeAction implements IAction {
 
 	private double mStartTime;
 	private final double mDuration, mLeft, mRight;

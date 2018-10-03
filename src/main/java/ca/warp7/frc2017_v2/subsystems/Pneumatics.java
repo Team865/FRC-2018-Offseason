@@ -1,11 +1,11 @@
-package ca.warp7.frc_2017v2.subsystems.pneumatics;
+package ca.warp7.frc2017_v2.subsystems;
 
 import ca.warp7.frc.annotation.InputStateModifier;
 import ca.warp7.frc.annotation.SystemStateUpdator;
 import ca.warp7.frc.core.ISubsystem;
 import edu.wpi.first.wpilibj.Compressor;
 
-import static ca.warp7.frc_2017v2.constants.RobotMap.RIO.compressorPin;
+import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.compressorPin;
 
 public class Pneumatics implements ISubsystem {
 

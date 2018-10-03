@@ -1,11 +1,11 @@
-package ca.warp7.frc_2017v2.auto.actions;
+package ca.warp7.frc2017_v2.auto.actions;
 
-import ca.warp7.frc.core.IAutoAction;
-import ca.warp7.frc_2017v2.constants.RobotMap;
+import ca.warp7.frc.action_graph.IAction;
+import ca.warp7.frc2017_v2.constants.RobotMap;
 
-import static ca.warp7.frc_2017v2.constants.RobotMap.Subsystems.drive;
+import static ca.warp7.frc2017_v2.constants.RobotMap.Subsystems.drive;
 
-public class DriveForDistanceAction implements IAutoAction {
+public class DriveForDistanceAction implements IAction {
 
 	private static final double kPIDTolerance = 15;
 

@@ -1,11 +1,11 @@
-package ca.warp7.frc_2017v2;
+package ca.warp7.frc2017_v2;
 
 import ca.warp7.frc.core.Robot;
-import ca.warp7.frc_2017v2.auto.actions.DriveForTimeAction;
-import ca.warp7.frc_2017v2.constants.DefaultMap;
-import ca.warp7.frc_2017v2.constants.RobotMap;
-import ca.warp7.frc_2017v2.operator_input.DualRemote;
-import ca.warp7.frc_2017v2.operator_input.OperatorInput;
+import ca.warp7.frc2017_v2.auto.actions.DriveForTimeAction;
+import ca.warp7.frc2017_v2.constants.DefaultMap;
+import ca.warp7.frc2017_v2.constants.RobotMap;
+import ca.warp7.frc2017_v2.operator_input.DualRemote;
+import ca.warp7.frc2017_v2.operator_input.OperatorInput;
 
 public final class Wanda extends Robot {
 

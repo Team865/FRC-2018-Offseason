@@ -1,4 +1,4 @@
-package ca.warp7.frc_2017v2.operator_input;
+package ca.warp7.frc2017_v2.operator_input;
 
 import ca.warp7.frc.wpi_wrapper.XboxController;
 

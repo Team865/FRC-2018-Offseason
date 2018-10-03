@@ -33,7 +33,11 @@ public abstract class Robot extends IterativeRobotWrapper {
 	public void autonomousInit() {
 		super.autonomousInit();
 		mManagedLoops.onEnable();
-		mAutoRunner.onStart();
+		try {
+			mAutoRunner.onStart();
+		} catch (NoAutoException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
@@ -136,7 +140,10 @@ public abstract class Robot extends IterativeRobotWrapper {
 
 	private class ObservationAccumulator {
 		synchronized void reportState(Object owner, StateType stateType, Object state) {
-			String prefix = resolveStatePrefix(owner, stateType);
+			String prefix = owner.getClass().getSimpleName();
+			if (stateType == StateType.INPUT) {
+				prefix = prefix.concat(".in");
+			}
 			boolean foundCachedObserver = false;
 			for (StateObserver observer : mStateObservers) {
 				if (observer.isSameAs(state)) {
@@ -167,20 +174,12 @@ public abstract class Robot extends IterativeRobotWrapper {
 			mPrintCounter = 0;
 			mAccumulatedPrinter.flush();
 		}
-
-		private String resolveStatePrefix(Object owner, StateType stateType) {
-			String prefix = owner.getClass().getSimpleName();
-			if (stateType == StateType.INPUT) {
-				return prefix.concat(".in");
-			}
-			return prefix;
-		}
 	}
 
 	private class Constructor {
 		private void preConfigure() {
 			printRobotPrefix();
-			Class<?> mappingClass = MapInspector.getMappingClass(getPackageName());
+			Class<?> mappingClass = RobotMapInspector.getMappingClass(getPackageName());
 			if (mappingClass != null) {
 				setMapping(mappingClass);
 			}
@@ -189,8 +188,8 @@ public abstract class Robot extends IterativeRobotWrapper {
 
 		private void initRobotSystem() {
 			_accessor = mAccessor;
-			Class<?> subsystemClass = MapInspector.reflectSubsystemsClass(mMappingClass);
-			mSubsystemsManager.setSubsystems(MapInspector.createReflectedSubsystems(subsystemClass));
+			Class<?> subsystemClass = RobotMapInspector.reflectSubsystemsClass(mMappingClass);
+			mSubsystemsManager.setSubsystems(RobotMapInspector.createReflectedSubsystems(subsystemClass));
 			mSubsystemsManager.constructAll();
 			mManagedLoops.addLoopSources(mSubsystemsManager, mObservationAccumulator::sendAll, mOIUpdater);
 			mManagedLoops.registerInitialLoops();

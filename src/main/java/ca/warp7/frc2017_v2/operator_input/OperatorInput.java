@@ -1,6 +1,6 @@
-package ca.warp7.frc_2017v2.operator_input;
+package ca.warp7.frc2017_v2.operator_input;
 
-import static ca.warp7.frc_2017v2.constants.RobotMap.Subsystems.*;
+import static ca.warp7.frc2017_v2.constants.RobotMap.Subsystems.*;
 
 public class OperatorInput {
 

@@ -1,8 +1,10 @@
 package ca.warp7.frc.core;
 
+import ca.warp7.frc.action_graph.IAction;
+
 class AutoRunner {
 
-	private IAutoAction mMainAction;
+	private IAction mMainAction;
 	private Thread mRunThread;
 
 	AutoRunner() {
@@ -10,7 +12,7 @@ class AutoRunner {
 	}
 
 	void setAutoMode(IAutoMode mode) {
-		if (mRunThread == null) {
+		if (mRunThread == null && mode != null) {
 			mMainAction = mode.getMainAction();
 		}
 	}
@@ -18,11 +20,11 @@ class AutoRunner {
 	/**
 	 * Start running the auto action
 	 *
-	 * @throws NoAutoModeException when the auto mode is null
+	 * @throws NoAutoException when the auto mode is null
 	 */
-	void onStart() throws NoAutoModeException {
+	void onStart() throws NoAutoException {
 		if (mMainAction == null) {
-			throw new NoAutoModeException("No auto mode was specified!");
+			throw new NoAutoException("The auto mode will do nothing!");
 		}
 		if (mRunThread == null) {
 			mRunThread = new Thread(() -> {

@@ -1,4 +1,4 @@
-package ca.warp7.frc_2017v2.subsystems.drive;
+package ca.warp7.frc2017_v2.subsystems;
 
 import ca.warp7.frc.annotation.InputStateModifier;
 import ca.warp7.frc.annotation.SystemCurrentState;
@@ -9,8 +9,9 @@ import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.cheesy_drive.IDriveSignalReceiver;
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
+import ca.warp7.frc.creator.Creator;
+import ca.warp7.frc.math.PID;
 import ca.warp7.frc.observer.StateType;
-import ca.warp7.frc.utils.Creator;
 import ca.warp7.frc.values.PIDValues;
 import ca.warp7.frc.wpi_wrapper.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,16 +19,16 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 
 import static ca.warp7.frc.math.Functions.limit;
-import static ca.warp7.frc_2017v2.constants.RobotMap.DriveConstants.*;
-import static ca.warp7.frc_2017v2.constants.RobotMap.RIO.*;
+import static ca.warp7.frc2017_v2.constants.RobotMap.DriveConstants.*;
+import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
 import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	@SystemInputState
-	private final DriveState.InputState mInputState = new DriveState.InputState();
+	private final InputState mInputState = new InputState();
 	@SystemCurrentState
-	private final DriveState.CurrentState mCurrentState = new DriveState.CurrentState();
+	private final CurrentState mCurrentState = new CurrentState();
 
 	private CheesyDrive mCheesyDrive;
 	private MotorGroup mLeftMotors;
@@ -202,5 +203,29 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	public boolean isPIDLoop() {
 		return mCurrentState.isPIDLoop;
+	}
+
+	static class InputState {
+		boolean shouldReverse;
+		boolean shouldSolenoidBeOnForShifter;
+		boolean shouldBeginOpenLoop;
+		boolean shouldBeginPIDLoop;
+		double demandedLeftSpeed;
+		double demandedRightSpeed;
+		double measuredLeftDistance;
+		double measuredRightDistance;
+		PID.InputState leftPIDInput = new PID.InputState();
+		PID.InputState rightPIDInput = new PID.InputState();
+	}
+
+	static class CurrentState {
+		boolean isReversed;
+		boolean isSolenoidOnForShifter;
+		boolean isOpenLoop;
+		boolean isPIDLoop;
+		double leftSpeed;
+		double rightSpeed;
+		PID.CurrentState leftPID = new PID.CurrentState();
+		PID.CurrentState rightPID = new PID.CurrentState();
 	}
 }

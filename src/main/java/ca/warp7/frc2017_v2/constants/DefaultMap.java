@@ -1,11 +1,11 @@
-package ca.warp7.frc_2017v2.constants;
+package ca.warp7.frc2017_v2.constants;
 
 import ca.warp7.frc.values.PIDValues;
 import ca.warp7.frc.values.Pins;
 
-import static ca.warp7.frc_2017v2.constants.RobotMap.DriveConstants.*;
-import static ca.warp7.frc_2017v2.constants.RobotMap.PID.uniformDrivePID;
-import static ca.warp7.frc_2017v2.constants.RobotMap.RIO.*;
+import static ca.warp7.frc2017_v2.constants.RobotMap.DriveConstants.*;
+import static ca.warp7.frc2017_v2.constants.RobotMap.PID.uniformDrivePID;
+import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
 
 public class DefaultMap {
 	public static void configure() {

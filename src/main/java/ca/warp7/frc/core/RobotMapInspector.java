@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-class MapInspector {
+class RobotMapInspector {
 
 	private static final String kSubsystemsClassName = "Subsystems";
 	private static final String kMappingClassPostfix = ".constants.RobotMap";
