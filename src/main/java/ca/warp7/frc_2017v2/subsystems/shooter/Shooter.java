@@ -1,4 +1,4 @@
-package ca.warp7.frc_2017v2.subsystems;
+package ca.warp7.frc_2017v2.subsystems.shooter;
 
 
 import ca.warp7.frc.core.ISubsystem;
@@ -9,6 +9,10 @@ import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
+
+/**
+ * Not a proper subsystem, just code copied from before
+ */
 
 @SuppressWarnings("deprecation")
 public class Shooter implements ISubsystem {

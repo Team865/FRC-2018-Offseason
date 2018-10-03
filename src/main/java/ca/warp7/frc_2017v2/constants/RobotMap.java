@@ -2,9 +2,9 @@ package ca.warp7.frc_2017v2.constants;
 
 import ca.warp7.frc.values.PIDValues;
 import ca.warp7.frc.values.Pins;
-import ca.warp7.frc_2017v2.subsystems.Pneumatics;
-import ca.warp7.frc_2017v2.subsystems.Shooter;
 import ca.warp7.frc_2017v2.subsystems.drive.Drive;
+import ca.warp7.frc_2017v2.subsystems.pneumatics.Pneumatics;
+import ca.warp7.frc_2017v2.subsystems.shooter.Shooter;
 
 /**
  * Static variables that maps the robot and includes constants

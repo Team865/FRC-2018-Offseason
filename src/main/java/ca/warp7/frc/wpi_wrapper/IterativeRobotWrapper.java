@@ -59,17 +59,17 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
 		// Do nothing
 	}
 
-	private String mLoggedRobotState;
+	private String mLoggedState;
 
 	protected IterativeRobotWrapper() {
 		super();
 	}
 
 	private void logState(String state) {
-		if (state.equals(mLoggedRobotState)) {
+		if (state.equals(mLoggedState)) {
 			return;
 		}
-		mLoggedRobotState = state;
+		mLoggedState = state;
 		SmartDashboard.putString("Robot State", state);
 		printRobotPrefix();
 		System.out.println("Robot State: " + state);

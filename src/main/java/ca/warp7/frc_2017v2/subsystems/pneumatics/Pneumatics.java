@@ -1,4 +1,4 @@
-package ca.warp7.frc_2017v2.subsystems;
+package ca.warp7.frc_2017v2.subsystems.pneumatics;
 
 import ca.warp7.frc.annotation.InputStateModifier;
 import ca.warp7.frc.annotation.SystemStateUpdator;

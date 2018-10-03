@@ -8,6 +8,7 @@ import ca.warp7.frc.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.cheesy_drive.IDriveSignalReceiver;
 import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.core.Robot;
 import ca.warp7.frc.observer.StateType;
 import ca.warp7.frc.utils.Creator;
 import ca.warp7.frc.values.PIDValues;
@@ -16,7 +17,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 
-import static ca.warp7.frc.core.Robot.utils;
 import static ca.warp7.frc.math.Functions.limit;
 import static ca.warp7.frc_2017v2.constants.RobotMap.DriveConstants.*;
 import static ca.warp7.frc_2017v2.constants.RobotMap.RIO.*;
@@ -142,8 +142,8 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	@Override
 	public synchronized void onReportState() {
-		utils.reportState(this, StateType.INPUT, mInputState);
-		utils.reportState(this, StateType.CURRENT, mCurrentState);
+		Robot.reportState(this, StateType.INPUT, mInputState);
+		Robot.reportState(this, StateType.CURRENT, mCurrentState);
 	}
 
 	@Override

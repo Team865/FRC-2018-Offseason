@@ -1,6 +1,6 @@
 package ca.warp7.frc.loop;
 
-import static ca.warp7.frc.core.Robot.utils;
+import ca.warp7.frc.core.Robot;
 
 public class SimpleLoop implements ILoop {
 	private String mName;
@@ -13,7 +13,7 @@ public class SimpleLoop implements ILoop {
 
 	@Override
 	public void onStart() {
-		utils.prefixedPrintln("Starting Loop: " + mName);
+		Robot.prefixedPrintln("Starting Loop: " + mName);
 	}
 
 	@Override
@@ -23,6 +23,6 @@ public class SimpleLoop implements ILoop {
 
 	@Override
 	public void onStop() {
-		utils.prefixedPrintln("Stopping Loop: " + mName);
+		Robot.prefixedPrintln("Stopping Loop: " + mName);
 	}
 }
