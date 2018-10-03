@@ -1,5 +1,7 @@
 package ca.warp7.frc.math;
 
+import ca.warp7.frc.values.PIDValues;
+
 @SuppressWarnings({"unused", "WeakerAccess", "SpellCheckingInspection"})
 public class PID {
 

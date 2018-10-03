@@ -12,7 +12,7 @@ repositories {
 }
 
 def TEAM = 865
-def ROBOT_CLASS_WANDA = "ca.warp7.frc_2017_v2.Wanda"
+def ROBOT_CLASS_WANDA = "ca.warp7.frc_2017v2.Wanda"
 def ROBOT_CLASS = ROBOT_CLASS_WANDA
 
 deploy {
@@ -33,6 +33,7 @@ deploy {
 dependencies {
     compile wpilib()
     if (ROBOT_CLASS == ROBOT_CLASS_WANDA){
+        // Support for the Talon
         compile ctreLegacy()
     } else {
         compile ctre()

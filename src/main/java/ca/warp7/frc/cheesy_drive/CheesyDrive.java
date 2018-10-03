@@ -9,22 +9,10 @@ import static ca.warp7.frc.math.Functions.limit;
 
 public class CheesyDrive {
 
-	private static class InputState {
-		private double wheel;
-		private double throttle;
-		private boolean quickTurn;
-		private boolean altQuickTurn;
-	}
-
-	private static class CurrentState {
-		private double quickStopAccumulator = 0;
-		private double oldWheel = 0;
-	}
-
 	@SystemInputState
-	private InputState mInputState = new InputState();
+	private CheesyDriveState.InputState mInputState = new CheesyDriveState.InputState();
 	@SystemCurrentState
-	private CurrentState mCurrentState = new CurrentState();
+	private CheesyDriveState.CurrentState mCurrentState = new CheesyDriveState.CurrentState();
 
 	private IDriveSignalReceiver mReceiver;
 
