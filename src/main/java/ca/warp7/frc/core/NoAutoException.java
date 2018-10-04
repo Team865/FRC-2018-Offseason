@@ -1,6 +1,6 @@
 package ca.warp7.frc.core;
 
-class NoAutoException extends NullPointerException {
+class NoAutoException extends Exception {
 	NoAutoException(String s) {
 		super(s);
 	}
