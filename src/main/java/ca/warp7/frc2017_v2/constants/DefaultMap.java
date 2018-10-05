@@ -17,7 +17,7 @@ public class DefaultMap {
 		driveRightPins = Pins.pins(0, 1);
 		driveLeftEncoderChannels = Pins.channels(0, 1);
 		driveRightEncoderChannels = Pins.channels(2, 3);
-		driveShifterPins = Pins.pin(5);
+		driveShifterSolenoidPin = Pins.pin(5);
 
 		hopperSpinPins = Pins.pin(7);
 		towerSpinPins = Pins.pin(6);

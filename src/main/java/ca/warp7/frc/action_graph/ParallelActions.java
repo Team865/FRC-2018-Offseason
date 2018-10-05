@@ -11,15 +11,15 @@ import java.util.List;
  * @author Team 254, modified by Team 865
  */
 
-public class ParallelAction implements IAction {
+public class ParallelActions implements IAction {
 
 	private final List<IAction> mActions;
 
-	public ParallelAction(List<IAction> actions) {
+	public ParallelActions(List<IAction> actions) {
 		mActions = new ArrayList<>(actions);
 	}
 
-	public ParallelAction(IAction... actions) {
+	public ParallelActions(IAction... actions) {
 		mActions = Arrays.asList(actions);
 	}
 

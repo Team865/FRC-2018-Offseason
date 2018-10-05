@@ -9,9 +9,9 @@ import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.cheesy_drive.IDriveSignalReceiver;
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
-import ca.warp7.frc.creator.Creator;
 import ca.warp7.frc.math.PID;
 import ca.warp7.frc.observer.StateType;
+import ca.warp7.frc.values.Creator;
 import ca.warp7.frc.values.PIDValues;
 import ca.warp7.frc.wpi_wrapper.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
@@ -31,11 +31,11 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	private final CurrentState mCurrentState = new CurrentState();
 
 	private CheesyDrive mCheesyDrive;
-	private MotorGroup mLeftMotors;
-	private MotorGroup mRightMotors;
+	private MotorGroup mLeftMotorGroup;
+	private MotorGroup mRightMotorGroup;
 	private Encoder mLeftEncoder;
 	private Encoder mRightEncoder;
-	private Solenoid mShifter;
+	private Solenoid mShifterSolenoid;
 
 	private static final double kRampIntervals = 6.0;
 
@@ -44,9 +44,9 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mCheesyDrive = new CheesyDrive();
 		mCheesyDrive.setDriveSignalReceiver(this);
 
-		mLeftMotors = new MotorGroup(VictorSP.class, driveLeftPins);
-		mRightMotors = new MotorGroup(VictorSP.class, driveRightPins);
-		mRightMotors.setInverted(true);
+		mLeftMotorGroup = new MotorGroup(VictorSP.class, driveLeftPins);
+		mRightMotorGroup = new MotorGroup(VictorSP.class, driveRightPins);
+		mRightMotorGroup.setInverted(true);
 
 		mLeftEncoder = Creator.encoderFromPins(driveLeftEncoderChannels, false, k4X);
 		mLeftEncoder.setReverseDirection(true);
@@ -56,8 +56,8 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mRightEncoder.setReverseDirection(false);
 		mRightEncoder.setDistancePerPulse(inchesPerTick);
 
-		mShifter = new Solenoid(driveShifterPins.first());
-		mShifter.set(false);
+		mShifterSolenoid = new Solenoid(driveShifterSolenoidPin.first());
+		mShifterSolenoid.set(false);
 	}
 
 
@@ -87,15 +87,15 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	public synchronized void onOutputLoop() {
 		double limitedLeft = limit(mCurrentState.leftSpeed, speedLimit);
 		double limitedRight = limit(mCurrentState.rightSpeed, speedLimit);
-		mLeftMotors.set(limit(limitedLeft * leftDriftOffset, speedLimit));
-		mRightMotors.set(limit(limitedRight * rightDriftOffset, speedLimit));
+		mLeftMotorGroup.set(limit(limitedLeft * leftDriftOffset, speedLimit));
+		mRightMotorGroup.set(limit(limitedRight * rightDriftOffset, speedLimit));
 
 		if (mCurrentState.isSolenoidOnForShifter) {
-			if (!mShifter.get()) {
-				mShifter.set(true);
+			if (!mShifterSolenoid.get()) {
+				mShifterSolenoid.set(true);
 			}
-		} else if (mShifter.get()) {
-			mShifter.set(false);
+		} else if (mShifterSolenoid.get()) {
+			mShifterSolenoid.set(false);
 		}
 
 	}

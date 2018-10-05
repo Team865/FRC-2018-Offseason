@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Executes one action at a time. Useful as a member of {@link ParallelAction}
+ * Executes one action at a time. Useful as a member of {@link ParallelActions}
  *
  * @author Team 254, modified by Team 865
  */

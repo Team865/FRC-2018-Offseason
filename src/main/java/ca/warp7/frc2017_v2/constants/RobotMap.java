@@ -23,7 +23,7 @@ public final class RobotMap {
 		public static Pins driveRightPins;
 		public static Pins driveLeftEncoderChannels;
 		public static Pins driveRightEncoderChannels;
-		public static Pins driveShifterPins;
+		public static Pins driveShifterSolenoidPin;
 		public static Pins compressorPin;
 
 		public static Pins hopperSpinPins;
