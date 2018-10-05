@@ -22,13 +22,12 @@ class ManagedLoops {
 	private ILoop mSystemOutputLoop; // Loop asking each system to perform its output
 
 	ManagedLoops() {
-
 		mStateObservationLooper = new Looper(kObservationLooperDelta);
 		mStateChangeLooper = new Looper(kStateChangeLooperDelta);
 		mInputLooper = new Looper(kInputLooperDelta);
 	}
 
-	void addLoopSources(SubsystemsManager manager, Runnable sendStates, Runnable OIUpdater) {
+	void setSource(SubsystemsManager manager, Runnable sendStates, Runnable OIUpdater) {
 		mStateReportingLoop = new SimpleLoop("State Reporting", manager::reportAll);
 		mStateSenderLoop = new SimpleLoop("State Sender", sendStates);
 
@@ -37,15 +36,8 @@ class ManagedLoops {
 
 		mSystemOutputLoop = new SimpleLoop("System Output", manager::outputAll);
 		mStateUpdaterLoop = new SimpleLoop("State Updater", manager::updateAll);
-	}
 
-	void registerInitialLoops() {
-		mStateObservationLooper.registerStartLoop(mStateReportingLoop);
-		mStateObservationLooper.registerLoop(mStateSenderLoop);
-		mStateChangeLooper.registerLoop(mStateUpdaterLoop);
-		mInputLooper.registerStartLoop(mSystemInputLoop);
-		mInputLooper.registerLoop(mControllerInputLoop);
-		mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
+		registerInitialLoops();
 	}
 
 	void onStartObservers() {
@@ -60,5 +52,14 @@ class ManagedLoops {
 	void onEnable() {
 		mStateChangeLooper.startLoops();
 		mInputLooper.startLoops();
+	}
+
+	private void registerInitialLoops() {
+		mStateObservationLooper.registerStartLoop(mStateReportingLoop);
+		mStateObservationLooper.registerLoop(mStateSenderLoop);
+		mStateChangeLooper.registerLoop(mStateUpdaterLoop);
+		mInputLooper.registerStartLoop(mSystemInputLoop);
+		mInputLooper.registerLoop(mControllerInputLoop);
+		mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
 	}
 }

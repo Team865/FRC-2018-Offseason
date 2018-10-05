@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_v2.auto.modes;
 
-import ca.warp7.frc.action_graph.IAction;
 import ca.warp7.frc.core.IAutoMode;
+import ca.warp7.frc.scheduler.IAction;
 
 public class NothingMode implements IAutoMode {
 	@Override

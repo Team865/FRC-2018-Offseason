@@ -1,6 +1,6 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.action_graph.IAction;
+import ca.warp7.frc.scheduler.IAction;
 
 class AutoRunner {
 
@@ -22,6 +22,7 @@ class AutoRunner {
 	 *
 	 * @throws NoAutoException when the auto mode is null
 	 */
+
 	void onStart() throws NoAutoException {
 		if (mMainAction == null) {
 			throw new NoAutoException("The auto mode will do nothing!");

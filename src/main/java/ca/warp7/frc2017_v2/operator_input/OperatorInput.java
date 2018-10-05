@@ -29,6 +29,8 @@ public class OperatorInput {
 		drive.cheesyDrive(sController);
 
 
+		// The following code are not modified for the new codebase
+
 		switch (sController.getShooterMode()) {
 			case RPM_4425:
 				// operator B button HELD_DOWN

@@ -1,4 +1,4 @@
-package ca.warp7.frc.action_graph;
+package ca.warp7.frc.scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,10 @@ class ActionGraph implements IAction, ITriggerSender {
 		mTriggerPool.add(mEntryPoint);
 	}
 
-	ActionTrigger createTrigger(String name) throws TriggerNotUnique {
+	ActionTrigger createTrigger(String name) {
 		for (ActionTrigger trigger : mTriggerPool) {
 			if (trigger.getName().equals(name)) {
-				throw new TriggerNotUnique();
+				name = name + "_" + String.valueOf((int) (Math.random() * 10000));
 			}
 		}
 		ActionTrigger newTrigger = new ActionTrigger(name);

@@ -1,6 +1,6 @@
 package ca.warp7.frc2017_v2.auto.actions;
 
-import ca.warp7.frc.action_graph.IAction;
+import ca.warp7.frc.scheduler.IAction;
 import edu.wpi.first.wpilibj.Timer;
 
 import static ca.warp7.frc2017_v2.constants.RobotMap.Subsystems.drive;

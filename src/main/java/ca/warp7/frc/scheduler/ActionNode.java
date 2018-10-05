@@ -1,4 +1,4 @@
-package ca.warp7.frc.action_graph;
+package ca.warp7.frc.scheduler;
 
 class ActionNode implements IAction {
 
@@ -9,7 +9,7 @@ class ActionNode implements IAction {
 	private boolean mIsActive;
 	private boolean mIsDone;
 
-	public ActionNode(ITriggerSender triggerSender, IAction action) {
+	ActionNode(ITriggerSender triggerSender, IAction action) {
 		mTriggerSender = triggerSender;
 		mContainedAction = action;
 		mIsActive = false;
@@ -24,11 +24,23 @@ class ActionNode implements IAction {
 		mOnEndTrigger = onEndTrigger;
 	}
 
+	ActionTrigger getStarterTrigger() {
+		return mStarterTrigger;
+	}
+
+	ActionTrigger getOnEndTrigger() {
+		return mOnEndTrigger;
+	}
+
 	void testTrigger(ActionTrigger trigger) {
 		if (mStarterTrigger != null && mStarterTrigger.equals(trigger)) {
 			mIsActive = true;
 			onStart();
 		}
+	}
+
+	String getName() {
+		return mContainedAction.getClass().getSimpleName();
 	}
 
 	boolean isDone() {

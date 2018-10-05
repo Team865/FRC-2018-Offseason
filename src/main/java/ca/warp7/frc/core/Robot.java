@@ -1,6 +1,6 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.observer.StateType;
+import ca.warp7.frc.comms.StateType;
 import ca.warp7.frc.wpi_wrapper.IterativeRobotWrapper;
 
 /**
@@ -15,7 +15,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	private StateAccumulator mStateAccumulator;
 	private SubsystemsManager mSubsystemsManager;
 	private ManagedLoops mManagedLoops;
-	private InternalAccessor mInternalAccessor;
+	private InstanceAccessor mInstanceAccessor;
 
 	protected Robot() {
 		super();
@@ -23,18 +23,33 @@ public abstract class Robot extends IterativeRobotWrapper {
 		mSubsystemsManager = new SubsystemsManager();
 		mStateAccumulator = new StateAccumulator();
 		mManagedLoops = new ManagedLoops();
-		mInternalAccessor = new InternalAccessor();
+		mInstanceAccessor = new InstanceAccessor();
 	}
 
 	@Override
-	public void robotInit() {
+	public final void startCompetition() {
+		setMapping(RobotMapInspector.getMappingClass(getPackageName()));
+		printRobotPrefix();
+		onCreate();
+		if (mMappingClass != null && mOIUpdater != null) {
+			super.startCompetition();
+		} else {
+			System.err.println("Robot not set up");
+		}
+	}
+
+	@Override
+	public final void robotInit() {
 		super.robotInit();
-		this.initRobotSystem();
+		_accessor = mInstanceAccessor;
+		mSubsystemsManager.setSubsystems(RobotMapInspector.getSubsystems(mMappingClass));
+		mSubsystemsManager.constructAll();
+		mManagedLoops.setSource(mSubsystemsManager, mStateAccumulator::sendAll, mOIUpdater);
 		mManagedLoops.onStartObservers();
 	}
 
 	@Override
-	public void disabledInit() {
+	public final void disabledInit() {
 		super.disabledInit();
 		mAutoRunner.onStop();
 		mManagedLoops.onDisable();
@@ -42,7 +57,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	@Override
-	public void autonomousInit() {
+	public final void autonomousInit() {
 		super.autonomousInit();
 		mManagedLoops.onEnable();
 		try {
@@ -53,52 +68,26 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	@Override
-	public void teleopInit() {
+	public final void teleopInit() {
 		super.teleopInit();
 		mAutoRunner.onStop();
 		mManagedLoops.onEnable();
 	}
 
-	@Override
-	public void startCompetition() {
-		this.configureStartCompetition();
-		if (mMappingClass != null && mOIUpdater != null) {
-			super.startCompetition();
-		} else {
-			System.err.println("Robot not set up");
-		}
-	}
-
 	protected abstract void onCreate();
 
-	protected void setOIUpdater(Runnable OIUpdater) {
+	protected final void setOIUpdater(Runnable OIUpdater) {
 		mOIUpdater = OIUpdater;
 	}
 
 	@SuppressWarnings("SameParameterValue")
-	protected void setAutoMode(IAutoMode mode) {
+	protected final void setAutoMode(IAutoMode mode) {
 		mAutoRunner.setAutoMode(mode);
 	}
 
 	@SuppressWarnings("WeakerAccess")
-	protected void setMapping(Class<?> mappingClass) {
+	protected final void setMapping(Class<?> mappingClass) {
 		mMappingClass = mappingClass;
-	}
-
-	private void configureStartCompetition() {
-		printRobotPrefix();
-		Class<?> mappingClass = RobotMapInspector.getMappingClass(getPackageName());
-		if (mappingClass != null) setMapping(mappingClass);
-		onCreate();
-	}
-
-	private void initRobotSystem() {
-		_accessor = mInternalAccessor;
-		Class<?> subsystemClass = RobotMapInspector.reflectSubsystemsClass(mMappingClass);
-		mSubsystemsManager.setSubsystems(RobotMapInspector.createReflectedSubsystems(subsystemClass));
-		mSubsystemsManager.constructAll();
-		mManagedLoops.addLoopSources(mSubsystemsManager, mStateAccumulator::sendAll, mOIUpdater);
-		mManagedLoops.registerInitialLoops();
 	}
 
 	@SuppressWarnings("unused")
@@ -119,9 +108,9 @@ public abstract class Robot extends IterativeRobotWrapper {
 		_accessor.reportState(owner, stateType, state);
 	}
 
-	private static InternalAccessor _accessor;
+	private static InstanceAccessor _accessor;
 
-	private class InternalAccessor {
+	private class InstanceAccessor {
 		private void print(Object object) {
 			mStateAccumulator.print(object);
 		}

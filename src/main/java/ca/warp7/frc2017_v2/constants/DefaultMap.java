@@ -9,6 +9,7 @@ import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
 
 public class DefaultMap {
 	public static void configure() {
+
 		// Pins
 		compressorPin = Pins.pin(0);
 

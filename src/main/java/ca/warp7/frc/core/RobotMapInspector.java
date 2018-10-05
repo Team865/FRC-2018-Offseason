@@ -9,7 +9,13 @@ class RobotMapInspector {
 	private static final String kSubsystemsClassName = "Subsystems";
 	private static final String kMappingClassPostfix = ".constants.RobotMap";
 
-	static List<ISubsystem> createReflectedSubsystems(Class<?> subsystemsClass) {
+	static List<ISubsystem> getSubsystems(Class<?> mappingClass) {
+		Class<?> subsystemsClass = null;
+		for (Class mappingSubclass : mappingClass.getClasses()) {
+			if (mappingSubclass.getSimpleName().equals(kSubsystemsClassName)) {
+				subsystemsClass = mappingSubclass;
+			}
+		}
 		List<ISubsystem> subsystems = new ArrayList<>();
 		if (subsystemsClass != null) {
 			Field[] subsystemsClassFields = subsystemsClass.getFields();
@@ -32,15 +38,6 @@ class RobotMapInspector {
 			}
 		}
 		return subsystems;
-	}
-
-	static Class<?> reflectSubsystemsClass(Class<?> mMappingClass) {
-		for (Class mappingSubclass : mMappingClass.getClasses()) {
-			if (mappingSubclass.getSimpleName().equals(kSubsystemsClassName)) {
-				return mappingSubclass;
-			}
-		}
-		return null;
 	}
 
 	static Class<?> getMappingClass(String packageName) {

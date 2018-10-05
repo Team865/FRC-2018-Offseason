@@ -1,7 +1,7 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.observer.StateObserver;
-import ca.warp7.frc.observer.StateType;
+import ca.warp7.frc.comms.StateObserver;
+import ca.warp7.frc.comms.StateType;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

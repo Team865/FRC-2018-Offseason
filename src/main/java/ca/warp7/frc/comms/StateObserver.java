@@ -1,4 +1,4 @@
-package ca.warp7.frc.observer;
+package ca.warp7.frc.comms;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

@@ -1,4 +1,4 @@
-package ca.warp7.frc.action_graph;
+package ca.warp7.frc.scheduler;
 
 /**
  * An interface that describes an iterative action. It is run by an autonomous action, called by the
