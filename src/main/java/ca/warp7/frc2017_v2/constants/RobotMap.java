@@ -23,8 +23,8 @@ public final class RobotMap {
 		public static Pins driveRightPins;
 		public static Pins driveLeftEncoderChannels;
 		public static Pins driveRightEncoderChannels;
-		public static Pins driveShifterSolenoidPin;
-		public static Pins compressorPin;
+		public static Pins pneumaticsShifterSolenoidPin;
+		public static Pins pneumaticsCompressorPin;
 
 		public static Pins hopperSpinPins;
 		public static Pins towerSpinPins;
@@ -42,7 +42,7 @@ public final class RobotMap {
 	public static final class DriveConstants {
 		public static double leftDriftOffset;
 		public static double rightDriftOffset;
-		public static double inchesPerTick;
+		public static double driveInchesPerTick;
 		public static double preDriftSpeedLimit;
 	}
 }

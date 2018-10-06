@@ -68,7 +68,7 @@ public class PID {
 
 		@Override
 		public String toString() {
-			return "MiniPID State";
+			return "MiniPID Handler";
 		}
 	}
 

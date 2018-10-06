@@ -17,17 +17,16 @@ public class OperatorInput {
 			pneumatics.toggleClosedLoop();
 		}
 
+		// driver RIGHT bumper NOT HELD_DOWN
+		pneumatics.setShift(sController.driveShouldShift());
+
 		// driver RIGHT stick button PRESSED
 		drive.setReversed(sController.driveShouldReverse());
-
-		// driver RIGHT bumper NOT HELD_DOWN
-		drive.setShift(sController.driveShouldShift());
 
 		// Wheel: driver RIGHT x-axis
 		// Throttle: driver LEFT y-axis
 		// QuickTurn: driver LEFT bumper HELD_DOWN
 		drive.cheesyDrive(sController);
-
 
 		// The following code are not modified for the new codebase
 

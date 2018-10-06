@@ -11,14 +11,14 @@ public class DefaultMap {
 	public static void configure() {
 
 		// Pins
-		compressorPin = Pins.pin(0);
+		pneumaticsCompressorPin = Pins.pin(0);
 
 		driveLeftPins = Pins.pins(2, 3);
 		driveLeftPins = Pins.pins(2, 3);
 		driveRightPins = Pins.pins(0, 1);
 		driveLeftEncoderChannels = Pins.channels(0, 1);
 		driveRightEncoderChannels = Pins.channels(2, 3);
-		driveShifterSolenoidPin = Pins.pin(5);
+		pneumaticsShifterSolenoidPin = Pins.pin(5);
 
 		hopperSpinPins = Pins.pin(7);
 		towerSpinPins = Pins.pin(6);
@@ -28,7 +28,7 @@ public class DefaultMap {
 		shooterMaster = Pins.pin(1);
 
 		// Drive constants
-		inchesPerTick = (4 * Math.PI) / 1024;
+		driveInchesPerTick = (4 * Math.PI) / 1024;
 		leftDriftOffset = 1.0;
 		rightDriftOffset = 1.0;
 		preDriftSpeedLimit = 0.98;

@@ -6,7 +6,6 @@ import ca.warp7.frc.annotation.SystemInputState;
 import ca.warp7.frc.annotation.SystemStateUpdator;
 import ca.warp7.frc.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
-import ca.warp7.frc.cheesy_drive.IDriveSignalReceiver;
 import ca.warp7.frc.comms.ReportType;
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
@@ -16,15 +15,14 @@ import ca.warp7.frc.values.PIDValues;
 import ca.warp7.frc.wpi_wrapper.MotorGroup;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 
-import static ca.warp7.frc.math.Functions.constrainMin;
+import static ca.warp7.frc.math.Functions.constrainMinimum;
 import static ca.warp7.frc.math.Functions.limit;
 import static ca.warp7.frc2017_v2.constants.RobotMap.DriveConstants.*;
 import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
 
-public class Drive implements ISubsystem, IDriveSignalReceiver {
+public class Drive implements ISubsystem {
 
 	private static final double kAbsolutePowerLimit = 1.0;
 	private static final double kRampIntervals = 6.0;
@@ -40,12 +38,14 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	private MotorGroup mRightMotorGroup;
 	private Encoder mLeftEncoder;
 	private Encoder mRightEncoder;
-	private Solenoid mShifterSolenoid;
 
 	@Override
 	public void onConstruct() {
 		mCheesyDrive = new CheesyDrive();
-		mCheesyDrive.setDriveSignalReceiver(this);
+		mCheesyDrive.setDriveSignalReceiver((leftSpeedDemand, rightSpeedDemand) -> {
+			mInputState.demandedLeftSpeed = leftSpeedDemand;
+			mInputState.demandedRightSpeed = rightSpeedDemand;
+		});
 
 		mLeftMotorGroup = new MotorGroup(VictorSP.class, driveLeftPins);
 		mRightMotorGroup = new MotorGroup(VictorSP.class, driveRightPins);
@@ -53,14 +53,11 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 		mLeftEncoder = Creator.encoderFromPins(driveLeftEncoderChannels, false, EncodingType.k4X);
 		mLeftEncoder.setReverseDirection(true);
-		mLeftEncoder.setDistancePerPulse(inchesPerTick);
+		mLeftEncoder.setDistancePerPulse(driveInchesPerTick);
 
 		mRightEncoder = Creator.encoderFromPins(driveRightEncoderChannels, false, EncodingType.k4X);
 		mRightEncoder.setReverseDirection(false);
-		mRightEncoder.setDistancePerPulse(inchesPerTick);
-
-		mShifterSolenoid = new Solenoid(driveShifterSolenoidPin.first());
-		mShifterSolenoid.set(false);
+		mRightEncoder.setDistancePerPulse(driveInchesPerTick);
 	}
 
 	@Override
@@ -71,10 +68,17 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		mInputState.shouldBeginPIDLoop = false;
 		mInputState.measuredLeftDistance = 0.0;
 		mInputState.measuredRightDistance = 0.0;
-		mInputState.shouldSolenoidBeOnForShifter = false;
 		mInputState.shouldReverse = false;
 		mInputState.leftPIDInput.reset();
 		mInputState.rightPIDInput.reset();
+	}
+
+	@Override
+	public void onAutonomousInit() {
+	}
+
+	@Override
+	public void onTeleopInit() {
 	}
 
 	@Override
@@ -91,15 +95,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		double limitedRight = limit(mCurrentState.rightSpeed, preDriftSpeedLimit);
 		mLeftMotorGroup.set(limit(limitedLeft * leftDriftOffset, kAbsolutePowerLimit));
 		mRightMotorGroup.set(limit(limitedRight * rightDriftOffset, kAbsolutePowerLimit));
-
-		if (mCurrentState.isSolenoidOnForShifter) {
-			if (!mShifterSolenoid.get()) {
-				mShifterSolenoid.set(true);
-			}
-		} else if (mShifterSolenoid.get()) {
-			mShifterSolenoid.set(false);
-		}
-
 	}
 
 	@SystemStateUpdator
@@ -121,7 +116,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 		}
 
 		mCurrentState.isReversed = mInputState.shouldReverse;
-		mCurrentState.isSolenoidOnForShifter = mInputState.shouldSolenoidBeOnForShifter;
 
 		if (mCurrentState.isOpenLoop) {
 
@@ -130,9 +124,9 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 				mInputState.demandedRightSpeed *= -1;
 			}
 
-			mCurrentState.leftSpeed += constrainMin(mInputState.demandedLeftSpeed -
+			mCurrentState.leftSpeed += constrainMinimum(mInputState.demandedLeftSpeed -
 					mCurrentState.leftSpeed, kMinimumRampDiffTolerance) / kRampIntervals;
-			mCurrentState.rightSpeed += constrainMin(mInputState.demandedRightSpeed -
+			mCurrentState.rightSpeed += constrainMinimum(mInputState.demandedRightSpeed -
 					mCurrentState.rightSpeed, kMinimumRampDiffTolerance) / kRampIntervals;
 
 		} else if (mCurrentState.isPIDLoop) {
@@ -144,7 +138,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 			mCurrentState.leftSpeed = 0;
 			mCurrentState.rightSpeed = 0;
-
 		}
 	}
 
@@ -152,12 +145,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	public synchronized void onReportState() {
 		Robot.reportState(this, ReportType.STATE_INPUT, mInputState);
 		Robot.reportState(this, ReportType.STATE_CURRENT, mCurrentState);
-	}
-
-	@Override
-	public synchronized void setDemandedDriveSpeed(double leftSpeedDemand, double rightSpeedDemand) {
-		mInputState.demandedLeftSpeed = leftSpeedDemand;
-		mInputState.demandedRightSpeed = rightSpeedDemand;
 	}
 
 	@InputStateModifier
@@ -185,15 +172,9 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 	}
 
 	@InputStateModifier
-	public synchronized void setShift(boolean shouldSolenoidBeOnForShifter) {
-		mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
-	}
-
-	@InputStateModifier
 	public synchronized void setReversed(boolean reversed) {
 		mInputState.shouldReverse = reversed;
 	}
-
 
 	@InputStateModifier
 	public synchronized void zeroSensors() {
@@ -218,7 +199,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	static class InputState {
 		boolean shouldReverse;
-		boolean shouldSolenoidBeOnForShifter;
 		boolean shouldBeginOpenLoop;
 		boolean shouldBeginPIDLoop;
 		double demandedLeftSpeed;
@@ -231,7 +211,6 @@ public class Drive implements ISubsystem, IDriveSignalReceiver {
 
 	static class CurrentState {
 		boolean isReversed;
-		boolean isSolenoidOnForShifter;
 		boolean isOpenLoop;
 		boolean isPIDLoop;
 		double leftSpeed;

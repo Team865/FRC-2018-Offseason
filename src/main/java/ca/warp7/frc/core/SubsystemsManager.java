@@ -2,6 +2,9 @@ package ca.warp7.frc.core;
 
 import java.util.List;
 
+/**
+ * Calls the subsystem functions by batch
+ */
 class SubsystemsManager {
 	private List<ISubsystem> mSubsystems;
 
@@ -13,8 +16,16 @@ class SubsystemsManager {
 		mSubsystems.forEach(ISubsystem::onConstruct);
 	}
 
-	void resetAll() {
+	void disableAll() {
 		mSubsystems.forEach(ISubsystem::onDisabled);
+	}
+
+	void onAutonomousInit() {
+		mSubsystems.forEach(ISubsystem::onAutonomousInit);
+	}
+
+	void onTeleopInit() {
+		mSubsystems.forEach(ISubsystem::onTeleopInit);
 	}
 
 	void outputAll() {

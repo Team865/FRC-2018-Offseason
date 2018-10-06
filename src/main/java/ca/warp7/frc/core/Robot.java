@@ -101,7 +101,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 		super.disabledInit();
 		mAutoRunner.onStop();
 		mManagedLoops.onDisable();
-		mSubsystemsManager.resetAll();
+		mSubsystemsManager.disableAll();
 	}
 
 	/**
@@ -111,6 +111,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	@Override
 	public final void autonomousInit() {
 		super.autonomousInit();
+		mSubsystemsManager.onAutonomousInit();
 		mManagedLoops.onEnable();
 		try {
 			mAutoRunner.onStart();
@@ -126,6 +127,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	public final void teleopInit() {
 		super.teleopInit();
 		mAutoRunner.onStop();
+		mSubsystemsManager.onTeleopInit();
 		mManagedLoops.onEnable();
 	}
 

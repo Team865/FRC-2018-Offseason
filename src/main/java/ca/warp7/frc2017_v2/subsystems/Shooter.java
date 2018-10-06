@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.VictorSP;
 
 @SuppressWarnings("deprecation")
 public class Shooter implements ISubsystem {
+
 	private MotorGroup mHopperSpin;
 	private MotorGroup mTowerSpin;
 	private MotorGroup mIntake;
@@ -59,13 +60,19 @@ public class Shooter implements ISubsystem {
 	}
 
 	@Override
-	public void onInputLoop() {
+	public void onAutonomousInit() {
+	}
 
+	@Override
+	public void onTeleopInit() {
+	}
+
+	@Override
+	public void onInputLoop() {
 	}
 
 	@Override
 	public void onOutputLoop() {
-
 	}
 
 	@Override

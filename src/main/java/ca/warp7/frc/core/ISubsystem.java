@@ -8,6 +8,12 @@ package ca.warp7.frc.core;
  * <p> All motors should be a part of a subsystem. For instance, all the wheel motors should be a
  * part of some kind of "Drive train" subsystem. </p>
  *
+ * <p>Every motor should also be only in one subsystem, not multiple ones.</p>
+ *
+ * <p>Each subsystem should have only one instance. They should be put in a Subsystems class
+ * for clarification and should be declared final. No other parts of the code should attempt
+ * to create subsystems. This could also be done using a singleton class</p>
+ *
  * <p>This interface defines all the callbacks a subsystem should have.
  * It is managed by the {@link SubsystemsManager}</p>
  *
@@ -32,10 +38,19 @@ public interface ISubsystem {
 
 	/**
 	 * Called when the robot is disabled
-	 *
 	 * Should reset everything having to do with output
 	 */
 	void onDisabled();
+
+	/**
+	 * Called at the start of auto for initial setup
+	 */
+	void onAutonomousInit();
+
+	/**
+	 * Called at the start of Teleop for initial setup
+	 */
+	void onTeleopInit();
 
 	/**
 	 * Called periodically for the subsystem to receive
@@ -53,7 +68,8 @@ public interface ISubsystem {
 	 * This is called from the State Change Looper.
 	 *
 	 * This function is guaranteed to not be called when the
-	 * robot is disabled
+	 * robot is disabled. Note that any output limits should
+	 * be applied here.
 	 */
 	void onOutputLoop();
 

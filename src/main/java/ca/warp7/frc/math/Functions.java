@@ -6,7 +6,7 @@ public class Functions {
 		return Math.max(-lim, Math.min(val, lim));
 	}
 
-	public static double constrainMin(double diff, double tolerance) {
+	public static double constrainMinimum(double diff, double tolerance) {
 		return Math.abs(diff) > Math.abs(tolerance) ? diff : 0;
 	}
 }
