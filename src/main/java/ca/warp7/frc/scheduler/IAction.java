@@ -8,14 +8,14 @@ package ca.warp7.frc.scheduler;
  */
 
 public interface IAction {
+
 	/**
 	 * Run code once when the action is started, for set up
 	 */
 	void onStart();
 
 	/**
-	 * Returns whether or not the code has finished execution. When implementing this interface, this method is used by
-	 * the runAction method every cycle to know when to stop running the action
+	 * Returns whether or not the code has finished execution.
 	 *
 	 * @return boolean
 	 */

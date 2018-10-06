@@ -31,7 +31,7 @@ public class DefaultMap {
 		inchesPerTick = (4 * Math.PI) / 1024;
 		leftDriftOffset = 1.0;
 		rightDriftOffset = 1.0;
-		speedLimit = 0.99;
+		preDriftSpeedLimit = 0.98;
 
 		// PID
 		uniformDrivePID = new PIDValues(0, 0, 0);

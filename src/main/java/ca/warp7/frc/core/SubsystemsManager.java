@@ -14,7 +14,7 @@ class SubsystemsManager {
 	}
 
 	void resetAll() {
-		mSubsystems.forEach(ISubsystem::onDisabledReset);
+		mSubsystems.forEach(ISubsystem::onDisabled);
 	}
 
 	void outputAll() {

@@ -28,7 +28,7 @@ public class Pneumatics implements ISubsystem {
 	}
 
 	@Override
-	public synchronized void onDisabledReset() {
+	public synchronized void onDisabled() {
 		mInputState.shouldCloseLoop = false;
 		mCurrentState.isClosedLoop = false;
 	}

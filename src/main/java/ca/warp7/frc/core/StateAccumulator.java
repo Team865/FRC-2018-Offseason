@@ -1,7 +1,7 @@
 package ca.warp7.frc.core;
 
+import ca.warp7.frc.comms.ReportType;
 import ca.warp7.frc.comms.StateObserver;
-import ca.warp7.frc.comms.StateType;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ class StateAccumulator {
 		mAccumulatedPrinter = new PrintStream(System.out, false);
 	}
 
-	synchronized void reportState(Object owner, StateType stateType, Object state) {
+	synchronized void reportState(Object owner, ReportType reportType, Object state) {
 		String prefix = owner.getClass().getSimpleName();
-		if (stateType == StateType.INPUT) {
+		if (reportType == ReportType.STATE_INPUT) {
 			prefix = prefix.concat(".in");
 		}
 		boolean foundCachedObserver = false;

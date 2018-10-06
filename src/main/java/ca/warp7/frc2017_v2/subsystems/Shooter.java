@@ -54,7 +54,7 @@ public class Shooter implements ISubsystem {
 	}
 
 	@Override
-	public synchronized void onDisabledReset() {
+	public synchronized void onDisabled() {
 		stop();
 	}
 

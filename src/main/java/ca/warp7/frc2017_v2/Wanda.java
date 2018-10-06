@@ -7,6 +7,14 @@ import ca.warp7.frc2017_v2.constants.RobotMap;
 import ca.warp7.frc2017_v2.operator_input.DualRemote;
 import ca.warp7.frc2017_v2.operator_input.OperatorInput;
 
+/**
+ * __        __              _
+ * \ \      / /_ _ _ __   __| | __ _
+ * \ \ /\ / / _` | '_ \ / _` |/ _` |
+ * \ V  V / (_| | | | | (_| | (_| |
+ * \_/\_/ \__,_|_| |_|\__,_|\__,_|
+ */
+
 public final class Wanda extends Robot {
 
 	@Override
@@ -19,7 +27,7 @@ public final class Wanda extends Robot {
 		setAutoMode(() -> new DriveForTimeAction(1, 0.5, 0.5));
 
 		OperatorInput.setController(new DualRemote(0, 1));
-		setOIUpdater(OperatorInput::onUpdate);
+		setOIRunner(OperatorInput::onUpdate);
 	}
 }
 

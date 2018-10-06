@@ -6,8 +6,8 @@
     ██║███╗██║██╔══██║██╔══██╗██╔═══╝    ██╔╝ 
     ╚███╔███╔╝██║  ██║██║  ██║██║        ██║  
      ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝  
-```     
-                                 
+```
+
 ### Setup and Deploy
 **Important**
 The school network blocks some of the network required to download 
@@ -75,9 +75,17 @@ A list of some relevant resources, not sorted in any order
 - [PID Loops Theory](https://github.com/FRC-Team-955/Team955RobotLib/wiki/PIDF-Loop) - By Team 955
 
 ### Package Organization
+
 - Reusable code are put in subpackages under the ```ca.warp7.frc``` packages. 
-These include internal code useful to all robots such as the looper mechanism,
-Cheesy Drive, state observers, and autonomous runners
+These include internal code useful to all robots such as the looping mechanism,
+state observers, and autonomous runners. 
+
+  - The entry point is located at ```ca.warp7.frc.core.Robot```
+  - ```.frc.core``` also has classes that manage subsystems, autos, loops,
+  and accumulating states.
+  - Autonomous action scheduling are managed in ```.frc.scheduler```
+  - The custom speed controller and Xbox controller are in ```.frc.wpi_wrapper```
+  - Most other packages in ```.frc``` are for support data structures
 
 - Code for specific robots are in packages named ```ca.warp7.frc20xx```. 
 Replace ```20xx``` with the year of the game the robot is designed for.
@@ -90,10 +98,13 @@ be another copy of the ROBOT_CLASS with different constants configuration.
 
 - Subsystems are in the ```subsystems``` package of the robot package
 
-- Auto modes and actions are in the ```auto.modes``` and ```auto.actions```
-packages respectively.
+- Auto modes and actions are in the ```auto.modes``` and ```auto.actions``` packages respectively.
+Test modes go in the ```auto.test_modes``` package
+
+- Constants and RobotMap are in the ```constants``` package.
 
 ### Java Naming Conventions
+
 ```java
 // All Classes: CamelCase
 class RobotNamingConventions{ 

@@ -43,6 +43,6 @@ public final class RobotMap {
 		public static double leftDriftOffset;
 		public static double rightDriftOffset;
 		public static double inchesPerTick;
-		public static double speedLimit;
+		public static double preDriftSpeedLimit;
 	}
 }
