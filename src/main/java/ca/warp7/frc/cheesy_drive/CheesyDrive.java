@@ -1,20 +1,13 @@
 package ca.warp7.frc.cheesy_drive;
 
-import ca.warp7.frc.annotation.InputStateModifier;
-import ca.warp7.frc.annotation.SystemCurrentState;
-import ca.warp7.frc.annotation.SystemInputState;
-import ca.warp7.frc.annotation.SystemStateUpdator;
-
 import static ca.warp7.frc.math.Functions.limit;
 
 public class CheesyDrive {
 
-	@SystemInputState
 	private CheesyDriveState.InputState mInputState = new CheesyDriveState.InputState();
-	@SystemCurrentState
 	private CheesyDriveState.CurrentState mCurrentState = new CheesyDriveState.CurrentState();
 
-	private IDriveSignalReceiver mReceiver;
+	private ISignalReceiver mReceiver;
 
 	private static double deadBand(double n) {
 		return Math.abs(n) < 0.18 ? 0 : (n - (0.18 * Math.signum(n))) * 1.22;
@@ -36,11 +29,10 @@ public class CheesyDrive {
 		return passes == 1 ? scaled : sinScale(scaled, nonLinearity, passes - 1, lim);
 	}
 
-	public void setDriveSignalReceiver(IDriveSignalReceiver receiver) {
+	public void setDriveSignalReceiver(ISignalReceiver receiver) {
 		mReceiver = receiver;
 	}
 
-	@InputStateModifier
 	public void setInputsFromControls(ICheesyDriveInput controls) {
 		mInputState.wheel = controls.getWheel();
 		mInputState.throttle = controls.getThrottle();
@@ -48,7 +40,6 @@ public class CheesyDrive {
 		mInputState.altQuickTurn = controls.shouldAltQuickTurn();
 	}
 
-	@SystemStateUpdator
 	public void calculateFeed() {
 		double rightPwm;
 		double leftPwm;
@@ -113,5 +104,4 @@ public class CheesyDrive {
 
 		mReceiver.setDemandedDriveSpeed(leftPwm, rightPwm);
 	}
-
 }

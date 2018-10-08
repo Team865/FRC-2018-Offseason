@@ -1,5 +1,6 @@
 package ca.warp7.frc.cheesy_drive;
 
-public interface IDriveSignalReceiver {
+@FunctionalInterface
+public interface ISignalReceiver {
 	void setDemandedDriveSpeed(double leftSpeedDemand, double rightSpeedDemand);
 }

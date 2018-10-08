@@ -7,17 +7,17 @@ import static ca.warp7.frc2017_v2.constants.RobotMap.Subsystems.drive;
 
 public class DriveForDistanceAction implements IAction {
 
-	private static final double kPIDTolerance = 15;
-
+	private final double mTolerance;
 	private final double mDistance;
 
-	public DriveForDistanceAction(double distance) {
+	public DriveForDistanceAction(double distance, double tolerance) {
 		mDistance = distance;
+		mTolerance = tolerance;
 	}
 
 	@Override
 	public boolean shouldFinish() {
-		return !drive.isPIDLoop() || drive.isWithinDistanceRange(mDistance, kPIDTolerance);
+		return !drive.isPIDLoop() || drive.isWithinDistanceRange(mDistance, mTolerance);
 	}
 
 	@Override

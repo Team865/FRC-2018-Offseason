@@ -7,7 +7,7 @@ import static ca.warp7.frc2017_v2.constants.RobotMap.DriveConstants.*;
 import static ca.warp7.frc2017_v2.constants.RobotMap.PID.uniformDrivePID;
 import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
 
-public class DefaultMap {
+public final class DefaultMap {
 	public static void configure() {
 
 		// Pins
@@ -28,7 +28,7 @@ public class DefaultMap {
 		shooterMaster = Pins.pin(1);
 
 		// Drive constants
-		driveInchesPerTick = (4 * Math.PI) / 1024;
+		inchesPerTick = (4 * Math.PI) / 1024;
 		leftDriftOffset = 1.0;
 		rightDriftOffset = 1.0;
 		preDriftSpeedLimit = 0.98;

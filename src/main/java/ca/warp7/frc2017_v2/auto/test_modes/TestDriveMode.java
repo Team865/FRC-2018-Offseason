@@ -11,9 +11,9 @@ public class TestDriveMode implements IAutoMode {
 	public IAction getMainAction() {
 
 		return new ScheduledMode()
-				.releaseStartingPoint()
+				.chain()
 				.addToEnd(new DriveForTimeAction(0.5, 0.5, 0.5))
-				.addToEnd(new DriveForDistanceAction(5))
+				.addToEnd(new DriveForDistanceAction(5, 30))
 				.getAction();
 	}
 }

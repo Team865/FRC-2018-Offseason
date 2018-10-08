@@ -1,23 +1,17 @@
 package ca.warp7.frc2017_v2.subsystems;
 
-import ca.warp7.frc.annotation.InputStateModifier;
-import ca.warp7.frc.annotation.SystemCurrentState;
-import ca.warp7.frc.annotation.SystemInputState;
-import ca.warp7.frc.annotation.SystemStateUpdator;
 import ca.warp7.frc.comms.ReportType;
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
+import ca.warp7.frc2017_v2.constants.RobotMap;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 
-import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.pneumaticsCompressorPin;
-import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.pneumaticsShifterSolenoidPin;
-
 public class Pneumatics implements ISubsystem {
 
-	@SystemInputState
+	@InputStateField
 	private final InputState mInputState = new InputState();
-	@SystemCurrentState
+	@CurrentStateField
 	private final CurrentState mCurrentState = new CurrentState();
 
 	private Compressor mCompressor;
@@ -25,8 +19,8 @@ public class Pneumatics implements ISubsystem {
 
 	@Override
 	public void onConstruct() {
-		mCompressor = new Compressor(pneumaticsCompressorPin.first());
-		mShifterSolenoid = new Solenoid(pneumaticsShifterSolenoidPin.first());
+		mCompressor = new Compressor(RobotMap.RIO.pneumaticsCompressorPin.first());
+		mShifterSolenoid = new Solenoid(RobotMap.RIO.pneumaticsShifterSolenoidPin.first());
 		mShifterSolenoid.set(false);
 	}
 
@@ -62,7 +56,6 @@ public class Pneumatics implements ISubsystem {
 	}
 
 	@Override
-	@SystemStateUpdator
 	public void onUpdateState() {
 		mCurrentState.isClosedLoop = mInputState.shouldBeginClosedLoop;
 		mCurrentState.isSolenoidOnForShifter = mInputState.shouldSolenoidBeOnForShifter;

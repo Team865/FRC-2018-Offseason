@@ -9,6 +9,7 @@ import ca.warp7.frc2017_v2.subsystems.Shooter;
 /**
  * Static variables that maps the robot and includes constants
  */
+
 public final class RobotMap {
 
 	@SuppressWarnings("WeakerAccess")
@@ -42,7 +43,7 @@ public final class RobotMap {
 	public static final class DriveConstants {
 		public static double leftDriftOffset;
 		public static double rightDriftOffset;
-		public static double driveInchesPerTick;
+		public static double inchesPerTick;
 		public static double preDriftSpeedLimit;
 	}
 }

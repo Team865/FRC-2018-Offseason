@@ -4,7 +4,7 @@ package ca.warp7.frc.scheduler;
 public class ScheduledMode {
 
 	private enum PostCallMode {
-		RELEASE, HOLD
+		CHAIN, HOLD
 	}
 
 	private ActionGraph mActionGraph;
@@ -14,7 +14,7 @@ public class ScheduledMode {
 	public ScheduledMode() {
 		mActionGraph = new ActionGraph();
 		mCurrentNode = null;
-		mPostCallMode = PostCallMode.RELEASE;
+		mPostCallMode = PostCallMode.CHAIN;
 	}
 
 	public IAction getAction() {
@@ -39,20 +39,20 @@ public class ScheduledMode {
 		mActionGraph.addNode(node);
 
 		switch (mPostCallMode) {
-			case RELEASE:
+			case CHAIN:
 				mCurrentNode = node;
 				break;
 		}
 		return this;
 	}
 
-	public ScheduledMode holdStartingPoint() {
+	public ScheduledMode hold() {
 		mPostCallMode = PostCallMode.HOLD;
 		return this;
 	}
 
-	public ScheduledMode releaseStartingPoint() {
-		mPostCallMode = PostCallMode.RELEASE;
+	public ScheduledMode chain() {
+		mPostCallMode = PostCallMode.CHAIN;
 		return this;
 	}
 }
