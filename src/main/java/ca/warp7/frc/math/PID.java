@@ -2,21 +2,14 @@ package ca.warp7.frc.math;
 
 import ca.warp7.frc.values.PIDValues;
 
-@SuppressWarnings({"unused", "WeakerAccess", "SpellCheckingInspection"})
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class PID {
-
 	public static class InputState {
-
-		private double measuredValue;
 		private double targetValue;
 		private double P;
 		private double I;
 		private double D;
 		private double F;
-
-		public void setMeasuredValue(double measuredValue) {
-			this.measuredValue = measuredValue;
-		}
 
 		public void setTargetValue(double targetValue) {
 			this.targetValue = targetValue;
@@ -39,7 +32,6 @@ public class PID {
 		}
 
 		public void reset() {
-			measuredValue = 0;
 			targetValue = 0;
 			setPID(0, 0, 0, 0);
 		}
@@ -52,23 +44,30 @@ public class PID {
 
 	public static class CurrentState {
 		private MiniPID mStateHandler;
+		private double mMeasuredValue;
 
 		public CurrentState() {
 			mStateHandler = new MiniPID(0, 0, 0, 0);
+			mMeasuredValue = 0;
+		}
+
+		public void setMeasuredValue(double measuredValue) {
+			mMeasuredValue = measuredValue;
 		}
 
 		public double calculate(InputState input) {
 			mStateHandler.setPID(input.P, input.I, input.D, input.F);
-			return mStateHandler.getOutput(input.measuredValue, input.targetValue);
+			return mStateHandler.getOutput(mMeasuredValue, input.targetValue);
 		}
 
 		public void reset() {
+			mMeasuredValue = 0;
 			mStateHandler.reset();
 		}
 
 		@Override
 		public String toString() {
-			return "MiniPID Handler";
+			return String.format("Measured Value: %.3f", mMeasuredValue);
 		}
 	}
 

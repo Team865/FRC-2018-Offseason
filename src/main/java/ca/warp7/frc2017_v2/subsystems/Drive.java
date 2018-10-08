@@ -21,11 +21,11 @@ import static java.lang.Math.*;
 
 public class Drive implements ISubsystem {
 
-	private static final double kAbsolutePowerLimit = 1.0;
+	private static final double kAbsoluteMaxOutputPower = 1.0;
 	private static final double kRampIntervalMultiplier = 0.5;
-	private static final double kMinRampDiff = 1.0E-04;
+	private static final double kMinRampRate = 1.0E-04;
 	private static final double kMinOutputPower = 1.0E-3;
-	private static final double kMaxLinearRampDiff = 0.1;
+	private static final double kMaxLinearRampRate = 0.1;
 
 	@InputStateField
 	private final InputState mInputState = new InputState();
@@ -51,12 +51,10 @@ public class Drive implements ISubsystem {
 		mRightMotorGroup = new MotorGroup(VictorSP.class, driveRightPins);
 		mRightMotorGroup.setInverted(true);
 
-		mLeftEncoder = Creator.encoder(driveLeftEncoderChannels, false, EncodingType.k4X);
-		mLeftEncoder.setReverseDirection(true);
+		mLeftEncoder = Creator.encoder(driveLeftEncoderChannels, true, EncodingType.k4X);
 		mLeftEncoder.setDistancePerPulse(inchesPerTick);
 
 		mRightEncoder = Creator.encoder(driveRightEncoderChannels, false, EncodingType.k4X);
-		mRightEncoder.setReverseDirection(false);
 		mRightEncoder.setDistancePerPulse(inchesPerTick);
 	}
 
@@ -66,8 +64,6 @@ public class Drive implements ISubsystem {
 		mInputState.demandedLeftSpeed = 0.0;
 		mInputState.shouldBeginOpenLoop = false;
 		mInputState.shouldBeginPIDLoop = false;
-		mInputState.measuredLeftDistance = 0.0;
-		mInputState.measuredRightDistance = 0.0;
 		mInputState.shouldReverse = false;
 		mInputState.leftPIDInput.reset();
 		mInputState.rightPIDInput.reset();
@@ -82,20 +78,27 @@ public class Drive implements ISubsystem {
 	}
 
 	@Override
-	public synchronized void onInputLoop() {
-		mInputState.measuredLeftDistance = mLeftEncoder.getDistance();
-		mLeftEncoder.getDistance();
-		mInputState.measuredRightDistance = mRightEncoder.getDistance();
-		mInputState.leftPIDInput.setMeasuredValue(mInputState.measuredLeftDistance);
-		mInputState.rightPIDInput.setMeasuredValue(mInputState.measuredRightDistance);
+	public synchronized void onMeasure() {
+		mCurrentState.measuredLeftDistance = mLeftEncoder.getDistance();
+		mCurrentState.measuredRightDistance = mRightEncoder.getDistance();
+		mCurrentState.leftPID.setMeasuredValue(mCurrentState.measuredLeftDistance);
+		mCurrentState.leftPID.setMeasuredValue(mCurrentState.measuredRightDistance);
 	}
 
 	@Override
-	public synchronized void onOutputLoop() {
+	public synchronized void onZeroSensors() {
+		mCurrentState.measuredLeftDistance = 0.0;
+		mCurrentState.measuredRightDistance = 0.0;
+		mLeftEncoder.reset();
+		mRightEncoder.reset();
+	}
+
+	@Override
+	public synchronized void onOutput() {
 		double limitedLeft = limit(mCurrentState.leftSpeed, preDriftSpeedLimit);
 		double limitedRight = limit(mCurrentState.rightSpeed, preDriftSpeedLimit);
-		mLeftMotorGroup.set(limit(limitedLeft * leftDriftOffset, kAbsolutePowerLimit));
-		mRightMotorGroup.set(limit(limitedRight * rightDriftOffset, kAbsolutePowerLimit));
+		mLeftMotorGroup.set(limit(limitedLeft * leftDriftOffset, kAbsoluteMaxOutputPower));
+		mRightMotorGroup.set(limit(limitedRight * rightDriftOffset, kAbsoluteMaxOutputPower));
 	}
 
 	@Override
@@ -127,12 +130,12 @@ public class Drive implements ISubsystem {
 			double leftSpeedDiff = mInputState.demandedLeftSpeed - mCurrentState.leftSpeed;
 			double rightSpeedDiff = mInputState.demandedRightSpeed - mCurrentState.rightSpeed;
 
-			mCurrentState.leftSpeed += constrainMinimum(min(kMaxLinearRampDiff,
-					abs(leftSpeedDiff * kRampIntervalMultiplier)) * signum(leftSpeedDiff), kMinRampDiff);
+			mCurrentState.leftSpeed += constrainMinimum(min(kMaxLinearRampRate,
+					abs(leftSpeedDiff * kRampIntervalMultiplier)) * signum(leftSpeedDiff), kMinRampRate);
 			mCurrentState.leftSpeed = constrainMinimum(mCurrentState.leftSpeed, kMinOutputPower);
 
-			mCurrentState.rightSpeed += constrainMinimum(min(kMaxLinearRampDiff,
-					abs(rightSpeedDiff / kRampIntervalMultiplier)) * signum(leftSpeedDiff), kMinRampDiff);
+			mCurrentState.rightSpeed += constrainMinimum(min(kMaxLinearRampRate,
+					abs(rightSpeedDiff / kRampIntervalMultiplier)) * signum(leftSpeedDiff), kMinRampRate);
 			mCurrentState.rightSpeed = constrainMinimum(mCurrentState.rightSpeed, kMinOutputPower);
 
 		} else if (mCurrentState.isPIDLoop) {
@@ -182,16 +185,8 @@ public class Drive implements ISubsystem {
 		mInputState.shouldReverse = reversed;
 	}
 
-	@InputStateModifier
-	public synchronized void zeroSensors() {
-		mInputState.measuredLeftDistance = 0.0;
-		mInputState.measuredRightDistance = 0.0;
-		mLeftEncoder.reset();
-		mRightEncoder.reset();
-	}
-
 	public synchronized boolean isWithinDistanceRange(double distanceRange, double tolerance) {
-		double average = (mInputState.measuredLeftDistance + mInputState.measuredRightDistance) / 2;
+		double average = (mCurrentState.measuredLeftDistance + mCurrentState.measuredRightDistance) / 2;
 		return abs(distanceRange - average) < abs(tolerance);
 	}
 
@@ -209,8 +204,6 @@ public class Drive implements ISubsystem {
 		boolean shouldBeginPIDLoop;
 		double demandedLeftSpeed;
 		double demandedRightSpeed;
-		double measuredLeftDistance;
-		double measuredRightDistance;
 		PID.InputState leftPIDInput = new PID.InputState();
 		PID.InputState rightPIDInput = new PID.InputState();
 	}
@@ -221,6 +214,8 @@ public class Drive implements ISubsystem {
 		boolean isPIDLoop;
 		double leftSpeed;
 		double rightSpeed;
+		double measuredLeftDistance;
+		double measuredRightDistance;
 		PID.CurrentState leftPID = new PID.CurrentState();
 		PID.CurrentState rightPID = new PID.CurrentState();
 	}

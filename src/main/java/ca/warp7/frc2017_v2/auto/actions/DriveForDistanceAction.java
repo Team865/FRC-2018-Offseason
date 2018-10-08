@@ -32,7 +32,7 @@ public class DriveForDistanceAction implements IAction {
 	@Override
 	public void onStart() {
 		// Reset the encoders and start the PIDLoop
-		drive.zeroSensors();
+		drive.onZeroSensors();
 		drive.setPIDTargetDistance(RobotMap.PID.uniformDrivePID, mDistance);
 	}
 }

@@ -40,11 +40,15 @@ public class Pneumatics implements ISubsystem {
 	}
 
 	@Override
-	public void onInputLoop() {
+	public void onMeasure() {
 	}
 
 	@Override
-	public void onOutputLoop() {
+	public void onZeroSensors() {
+	}
+
+	@Override
+	public void onOutput() {
 		mCompressor.setClosedLoopControl(mCurrentState.isClosedLoop);
 		if (mCurrentState.isSolenoidOnForShifter) {
 			if (!mShifterSolenoid.get()) {
@@ -65,11 +69,6 @@ public class Pneumatics implements ISubsystem {
 	public void onReportState() {
 		Robot.reportState(this, ReportType.STATE_INPUT, mInputState);
 		Robot.reportState(this, ReportType.STATE_CURRENT, mCurrentState);
-	}
-
-	@InputStateModifier
-	public synchronized void setClosedLoop(boolean on) {
-		mInputState.shouldBeginClosedLoop = on;
 	}
 
 	@InputStateModifier

@@ -4,7 +4,6 @@ import ca.warp7.frc.values.PIDValues;
 import ca.warp7.frc.values.Pins;
 import ca.warp7.frc2017_v2.subsystems.Drive;
 import ca.warp7.frc2017_v2.subsystems.Pneumatics;
-import ca.warp7.frc2017_v2.subsystems.Shooter;
 
 /**
  * Static variables that maps the robot and includes constants
@@ -16,7 +15,7 @@ public final class RobotMap {
 	public static final class Subsystems {
 		public static final Drive drive = new Drive();
 		public static final Pneumatics pneumatics = new Pneumatics();
-		public static final Shooter shooter = new Shooter();
+		//public static final Shooter shooter = new Shooter();
 	}
 
 	public static final class RIO {

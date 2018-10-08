@@ -29,11 +29,15 @@ class SubsystemsManager {
 	}
 
 	void outputAll() {
-		mSubsystems.forEach(ISubsystem::onOutputLoop);
+		mSubsystems.forEach(ISubsystem::onOutput);
 	}
 
-	void inputAll() {
-		mSubsystems.forEach(ISubsystem::onInputLoop);
+	void measureAll() {
+		mSubsystems.forEach(ISubsystem::onMeasure);
+	}
+
+	void zeroAllSensors() {
+		mSubsystems.forEach(ISubsystem::onZeroSensors);
 	}
 
 	void reportAll() {

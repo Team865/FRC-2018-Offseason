@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
  * <b> ISubsystem defines a major component system of the robot.
  * A good example of a subsystem is the drive train or a claw.</b>
@@ -42,6 +43,7 @@ import java.lang.annotation.Target;
  * that the periodic functions are not blocking operations as to prevent leaking.</p>
  */
 
+
 public interface ISubsystem {
 
 	/**
@@ -77,14 +79,24 @@ public interface ISubsystem {
 	void onTeleopInit();
 
 	/**
-	 * <p>Called periodically for the subsystem to receive inputs from its input devices.
+	 * <p>Called periodically for the subsystem to get measurements from its input devices.
 	 * This method is called from the Input Looper. All sensor reading should be done
 	 * in this method.</p>
+	 *
+	 * <p>When using input/current states, the measured values here should change
+	 * the subsystem's current state</p>
 	 *
 	 * <p>Note that this method may still be called while the robot is disabled, so
 	 * extra care should be made that it performs no outputting</p>
 	 */
-	void onInputLoop();
+	void onMeasure();
+
+
+	/**
+	 * <p>Called at the start for the subsystem to zero its sensors.
+	 * This method may by called by autonomous actions otherwise</p>
+	 */
+	void onZeroSensors();
 
 	/**
 	 * <p>Called periodically for the subsystem to send outputs to its output device.
@@ -93,7 +105,7 @@ public interface ISubsystem {
 	 * <p>This method is guaranteed to not be called when the robot is disabled.
 	 * Any output limits should be applied here for safety reasons.</p>
 	 */
-	void onOutputLoop();
+	void onOutput();
 
 	/**
 	 * <p>Called periodically for the subsystem to convert its inputs into the current

@@ -85,11 +85,12 @@ public abstract class Robot extends IterativeRobotWrapper {
 	@Override
 	public final void robotInit() {
 		super.robotInit();
-		_accessor = new InstanceAccessor();
+		sAccessor = new InstanceAccessor();
 		mSubsystemsManager.setSubsystems(RobotMapInspector.getSubsystems(mMappingClass));
 		mSubsystemsManager.constructAll();
+		mSubsystemsManager.zeroAllSensors();
 		mManagedLoops.setSource(mSubsystemsManager, mStateAccumulator::sendAll, mOIRunner);
-		mManagedLoops.onStartObservers();
+		mManagedLoops.startObservers();
 	}
 
 	/**
@@ -100,7 +101,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	public final void disabledInit() {
 		super.disabledInit();
 		mAutoRunner.onStop();
-		mManagedLoops.onDisable();
+		mManagedLoops.disable();
 		mSubsystemsManager.disableAll();
 	}
 
@@ -112,7 +113,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	public final void autonomousInit() {
 		super.autonomousInit();
 		mSubsystemsManager.onAutonomousInit();
-		mManagedLoops.onEnable();
+		mManagedLoops.enable();
 		try {
 			mAutoRunner.onStart();
 		} catch (NoAutoException e) {
@@ -128,7 +129,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 		super.teleopInit();
 		mAutoRunner.onStop();
 		mSubsystemsManager.onTeleopInit();
-		mManagedLoops.onEnable();
+		mManagedLoops.enable();
 	}
 
 	/**
@@ -171,29 +172,32 @@ public abstract class Robot extends IterativeRobotWrapper {
 
 	/**
 	 * Similar to {@link java.io.PrintStream#print(Object)}
+	 *
 	 * @param object the object to print
 	 */
 	@SuppressWarnings({"unused", "WeakerAccess"})
 	public static void print(Object object) {
-		_accessor.print(object);
+		sAccessor.print(object);
 	}
 
 	/**
 	 * Similar to {@link java.io.PrintStream#println(Object)}
+	 *
 	 * @param object the object to print
 	 */
 	@SuppressWarnings({"unused", "WeakerAccess"})
 	public static void println(Object object) {
-		_accessor.println(object);
+		sAccessor.println(object);
 	}
 
 	/**
 	 * Similar to {@link java.io.PrintStream#println(Object)},
 	 * except with the robot name as prefix
+	 *
 	 * @param object the object to print
 	 */
 	public static void prefixedPrintln(Object object) {
-		_accessor.prefixedPrintln(object);
+		sAccessor.prefixedPrintln(object);
 	}
 
 	/**
@@ -204,13 +208,13 @@ public abstract class Robot extends IterativeRobotWrapper {
 	 * @param state      The state object to be reflected
 	 */
 	public static void reportState(Object owner, ReportType reportType, Object state) {
-		_accessor.reportState(owner, reportType, state);
+		sAccessor.reportState(owner, reportType, state);
 	}
 
 	/**
 	 * A static accessor that refers to the Robot instance
 	 */
-	private static InstanceAccessor _accessor;
+	private static InstanceAccessor sAccessor;
 
 	/**
 	 * Accessor class, containing relay methods to the Robot and its variables

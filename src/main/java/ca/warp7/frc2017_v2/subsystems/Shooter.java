@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj.VictorSP;
 
 /**
  * Not a proper subsystem, just code copied from before
+ * (Current excluded from source)
  */
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings("ALL")
 public class Shooter implements ISubsystem {
 
 	private MotorGroup mHopperSpin;
@@ -68,11 +69,15 @@ public class Shooter implements ISubsystem {
 	}
 
 	@Override
-	public void onInputLoop() {
+	public void onMeasure() {
 	}
 
 	@Override
-	public void onOutputLoop() {
+	public void onZeroSensors() {
+	}
+
+	@Override
+	public void onOutput() {
 	}
 
 	@Override

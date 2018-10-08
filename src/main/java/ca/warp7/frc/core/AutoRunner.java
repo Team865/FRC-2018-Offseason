@@ -37,16 +37,16 @@ class AutoRunner {
 
 	/**
 	 * Start running the auto action.
-	 *
+	 * <p>
 	 * The mechanism which each action is running on means that
 	 * there cannot be blocking operations in both
 	 * {@link IAction#onUpdate()} and {@link IAction#onStop()}
-	 * or auto may not end on time
-	 *
+	 * or auto may not end on time</p>
+	 * <p>
 	 * The proper code mechanism should use implement {@link IAction}
 	 * for a monitoring/locking purpose, and the actual feed forward
 	 * and feedback loops should be run instead in the IO loops. This
-	 * would also make the actual periodic delay not very relevant
+	 * would also make the actual periodic delay not very relevant</p>
 	 *
 	 * @throws NoAutoException when the auto mode is null
 	 */
