@@ -1,4 +1,4 @@
-package ca.warp7.frc.loop;
+package ca.warp7.frc.core;
 
 import edu.wpi.first.wpilibj.Notifier;
 
@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Runs a list of loops using the {@link Notifier}
+ *
  * @author Team 254, modified by Team 865
  */
 
-public class Looper {
+class Looper {
 	private final Notifier mNotifier;
 	private final List<ILoop> mLoops;
 	private ILoop mStartLoop;
@@ -17,9 +19,9 @@ public class Looper {
 	private final Object mTaskRunningLock;
 
 	private boolean mIsRunning;
-	private double mPeriod;
+	private final double mPeriod;
 
-	public Looper(double delta) {
+	Looper(double delta) {
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
@@ -43,25 +45,25 @@ public class Looper {
 		mPeriod = delta;
 	}
 
-	public synchronized void registerLoop(ILoop loop) {
+	synchronized void registerLoop(ILoop loop) {
 		synchronized (mTaskRunningLock) {
 			mLoops.add(loop);
 		}
 	}
 
-	public synchronized void registerStartLoop(ILoop startLoop) {
+	synchronized void registerStartLoop(ILoop startLoop) {
 		synchronized (mTaskRunningLock) {
 			mStartLoop = startLoop;
 		}
 	}
 
-	public synchronized void registerFinalLoop(ILoop finalLoop) {
+	synchronized void registerFinalLoop(ILoop finalLoop) {
 		synchronized (mTaskRunningLock) {
 			mFinalLoop = finalLoop;
 		}
 	}
 
-	public synchronized void startLoops() {
+	synchronized void startLoops() {
 		if (!mIsRunning) {
 			synchronized (mTaskRunningLock) {
 				if (mStartLoop != null) mStartLoop.onStart();
@@ -73,7 +75,7 @@ public class Looper {
 		}
 	}
 
-	public synchronized void stopLoops() {
+	synchronized void stopLoops() {
 		if (mIsRunning) {
 			mNotifier.stop();
 			synchronized (mTaskRunningLock) {

@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_v2.subsystems;
 
-import ca.warp7.frc.comms.ReportType;
 import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.core.ReportType;
 import ca.warp7.frc.core.Robot;
 import ca.warp7.frc2017_v2.constants.RobotMap;
 import edu.wpi.first.wpilibj.Compressor;
@@ -28,10 +28,6 @@ public class Pneumatics implements ISubsystem {
 	public synchronized void onDisabled() {
 		mInputState.shouldBeginClosedLoop = false;
 		mInputState.shouldSolenoidBeOnForShifter = false;
-	}
-
-	@Override
-	public void onAutonomousInit() {
 	}
 
 	@Override
@@ -67,8 +63,8 @@ public class Pneumatics implements ISubsystem {
 
 	@Override
 	public void onReportState() {
-		Robot.reportState(this, ReportType.STATE_INPUT, mInputState);
-		Robot.reportState(this, ReportType.STATE_CURRENT, mCurrentState);
+		Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
+		Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
 	}
 
 	@InputStateModifier

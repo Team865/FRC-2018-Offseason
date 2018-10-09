@@ -1,11 +1,11 @@
 package ca.warp7.frc.cheesy_drive;
 
-import static ca.warp7.frc.math.Functions.limit;
+import static ca.warp7.frc.core.Functions.limit;
 
 public class CheesyDrive {
 
-	private CheesyDriveState.InputState mInputState = new CheesyDriveState.InputState();
-	private CheesyDriveState.CurrentState mCurrentState = new CheesyDriveState.CurrentState();
+	private final InputState mInputState = new InputState();
+	private final CurrentState mCurrentState = new CurrentState();
 
 	private ISignalReceiver mReceiver;
 
@@ -103,5 +103,17 @@ public class CheesyDrive {
 		}
 
 		mReceiver.setDemandedDriveSpeed(leftPwm, rightPwm);
+	}
+
+	static class CurrentState {
+		double quickStopAccumulator = 0;
+		double oldWheel = 0;
+	}
+
+	static class InputState {
+		double wheel;
+		double throttle;
+		boolean quickTurn;
+		boolean altQuickTurn;
 	}
 }

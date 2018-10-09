@@ -2,26 +2,32 @@ package ca.warp7.frc2017_v2.subsystems;
 
 import ca.warp7.frc.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
-import ca.warp7.frc.comms.ReportType;
+import ca.warp7.frc.core.Creator;
 import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.core.ReportType;
 import ca.warp7.frc.core.Robot;
-import ca.warp7.frc.math.PID;
-import ca.warp7.frc.values.Creator;
-import ca.warp7.frc.values.PIDValues;
+import ca.warp7.frc.state.MiniPID;
+import ca.warp7.frc.state.PIDValues;
 import ca.warp7.frc.wpi_wrapper.MotorGroup;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
 
-import static ca.warp7.frc.math.Functions.constrainMinimum;
-import static ca.warp7.frc.math.Functions.limit;
+import static ca.warp7.frc.core.Functions.constrainMinimum;
+import static ca.warp7.frc.core.Functions.limit;
 import static ca.warp7.frc2017_v2.constants.RobotMap.DriveConstants.*;
 import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
 import static java.lang.Math.*;
 
+/**
+ * Controls the motors turing the wheels in the drive train
+ * and responsible for altering the robot's pose (location+heading)
+ */
+
 public class Drive implements ISubsystem {
 
 	private static final double kAbsoluteMaxOutputPower = 1.0;
+	private static final double kMaximumPIDPower = 0.5;
 	private static final double kRampIntervalMultiplier = 0.5;
 	private static final double kMinRampRate = 1.0E-04;
 	private static final double kMinOutputPower = 1.0E-3;
@@ -65,24 +71,17 @@ public class Drive implements ISubsystem {
 		mInputState.shouldBeginOpenLoop = false;
 		mInputState.shouldBeginPIDLoop = false;
 		mInputState.shouldReverse = false;
-		mInputState.leftPIDInput.reset();
-		mInputState.rightPIDInput.reset();
-	}
-
-	@Override
-	public void onAutonomousInit() {
-	}
-
-	@Override
-	public void onTeleopInit() {
+		mInputState.targetLeftDistance = 0;
+		mInputState.targetRightDistance = 0;
+		mInputState.leftPIDValues.reset();
+		mInputState.rightPIDValues.reset();
+		onZeroSensors();
 	}
 
 	@Override
 	public synchronized void onMeasure() {
 		mCurrentState.measuredLeftDistance = mLeftEncoder.getDistance();
 		mCurrentState.measuredRightDistance = mRightEncoder.getDistance();
-		mCurrentState.leftPID.setMeasuredValue(mCurrentState.measuredLeftDistance);
-		mCurrentState.leftPID.setMeasuredValue(mCurrentState.measuredRightDistance);
 	}
 
 	@Override
@@ -127,6 +126,8 @@ public class Drive implements ISubsystem {
 				mInputState.demandedRightSpeed *= -1;
 			}
 
+			// Apply a linear ramping constraint to the demanded speeds
+
 			double leftSpeedDiff = mInputState.demandedLeftSpeed - mCurrentState.leftSpeed;
 			double rightSpeedDiff = mInputState.demandedRightSpeed - mCurrentState.rightSpeed;
 
@@ -140,8 +141,13 @@ public class Drive implements ISubsystem {
 
 		} else if (mCurrentState.isPIDLoop) {
 
-			mCurrentState.leftSpeed = mCurrentState.leftPID.calculate(mInputState.leftPIDInput);
-			mCurrentState.rightSpeed = mCurrentState.rightPID.calculate(mInputState.rightPIDInput);
+			mInputState.leftPIDValues.copyTo(mCurrentState.leftMiniPID);
+			mInputState.rightPIDValues.copyTo(mCurrentState.rightMiniPID);
+
+			mCurrentState.leftSpeed = mCurrentState.leftMiniPID
+					.getOutput(mCurrentState.measuredLeftDistance, mInputState.targetLeftDistance);
+			mCurrentState.rightSpeed = mCurrentState.rightMiniPID
+					.getOutput(mCurrentState.measuredRightDistance, mInputState.targetRightDistance);
 
 		} else {
 
@@ -152,8 +158,8 @@ public class Drive implements ISubsystem {
 
 	@Override
 	public synchronized void onReportState() {
-		Robot.reportState(this, ReportType.STATE_INPUT, mInputState);
-		Robot.reportState(this, ReportType.STATE_CURRENT, mCurrentState);
+		Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
+		Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
 	}
 
 	@InputStateModifier
@@ -176,8 +182,15 @@ public class Drive implements ISubsystem {
 	public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
 		mInputState.shouldBeginOpenLoop = false;
 		mInputState.shouldBeginPIDLoop = true;
-		mInputState.leftPIDInput.setPID(pidValues).setTargetValue(targetDistance);
-		mInputState.rightPIDInput.setPID(pidValues).setTargetValue(targetDistance);
+		pidValues.copyTo(mInputState.leftPIDValues);
+		pidValues.copyTo(mInputState.rightPIDValues);
+		mInputState.targetLeftDistance = targetDistance;
+		mInputState.targetRightDistance = targetDistance;
+
+		mCurrentState.leftMiniPID.setOutputRampRate(kMaxLinearRampRate);
+		mCurrentState.rightMiniPID.setOutputRampRate(kMaxLinearRampRate);
+		mCurrentState.leftMiniPID.setOutputLimits(kMaximumPIDPower);
+		mCurrentState.rightMiniPID.setOutputLimits(kMaximumPIDPower);
 	}
 
 	@InputStateModifier
@@ -204,8 +217,10 @@ public class Drive implements ISubsystem {
 		boolean shouldBeginPIDLoop;
 		double demandedLeftSpeed;
 		double demandedRightSpeed;
-		PID.InputState leftPIDInput = new PID.InputState();
-		PID.InputState rightPIDInput = new PID.InputState();
+		double targetLeftDistance;
+		double targetRightDistance;
+		final PIDValues leftPIDValues = new PIDValues(0, 0, 0, 0);
+		final PIDValues rightPIDValues = new PIDValues(0, 0, 0, 0);
 	}
 
 	static class CurrentState {
@@ -216,7 +231,7 @@ public class Drive implements ISubsystem {
 		double rightSpeed;
 		double measuredLeftDistance;
 		double measuredRightDistance;
-		PID.CurrentState leftPID = new PID.CurrentState();
-		PID.CurrentState rightPID = new PID.CurrentState();
+		final MiniPID leftMiniPID = new MiniPID(0, 0, 0, 0);
+		final MiniPID rightMiniPID = new MiniPID(0, 0, 0, 0);
 	}
 }

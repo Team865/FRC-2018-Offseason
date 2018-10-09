@@ -1,4 +1,4 @@
-package ca.warp7.frc.math;
+package ca.warp7.frc.core;
 
 public class Functions {
 	public static double limit(double val, double lim) {

@@ -1,7 +1,7 @@
 package ca.warp7.frc.scheduler;
 
 class ActionTrigger {
-	private String mName;
+	private final String mName;
 
 	ActionTrigger(String name) {
 		mName = name;

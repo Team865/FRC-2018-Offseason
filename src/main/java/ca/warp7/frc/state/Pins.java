@@ -1,4 +1,4 @@
-package ca.warp7.frc.values;
+package ca.warp7.frc.state;
 
 public class Pins {
 	private final int[] mPinsArray;

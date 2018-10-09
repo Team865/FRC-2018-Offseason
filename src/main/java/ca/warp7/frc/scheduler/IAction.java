@@ -1,8 +1,9 @@
 package ca.warp7.frc.scheduler;
 
 /**
- * An interface that describes an iterative action. It is run by an autonomous action, called by the
- * method runAction in AutoModeBase (or more commonly in autonomous modes that extend AutoModeBase)
+ * An interface that describes an iterative action that has a start, loop, and end.
+ * An Action is the unit of basis for autonomous programs. It may run a list of other
+ * Actions as part of its program
  *
  * @author Team 254, modified by Team 865
  */
@@ -10,7 +11,7 @@ package ca.warp7.frc.scheduler;
 public interface IAction {
 
 	/**
-	 * Run code once when the action is started, for set up
+	 * Run code once when the action is started, usually for set up
 	 */
 	void onStart();
 
@@ -22,8 +23,8 @@ public interface IAction {
 	boolean shouldFinish();
 
 	/**
-	 * Called by runAction in AutoModeBase iteratively until isFinished returns true. Iterative logic lives in this
-	 * method
+	 * Called by runAction in AutoModeBase iteratively until isFinished returns true.
+	 * Iterative logic lives in this method
 	 */
 	void onUpdate();
 

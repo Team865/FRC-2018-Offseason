@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ActionGraph implements IAction, ITriggerSender {
-	private List<ActionNode> mActionNodes;
-	private List<ActionTrigger> mPeriodicTriggers;
-	private List<ActionTrigger> mTriggerPool;
-	private ActionTrigger mEntryPoint;
+	private final List<ActionNode> mActionNodes;
+	private final List<ActionTrigger> mPeriodicTriggers;
+	private final List<ActionTrigger> mTriggerPool;
+	private final ActionTrigger mEntryPoint;
 
 	ActionGraph() {
 		mActionNodes = new ArrayList<>();

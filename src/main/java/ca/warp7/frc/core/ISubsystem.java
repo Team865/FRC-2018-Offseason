@@ -44,6 +44,7 @@ import java.lang.annotation.Target;
  */
 
 
+@SuppressWarnings("EmptyMethod")
 public interface ISubsystem {
 
 	/**
@@ -68,7 +69,8 @@ public interface ISubsystem {
 	 * <p>Auto loops don't start until this method returns, therefore the implementation
 	 * must execute quickly</p>
 	 */
-	void onAutonomousInit();
+	default void onAutonomousInit() {
+	}
 
 	/**
 	 * <p>Called at the start of Teleop for initial setup</p>
@@ -76,7 +78,8 @@ public interface ISubsystem {
 	 * <p>Teleop loops don't start until this method returns, therefore the implementation
 	 * must execute quickly</p>
 	 */
-	void onTeleopInit();
+	default void onTeleopInit() {
+	}
 
 	/**
 	 * <p>Called periodically for the subsystem to get measurements from its input devices.

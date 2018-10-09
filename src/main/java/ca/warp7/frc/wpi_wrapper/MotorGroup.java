@@ -1,6 +1,6 @@
 package ca.warp7.frc.wpi_wrapper;
 
-import ca.warp7.frc.values.Pins;
+import ca.warp7.frc.state.Pins;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,12 +12,11 @@ public class MotorGroup implements SpeedController {
 	private SpeedController[] mMotors;
 	private boolean mInverted;
 
-	private MotorGroup(int[] pins, Class<?> type) {
-		assert type.isAssignableFrom(SpeedController.class);
+	private MotorGroup(int[] pins, Class<? extends SpeedController> type) {
 		mMotors = new SpeedController[pins.length];
 		for (int i = 0; i < pins.length; i++) {
 			try {
-				mMotors[i] = (SpeedController) type.getConstructor(Integer.TYPE).newInstance(pins[i]);
+				mMotors[i] = type.getConstructor(Integer.TYPE).newInstance(pins[i]);
 			} catch (NoSuchMethodException | InstantiationException
 					| IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
@@ -25,7 +24,7 @@ public class MotorGroup implements SpeedController {
 		}
 	}
 
-	public MotorGroup(Class<?> type, Pins pins) {
+	public MotorGroup(Class<? extends SpeedController> type, Pins pins) {
 		this(pins.array(), type);
 	}
 

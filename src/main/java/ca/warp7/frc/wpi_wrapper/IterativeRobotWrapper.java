@@ -6,9 +6,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Gets rid of the default messages in IterativeRobot and
- * actually print out some useful stuff
+ * actually print out some useful stuff. Also makes methods
+ * final so subclasses don't extend them.
  */
 
+@SuppressWarnings("EmptyMethod")
 public abstract class IterativeRobotWrapper extends IterativeRobot {
 
 	@Override
@@ -35,7 +37,6 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
 	public void testInit() {
 		logStateChange("Test");
 	}
-
 
 	private String mLoggedState;
 	private double mOldTime;

@@ -2,8 +2,8 @@ package ca.warp7.frc.scheduler;
 
 class ActionNode implements IAction {
 
-	private IAction mContainedAction;
-	private ITriggerSender mTriggerSender;
+	private final IAction mContainedAction;
+	private final ITriggerSender mTriggerSender;
 	private ActionTrigger mStarterTrigger;
 	private ActionTrigger mOnEndTrigger;
 	private boolean mIsActive;

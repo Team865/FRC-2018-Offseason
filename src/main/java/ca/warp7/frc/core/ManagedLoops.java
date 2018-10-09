@@ -1,19 +1,15 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.loop.ILoop;
-import ca.warp7.frc.loop.Looper;
-import ca.warp7.frc.loop.SimpleLoop;
-
 class ManagedLoops {
 
 	private static final double kObservationLooperDelta = 0.5;
-	private Looper mStateObservationLooper = new Looper(kObservationLooperDelta);
+	private final Looper mStateObservationLooper = new Looper(kObservationLooperDelta);
 
 	private static final double kInputLooperDelta = 0.02;
-	private Looper mInputLooper = new Looper(kInputLooperDelta);
+	private final Looper mInputLooper = new Looper(kInputLooperDelta);
 
 	private static final double kStateChangeLooperDelta = 0.02;
-	private Looper mStateChangeLooper = new Looper(kStateChangeLooperDelta);
+	private final Looper mStateChangeLooper = new Looper(kStateChangeLooperDelta);
 
 	/**
 	 * Loop asking each system to report its state

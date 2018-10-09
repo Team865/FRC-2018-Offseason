@@ -1,4 +1,4 @@
-package ca.warp7.frc.math;
+package ca.warp7.frc.state;
 
 /*
 Copyright 2016, 2018 Dan Sheadel
@@ -33,7 +33,7 @@ Changes made: inspection fixes, no significant change
  * See http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-direction/improving-the-beginners-pid-introduction
  */
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "SpellCheckingInspection"})
 public class MiniPID {
 
 	//**********************************

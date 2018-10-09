@@ -54,7 +54,7 @@ class AutoRunner {
 
 		// Make sure an auto exists
 		if (mMainAction == null) {
-			throw new NoAutoException("The auto mode will do nothing!");
+			throw new NoAutoException();
 		}
 
 		// Make sure autos are not running right now

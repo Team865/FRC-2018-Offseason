@@ -4,6 +4,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Use reflection to get the subsystems
+ */
+
 class RobotMapInspector {
 
 	private static final String kSubsystemsClassName = "Subsystems";

@@ -2,8 +2,8 @@ package ca.warp7.frc2017_v2.operator_input;
 
 import ca.warp7.frc.wpi_wrapper.XboxController;
 
-import static ca.warp7.frc.values.ButtonState.HELD_DOWN;
-import static ca.warp7.frc.values.ButtonState.PRESSED;
+import static ca.warp7.frc.core.ButtonState.HELD_DOWN;
+import static ca.warp7.frc.core.ButtonState.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 

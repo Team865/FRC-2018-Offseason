@@ -1,5 +1,6 @@
-package ca.warp7.frc.values;
+package ca.warp7.frc.core;
 
+import ca.warp7.frc.state.Pins;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 

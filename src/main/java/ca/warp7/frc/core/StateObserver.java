@@ -1,4 +1,4 @@
-package ca.warp7.frc.comms;
+package ca.warp7.frc.core;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -6,13 +6,14 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StateObserver {
+class StateObserver {
 	private final Object mObservedObject;
 	private final String mObservedPrefix;
 	private final Field[] mCachedFields;
-	private Map<String, Object> mObservedMap;
+	private final Map<String, Object> mObservedMap;
 
-	public StateObserver(String prefix, Object object) {
+	StateObserver(String prefix, Object object) {
+		System.out.println(String.format("Creating State Observer for: %s", prefix));
 		mObservedPrefix = prefix;
 		mObservedObject = object;
 		mCachedFields = mObservedObject.getClass().getDeclaredFields();
@@ -22,11 +23,11 @@ public class StateObserver {
 		}
 	}
 
-	public boolean isSameAs(Object other) {
+	boolean isSameAs(Object other) {
 		return mObservedObject == other;
 	}
 
-	public void updateData() {
+	void updateData() {
 		for (Field stateField : mCachedFields) {
 			try {
 				String fieldName = stateField.getName();
@@ -40,7 +41,7 @@ public class StateObserver {
 		}
 	}
 
-	public void updateSmartDashboard() {
+	void updateSmartDashboard() {
 		for (String entryKey : mObservedMap.keySet()) {
 			Object value = mObservedMap.get(entryKey);
 			if (value instanceof Number) {

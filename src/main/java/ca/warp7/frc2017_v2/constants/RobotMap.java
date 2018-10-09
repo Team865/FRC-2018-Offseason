@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_v2.constants;
 
-import ca.warp7.frc.values.PIDValues;
-import ca.warp7.frc.values.Pins;
+import ca.warp7.frc.state.PIDValues;
+import ca.warp7.frc.state.Pins;
 import ca.warp7.frc2017_v2.subsystems.Drive;
 import ca.warp7.frc2017_v2.subsystems.Pneumatics;
 

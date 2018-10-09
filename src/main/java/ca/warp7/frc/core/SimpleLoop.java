@@ -1,12 +1,10 @@
-package ca.warp7.frc.loop;
-
-import ca.warp7.frc.core.Robot;
+package ca.warp7.frc.core;
 
 public class SimpleLoop implements ILoop {
-	private String mName;
-	private Runnable mLoopFunction;
+	private final String mName;
+	private final Runnable mLoopFunction;
 
-	public SimpleLoop(String name, Runnable loopFunction) {
+	SimpleLoop(String name, Runnable loopFunction) {
 		mName = name;
 		mLoopFunction = loopFunction;
 	}

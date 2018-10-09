@@ -1,6 +1,5 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.comms.ReportType;
 import ca.warp7.frc.wpi_wrapper.IterativeRobotWrapper;
 
 /**
@@ -16,24 +15,24 @@ public abstract class Robot extends IterativeRobotWrapper {
 	 * Contains an array of subsystems.
 	 * See {@link SubsystemsManager} for details
 	 */
-	private SubsystemsManager mSubsystemsManager;
+	private final SubsystemsManager mSubsystemsManager;
 
 	/**
 	 * Keeps track of the robot's looper and loops
 	 * See {@link ManagedLoops} for details
 	 */
-	private ManagedLoops mManagedLoops;
+	private final ManagedLoops mManagedLoops;
 
 	/**
 	 * Runs autos. See {@link AutoRunner} for details
 	 */
-	private AutoRunner mAutoRunner;
+	private final AutoRunner mAutoRunner;
 
 	/**
 	 * Keep track of state reporting and sending
 	 * See {@link StateAccumulator} for details
 	 */
-	private StateAccumulator mStateAccumulator;
+	private final StateAccumulator mStateAccumulator;
 
 	/**
 	 * A procedure passed into the {@link ManagedLoops} runner
@@ -117,7 +116,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 		try {
 			mAutoRunner.onStart();
 		} catch (NoAutoException e) {
-			System.err.println(e.getMessage());
+			System.err.println("The auto mode will do nothing!");
 		}
 	}
 
@@ -130,6 +129,15 @@ public abstract class Robot extends IterativeRobotWrapper {
 		mAutoRunner.onStop();
 		mSubsystemsManager.onTeleopInit();
 		mManagedLoops.enable();
+	}
+
+	/**
+	 * Nothing in the testing state
+	 */
+	@SuppressWarnings("EmptyMethod")
+	@Override
+	public void testInit() {
+		super.testInit();
 	}
 
 	/**
@@ -196,6 +204,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	 *
 	 * @param object the object to print
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public static void prefixedPrintln(Object object) {
 		sAccessor.prefixedPrintln(object);
 	}
@@ -204,7 +213,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	 * Reports a state object
 	 *
 	 * @param owner      the owner of the state object, which can modify it
-	 * @param reportType Either STATE_INPUT or STATE_CURRENT
+	 * @param reportType The report type. See {@link ReportType}
 	 * @param state      The state object to be reflected
 	 */
 	public static void reportState(Object owner, ReportType reportType, Object state) {

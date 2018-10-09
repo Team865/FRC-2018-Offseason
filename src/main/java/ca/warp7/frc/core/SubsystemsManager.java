@@ -3,7 +3,7 @@ package ca.warp7.frc.core;
 import java.util.List;
 
 /**
- * Calls the subsystem functions by batch
+ * Calls the subsystem functions for each subsystem
  */
 class SubsystemsManager {
 	private List<ISubsystem> mSubsystems;
