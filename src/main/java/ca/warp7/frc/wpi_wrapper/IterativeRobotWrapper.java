@@ -58,11 +58,11 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
 		double dt = newTime - mOldTime;
 		mOldTime = newTime;
 		printRobotPrefix();
-		System.out.print("Robot State: " + mLoggedState);
+		System.err.print("Robot State: " + mLoggedState);
 		if (!oldState.isEmpty()) {
-			System.out.print(String.format(", %.3f seconds after %s began", dt, oldState));
+			System.err.print(String.format(", %.0f seconds after %s began", dt, oldState));
 		}
-		System.out.println();
+		System.err.println();
 	}
 
 	protected final String getPackageName() {

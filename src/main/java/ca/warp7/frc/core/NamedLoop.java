@@ -10,6 +10,14 @@ public class NamedLoop implements ILoop {
 	}
 
 	@Override
+	public void onStart() {
+	}
+
+	@Override
+	public void onStop() {
+	}
+
+	@Override
 	public String getName() {
 		return mName;
 	}

@@ -32,7 +32,7 @@ public class Pneumatics implements ISubsystem {
 
 	@Override
 	public void onTeleopInit() {
-		mInputState.shouldBeginClosedLoop = true;
+		mInputState.shouldBeginClosedLoop = false;
 	}
 
 	@Override

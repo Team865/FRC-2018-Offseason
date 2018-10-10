@@ -13,7 +13,7 @@ class StateObserver {
 	private final Map<String, Object> mObservedMap;
 
 	StateObserver(String prefix, Object object) {
-		System.out.println(String.format("Creating State Observer for: %s", prefix));
+		System.out.println(String.format("New State Observer for: %s", prefix));
 		mObservedPrefix = prefix;
 		mObservedObject = object;
 		mCachedFields = mObservedObject.getClass().getDeclaredFields();

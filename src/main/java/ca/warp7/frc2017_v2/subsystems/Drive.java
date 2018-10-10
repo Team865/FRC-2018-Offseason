@@ -136,7 +136,7 @@ public class Drive implements ISubsystem {
 			mCurrentState.leftSpeed = constrainMinimum(mCurrentState.leftSpeed, kMinOutputPower);
 
 			mCurrentState.rightSpeed += constrainMinimum(min(kMaxLinearRampRate,
-					abs(rightSpeedDiff / kRampIntervalMultiplier)) * signum(leftSpeedDiff), kMinRampRate);
+					abs(rightSpeedDiff / kRampIntervalMultiplier)) * signum(rightSpeedDiff), kMinRampRate);
 			mCurrentState.rightSpeed = constrainMinimum(mCurrentState.rightSpeed, kMinOutputPower);
 
 		} else if (mCurrentState.isPIDLoop) {

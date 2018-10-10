@@ -25,7 +25,7 @@ public final class Wanda extends Robot {
 		DefaultMap.configure();
 
 		setAutoMode(new NothingMode());
-		//setAutoMode(() -> new DriveForTimeAction(1, 0.5, 0.5));
+//		setAutoMode(() -> new DriveForTimeAction(1, 0.5, 0.5));
 
 		OperatorInput.setController(new DualRemote(0, 1));
 		setOIRunner(OperatorInput::onUpdate);
