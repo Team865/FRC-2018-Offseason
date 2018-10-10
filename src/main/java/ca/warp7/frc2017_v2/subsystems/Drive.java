@@ -21,7 +21,7 @@ import static java.lang.Math.*;
 
 /**
  * Controls the motors turing the wheels in the drive train
- * and responsible for altering the robot's pose (location+heading)
+ * and responsible for altering the robot's pose (location + heading)
  */
 
 public class Drive implements ISubsystem {
@@ -126,7 +126,7 @@ public class Drive implements ISubsystem {
 				mInputState.demandedRightSpeed *= -1;
 			}
 
-			// Apply a linear ramping constraint to the demanded speeds
+			// Apply a linear ramp constraint to the demanded speeds
 
 			double leftSpeedDiff = mInputState.demandedLeftSpeed - mCurrentState.leftSpeed;
 			double rightSpeedDiff = mInputState.demandedRightSpeed - mCurrentState.rightSpeed;

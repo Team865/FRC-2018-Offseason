@@ -71,9 +71,9 @@ public abstract class Robot extends IterativeRobotWrapper {
 		super.robotInit();
 		sAccessor = new InstanceAccessor();
 		mSubsystemsManager.setSubsystems(RobotMapInspector.getSubsystems(mMappingClass));
+		mManagedLoops.setSource(mSubsystemsManager, mStateAccumulator::sendAll, mOIRunner);
 		mSubsystemsManager.constructAll();
 		mSubsystemsManager.zeroAllSensors();
-		mManagedLoops.setSource(mSubsystemsManager, mStateAccumulator::sendAll, mOIRunner);
 		mManagedLoops.startObservers();
 	}
 
@@ -98,7 +98,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 		mManagedLoops.enable();
 		try {
 			mAutoRunner.onStart();
-		} catch (NoAutoException e) {
+		} catch (final AutoRunner.NoAutoException e) {
 			printError("The auto mode will do nothing!");
 		}
 	}

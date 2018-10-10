@@ -94,4 +94,7 @@ class AutoRunner {
 			mMainAction = null;
 		}
 	}
+
+	static class NoAutoException extends Exception {
+	}
 }
