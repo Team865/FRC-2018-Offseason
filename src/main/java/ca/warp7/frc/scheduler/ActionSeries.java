@@ -31,10 +31,6 @@ public class ActionSeries implements IAction {
 	}
 
 	@Override
-	public void onStart() {
-	}
-
-	@Override
 	public void onUpdate() {
 		if (mCurAction == null) {
 			if (mRemainingActions.isEmpty()) {
@@ -51,9 +47,5 @@ public class ActionSeries implements IAction {
 			mCurAction.onStop();
 			mCurAction = null;
 		}
-	}
-
-	@Override
-	public void onStop() {
 	}
 }

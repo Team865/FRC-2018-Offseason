@@ -91,7 +91,6 @@ class AutoRunner {
 	void onStop() {
 		if (mRunThread != null) {
 			mRunThread.interrupt();
-			mRunThread = null;
 			mMainAction = null;
 		}
 	}

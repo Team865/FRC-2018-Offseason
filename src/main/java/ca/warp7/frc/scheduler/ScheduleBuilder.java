@@ -1,7 +1,7 @@
 package ca.warp7.frc.scheduler;
 
 @SuppressWarnings("unused")
-public class ScheduledMode {
+public class ScheduleBuilder {
 
 	private enum PostCallMode {
 		CHAIN, HOLD
@@ -11,7 +11,7 @@ public class ScheduledMode {
 	private ActionNode mCurrentNode;
 	private PostCallMode mPostCallMode;
 
-	public ScheduledMode() {
+	public ScheduleBuilder() {
 		mActionGraph = new ActionGraph();
 		mCurrentNode = null;
 		mPostCallMode = PostCallMode.CHAIN;
@@ -21,7 +21,7 @@ public class ScheduledMode {
 		return mActionGraph;
 	}
 
-	public ScheduledMode addToEnd(IAction action) {
+	public ScheduleBuilder addToEnd(IAction action) {
 		ActionNode node = new ActionNode(mActionGraph, action);
 
 		ActionTrigger currentEndTrigger;
@@ -46,12 +46,12 @@ public class ScheduledMode {
 		return this;
 	}
 
-	public ScheduledMode hold() {
+	public ScheduleBuilder hold() {
 		mPostCallMode = PostCallMode.HOLD;
 		return this;
 	}
 
-	public ScheduledMode chain() {
+	public ScheduleBuilder chain() {
 		mPostCallMode = PostCallMode.CHAIN;
 		return this;
 	}

@@ -37,8 +37,8 @@ dependencies {
         compile ctreLegacy()
     } else {
         compile ctre()
+        compile navx()
     }
-    compile navx()
     //compile "org.la4j:la4j:+" // Linear Algebra Library
 }
 

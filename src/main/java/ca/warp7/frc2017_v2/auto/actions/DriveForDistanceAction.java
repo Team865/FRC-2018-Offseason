@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_v2.auto.actions;
 
 import ca.warp7.frc.scheduler.IAction;
-import ca.warp7.frc2017_v2.constants.RobotMap;
+import ca.warp7.frc.state.PIDValues;
 
 import static ca.warp7.frc2017_v2.constants.RobotMap.Subsystems.drive;
 
@@ -9,8 +9,10 @@ public class DriveForDistanceAction implements IAction {
 
 	private final double mTolerance;
 	private final double mDistance;
+	private final PIDValues mPID;
 
-	public DriveForDistanceAction(double distance, double tolerance) {
+	public DriveForDistanceAction(PIDValues pidValues, double distance, double tolerance) {
+		mPID = pidValues;
 		mDistance = distance;
 		mTolerance = tolerance;
 	}
@@ -33,6 +35,6 @@ public class DriveForDistanceAction implements IAction {
 	public void onStart() {
 		// Reset the encoders and start the PIDLoop
 		drive.onZeroSensors();
-		drive.setPIDTargetDistance(RobotMap.PID.uniformDrivePID, mDistance);
+		drive.setPIDTargetDistance(mPID, mDistance);
 	}
 }

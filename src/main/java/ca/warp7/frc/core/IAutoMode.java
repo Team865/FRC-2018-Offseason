@@ -1,11 +1,12 @@
 package ca.warp7.frc.core;
 
 import ca.warp7.frc.scheduler.IAction;
+import ca.warp7.frc.scheduler.ScheduleBuilder;
 
 /**
  * Essentially a wrapper to get an action, no other mechanisms
  * included. There are other classes that help with scheduling
- * mechanisms such as {@link ca.warp7.frc.scheduler.ScheduledMode}
+ * mechanisms such as {@link ScheduleBuilder}
  * and {@link ca.warp7.frc.scheduler.ActionSeries}
  */
 public interface IAutoMode {

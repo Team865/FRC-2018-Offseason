@@ -42,14 +42,14 @@ class ManagedLoops {
 	private ILoop mSystemOutputLoop;
 
 	void setSource(SubsystemsManager manager, Runnable sendStates, Runnable OIUpdater) {
-		mStateReportingLoop = new SimpleLoop("State Reporting", manager::reportAll);
-		mStateSenderLoop = new SimpleLoop("State Sender", sendStates);
+		mStateReportingLoop = new NamedLoop("State Reporting", manager::reportAll);
+		mStateSenderLoop = new NamedLoop("State Sender", sendStates);
 
-		mMeasuringLoop = new SimpleLoop("System Measuring", manager::measureAll);
-		mControllerInputLoop = new SimpleLoop("Controller Input", OIUpdater);
+		mMeasuringLoop = new NamedLoop("System Measuring", manager::measureAll);
+		mControllerInputLoop = new NamedLoop("Controller Input", OIUpdater);
 
-		mSystemOutputLoop = new SimpleLoop("System Output", manager::outputAll);
-		mStateUpdaterLoop = new SimpleLoop("State Updater", manager::updateAll);
+		mSystemOutputLoop = new NamedLoop("System Output", manager::outputAll);
+		mStateUpdaterLoop = new NamedLoop("State Updater", manager::updateAll);
 
 		registerInitialLoops();
 	}

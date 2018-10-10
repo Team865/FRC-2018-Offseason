@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Calls the subsystem functions for each subsystem
  */
+
 class SubsystemsManager {
 	private List<ISubsystem> mSubsystems;
 

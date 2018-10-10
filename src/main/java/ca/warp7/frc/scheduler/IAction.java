@@ -13,7 +13,8 @@ public interface IAction {
 	/**
 	 * Run code once when the action is started, usually for set up
 	 */
-	void onStart();
+	default void onStart() {
+	}
 
 	/**
 	 * Returns whether or not the code has finished execution.
@@ -26,10 +27,12 @@ public interface IAction {
 	 * Called by runAction in AutoModeBase iteratively until isFinished returns true.
 	 * Iterative logic lives in this method
 	 */
-	void onUpdate();
+	default void onUpdate() {
+	}
 
 	/**
 	 * Run code once when the action finishes, usually for clean up
 	 */
-	void onStop();
+	default void onStop() {
+	}
 }

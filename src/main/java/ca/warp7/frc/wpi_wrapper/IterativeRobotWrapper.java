@@ -69,12 +69,8 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
 		return getClass().getPackage().getName();
 	}
 
-	protected final String getRobotPrefix() {
-		return "(" + getClass().getSimpleName() + ") ";
-	}
-
 	protected final void printRobotPrefix() {
-		System.out.print(getRobotPrefix());
+		System.out.print("(" + getClass().getSimpleName() + ") ");
 	}
 
 

@@ -11,18 +11,54 @@ class StateAccumulator {
 	private int mPrintCounter;
 	private final List<StateObserver> mStateObservers;
 	private final PrintStream mAccumulatedPrinter;
+	private final PrintStream mAccumulatedError;
 
 	StateAccumulator() {
 		mPrintCounter = 0;
 		mStateObservers = new ArrayList<>();
 		mAccumulatedPrinter = new PrintStream(System.out, false);
+		mAccumulatedError = new PrintStream(System.err, false);
 	}
 
+	/**
+	 * Reports a state object
+	 *
+	 * @param owner      the owner of the state object, which can modify it
+	 * @param reportType The report type. See {@link ReportType}
+	 * @param state      The state object to be reflected
+	 */
 	synchronized void reportState(Object owner, ReportType reportType, Object state) {
-		String prefix = owner.getClass().getSimpleName();
-		if (reportType == ReportType.REFLECT_STATE_INPUT) {
-			prefix = prefix.concat(".in");
+		String ownerName, value;
+		if (owner != null) {
+			ownerName = owner.getClass().getSimpleName();
+		} else {
+			ownerName = "Robot";
 		}
+		switch (reportType) {
+			case REFLECT_STATE_CURRENT:
+				reflectObject(ownerName, state);
+				break;
+			case REFLECT_STATE_INPUT:
+				reflectObject(ownerName + ".in", state);
+				break;
+			case PRINT_LINE:
+				value = String.valueOf(state);
+				if (mPrintCounter <= kMaxPrintLength) {
+					mPrintCounter += value.length();
+					mAccumulatedPrinter.println(value);
+				}
+				break;
+			case ERROR_PRINT_LINE:
+				value = String.valueOf(state);
+				if (mPrintCounter <= kMaxPrintLength) {
+					mPrintCounter += value.length();
+					mAccumulatedError.println(value);
+				}
+				break;
+		}
+	}
+
+	private synchronized void reflectObject(String prefix, Object state) {
 		boolean foundCachedObserver = false;
 		for (StateObserver observer : mStateObservers) {
 			if (observer.isSameAs(state)) {
@@ -34,14 +70,6 @@ class StateAccumulator {
 			StateObserver observer = new StateObserver(prefix, state);
 			observer.updateData();
 			mStateObservers.add(observer);
-		}
-	}
-
-	synchronized void print(Object object) {
-		String value = String.valueOf(object);
-		if (mPrintCounter <= kMaxPrintLength) {
-			mPrintCounter += value.length();
-			mAccumulatedPrinter.print(value);
 		}
 	}
 

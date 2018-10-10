@@ -3,23 +3,18 @@ package ca.warp7.frc.core;
 import ca.warp7.frc.wpi_wrapper.IterativeRobotWrapper;
 
 /**
- * Base class for managing the robot's general lifecycle,
- * as well as keeping track of the system's state
- * <p>
- * This class is an extension of IterativeRobot
+ * Base class for managing all the robot's stuff
  */
 
 public abstract class Robot extends IterativeRobotWrapper {
 
 	/**
-	 * Contains an array of subsystems.
-	 * See {@link SubsystemsManager} for details
+	 * Contains an array of subsystems. See {@link SubsystemsManager} for details
 	 */
 	private final SubsystemsManager mSubsystemsManager;
 
 	/**
-	 * Keeps track of the robot's looper and loops
-	 * See {@link ManagedLoops} for details
+	 * Keeps track of the robot's looper and loops. See {@link ManagedLoops} for details
 	 */
 	private final ManagedLoops mManagedLoops;
 
@@ -29,22 +24,18 @@ public abstract class Robot extends IterativeRobotWrapper {
 	private final AutoRunner mAutoRunner;
 
 	/**
-	 * Keep track of state reporting and sending
-	 * See {@link StateAccumulator} for details
+	 * Keep track of state reporting and sending. See {@link StateAccumulator} for details
 	 */
 	private final StateAccumulator mStateAccumulator;
 
 	/**
-	 * A procedure passed into the {@link ManagedLoops} runner
-	 * called in teleop. Should get input from controllers and
-	 * pass them to subsystems
+	 * A procedure passed into the {@link ManagedLoops} runner called in teleop
 	 */
 	private Runnable mOIRunner;
 
 	/**
-	 * Class representing all the common constants of the
-	 * robot. Subsystems are pulled from this class
-	 * reflectively. See {@link RobotMapInspector}
+	 * Class representing all the common constants of the robot. Subsystems are pulled from
+	 * this class reflectively. See {@link RobotMapInspector}
 	 */
 	private Class<?> mMappingClass;
 
@@ -57,10 +48,8 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Call the onCreate method defined by the subclass
-	 * to try to get the mapping class and OI updater.
-	 * If successful, call the normal startCompetition
-	 * to start everything
+	 * Call the onCreate method defined by the subclass to try to get the mapping class and OI updater.
+	 * If successful, call the normal startCompetition to start everything
 	 */
 	@Override
 	public final void startCompetition() {
@@ -75,11 +64,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Performs all actual setup steps
-	 * 1. Create an instance accessor for state reporting
-	 * 2. Reflect the subsystems in the mapping class and hand it to the manager
-	 * 3. Pass references to the managed loops so that loops may be defined and registered
-	 * 4. Start the observation loop that runs both when enabled and disabled
+	 * Performs all actual setup steps for the robot
 	 */
 	@Override
 	public final void robotInit() {
@@ -93,8 +78,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Disables the auto thread, managed loops and resets the subsystems
-	 * when the robot should disable
+	 * Disables the auto thread, managed loops and resets the subsystems when the robot should disable
 	 */
 	@Override
 	public final void disabledInit() {
@@ -105,8 +89,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Enables the managed loops and tries to start auto
-	 * Prints error if there isn't an auto mod available
+	 * Enables the managed loops and tries to start auto. Prints error if there isn't an auto mod available
 	 */
 	@Override
 	public final void autonomousInit() {
@@ -116,7 +99,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 		try {
 			mAutoRunner.onStart();
 		} catch (NoAutoException e) {
-			System.err.println("The auto mode will do nothing!");
+			printError("The auto mode will do nothing!");
 		}
 	}
 
@@ -141,27 +124,21 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Method should call the following three methods
-	 * to set the robot's subsystems, the OI runner, and the
-	 * auto mode
+	 * Method should call the following three methods to set the robot's subsystems, the OI
+	 * runner, and the auto mode
 	 */
 	protected abstract void onCreate();
 
 	/**
-	 * Sets the Operator Input runner.
-	 *
-	 * @param OIRunner The runner that is called periodically during Teleop.
-	 *                 It should get input from controllers and
-	 *                 pass them to subsystems
+	 * Sets the Operator Input runner, which should get input from controllers and
+	 * pass them to subsystems
 	 */
 	protected final void setOIRunner(Runnable OIRunner) {
 		mOIRunner = OIRunner;
 	}
 
 	/**
-	 * Sets the auto mode for the robot
-	 *
-	 * @param mode the mode to run. See {@link IAutoMode}
+	 * Sets the auto mode for the robot. See {@link IAutoMode}.
 	 */
 	@SuppressWarnings("SameParameterValue")
 	protected final void setAutoMode(IAutoMode mode) {
@@ -169,9 +146,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Sets the mapping class of the robot
-	 *
-	 * @param mappingClass Class representing all the common constants of the robot.
+	 * Sets the class representing all the common constants of the robot.
 	 */
 	@SuppressWarnings("WeakerAccess")
 	protected final void setMapping(Class<?> mappingClass) {
@@ -179,42 +154,23 @@ public abstract class Robot extends IterativeRobotWrapper {
 	}
 
 	/**
-	 * Similar to {@link java.io.PrintStream#print(Object)}
-	 *
-	 * @param object the object to print
-	 */
-	@SuppressWarnings({"unused", "WeakerAccess"})
-	public static void print(Object object) {
-		sAccessor.print(object);
-	}
-
-	/**
-	 * Similar to {@link java.io.PrintStream#println(Object)}
-	 *
-	 * @param object the object to print
-	 */
-	@SuppressWarnings({"unused", "WeakerAccess"})
-	public static void println(Object object) {
-		sAccessor.println(object);
-	}
-
-	/**
-	 * Similar to {@link java.io.PrintStream#println(Object)},
-	 * except with the robot name as prefix
-	 *
-	 * @param object the object to print
+	 * Prints an object to System.out
 	 */
 	@SuppressWarnings("WeakerAccess")
-	public static void prefixedPrintln(Object object) {
-		sAccessor.prefixedPrintln(object);
+	public static void printLine(Object object) {
+		sAccessor.reportState(null, ReportType.PRINT_LINE, object);
 	}
 
 	/**
-	 * Reports a state object
-	 *
-	 * @param owner      the owner of the state object, which can modify it
-	 * @param reportType The report type. See {@link ReportType}
-	 * @param state      The state object to be reflected
+	 * Prints an error to System.err
+	 */
+	@SuppressWarnings({"unused", "WeakerAccess"})
+	public static void printError(Object object) {
+		sAccessor.reportState(null, ReportType.ERROR_PRINT_LINE, object);
+	}
+
+	/**
+	 * See {@link StateAccumulator#reportState(Object, ReportType, Object)}
 	 */
 	public static void reportState(Object owner, ReportType reportType, Object state) {
 		sAccessor.reportState(owner, reportType, state);
@@ -225,24 +181,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	 */
 	private static InstanceAccessor sAccessor;
 
-	/**
-	 * Accessor class, containing relay methods to the Robot and its variables
-	 */
 	private class InstanceAccessor {
-		private void print(Object object) {
-			mStateAccumulator.print(object);
-		}
-
-		private void println(Object object) {
-			mStateAccumulator.print(object);
-			mStateAccumulator.print("\n");
-		}
-
-		private void prefixedPrintln(Object object) {
-			mStateAccumulator.print(getRobotPrefix());
-			println(object);
-		}
-
 		private void reportState(Object owner, ReportType reportType, Object state) {
 			mStateAccumulator.reportState(owner, reportType, state);
 		}
