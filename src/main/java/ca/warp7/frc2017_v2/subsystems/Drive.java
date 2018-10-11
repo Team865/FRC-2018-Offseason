@@ -17,7 +17,6 @@ import static ca.warp7.frc.core.Functions.constrainMinimum;
 import static ca.warp7.frc.core.Functions.limit;
 import static ca.warp7.frc2017_v2.constants.RobotMap.DriveConstants.*;
 import static ca.warp7.frc2017_v2.constants.RobotMap.RIO.*;
-import static java.lang.Math.*;
 
 /**
  * Controls the motors turing the wheels in the drive train
@@ -31,7 +30,7 @@ public class Drive implements ISubsystem {
 	private static final double kRampIntervalMultiplier = 0.5;
 	private static final double kMinRampRate = 1.0E-04;
 	private static final double kMinOutputPower = 1.0E-3;
-	private static final double kMaxLinearRampRate = 0.1;
+	private static final double kMaxLinearRampRate = 0.05;
 
 	@InputStateField
 	private final InputState mInputState = new InputState();
@@ -131,13 +130,16 @@ public class Drive implements ISubsystem {
 			double leftSpeedDiff = mInputState.demandedLeftSpeed - mCurrentState.leftSpeed;
 			double rightSpeedDiff = mInputState.demandedRightSpeed - mCurrentState.rightSpeed;
 
-			mCurrentState.leftSpeed += constrainMinimum(min(kMaxLinearRampRate,
-					abs(leftSpeedDiff * kRampIntervalMultiplier)) * signum(leftSpeedDiff), kMinRampRate);
+			mCurrentState.leftSpeed += constrainMinimum(Math.min(kMaxLinearRampRate,
+					Math.abs(leftSpeedDiff * kRampIntervalMultiplier)) * Math.signum(leftSpeedDiff), kMinRampRate);
 			mCurrentState.leftSpeed = constrainMinimum(mCurrentState.leftSpeed, kMinOutputPower);
 
-			mCurrentState.rightSpeed += constrainMinimum(min(kMaxLinearRampRate,
-					abs(rightSpeedDiff / kRampIntervalMultiplier)) * signum(rightSpeedDiff), kMinRampRate);
+			mCurrentState.rightSpeed += constrainMinimum(Math.min(kMaxLinearRampRate,
+					Math.abs(rightSpeedDiff * kRampIntervalMultiplier)) * Math.signum(rightSpeedDiff), kMinRampRate);
 			mCurrentState.rightSpeed = constrainMinimum(mCurrentState.rightSpeed, kMinOutputPower);
+
+			//For debugging
+			//System.out.println(String.format("%.3f, %.3f", mCurrentState.leftSpeed, mCurrentState.rightSpeed));
 
 		} else if (mCurrentState.isPIDLoop) {
 
@@ -200,15 +202,15 @@ public class Drive implements ISubsystem {
 
 	public synchronized boolean isWithinDistanceRange(double distanceRange, double tolerance) {
 		double average = (mCurrentState.measuredLeftDistance + mCurrentState.measuredRightDistance) / 2;
-		return abs(distanceRange - average) < abs(tolerance);
+		return Math.abs(distanceRange - average) < Math.abs(tolerance);
 	}
 
-	public boolean isOpenLoop() {
-		return mCurrentState.isOpenLoop;
+	public boolean shouldBeginOpenLoop() {
+		return mInputState.shouldBeginOpenLoop;
 	}
 
-	public boolean isPIDLoop() {
-		return mCurrentState.isPIDLoop;
+	public boolean shouldBeginPIDLoop() {
+		return mInputState.shouldBeginPIDLoop;
 	}
 
 	static class InputState {

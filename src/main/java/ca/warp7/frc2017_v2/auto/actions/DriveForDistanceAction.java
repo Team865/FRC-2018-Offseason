@@ -19,7 +19,7 @@ public class DriveForDistanceAction implements IAction {
 
 	@Override
 	public boolean shouldFinish() {
-		return !drive.isPIDLoop() || drive.isWithinDistanceRange(mDistance, mTolerance);
+		return !drive.shouldBeginPIDLoop() || drive.isWithinDistanceRange(mDistance, mTolerance);
 	}
 
 	@Override

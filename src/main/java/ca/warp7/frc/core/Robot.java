@@ -74,7 +74,10 @@ public abstract class Robot extends IterativeRobotWrapper {
 		mManagedLoops.setSource(mSubsystemsManager, mStateAccumulator::sendAll, mOIRunner);
 		mSubsystemsManager.constructAll();
 		mSubsystemsManager.zeroAllSensors();
+		mSubsystemsManager.reportAll();
 		mManagedLoops.startObservers();
+		disabledInit();
+		autonomousInit();
 	}
 
 	/**

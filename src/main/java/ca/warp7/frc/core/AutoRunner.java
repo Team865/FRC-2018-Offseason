@@ -1,6 +1,7 @@
 package ca.warp7.frc.core;
 
 import ca.warp7.frc.scheduler.IAction;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Runner class for the auto mode, capable of starting
@@ -62,13 +63,19 @@ class AutoRunner {
 
 			mRunThread = new Thread(() -> {
 
+				System.out.println("Auto starting");
+
+				double startTime = Timer.getFPGATimestamp();
+
 				mMainAction.onStart();
 
 				// If the thread is interrupted, it checks both during the start of the
 				// while loop and while it's running Thread.sleep
 
 				while (!Thread.currentThread().isInterrupted() && !mMainAction.shouldFinish()) {
+
 					mMainAction.onUpdate();
+
 					try {
 						Thread.sleep(kAutoLoopDeltaMilliseconds);
 					} catch (InterruptedException e) {
@@ -76,6 +83,8 @@ class AutoRunner {
 						break;
 					}
 				}
+
+				System.out.println(String.format("Auto ending after %.2fs", Timer.getFPGATimestamp() - startTime));
 
 				mMainAction.onStop();
 

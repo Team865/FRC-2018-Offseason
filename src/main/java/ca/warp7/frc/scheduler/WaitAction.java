@@ -2,11 +2,11 @@ package ca.warp7.frc.scheduler;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class Wait implements IAction {
+public class WaitAction implements IAction {
 	private double mStartTime;
 	private double mDuration;
 
-	public Wait(double duration) {
+	public WaitAction(double duration) {
 		mDuration = duration;
 	}
 

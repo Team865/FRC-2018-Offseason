@@ -18,7 +18,9 @@ public class DriveForTimeAction implements IAction {
 
 	@Override
 	public boolean shouldFinish() {
-		return !drive.isOpenLoop() || Timer.getFPGATimestamp() - mStartTime > mDuration;
+		// This action should finish when drive is not going open loop
+		// or if the set duration is reached
+		return !drive.shouldBeginOpenLoop() || ((Timer.getFPGATimestamp() - mStartTime) > mDuration);
 	}
 
 	@Override
