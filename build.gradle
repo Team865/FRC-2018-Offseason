@@ -41,6 +41,8 @@ wpi {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
     //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
     compile wpilib()
     if (ROBOT_CLASS == ROBOT_CLASS_WANDA) {
