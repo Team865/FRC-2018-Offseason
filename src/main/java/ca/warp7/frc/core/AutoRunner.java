@@ -77,6 +77,7 @@ class AutoRunner {
 					mMainAction.onUpdate();
 
 					try {
+						// Sleep so update is not called so often
 						Thread.sleep(kAutoLoopDeltaMilliseconds);
 					} catch (InterruptedException e) {
 						// Breaks out the loop instead of returning so that onStop can be called
@@ -84,10 +85,13 @@ class AutoRunner {
 					}
 				}
 
-				System.out.println(String.format("Auto ending after %.2fs", Timer.getFPGATimestamp() - startTime));
+				double timeDiff = Timer.getFPGATimestamp() - startTime;
+
+				System.out.println(String.format("Auto ending after %.2fs", timeDiff));
 
 				mMainAction.onStop();
 
+				mRunThread = null;
 			});
 
 			mRunThread.start();
@@ -100,7 +104,6 @@ class AutoRunner {
 	void onStop() {
 		if (mRunThread != null) {
 			mRunThread.interrupt();
-			mMainAction = null;
 		}
 	}
 

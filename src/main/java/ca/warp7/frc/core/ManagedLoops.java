@@ -68,12 +68,20 @@ class ManagedLoops {
 		mInputLooper.startLoops();
 	}
 
+	void enableController() {
+		mInputLooper.registerFinalLoop(mControllerInputLoop);
+	}
+
+	void disableController() {
+		mInputLooper.registerFinalLoop(null);
+	}
+
 	private void registerInitialLoops() {
 		mStateObservationLooper.registerStartLoop(mStateReportingLoop);
 		mStateObservationLooper.registerLoop(mStateSenderLoop);
 		mStateChangeLooper.registerLoop(mStateUpdaterLoop);
 		mInputLooper.registerStartLoop(mMeasuringLoop);
-		mInputLooper.registerLoop(mControllerInputLoop);
+		mInputLooper.registerFinalLoop(mControllerInputLoop);
 		mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
 	}
 }

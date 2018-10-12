@@ -30,7 +30,7 @@ public class Drive implements ISubsystem {
 	private static final double kRampIntervalMultiplier = 0.5;
 	private static final double kMinRampRate = 1.0E-04;
 	private static final double kMinOutputPower = 1.0E-3;
-	private static final double kMaxLinearRampRate = 0.05;
+	private static final double kMaxLinearRampRate = 1.0 / 4;
 
 	@InputStateField
 	private final InputState mInputState = new InputState();
@@ -138,8 +138,12 @@ public class Drive implements ISubsystem {
 					Math.abs(rightSpeedDiff * kRampIntervalMultiplier)) * Math.signum(rightSpeedDiff), kMinRampRate);
 			mCurrentState.rightSpeed = constrainMinimum(mCurrentState.rightSpeed, kMinOutputPower);
 
+//			mCurrentState.leftSpeed += leftSpeedDiff / 6;
+//			mCurrentState.rightSpeed += rightSpeedDiff / 6;
+
 			//For debugging
 			//System.out.println(String.format("%.3f, %.3f", mCurrentState.leftSpeed, mCurrentState.rightSpeed));
+			//System.out.println(String.format("%.3f, %.3f", mInputState.demandedLeftSpeed, mInputState.demandedRightSpeed));
 
 		} else if (mCurrentState.isPIDLoop) {
 

@@ -102,7 +102,9 @@ public class CheesyDrive {
 			rightPwm = -1;
 		}
 
-		mReceiver.setDemandedDriveSpeed(leftPwm, rightPwm);
+		if (mReceiver != null) {
+			mReceiver.setDemandedDriveSpeed(leftPwm, rightPwm);
+		}
 	}
 
 	static class CurrentState {

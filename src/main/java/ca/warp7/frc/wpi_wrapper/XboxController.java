@@ -1,9 +1,9 @@
 package ca.warp7.frc.wpi_wrapper;
 
-import ca.warp7.frc.core.ButtonState;
+import ca.warp7.frc.state.ButtonState;
 import edu.wpi.first.wpilibj.GenericHID;
 
-import static ca.warp7.frc.core.ButtonState.*;
+import static ca.warp7.frc.state.ButtonState.*;
 
 @SuppressWarnings("unused")
 public class XboxController {

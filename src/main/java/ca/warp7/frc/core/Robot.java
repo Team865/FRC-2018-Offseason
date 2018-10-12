@@ -76,8 +76,6 @@ public abstract class Robot extends IterativeRobotWrapper {
 		mSubsystemsManager.zeroAllSensors();
 		mSubsystemsManager.reportAll();
 		mManagedLoops.startObservers();
-		disabledInit();
-		autonomousInit();
 	}
 
 	/**
@@ -98,6 +96,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 	public final void autonomousInit() {
 		super.autonomousInit();
 		mSubsystemsManager.onAutonomousInit();
+		mManagedLoops.disableController();
 		mManagedLoops.enable();
 		try {
 			mAutoRunner.onStart();
@@ -114,6 +113,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 		super.teleopInit();
 		mAutoRunner.onStop();
 		mSubsystemsManager.onTeleopInit();
+		mManagedLoops.enableController();
 		mManagedLoops.enable();
 	}
 
