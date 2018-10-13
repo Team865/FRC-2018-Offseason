@@ -9,23 +9,34 @@
 ```
 
 ### Setup and Deploy
-**Important**
-The school network blocks some of the network required to download 
-the necessary software, especially [https://raw.githubusercontent.com](https://raw.githubusercontent.com).
-Therefore it may be necessary to set up the following things at home
+This project uses [GradleRIO](https://github.com/wpilibsuite/GradleRIO), a build plugin 
+that will become official in 2019. It automatically downloads the required libraries 
+and can manage multiple sub-projects. It also lets us use any IDE to develop our robot
+code.
 
-**Download Software:**
-Java is used to program the robot and the preferred IDE
-is IntelliJ.Install the following: [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/) 
-(Version 8, not 9 or 10), [IntelliJ IDEA](https://www.jetbrains.com/idea/download/)
-(Version 2018.2 or higher), and [Git](https://git-scm.com/download). Also download and install the 
-[FRC Update Suite](http://wpilib.screenstepslive.com/s/4485/m/13503/l/599670-installing-the-frc-2017-update-suite-all-languages)
+
+##### Important
+GradleRIO uses [https://raw.githubusercontent.com](https://raw.githubusercontent.com) to
+download some of its libraries, however it's blocked by the school board's network policy.
+It may be necessary to perform builds at home whenever the libraries change so they can
+be properly downloaded
+
+##### Required Software
+Java (Version 8, not higher) is the language used for this project. 
+Download it here: [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/).
+[Git](https://git-scm.com/download) is needed for making commits and pushing to Github.
+We also need the [FRC Update Suite](http://wpilib.screenstepslive.com/s/4485/m/13503/l/599670-installing-the-frc-2017-update-suite-all-languages)
 for the Driver Station, RoboRIO Imaging Tool, and the mDNS driver for connecting to the robot network, as well as the 
-[Configuration Utility](https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/144986-programming-your-radio)
-for the radio. This project uses Gradle which will
-automatically download WPILib and related Java libraries.
+[Radio Configuration Utility](https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/144986-programming-your-radio).
 
-**Download Code:**
+, 
+, and  Also download and install the 
+
+##### Preferred Environment
+The preferred IDE for this project is [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (Version 2018.2 or higher).
+There are [Documentation](https://www.jetbrains.com/help/idea/gradle.html) for how to setup a Gradle project.
+
+##### Download Code
 Open IntelliJ and select "Check out from Version Control > Git". 
 In the dialog, Log into a GitHub account that has access to the repo
 and paste `https://github.com/Team865/FRC-2018-Offseason.git`. 
@@ -34,24 +45,26 @@ want to import the build.gradle file. Either import it now,
 or go to "Import Project" from the start screen later and
 choose build.gradle
 
-**Import project into IntelliJ:**
+##### Import project into IntelliJ
 A setup dialog is shown to import the gradle project
 Leave the setup options as-is, but change the 
 "Use default gradle wrapper (Recommended)" to 
-"Use gradle wrapper function" and check "Auto Import"
+"Use gradle wrapper function" and check "Auto Import".
+If it's asking for Gradle JVM, select your java installation
+folder that should start with "jdk" and is usually in
+"C:\Program Files\Java".
 Click next and it will create the project files and download
 the libraries
 
-**Using IntelliJ to Build and Deploy**
+##### Using IntelliJ to Build and Deploy
 Find the Gradle Tab in IntelliJ (shown by Navigate > Tool Buttons),
 there is list of tasks available for gradle to run.
-Navigate to Tasks > build > build and run it by double click.
+Find the specific module to be built and
+navigate to Tasks > build > build under that module. 
+Run it by double clicking.
 It will download all the required libraries. At this point the
 project is ready for programming. To deploy, run the task at 
 Tasks > embeddedTools > deploy.
-
-All tasks can also all be ran from pure command
-line. See [GradleRIO docs](https://github.com/wpilibsuite/GradleRIO)
 
 ### Programming Resources
 A list of some relevant resources, not sorted in any order
@@ -80,7 +93,7 @@ A list of some relevant resources, not sorted in any order
 These include internal code useful to all robots such as the looping mechanism,
 state observers, and autonomous runners. 
 
-  - The entry point is located at ```ca.warp7.frc_commons.core.Robot```
+  - The entry point is located at ```Robot```
   - ```.frc.core``` also has classes that manage subsystems, autos, loops,
   and accumulating states.
   - Autonomous action scheduling are managed in ```.frc.scheduler```
