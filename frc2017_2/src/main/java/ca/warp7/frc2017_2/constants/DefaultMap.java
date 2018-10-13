@@ -11,7 +11,6 @@ public final class DefaultMap {
 		RIO.pneumaticsCompressorPin = Pins.pin(0);
 
 		RIO.driveLeftPins = Pins.pins(2, 3);
-		RIO.driveLeftPins = Pins.pins(2, 3);
 		RIO.driveRightPins = Pins.pins(0, 1);
 		RIO.driveLeftEncoderChannels = Pins.channels(0, 1);
 		RIO.driveRightEncoderChannels = Pins.channels(2, 3);

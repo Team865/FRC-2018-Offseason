@@ -1,0 +1,41 @@
+import edu.wpi.first.gradlerio.GradleRIOPlugin
+import edu.wpi.first.gradlerio.frc.FRCJavaArtifact
+import edu.wpi.first.gradlerio.frc.RoboRIO
+
+plugins {
+    id "java"
+    id "edu.wpi.first.GradleRIO"
+}
+
+repositories {
+    mavenCentral()
+}
+
+def ROBOT_CLASS = "ca.warp7.frc2018_3.FiftyCents"
+
+deploy {
+    targets {
+        target("roborio", RoboRIO) {
+            team = project.ext.TEAM_NUMBER
+        }
+    }
+    artifacts {
+        artifact('frcJava', FRCJavaArtifact) {
+            //noinspection GroovyAssignabilityCheck
+            targets << "roborio"
+            debug = false
+        }
+    }
+}
+
+dependencies {
+    compile project(":commons")
+    compile wpilib()
+    compile ctre()
+    compile navx()
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+}

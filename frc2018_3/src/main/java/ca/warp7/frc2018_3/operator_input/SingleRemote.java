@@ -1,0 +1,53 @@
+package ca.warp7.frc2018_3.operator_input;
+
+import ca.warp7.frc.commons.wpi_wrapper.XboxController;
+
+import static ca.warp7.frc.commons.state.ButtonState.HELD_DOWN;
+import static ca.warp7.frc.commons.state.ButtonState.PRESSED;
+import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
+import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
+
+@SuppressWarnings("WeakerAccess")
+public class SingleRemote implements IOperatorController {
+
+    private final XboxController mDriver;
+
+    public SingleRemote(int driverPort) {
+        mDriver = new XboxController(driverPort);
+    }
+
+    @Override
+    public double getWheel() {
+        return -mDriver.getX(kRight);
+    }
+
+    @Override
+    public double getThrottle() {
+        return mDriver.getY(kLeft);
+    }
+
+    @Override
+    public boolean shouldQuickTurn() {
+        return mDriver.getBumper(kLeft) == HELD_DOWN;
+    }
+
+    @Override
+    public boolean shouldAltQuickTurn() {
+        return false;
+    }
+
+    @Override
+    public boolean driveShouldReverse() {
+        return mDriver.getStickButton(kRight) == PRESSED;
+    }
+
+    @Override
+    public boolean driveShouldShift() {
+        return mDriver.getBumper(kRight) != HELD_DOWN;
+    }
+
+    @Override
+    public boolean compressorShouldSwitch() {
+        return mDriver.getBackButton() == PRESSED;
+    }
+}
