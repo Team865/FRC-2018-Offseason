@@ -76,11 +76,11 @@ A list of some relevant resources, not sorted in any order
 
 ### Package Organization
 
-- Reusable code are put in subpackages under the ```ca.warp7.frc``` packages. 
+- Reusable code are put in subpackages under the ```ca.warp7.frc_commons``` packages. 
 These include internal code useful to all robots such as the looping mechanism,
 state observers, and autonomous runners. 
 
-  - The entry point is located at ```ca.warp7.frc.core.Robot```
+  - The entry point is located at ```ca.warp7.frc_commons.core.Robot```
   - ```.frc.core``` also has classes that manage subsystems, autos, loops,
   and accumulating states.
   - Autonomous action scheduling are managed in ```.frc.scheduler```
