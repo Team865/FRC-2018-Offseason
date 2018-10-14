@@ -12,7 +12,7 @@ public class FiftyCents extends Robot {
     protected void onCreate() {
         System.out.println("Hello me is robit!");
 
-        setMapping(RobotMap.class);
+        setComponents(RobotMap.class);
         DefaultMap.configure();
 
         setAutoMode(new NothingMode());

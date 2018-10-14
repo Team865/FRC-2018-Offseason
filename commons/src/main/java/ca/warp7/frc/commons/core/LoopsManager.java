@@ -1,6 +1,6 @@
 package ca.warp7.frc.commons.core;
 
-class ManagedLoops {
+class LoopsManager {
 
     private static final double kObservationLooperDelta = 0.5;
     private final Looper mStateObservationLooper = new Looper(kObservationLooperDelta);

@@ -3,7 +3,6 @@ package ca.warp7.frc2017_2;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc2017_2.auto.actions.DriveForTimeAction;
 import ca.warp7.frc2017_2.constants.DefaultMap;
-import ca.warp7.frc2017_2.constants.RobotMap;
 import ca.warp7.frc2017_2.operator_input.OperatorInput;
 import ca.warp7.frc2017_2.operator_input.SingleRemote;
 
@@ -21,7 +20,6 @@ public final class Wanda extends Robot {
     protected void onCreate() {
         System.out.println("Hello me is robit!");
 
-        setMapping(RobotMap.class);
         DefaultMap.configure();
 
         //setAutoMode(new NothingMode());

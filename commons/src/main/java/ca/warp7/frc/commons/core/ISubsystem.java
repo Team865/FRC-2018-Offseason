@@ -26,11 +26,11 @@ import java.lang.annotation.Target;
  *
  * <p>For working in conjunction with the {@link Robot} class, the above said Subsystems
  * class should be part of a mapping class so that it could be reflectively found by the
- * {@link RobotMapInspector}</p>
+ * {@link Components}</p>
  *
  * <p>This interface defines all the callbacks a subsystem should have.
  * It is managed by the {@link SubsystemsManager} and called periodically by the
- * {@link ManagedLoops} class during different phases of robot runtime</p>
+ * {@link LoopsManager} class during different phases of robot runtime</p>
  *
  * <p>A good implementation strategy is define specific object classes that holds the input state
  * and current state of the subsystem respectively. This interface defines some annotations in
@@ -92,14 +92,16 @@ public interface ISubsystem {
      * <p>Note that this method may still be called while the robot is disabled, so
      * extra care should be made that it performs no outputting</p>
      */
-    void onMeasure();
+    default void onMeasure(){
+    }
 
 
     /**
      * <p>Called at the start for the subsystem to zero its sensors.
      * This method may by called by autonomous actions otherwise</p>
      */
-    void onZeroSensors();
+    default void onZeroSensors(){
+    }
 
     /**
      * <p>Called periodically for the subsystem to send outputs to its output device.
@@ -127,10 +129,11 @@ public interface ISubsystem {
      * <p>Called periodically for the subsystem to report its state, which could involve
      * printing or sending to the SmartDashboard.</p>
      *
-     * <p>This runs at a slower rate than the other periodic methods.See {@link ManagedLoops}.
+     * <p>This runs at a slower rate than the other periodic methods.See {@link LoopsManager}.
      * It also runs regardless of whether the Robot is enabled or disabled.</p>
      */
-    void onReportState();
+    default void onReportState(){
+    }
 
     /**
      * <p>This annotation marks a field to hold the current state of the system.
@@ -155,5 +158,12 @@ public interface ISubsystem {
      */
     @Target(ElementType.METHOD)
     @interface InputStateModifier {
+    }
+
+    /**
+     * <p>Marks a the subsystems and components of a robot</p>
+     */
+    @Target(ElementType.TYPE)
+    @interface RobotComponentsPool {
     }
 }

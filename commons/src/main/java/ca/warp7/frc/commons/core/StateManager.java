@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-class StateAccumulator {
+class StateManager {
 
     private static final int kMaxPrintLength = 255;
 
@@ -13,7 +13,7 @@ class StateAccumulator {
     private final PrintStream mAccumulatedPrinter;
     private final PrintStream mAccumulatedError;
 
-    StateAccumulator() {
+    StateManager() {
         mPrintCounter = 0;
         mStateObservers = new ArrayList<>();
         mAccumulatedPrinter = new PrintStream(System.out, false);

@@ -3,7 +3,7 @@ package ca.warp7.frc2018_3.auto.actions;
 import ca.warp7.frc.commons.scheduler.IAction;
 import ca.warp7.frc.commons.state.PIDValues;
 
-import static ca.warp7.frc2018_3.constants.RobotMap.Subsystems.drive;
+import static ca.warp7.frc2018_3.Components.drive;
 
 
 public class DriveForDistanceAction implements IAction {

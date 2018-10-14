@@ -8,21 +8,14 @@ import java.util.List;
  * Use reflection to get the subsystems
  */
 
-class RobotMapInspector {
+class Components {
 
-    private static final String kSubsystemsClassName = "Subsystems";
-    private static final String kMappingClassPostfix = ".constants.RobotMap";
+    private static final String kComponentsClassName = ".Components";
 
-    static List<ISubsystem> getSubsystems(Class<?> mappingClass) {
-        Class<?> subsystemsClass = null;
-        for (Class mappingSubclass : mappingClass.getClasses()) {
-            if (mappingSubclass.getSimpleName().equals(kSubsystemsClassName)) {
-                subsystemsClass = mappingSubclass;
-            }
-        }
+    static List<ISubsystem> getSubsystems(Class<?> componentsClass) {
         List<ISubsystem> subsystems = new ArrayList<>();
-        if (subsystemsClass != null) {
-            Field[] subsystemsClassFields = subsystemsClass.getFields();
+        if (componentsClass != null) {
+            Field[] subsystemsClassFields = componentsClass.getFields();
             for (Field subsystemField : subsystemsClassFields) {
                 if (ISubsystem.class.isAssignableFrom(subsystemField.getType())) {
                     try {
@@ -44,12 +37,12 @@ class RobotMapInspector {
         return subsystems;
     }
 
-    static Class<?> getMappingClass(String packageName) {
-        String mappingClassName = packageName + kMappingClassPostfix;
+    static Class<?> tryGetComponentsFromPackage(String packageName) {
+        String potentialClassName = packageName + kComponentsClassName;
         try {
-            return Class.forName(mappingClassName);
+            return Class.forName(potentialClassName);
         } catch (ClassNotFoundException e) {
-            System.err.println("Mapping class not found");
+            System.err.println("Components not found");
             return null;
         }
     }

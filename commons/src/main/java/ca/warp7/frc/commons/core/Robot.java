@@ -11,41 +11,32 @@ public abstract class Robot extends IterativeRobotWrapper {
     /**
      * Contains an array of subsystems. See {@link SubsystemsManager} for details
      */
-    private final SubsystemsManager mSubsystemsManager;
+    private final SubsystemsManager mSubsystemsManager = new SubsystemsManager();
 
     /**
-     * Keeps track of the robot's looper and loops. See {@link ManagedLoops} for details
+     * Keeps track of the robot's looper and loops. See {@link LoopsManager} for details
      */
-    private final ManagedLoops mManagedLoops;
+    private final LoopsManager mLoopsManager = new LoopsManager();
 
     /**
-     * Runs autos. See {@link AutoRunner} for details
+     * Keep track of state reporting and sending. See {@link StateManager} for details
      */
-    private final AutoRunner mAutoRunner;
+    private final StateManager mStateManager = new StateManager();
 
     /**
-     * Keep track of state reporting and sending. See {@link StateAccumulator} for details
+     * Starts and ends auto programs. See {@link AutoRunner} for details
      */
-    private final StateAccumulator mStateAccumulator;
+    private final AutoRunner mAutoRunner = new AutoRunner();
 
     /**
-     * A procedure passed into the {@link ManagedLoops} runner called in teleop
+     * A procedure passed into the {@link LoopsManager} runner called in teleop
      */
     private Runnable mOIRunner;
 
     /**
-     * Class representing all the common constants of the robot. Subsystems are pulled from
-     * this class reflectively. See {@link RobotMapInspector}
+     * User class representing all the components of the robot
      */
-    private Class<?> mMappingClass;
-
-    protected Robot() {
-        super();
-        mAutoRunner = new AutoRunner();
-        mSubsystemsManager = new SubsystemsManager();
-        mStateAccumulator = new StateAccumulator();
-        mManagedLoops = new ManagedLoops();
-    }
+    private Class<?> mComponents;
 
     /**
      * Call the onCreate method defined by the subclass to try to get the mapping class and OI updater.
@@ -53,13 +44,14 @@ public abstract class Robot extends IterativeRobotWrapper {
      */
     @Override
     public final void startCompetition() {
-        setMapping(RobotMapInspector.getMappingClass(getPackageName()));
-        printRobotPrefix();
+        setComponents(Components.tryGetComponentsFromPackage(getPackageName()));
+        sAccessor = new InstanceAccessor();
+        displayQualifier();
         onCreate();
-        if (mMappingClass != null && mOIRunner != null) {
+        if (mComponents != null && mOIRunner != null) {
             super.startCompetition();
         } else {
-            System.err.println("Robot not set up");
+            printError("Robot is not set up");
         }
     }
 
@@ -69,13 +61,12 @@ public abstract class Robot extends IterativeRobotWrapper {
     @Override
     public final void robotInit() {
         super.robotInit();
-        sAccessor = new InstanceAccessor();
-        mSubsystemsManager.setSubsystems(RobotMapInspector.getSubsystems(mMappingClass));
-        mManagedLoops.setSource(mSubsystemsManager, mStateAccumulator::sendAll, mOIRunner);
+        mSubsystemsManager.setSubsystems(Components.getSubsystems(mComponents));
+        mLoopsManager.setSource(mSubsystemsManager, mStateManager::sendAll, mOIRunner);
         mSubsystemsManager.constructAll();
         mSubsystemsManager.zeroAllSensors();
         mSubsystemsManager.reportAll();
-        mManagedLoops.startObservers();
+        mLoopsManager.startObservers();
     }
 
     /**
@@ -85,8 +76,9 @@ public abstract class Robot extends IterativeRobotWrapper {
     public final void disabledInit() {
         super.disabledInit();
         mAutoRunner.onStop();
-        mManagedLoops.disable();
+        mLoopsManager.disable();
         mSubsystemsManager.disableAll();
+        mSubsystemsManager.updateAll();
     }
 
     /**
@@ -96,8 +88,8 @@ public abstract class Robot extends IterativeRobotWrapper {
     public final void autonomousInit() {
         super.autonomousInit();
         mSubsystemsManager.onAutonomousInit();
-        mManagedLoops.disableController();
-        mManagedLoops.enable();
+        mLoopsManager.disableController();
+        mLoopsManager.enable();
         try {
             mAutoRunner.onStart();
         } catch (final AutoRunner.NoAutoException e) {
@@ -113,8 +105,8 @@ public abstract class Robot extends IterativeRobotWrapper {
         super.teleopInit();
         mAutoRunner.onStop();
         mSubsystemsManager.onTeleopInit();
-        mManagedLoops.enableController();
-        mManagedLoops.enable();
+        mLoopsManager.enableController();
+        mLoopsManager.enable();
     }
 
     /**
@@ -149,11 +141,11 @@ public abstract class Robot extends IterativeRobotWrapper {
     }
 
     /**
-     * Sets the class representing all the common constants of the robot.
+     * Sets the components class
      */
     @SuppressWarnings("WeakerAccess")
-    protected final void setMapping(Class<?> mappingClass) {
-        mMappingClass = mappingClass;
+    protected final void setComponents(Class<?> components) {
+        mComponents = components;
     }
 
     /**
@@ -173,7 +165,7 @@ public abstract class Robot extends IterativeRobotWrapper {
     }
 
     /**
-     * See {@link StateAccumulator#reportState(Object, ReportType, Object)}
+     * See {@link StateManager#reportState(Object, ReportType, Object)}
      */
     public static void reportState(Object owner, ReportType reportType, Object state) {
         sAccessor.reportState(owner, reportType, state);
@@ -186,7 +178,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 
     private class InstanceAccessor {
         private void reportState(Object owner, ReportType reportType, Object state) {
-            mStateAccumulator.reportState(owner, reportType, state);
+            mStateManager.reportState(owner, reportType, state);
         }
     }
 }

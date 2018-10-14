@@ -7,15 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 @SuppressWarnings("FieldCanBeLocal")
 public class Limelight {
 
-    private static Limelight instance;
-
-    public static Limelight getInstance() {
-        if (instance == null) {
-            instance = new Limelight();
-        }
-        return instance;
-    }
-
     private NetworkTable table;
 
     //    // Create variables
@@ -30,7 +21,7 @@ public class Limelight {
     private int pipeline;
     private int pipelineNumber = 2;
 
-    private Limelight() {
+    public Limelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
@@ -54,26 +45,26 @@ public class Limelight {
         return skew;
     }
 
-    public boolean foundObject() {
+    boolean foundObject() {
         int found = (int) table.getEntry("tv").getDouble(0);
         return found == 1;
     }
 
-    public double getLEDMode() {
+    private double getLEDMode() {
         LEDMode = table.getEntry("ledMode").getDouble(1);
         return LEDMode;
     }
 
-    public double getCamMode() {
+    private double getCamMode() {
         camMode = table.getEntry("camMode").getDouble(0);
         return camMode;
     }
 
-    public int getNetworkPipeline() {
+    private int getNetworkPipeline() {
         return (int) table.getEntry("pipeline").getDouble(0);
     }
 
-    public int getPipeline() {
+    int getPipeline() {
         return pipeline;
     }
 
@@ -100,7 +91,7 @@ public class Limelight {
         }
     }
 
-    public void setPipeline(int pipeline) {
+    private void setPipeline(int pipeline) {
         table.getEntry("pipeline").setDouble(pipeline);
         this.pipeline = pipeline;
         SmartDashboard.putNumber("Camera Mode", pipeline);

@@ -41,7 +41,7 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
     private String mLoggedState;
     private double mOldTime;
 
-    protected IterativeRobotWrapper() {
+    public IterativeRobotWrapper() {
         super();
         mLoggedState = "";
         mOldTime = Timer.getFPGATimestamp();
@@ -57,7 +57,7 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
         double newTime = Timer.getFPGATimestamp();
         double dt = newTime - mOldTime;
         mOldTime = newTime;
-        printRobotPrefix();
+        displayQualifier();
         System.err.print("Robot State: " + mLoggedState);
         if (!oldState.isEmpty()) {
             System.err.print(String.format(", %.0f seconds after %s began", dt, oldState));
@@ -69,8 +69,8 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
         return getClass().getPackage().getName();
     }
 
-    protected final void printRobotPrefix() {
-        System.out.print("(" + getClass().getSimpleName() + ") ");
+    protected final void displayQualifier() {
+        System.out.print(getClass().getSimpleName() + ": ");
     }
 
 

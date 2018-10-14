@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_2.operator_input;
 
-import static ca.warp7.frc2017_2.constants.RobotMap.Subsystems.drive;
-import static ca.warp7.frc2017_2.constants.RobotMap.Subsystems.pneumatics;
+import static ca.warp7.frc2017_2.Components.drive;
+import static ca.warp7.frc2017_2.Components.pneumatics;
 
 public class OperatorInput {
 
