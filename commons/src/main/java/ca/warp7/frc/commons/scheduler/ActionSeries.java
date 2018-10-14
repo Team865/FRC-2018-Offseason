@@ -12,40 +12,40 @@ import java.util.List;
 
 public class ActionSeries implements IAction {
 
-	private IAction mCurAction;
-	private final List<IAction> mRemainingActions;
+    private IAction mCurAction;
+    private final List<IAction> mRemainingActions;
 
-	public ActionSeries(List<IAction> actions) {
-		mRemainingActions = new ArrayList<>(actions);
-		mCurAction = null;
-	}
+    public ActionSeries(List<IAction> actions) {
+        mRemainingActions = new ArrayList<>(actions);
+        mCurAction = null;
+    }
 
-	public ActionSeries(IAction... actions) {
-		mRemainingActions = Arrays.asList(actions);
-		mCurAction = null;
-	}
+    public ActionSeries(IAction... actions) {
+        mRemainingActions = Arrays.asList(actions);
+        mCurAction = null;
+    }
 
-	@Override
-	public boolean shouldFinish() {
-		return mRemainingActions.isEmpty() && mCurAction == null;
-	}
+    @Override
+    public boolean shouldFinish() {
+        return mRemainingActions.isEmpty() && mCurAction == null;
+    }
 
-	@Override
-	public void onUpdate() {
-		if (mCurAction == null) {
-			if (mRemainingActions.isEmpty()) {
-				return;
-			}
+    @Override
+    public void onUpdate() {
+        if (mCurAction == null) {
+            if (mRemainingActions.isEmpty()) {
+                return;
+            }
 
-			mCurAction = mRemainingActions.remove(0);
-			mCurAction.onStart();
-		}
+            mCurAction = mRemainingActions.remove(0);
+            mCurAction.onStart();
+        }
 
-		mCurAction.onUpdate();
+        mCurAction.onUpdate();
 
-		if (mCurAction.shouldFinish()) {
-			mCurAction.onStop();
-			mCurAction = null;
-		}
-	}
+        if (mCurAction.shouldFinish()) {
+            mCurAction.onStop();
+            mCurAction = null;
+        }
+    }
 }

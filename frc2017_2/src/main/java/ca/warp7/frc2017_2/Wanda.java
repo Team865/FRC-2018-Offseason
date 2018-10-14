@@ -17,19 +17,19 @@ import ca.warp7.frc2017_2.operator_input.SingleRemote;
 
 public final class Wanda extends Robot {
 
-	@Override
-	protected void onCreate() {
-		System.out.println("Hello me is robit!");
+    @Override
+    protected void onCreate() {
+        System.out.println("Hello me is robit!");
 
-		setMapping(RobotMap.class);
-		DefaultMap.configure();
+        setMapping(RobotMap.class);
+        DefaultMap.configure();
 
-		//setAutoMode(new NothingMode());
-		setAutoMode(() -> new DriveForTimeAction(2, -0, -0.5));
+        //setAutoMode(new NothingMode());
+        setAutoMode(() -> new DriveForTimeAction(2, -0, -0.5));
 
-		//OperatorInput.setController(new DualRemote(0, 1));
-		OperatorInput.setController(new SingleRemote(0));
-		setOIRunner(OperatorInput::onUpdate);
-	}
+        //OperatorInput.setController(new DualRemote(0, 1));
+        OperatorInput.setController(new SingleRemote(0));
+        setOIRunner(OperatorInput::onUpdate);
+    }
 }
 

@@ -4,17 +4,17 @@ import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
 
 interface IOperatorController extends ICheesyDriveInput {
 
-	boolean compressorShouldSwitch();
+    boolean compressorShouldSwitch();
 
-	boolean driveShouldShift();
+    boolean driveShouldShift();
 
-	boolean driveShouldReverse();
+    boolean driveShouldReverse();
 
-	ShooterMode getShooterMode();
+    ShooterMode getShooterMode();
 
-	boolean hopperShouldReverse();
+    boolean hopperShouldReverse();
 
-	boolean shooterShouldShoot();
+    boolean shooterShouldShoot();
 
-	boolean shooterShouldStop();
+    boolean shooterShouldStop();
 }

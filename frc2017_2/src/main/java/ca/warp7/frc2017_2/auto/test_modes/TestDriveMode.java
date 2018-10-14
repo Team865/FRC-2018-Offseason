@@ -8,13 +8,13 @@ import ca.warp7.frc2017_2.auto.actions.DriveForTimeAction;
 import ca.warp7.frc2017_2.constants.RobotMap;
 
 public class TestDriveMode implements IAutoMode {
-	@Override
-	public IAction getMainAction() {
+    @Override
+    public IAction getMainAction() {
 
-		return new ScheduleBuilder()
-				.chain()
-				.addToEnd(new DriveForTimeAction(0.5, 0.5, 0.5))
-				.addToEnd(new DriveForDistanceAction(RobotMap.PID.uniformDrivePID, 5, 30))
-				.getAction();
-	}
+        return new ScheduleBuilder()
+                .chain()
+                .addToEnd(new DriveForTimeAction(0.5, 0.5, 0.5))
+                .addToEnd(new DriveForDistanceAction(RobotMap.PID.uniformDrivePID, 5, 30))
+                .getAction();
+    }
 }

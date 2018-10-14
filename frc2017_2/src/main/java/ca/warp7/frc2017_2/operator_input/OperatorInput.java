@@ -5,31 +5,31 @@ import static ca.warp7.frc2017_2.constants.RobotMap.Subsystems.pneumatics;
 
 public class OperatorInput {
 
-	private static IOperatorController sController;
+    private static IOperatorController sController;
 
-	public static void setController(IOperatorController controller) {
-		sController = controller;
-	}
+    public static void setController(IOperatorController controller) {
+        sController = controller;
+    }
 
-	public static void onUpdate() {
+    public static void onUpdate() {
 
-		// driver BACK button PRESSED
-		if (sController.compressorShouldSwitch()) {
-			pneumatics.toggleClosedLoop();
-		}
+        // driver BACK button PRESSED
+        if (sController.compressorShouldSwitch()) {
+            pneumatics.toggleClosedLoop();
+        }
 
-		// driver RIGHT bumper NOT HELD_DOWN
-		pneumatics.setShift(sController.driveShouldShift());
+        // driver RIGHT bumper NOT HELD_DOWN
+        pneumatics.setShift(sController.driveShouldShift());
 
-		// driver RIGHT stick button PRESSED
-		drive.setReversed(sController.driveShouldReverse());
+        // driver RIGHT stick button PRESSED
+        drive.setReversed(sController.driveShouldReverse());
 
-		// Wheel: driver RIGHT x-axis
-		// Throttle: driver LEFT y-axis
-		// QuickTurn: driver LEFT bumper HELD_DOWN
-		drive.cheesyDrive(sController);
+        // Wheel: driver RIGHT x-axis
+        // Throttle: driver LEFT y-axis
+        // QuickTurn: driver LEFT bumper HELD_DOWN
+        drive.cheesyDrive(sController);
 
-		// The following code are not modified for the new codebase
+        // The following code are not modified for the new codebase
 
 //		switch (sController.getShooterMode()) {
 //			case RPM_4425:
@@ -67,5 +67,5 @@ public class OperatorInput {
 //			shooter.setHopperSpeed(0.0);
 //			shooter.setTowerSpeed(0.0);
 //		}
-	}
+    }
 }

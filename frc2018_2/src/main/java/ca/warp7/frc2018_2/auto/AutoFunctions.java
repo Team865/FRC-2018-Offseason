@@ -92,7 +92,6 @@ public class AutoFunctions {
             } else {
                 angleSetpointSign = 1;
             }
-            ticks = 0;
             radiusCurveReset = false;
             radiusCurvePID.reset();
             radiusCurvePID.setOutputLimits(2 * speedLimit);

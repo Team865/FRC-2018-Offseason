@@ -1,15 +1,26 @@
-package ca.warp7.frc2018_2.subsystems;
+package ca.warp7.frc2018_3.sensors;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class Limelight {
+
+    private static Limelight instance;
+
+    public static Limelight getInstance() {
+        if (instance == null) {
+            instance = new Limelight();
+        }
+        return instance;
+    }
+
     private NetworkTable table;
 
-    // Create variables
-    private double targetD;
-    private boolean hasTarget;
+    //    // Create variables
+//    private double targetD;
+//    private boolean hasTarget;
     private double xOffset;
     private double yOffset;
     private double area;
@@ -19,7 +30,7 @@ public class Limelight {
     private int pipeline;
     private int pipelineNumber = 2;
 
-    public Limelight() {
+    private Limelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
@@ -95,7 +106,7 @@ public class Limelight {
         SmartDashboard.putNumber("Camera Mode", pipeline);
     }
 
-    public void mutiPipeline() {
+    public void multiPipeline() {
         if (!foundObject())
             setPipeline((getNetworkPipeline() + 1) % pipelineNumber);
     }

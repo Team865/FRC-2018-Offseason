@@ -50,7 +50,7 @@ public class Lift {
     public void rampSpeed(double speed) {
         ramp += (speed - ramp) / rampSpeed;
 
-        if (false && speed > 0)//is max limit hit
+        if (false)//is max limit hit
             ramp = 0;
         LiftMotorLeft.set(ramp);
         LiftMotorRight.set(ramp);

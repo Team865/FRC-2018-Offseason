@@ -170,7 +170,6 @@ public class AutonomousBase {
                     step++;
                     intake.setSpeed(1);
                     autoFunc.setSpeedLimit(0.5);
-                    ;
 
                 }
                 break;

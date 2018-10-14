@@ -10,16 +10,20 @@ import static ca.warp7.frc.commons.state.Pins.*;
 public final class DefaultMap {
     public static void configure() {
 
-        RIO.pneumaticsCompressorPin = pin(0); // LAST UPDATED OCT 13 2018, NOT CHECKED
+        RIO.driveLeftPins = pins(3, 4);
+        RIO.driveRightPins = pins(5, 1);
+        RIO.driveLeftEncoderChannels = channels(2, 3);
+        RIO.driveRightEncoderChannels = channels(0, 1);
 
-        RIO.driveLeftPins = pins(3, 4); // LAST UPDATED OCT 13 2018, NOT CHECKED
-        RIO.driveRightPins = pins(5, 1); // LAST UPDATED OCT 13 2018, NOT CHECKED
-        RIO.driveLeftEncoderChannels = channels(2, 3); // LAST UPDATED OCT 13 2018, NOT CHECKED
-        RIO.driveRightEncoderChannels = channels(0, 1); // LAST UPDATED OCT 13 2018, NOT CHECKED
+        RIO.pneumaticsCompressorPin = pin(0);
+        RIO.pneumaticsShifterSolenoidPin = pin(1);
 
-        RIO.pneumaticsShifterSolenoidPin = pin(1); // LAST UPDATED OCT 13 2018, NOT CHECKED
+        RIO.climberPins = pins(9, 0);
+        RIO.intakeLeftPin = pin(7);
+        RIO.intakeRightPin = pin(2);
+        RIO.intakePiston = pin(0);
 
-        DriveConstants.inchesPerTick = (6 * Math.PI) / 256; // LAST UPDATED OCT 13 2018, NOT CHECKED
+        DriveConstants.inchesPerTick = (6 * Math.PI) / 256;
         DriveConstants.leftDriftOffset = 1.0;
         DriveConstants.rightDriftOffset = 1.0;
         DriveConstants.preDriftSpeedLimit = 0.98;

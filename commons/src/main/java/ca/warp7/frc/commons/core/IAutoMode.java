@@ -12,10 +12,10 @@ import ca.warp7.frc.commons.scheduler.ScheduleBuilder;
  */
 public interface IAutoMode {
 
-	/**
-	 * Procedure to fetch the main action of the mode
-	 *
-	 * @return the action
-	 */
-	IAction getMainAction();
+    /**
+     * Procedure to fetch the main action of the mode
+     *
+     * @return the action
+     */
+    IAction getMainAction();
 }

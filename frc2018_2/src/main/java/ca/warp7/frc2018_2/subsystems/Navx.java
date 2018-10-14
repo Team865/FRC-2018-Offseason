@@ -55,7 +55,7 @@ public class Navx {
 
     public void startUpdateDisplacement(int refesh) {
         updater = new RTS("DisplacementUpdater", refesh);
-        Runnable methodCall = () -> updateDisplacement();
+        Runnable methodCall = this::updateDisplacement;
         updater.addTask(methodCall);
         updater.start();
     }

@@ -47,113 +47,113 @@ import java.lang.annotation.Target;
 @SuppressWarnings("EmptyMethod")
 public interface ISubsystem {
 
-	/**
-	 * <p>Called when constructing the subsystem</p>
-	 *
-	 * <p>This method should connect any hardware components such as motors, gyros,
-	 * and encoders and perform any initial settings such as their direction</p>
-	 */
-	void onConstruct();
+    /**
+     * <p>Called when constructing the subsystem</p>
+     *
+     * <p>This method should connect any hardware components such as motors, gyros,
+     * and encoders and perform any initial settings such as their direction</p>
+     */
+    void onConstruct();
 
-	/**
-	 * <p>Called when the robot is disabled</p>
-	 *
-	 * <p>This method should reset everything having to do with output so as to put
-	 * the subsystem in a disabled state</p>
-	 */
-	void onDisabled();
+    /**
+     * <p>Called when the robot is disabled</p>
+     *
+     * <p>This method should reset everything having to do with output so as to put
+     * the subsystem in a disabled state</p>
+     */
+    void onDisabled();
 
-	/**
-	 * <p>Called at the start of auto for initial setup</p>
-	 *
-	 * <p>Auto loops don't start until this method returns, therefore the implementation
-	 * must execute quickly</p>
-	 */
-	default void onAutonomousInit() {
-	}
+    /**
+     * <p>Called at the start of auto for initial setup</p>
+     *
+     * <p>Auto loops don't start until this method returns, therefore the implementation
+     * must execute quickly</p>
+     */
+    default void onAutonomousInit() {
+    }
 
-	/**
-	 * <p>Called at the start of Teleop for initial setup</p>
-	 *
-	 * <p>Teleop loops don't start until this method returns, therefore the implementation
-	 * must execute quickly</p>
-	 */
-	default void onTeleopInit() {
-	}
+    /**
+     * <p>Called at the start of Teleop for initial setup</p>
+     *
+     * <p>Teleop loops don't start until this method returns, therefore the implementation
+     * must execute quickly</p>
+     */
+    default void onTeleopInit() {
+    }
 
-	/**
-	 * <p>Called periodically for the subsystem to get measurements from its input devices.
-	 * This method is called from the Input Looper. All sensor reading should be done
-	 * in this method.</p>
-	 *
-	 * <p>When using input/current states, the measured values here should change
-	 * the subsystem's current state</p>
-	 *
-	 * <p>Note that this method may still be called while the robot is disabled, so
-	 * extra care should be made that it performs no outputting</p>
-	 */
-	void onMeasure();
+    /**
+     * <p>Called periodically for the subsystem to get measurements from its input devices.
+     * This method is called from the Input Looper. All sensor reading should be done
+     * in this method.</p>
+     *
+     * <p>When using input/current states, the measured values here should change
+     * the subsystem's current state</p>
+     *
+     * <p>Note that this method may still be called while the robot is disabled, so
+     * extra care should be made that it performs no outputting</p>
+     */
+    void onMeasure();
 
 
-	/**
-	 * <p>Called at the start for the subsystem to zero its sensors.
-	 * This method may by called by autonomous actions otherwise</p>
-	 */
-	void onZeroSensors();
+    /**
+     * <p>Called at the start for the subsystem to zero its sensors.
+     * This method may by called by autonomous actions otherwise</p>
+     */
+    void onZeroSensors();
 
-	/**
-	 * <p>Called periodically for the subsystem to send outputs to its output device.
-	 * This method is called from the State Change Looper.</p>
-	 *
-	 * <p>This method is guaranteed to not be called when the robot is disabled.
-	 * Any output limits should be applied here for safety reasons.</p>
-	 */
-	void onOutput();
+    /**
+     * <p>Called periodically for the subsystem to send outputs to its output device.
+     * This method is called from the State Change Looper.</p>
+     *
+     * <p>This method is guaranteed to not be called when the robot is disabled.
+     * Any output limits should be applied here for safety reasons.</p>
+     */
+    void onOutput();
 
-	/**
-	 * <p>Called periodically for the subsystem to convert its inputs into the current
-	 * state of the subsystem, including performing necessary calculations.
-	 * This is called from the State Change Looper.</p>
-	 *
-	 * <p>This function is guaranteed to not be called when the robot is disabled.
-	 * It is possible that this method is not the only state-updating runner for this
-	 * subsystem in the State Change Looper, as other runners may have specific tasks
-	 * worth separating out and are non-conflicting. In such case, those runners will
-	 * also be stopped when disabled.</p>
-	 */
-	void onUpdateState();
+    /**
+     * <p>Called periodically for the subsystem to convert its inputs into the current
+     * state of the subsystem, including performing necessary calculations.
+     * This is called from the State Change Looper.</p>
+     *
+     * <p>This function is guaranteed to not be called when the robot is disabled.
+     * It is possible that this method is not the only state-updating runner for this
+     * subsystem in the State Change Looper, as other runners may have specific tasks
+     * worth separating out and are non-conflicting. In such case, those runners will
+     * also be stopped when disabled.</p>
+     */
+    void onUpdateState();
 
-	/**
-	 * <p>Called periodically for the subsystem to report its state, which could involve
-	 * printing or sending to the SmartDashboard.</p>
-	 *
-	 * <p>This runs at a slower rate than the other periodic methods.See {@link ManagedLoops}.
-	 * It also runs regardless of whether the Robot is enabled or disabled.</p>
-	 */
-	void onReportState();
+    /**
+     * <p>Called periodically for the subsystem to report its state, which could involve
+     * printing or sending to the SmartDashboard.</p>
+     *
+     * <p>This runs at a slower rate than the other periodic methods.See {@link ManagedLoops}.
+     * It also runs regardless of whether the Robot is enabled or disabled.</p>
+     */
+    void onReportState();
 
-	/**
-	 * <p>This annotation marks a field to hold the current state of the system.
-	 * For clarity, there should only be one of such fields</p>
-	 */
-	@Target(ElementType.FIELD)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface CurrentStateField {
-	}
+    /**
+     * <p>This annotation marks a field to hold the current state of the system.
+     * For clarity, there should only be one of such fields</p>
+     */
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface CurrentStateField {
+    }
 
-	/**
-	 * <p>This annotation marks a field to hold the input state of the system.
-	 * For clarity, there should only be one of such fields</p>
-	 */
-	@Target(ElementType.FIELD)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface InputStateField {
-	}
+    /**
+     * <p>This annotation marks a field to hold the input state of the system.
+     * For clarity, there should only be one of such fields</p>
+     */
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface InputStateField {
+    }
 
-	/**
-	 * <p>Marks a method in a subsystem that directly alters its input state</p>
-	 */
-	@Target(ElementType.METHOD)
-	@interface InputStateModifier {
-	}
+    /**
+     * <p>Marks a method in a subsystem that directly alters its input state</p>
+     */
+    @Target(ElementType.METHOD)
+    @interface InputStateModifier {
+    }
 }

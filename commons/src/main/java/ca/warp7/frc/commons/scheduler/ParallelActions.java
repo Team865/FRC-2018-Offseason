@@ -13,44 +13,44 @@ import java.util.List;
 
 public class ParallelActions implements IAction {
 
-	private final List<IAction> mActions;
+    private final List<IAction> mActions;
 
-	public ParallelActions(List<IAction> actions) {
-		mActions = new ArrayList<>(actions);
-	}
+    public ParallelActions(List<IAction> actions) {
+        mActions = new ArrayList<>(actions);
+    }
 
-	public ParallelActions(IAction... actions) {
-		mActions = Arrays.asList(actions);
-	}
+    public ParallelActions(IAction... actions) {
+        mActions = Arrays.asList(actions);
+    }
 
-	@Override
-	public void onStart() {
-		for (IAction action : mActions) {
-			action.onStart();
-		}
-	}
+    @Override
+    public void onStart() {
+        for (IAction action : mActions) {
+            action.onStart();
+        }
+    }
 
-	@Override
-	public boolean shouldFinish() {
-		for (IAction action : mActions) {
-			if (!action.shouldFinish()) {
-				return false;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean shouldFinish() {
+        for (IAction action : mActions) {
+            if (!action.shouldFinish()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public void onUpdate() {
-		for (IAction action : mActions) {
-			action.onUpdate();
-		}
-	}
+    @Override
+    public void onUpdate() {
+        for (IAction action : mActions) {
+            action.onUpdate();
+        }
+    }
 
-	@Override
-	public void onStop() {
-		for (IAction action : mActions) {
-			action.onStop();
-		}
-	}
+    @Override
+    public void onStop() {
+        for (IAction action : mActions) {
+            action.onStop();
+        }
+    }
 }

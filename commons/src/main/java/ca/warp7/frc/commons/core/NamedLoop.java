@@ -1,29 +1,29 @@
 package ca.warp7.frc.commons.core;
 
 public class NamedLoop implements ILoop {
-	private final String mName;
-	private final Runnable mLoopFunction;
+    private final String mName;
+    private final Runnable mLoopFunction;
 
-	NamedLoop(String name, Runnable loopFunction) {
-		mName = name;
-		mLoopFunction = loopFunction;
-	}
+    NamedLoop(String name, Runnable loopFunction) {
+        mName = name;
+        mLoopFunction = loopFunction;
+    }
 
-	@Override
-	public void onStart() {
-	}
+    @Override
+    public void onStart() {
+    }
 
-	@Override
-	public void onStop() {
-	}
+    @Override
+    public void onStop() {
+    }
 
-	@Override
-	public String getName() {
-		return mName;
-	}
+    @Override
+    public String getName() {
+        return mName;
+    }
 
-	@Override
-	public void onLoop() {
-		mLoopFunction.run();
-	}
+    @Override
+    public void onLoop() {
+        mLoopFunction.run();
+    }
 }

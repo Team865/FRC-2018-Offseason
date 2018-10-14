@@ -7,45 +7,45 @@ import java.util.List;
  */
 
 class SubsystemsManager {
-	private List<ISubsystem> mSubsystems;
+    private List<ISubsystem> mSubsystems;
 
-	public void setSubsystems(List<ISubsystem> subsystems) {
-		mSubsystems = subsystems;
-	}
+    public void setSubsystems(List<ISubsystem> subsystems) {
+        mSubsystems = subsystems;
+    }
 
-	void constructAll() {
-		mSubsystems.forEach(ISubsystem::onConstruct);
-	}
+    void constructAll() {
+        mSubsystems.forEach(ISubsystem::onConstruct);
+    }
 
-	void disableAll() {
-		mSubsystems.forEach(ISubsystem::onDisabled);
-	}
+    void disableAll() {
+        mSubsystems.forEach(ISubsystem::onDisabled);
+    }
 
-	void onAutonomousInit() {
-		mSubsystems.forEach(ISubsystem::onAutonomousInit);
-	}
+    void onAutonomousInit() {
+        mSubsystems.forEach(ISubsystem::onAutonomousInit);
+    }
 
-	void onTeleopInit() {
-		mSubsystems.forEach(ISubsystem::onTeleopInit);
-	}
+    void onTeleopInit() {
+        mSubsystems.forEach(ISubsystem::onTeleopInit);
+    }
 
-	void outputAll() {
-		mSubsystems.forEach(ISubsystem::onOutput);
-	}
+    void outputAll() {
+        mSubsystems.forEach(ISubsystem::onOutput);
+    }
 
-	void measureAll() {
-		mSubsystems.forEach(ISubsystem::onMeasure);
-	}
+    void measureAll() {
+        mSubsystems.forEach(ISubsystem::onMeasure);
+    }
 
-	void zeroAllSensors() {
-		mSubsystems.forEach(ISubsystem::onZeroSensors);
-	}
+    void zeroAllSensors() {
+        mSubsystems.forEach(ISubsystem::onZeroSensors);
+    }
 
-	void reportAll() {
-		mSubsystems.forEach(ISubsystem::onReportState);
-	}
+    void reportAll() {
+        mSubsystems.forEach(ISubsystem::onReportState);
+    }
 
-	void updateAll() {
-		mSubsystems.forEach(ISubsystem::onUpdateState);
-	}
+    void updateAll() {
+        mSubsystems.forEach(ISubsystem::onUpdateState);
+    }
 }

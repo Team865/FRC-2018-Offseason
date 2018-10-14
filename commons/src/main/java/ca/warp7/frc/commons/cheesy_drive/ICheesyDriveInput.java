@@ -2,11 +2,11 @@ package ca.warp7.frc.commons.cheesy_drive;
 
 @SuppressWarnings("SameReturnValue")
 public interface ICheesyDriveInput {
-	double getWheel();
+    double getWheel();
 
-	double getThrottle();
+    double getThrottle();
 
-	boolean shouldQuickTurn();
+    boolean shouldQuickTurn();
 
-	boolean shouldAltQuickTurn();
+    boolean shouldAltQuickTurn();
 }

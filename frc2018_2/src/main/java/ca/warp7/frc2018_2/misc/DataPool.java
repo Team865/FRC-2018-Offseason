@@ -41,15 +41,15 @@ public class DataPool {
     }
 
     public void logInt(String key, int i) {
-        logData(key, new Integer(i));
+        logData(key, i);
     }
 
     public void logBoolean(String key, boolean b) {
-        logData(key, new Boolean(b));
+        logData(key, b);
     }
 
     public void logDouble(String key, double d) {
-        logData(key, new Double(d));
+        logData(key, d);
     }
 
     public static void collectAllData() {
