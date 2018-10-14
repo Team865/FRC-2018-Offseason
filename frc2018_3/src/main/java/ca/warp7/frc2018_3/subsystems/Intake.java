@@ -1,6 +1,8 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.ISubsystem;
+import ca.warp7.frc.commons.core.ReportType;
+import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
 import ca.warp7.frc2018_3.sensors.LimelightPhotoSensor;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -18,15 +20,15 @@ public class Intake implements ISubsystem {
     public static final double kFastOuttakePower = -0.75;
     public static final double kSlowOuttakePower = -0.5;
 
+    @InputStateField
+    private final InputState mInputState = new InputState();
+    @CurrentStateField
+    private final CurrentState mCurrentState = new CurrentState();
+
     private MotorGroup mIntakeMotorRight;
     private MotorGroup mIntakeMotorLeft;
     private Solenoid mIntakePistons;
     private LimelightPhotoSensor mPhotoSensor;
-
-    private double mLeftSpeed;
-    private double mRightSpeed;
-    private double mDemandedLeftSpeed;
-    private double mDemandedRightSpeed;
 
     @Override
     public void onConstruct() {
@@ -39,36 +41,52 @@ public class Intake implements ISubsystem {
 
     @Override
     public void onDisabled() {
-        mDemandedLeftSpeed = 0;
-        mDemandedRightSpeed = 0;
+        mInputState.demandedLeftSpeed = 0;
+        mInputState.demandedLeftSpeed = 0;
     }
 
     @Override
     public void onOutput() {
-        mIntakeMotorLeft.set(limit(mLeftSpeed, kAbsoluteMaxOutputPower));
-        mIntakeMotorRight.set(limit(mRightSpeed, kAbsoluteMaxOutputPower));
+        mIntakeMotorLeft.set(limit(mCurrentState.leftSpeed, kAbsoluteMaxOutputPower));
+        mIntakeMotorRight.set(limit(mCurrentState.rightSpeed, kAbsoluteMaxOutputPower));
     }
 
     @Override
     public void onUpdateState() {
-        mLeftSpeed += (mLeftSpeed - mDemandedLeftSpeed) / 6.0;
-        mRightSpeed += (mRightSpeed - mDemandedRightSpeed) / 6.0;
+        mCurrentState.leftSpeed += (mCurrentState.leftSpeed - mInputState.demandedLeftSpeed) / 6.0;
+        mCurrentState.rightSpeed += (mCurrentState.rightSpeed - mInputState.demandedRightSpeed) / 6.0;
+    }
+
+    @Override
+    public void onReportState() {
+        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
+        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
     }
 
     public void setSpeed(double speed) {
-        mDemandedLeftSpeed = speed;
-        mDemandedRightSpeed = speed;
+        mInputState.demandedLeftSpeed = speed;
+        mInputState.demandedRightSpeed = speed;
     }
 
     public double getSpeed() {
         return mIntakeMotorRight.get();
     }
 
-    public void pistonToggle() {
+    public void togglePiston() {
         mIntakePistons.set(!mIntakePistons.get());
     }
 
     public boolean hasCube() {
         return mPhotoSensor.isTriggered();
+    }
+
+    static class InputState {
+        double demandedLeftSpeed;
+        double demandedRightSpeed;
+    }
+
+    static class CurrentState {
+        double leftSpeed;
+        double rightSpeed;
     }
 }

@@ -67,7 +67,7 @@ public class Pneumatics implements ISubsystem {
     }
 
     @InputStateModifier
-    public synchronized void setShift(boolean shouldSolenoidBeOnForShifter) {
+    public synchronized void setShouldSolenoidBeOnForShifter(boolean shouldSolenoidBeOnForShifter) {
         mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
     }
 

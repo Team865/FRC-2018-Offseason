@@ -6,9 +6,15 @@ interface IOperatorController extends ICheesyDriveInput {
 
     boolean compressorShouldSwitch();
 
-    boolean driveShouldShift();
+    boolean driveShouldSolenoidBeOnForShifter();
 
     boolean driveShouldReverse();
 
     IntakeMode getIntakeMode();
+
+    double getClimberSpeed();
+
+    boolean intakeShouldTogglePiston();
+
+    boolean cameraShouldSwitch();
 }

@@ -42,7 +42,7 @@ public class SingleRemote implements IOperatorController {
     }
 
     @Override
-    public boolean driveShouldShift() {
+    public boolean driveShouldSolenoidBeOnForShifter() {
         return mDriver.getBumper(kRight) != HELD_DOWN;
     }
 
@@ -69,5 +69,23 @@ public class SingleRemote implements IOperatorController {
 
             return IntakeMode.NONE;
         }
+    }
+
+    @Override
+    public double getClimberSpeed() {
+        if (mDriver.getBButton() == HELD_DOWN){
+            return -mDriver.getY(kLeft); // This overrides Cheesy Drive
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean intakeShouldTogglePiston() {
+        return mDriver.getAButton() == PRESSED;
+    }
+
+    @Override
+    public boolean cameraShouldSwitch() {
+        return mDriver.getXButton() == PRESSED;
     }
 }

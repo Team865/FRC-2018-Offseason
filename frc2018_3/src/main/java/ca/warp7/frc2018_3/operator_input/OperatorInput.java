@@ -1,11 +1,8 @@
 package ca.warp7.frc2018_3.operator_input;
 
-
 import ca.warp7.frc2018_3.subsystems.Intake;
 
-import static ca.warp7.frc2018_3.Components.drive;
-import static ca.warp7.frc2018_3.Components.intake;
-import static ca.warp7.frc2018_3.Components.pneumatics;
+import static ca.warp7.frc2018_3.Components.*;
 
 public class OperatorInput {
 
@@ -23,7 +20,7 @@ public class OperatorInput {
         }
 
         // driver RIGHT bumper NOT HELD_DOWN
-        pneumatics.setShift(mController.driveShouldShift());
+        pneumatics.setShouldSolenoidBeOnForShifter(mController.driveShouldSolenoidBeOnForShifter());
 
         // driver RIGHT stick button PRESSED
         drive.setReversed(mController.driveShouldReverse());
@@ -44,13 +41,27 @@ public class OperatorInput {
                 intake.setSpeed(Intake.kIntakePower);
                 break;
             case FAST_OUTTAKE:
-                // driver LEFT trigger HELD DOWN
+                // driver LEFT trigger HELD_DOWN
                 intake.setSpeed(Intake.kFastOuttakePower);
                 break;
             case SLOW_OUTTAKE:
-                // driver LEFT d-pad HELD DOWN
+                // driver LEFT d-pad HELD_DOWN
                 intake.setSpeed(Intake.kSlowOuttakePower);
                 break;
         }
+
+        // driver A button PRESSED
+        if (mController.intakeShouldTogglePiston()){
+            intake.togglePiston();
+        }
+
+        // drive X button PRESSED
+        if (mController.cameraShouldSwitch()){
+            limelight.switchCamera();
+        }
+
+        // operator RIGHT y-axis when operator B button HELD_DOWN exclusive or
+        // driver LEFT y-axis when driver B button HELD_DOWN or 0
+        climber.setSpeed(mController.getClimberSpeed());
     }
 }
