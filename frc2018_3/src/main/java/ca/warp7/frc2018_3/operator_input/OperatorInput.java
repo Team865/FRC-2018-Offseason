@@ -8,11 +8,12 @@ public class OperatorInput {
 
     private static IOperatorController sController;
 
-    public static void setController(IOperatorController controller) {
+    public static Runnable getRunnerFromController(IOperatorController controller){
         sController = controller;
+        return OperatorInput::onUpdate;
     }
 
-    public static void onUpdate() {
+    private static void onUpdate() {
 
         // driver BACK button PRESSED
         if (sController.compressorShouldSwitch()) {

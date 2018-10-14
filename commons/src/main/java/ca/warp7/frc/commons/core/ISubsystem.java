@@ -25,12 +25,15 @@ import java.lang.annotation.Target;
  * to create subsystems. This could also be done using a singleton class</p>
  *
  * <p>For working in conjunction with the {@link Robot} class, the above said Subsystems
- * class should be part of a mapping class so that it could be reflectively found by the
+ * class should be part of a components class so that it could be reflectively found by the
  * {@link Components}</p>
  *
  * <p>This interface defines all the callbacks a subsystem should have.
  * It is managed by the {@link SubsystemsManager} and called periodically by the
  * {@link LoopsManager} class during different phases of robot runtime</p>
+ *
+ * <p>All the methods except onConstruct are empty default methods. Choose the appropriate one to
+ * implement. They will be called by the {@link SubsystemsManager} regardless which are implemented</p>
  *
  * <p>A good implementation strategy is define specific object classes that holds the input state
  * and current state of the subsystem respectively. This interface defines some annotations in
@@ -51,7 +54,10 @@ public interface ISubsystem {
      * <p>Called when constructing the subsystem</p>
      *
      * <p>This method should connect any hardware components such as motors, gyros,
-     * and encoders and perform any initial settings such as their direction</p>
+     * and encoders and perform any initial settings such as their direction.
+     * This method should be used instead of class constructors since subsystems are often
+     * created statically and we want to initialize in the proper order. In other words, this
+     * is a "deferred" constructor</p>
      */
     void onConstruct();
 
@@ -61,7 +67,8 @@ public interface ISubsystem {
      * <p>This method should reset everything having to do with output so as to put
      * the subsystem in a disabled state</p>
      */
-    void onDisabled();
+    default void onDisabled(){
+    }
 
     /**
      * <p>Called at the start of auto for initial setup</p>
@@ -95,7 +102,6 @@ public interface ISubsystem {
     default void onMeasure(){
     }
 
-
     /**
      * <p>Called at the start for the subsystem to zero its sensors.
      * This method may by called by autonomous actions otherwise</p>
@@ -110,7 +116,8 @@ public interface ISubsystem {
      * <p>This method is guaranteed to not be called when the robot is disabled.
      * Any output limits should be applied here for safety reasons.</p>
      */
-    void onOutput();
+    default void onOutput(){
+    }
 
     /**
      * <p>Called periodically for the subsystem to convert its inputs into the current
@@ -123,7 +130,8 @@ public interface ISubsystem {
      * worth separating out and are non-conflicting. In such case, those runners will
      * also be stopped when disabled.</p>
      */
-    void onUpdateState();
+    default void onUpdateState(){
+    }
 
     /**
      * <p>Called periodically for the subsystem to report its state, which could involve
@@ -161,7 +169,7 @@ public interface ISubsystem {
     }
 
     /**
-     * <p>Marks a the subsystems and components of a robot</p>
+     * <p>Marks a the subsystems and components class of a robot</p>
      */
     @Target(ElementType.TYPE)
     @interface RobotComponentsPool {

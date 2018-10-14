@@ -3,6 +3,8 @@ package ca.warp7.frc.commons.wpi_wrapper;
 import ca.warp7.frc.commons.state.ButtonState;
 import edu.wpi.first.wpilibj.GenericHID;
 
+import static ca.warp7.frc.commons.state.ButtonState.*;
+
 @SuppressWarnings("unused")
 public class XboxController {
     private LocalXboxController mInnerController;
@@ -25,7 +27,7 @@ public class XboxController {
     }
 
     private ButtonState compareBooleanState(boolean previousState, boolean newState) {
-        return newState != previousState ? newState ? ButtonState.PRESSED : ButtonState.RELEASED : newState ? ButtonState.HELD_DOWN : ButtonState.KEPT_UP;
+        return newState != previousState ? newState ? PRESSED : RELEASED : newState ? HELD_DOWN : KEPT_UP;
     }
 
     public ButtonState getAButton() {
@@ -106,7 +108,7 @@ public class XboxController {
         int newState = mInnerController.getPOV(0);
         mDirectionalPad = newState;
         return newState != previousState ? newState == value ?
-                ButtonState.PRESSED : ButtonState.RELEASED : newState == value ? ButtonState.HELD_DOWN : ButtonState.KEPT_UP;
+                PRESSED : RELEASED : newState == value ? HELD_DOWN : KEPT_UP;
     }
 
     public void setRumble(GenericHID.RumbleType type, double d) {

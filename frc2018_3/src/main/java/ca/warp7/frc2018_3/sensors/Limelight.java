@@ -1,15 +1,15 @@
 package ca.warp7.frc2018_3.sensors;
 
+import ca.warp7.frc.commons.core.IComponent;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class Limelight {
+public class Limelight implements IComponent {
 
     private NetworkTable table;
 
-    //    // Create variables
 //    private double targetD;
 //    private boolean hasTarget;
     private double xOffset;
@@ -21,7 +21,8 @@ public class Limelight {
     private int pipeline;
     private int pipelineNumber = 2;
 
-    public Limelight() {
+    @Override
+    public void onConstruct() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
     }
 

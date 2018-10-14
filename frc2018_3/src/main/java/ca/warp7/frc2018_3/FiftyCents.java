@@ -12,13 +12,10 @@ public class FiftyCents extends Robot {
     protected void onCreate() {
         System.out.println("Hello me is robit!");
 
-        setComponents(RobotMap.class);
         DefaultMap.configure();
 
         setAutoMode(new NothingMode());
 
-        OperatorInput.setController(new DualRemote(0, 1));
-        //OperatorInput.setController(new SingleRemote(0));
-        setOIRunner(OperatorInput::onUpdate);
+        setOIRunner(OperatorInput.getRunnerFromController(new DualRemote()));
     }
 }

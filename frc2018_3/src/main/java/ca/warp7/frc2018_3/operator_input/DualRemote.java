@@ -7,8 +7,8 @@ public class DualRemote extends SingleRemote {
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final XboxController mOperator;
 
-    public DualRemote(int driverPort, int operatorPort) {
-        super(driverPort);
-        mOperator = new XboxController(operatorPort);
+    public DualRemote() {
+        super();
+        mOperator = new XboxController(1);
     }
 }

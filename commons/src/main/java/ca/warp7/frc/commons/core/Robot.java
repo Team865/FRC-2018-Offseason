@@ -9,6 +9,11 @@ import ca.warp7.frc.commons.wpi_wrapper.IterativeRobotWrapper;
 public abstract class Robot extends IterativeRobotWrapper {
 
     /**
+     * Contains utilities to initialize the components of the robot. See {@link Components}
+     */
+    private final Components mComponents = new Components();
+
+    /**
      * Contains an array of subsystems. See {@link SubsystemsManager} for details
      */
     private final SubsystemsManager mSubsystemsManager = new SubsystemsManager();
@@ -28,50 +33,32 @@ public abstract class Robot extends IterativeRobotWrapper {
      */
     private final AutoRunner mAutoRunner = new AutoRunner();
 
-    /**
-     * A procedure passed into the {@link LoopsManager} runner called in teleop
-     */
-    private Runnable mOIRunner;
-
-    /**
-     * User class representing all the components of the robot
-     */
-    private Class<?> mComponents;
-
-    /**
-     * Call the onCreate method defined by the subclass to try to get the mapping class and OI updater.
-     * If successful, call the normal startCompetition to start everything
-     */
     @Override
     public final void startCompetition() {
-        setComponents(Components.tryGetComponentsFromPackage(getPackageName()));
+        this.displayQualifier();
+        setComponents(Components.tryReflectComponentsFromPackage(getPackageName()));
         sAccessor = new InstanceAccessor();
-        displayQualifier();
-        onCreate();
-        if (mComponents != null && mOIRunner != null) {
+        this.onCreate();
+        if (mComponents.hasClass() && mLoopsManager.hasOIRunner()) {
             super.startCompetition();
         } else {
             printError("Robot is not set up");
         }
     }
 
-    /**
-     * Performs all actual setup steps for the robot
-     */
     @Override
     public final void robotInit() {
         super.robotInit();
-        mSubsystemsManager.setSubsystems(Components.getSubsystems(mComponents));
-        mLoopsManager.setSource(mSubsystemsManager, mStateManager::sendAll, mOIRunner);
+        mComponents.createAll();
+        mSubsystemsManager.setSubsystems(mComponents.getSubsystems());
+        mLoopsManager.setPeriodicSource(mSubsystemsManager, mStateManager);
+        mComponents.getExtraComponents().forEach(IComponent::onConstruct);
         mSubsystemsManager.constructAll();
-        mSubsystemsManager.zeroAllSensors();
-        mSubsystemsManager.reportAll();
         mLoopsManager.startObservers();
+        mSubsystemsManager.reportAll();
+        mSubsystemsManager.zeroAllSensors();
     }
 
-    /**
-     * Disables the auto thread, managed loops and resets the subsystems when the robot should disable
-     */
     @Override
     public final void disabledInit() {
         super.disabledInit();
@@ -81,9 +68,6 @@ public abstract class Robot extends IterativeRobotWrapper {
         mSubsystemsManager.updateAll();
     }
 
-    /**
-     * Enables the managed loops and tries to start auto. Prints error if there isn't an auto mod available
-     */
     @Override
     public final void autonomousInit() {
         super.autonomousInit();
@@ -97,9 +81,6 @@ public abstract class Robot extends IterativeRobotWrapper {
         }
     }
 
-    /**
-     * Stops any autos and makes sure the loops are enabled
-     */
     @Override
     public final void teleopInit() {
         super.teleopInit();
@@ -109,9 +90,6 @@ public abstract class Robot extends IterativeRobotWrapper {
         mLoopsManager.enable();
     }
 
-    /**
-     * Nothing in the testing state
-     */
     @SuppressWarnings("EmptyMethod")
     @Override
     public void testInit() {
@@ -119,17 +97,15 @@ public abstract class Robot extends IterativeRobotWrapper {
     }
 
     /**
-     * Method should call the following three methods to set the robot's subsystems, the OI
-     * runner, and the auto mode
+     * Method should call the following three methods to setup the robot
      */
     protected abstract void onCreate();
 
     /**
-     * Sets the Operator Input runner, which should get input from controllers and
-     * pass them to subsystems
+     * Sets the Operator Input runner, which gets input from controllers and pass them to subsystems
      */
     protected final void setOIRunner(Runnable OIRunner) {
-        mOIRunner = OIRunner;
+        mLoopsManager.setOIRunner(OIRunner);
     }
 
     /**
@@ -144,8 +120,8 @@ public abstract class Robot extends IterativeRobotWrapper {
      * Sets the components class
      */
     @SuppressWarnings("WeakerAccess")
-    protected final void setComponents(Class<?> components) {
-        mComponents = components;
+    protected final void setComponents(Class<?> componentsClass) {
+        mComponents.setClass(componentsClass);
     }
 
     /**
@@ -153,7 +129,7 @@ public abstract class Robot extends IterativeRobotWrapper {
      */
     @SuppressWarnings("WeakerAccess")
     public static void printLine(Object object) {
-        sAccessor.reportState(null, ReportType.PRINT_LINE, object);
+        sAccessor.report(null, ReportType.PRINT_LINE, object);
     }
 
     /**
@@ -161,14 +137,14 @@ public abstract class Robot extends IterativeRobotWrapper {
      */
     @SuppressWarnings({"unused", "WeakerAccess"})
     public static void printError(Object object) {
-        sAccessor.reportState(null, ReportType.ERROR_PRINT_LINE, object);
+        sAccessor.report(null, ReportType.ERROR_PRINT_LINE, object);
     }
 
     /**
-     * See {@link StateManager#reportState(Object, ReportType, Object)}
+     * See {@link StateManager#report(Object, ReportType, Object)}
      */
     public static void reportState(Object owner, ReportType reportType, Object state) {
-        sAccessor.reportState(owner, reportType, state);
+        sAccessor.report(owner, reportType, state);
     }
 
     /**
@@ -177,8 +153,8 @@ public abstract class Robot extends IterativeRobotWrapper {
     private static InstanceAccessor sAccessor;
 
     private class InstanceAccessor {
-        private void reportState(Object owner, ReportType reportType, Object state) {
-            mStateManager.reportState(owner, reportType, state);
+        private void report(Object owner, ReportType reportType, Object state) {
+            mStateManager.report(owner, reportType, state);
         }
     }
 }

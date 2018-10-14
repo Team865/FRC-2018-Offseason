@@ -36,14 +36,6 @@ public class Pneumatics implements ISubsystem {
     }
 
     @Override
-    public void onMeasure() {
-    }
-
-    @Override
-    public void onZeroSensors() {
-    }
-
-    @Override
     public void onOutput() {
         mCompressor.setClosedLoopControl(mCurrentState.isClosedLoop);
         if (mCurrentState.isSolenoidOnForShifter) {

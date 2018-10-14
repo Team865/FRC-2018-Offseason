@@ -27,7 +27,7 @@ class StateManager {
      * @param reportType The report type. See {@link ReportType}
      * @param state      The state object to be reflected
      */
-    synchronized void reportState(Object owner, ReportType reportType, Object state) {
+    synchronized void report(Object owner, ReportType reportType, Object state) {
         String ownerName, value;
         if (owner != null) {
             ownerName = owner.getClass().getSimpleName();

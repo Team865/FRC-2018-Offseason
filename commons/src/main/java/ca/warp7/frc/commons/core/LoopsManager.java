@@ -41,15 +41,32 @@ class LoopsManager {
      */
     private ILoop mSystemOutputLoop;
 
-    void setSource(SubsystemsManager manager, Runnable sendStates, Runnable OIUpdater) {
-        mStateReportingLoop = new NamedLoop("State Reporting", manager::reportAll);
-        mStateSenderLoop = new NamedLoop("State Sender", sendStates);
+    /**
+     * A procedure passed into the {@link LoopsManager} runner called in teleop
+     */
+    private Runnable mOIRunner;
 
-        mMeasuringLoop = new NamedLoop("System Measuring", manager::measureAll);
-        mControllerInputLoop = new NamedLoop("Controller Input", OIUpdater);
+    /**
+     * Sets the Operator Input runner, which should get input from controllers and
+     * pass them to subsystems
+     */
+    void setOIRunner(Runnable OIRunner) {
+        mOIRunner = OIRunner;
+    }
 
-        mSystemOutputLoop = new NamedLoop("System Output", manager::outputAll);
-        mStateUpdaterLoop = new NamedLoop("State Updater", manager::updateAll);
+    boolean hasOIRunner(){
+        return mOIRunner != null;
+    }
+
+    void setPeriodicSource(SubsystemsManager subsystemsManager, StateManager stateManager) {
+        mStateReportingLoop = new NamedLoop("State Reporting", subsystemsManager::reportAll);
+        mStateSenderLoop = new NamedLoop("State Sender", stateManager::sendAll);
+
+        mMeasuringLoop = new NamedLoop("System Measuring", subsystemsManager::measureAll);
+        mControllerInputLoop = new NamedLoop("Operator Input", mOIRunner);
+
+        mSystemOutputLoop = new NamedLoop("System Output", subsystemsManager::outputAll);
+        mStateUpdaterLoop = new NamedLoop("State Updater", subsystemsManager::updateAll);
 
         registerInitialLoops();
     }

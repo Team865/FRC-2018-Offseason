@@ -12,8 +12,8 @@ public class SingleRemote implements IOperatorController {
 
     private final XboxController mDriver;
 
-    public SingleRemote(int driverPort) {
-        mDriver = new XboxController(driverPort);
+    public SingleRemote() {
+        mDriver = new XboxController(0);
     }
 
     @Override
