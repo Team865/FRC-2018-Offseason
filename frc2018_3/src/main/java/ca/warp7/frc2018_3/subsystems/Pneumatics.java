@@ -3,9 +3,11 @@ package ca.warp7.frc2018_3.subsystems;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
-import ca.warp7.frc2018_3.constants.RobotMap;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
+
+import static ca.warp7.frc2018_3.Constants.kPneumaticsCompressorPin;
+import static ca.warp7.frc2018_3.Constants.kPneumaticsShifterSolenoidPin;
 
 public class Pneumatics implements ISubsystem {
 
@@ -19,8 +21,8 @@ public class Pneumatics implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mCompressor = new Compressor(RobotMap.RIO.pneumaticsCompressorPin.first());
-        mShifterSolenoid = new Solenoid(RobotMap.RIO.pneumaticsShifterSolenoidPin.first());
+        mCompressor = new Compressor(kPneumaticsCompressorPin.first());
+        mShifterSolenoid = new Solenoid(kPneumaticsShifterSolenoidPin.first());
         mShifterSolenoid.set(false);
     }
 

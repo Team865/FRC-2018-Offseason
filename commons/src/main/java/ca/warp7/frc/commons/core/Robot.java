@@ -52,10 +52,9 @@ public abstract class Robot extends IterativeRobotWrapper {
         mComponents.createAll();
         mSubsystemsManager.setSubsystems(mComponents.getSubsystems());
         mLoopsManager.setPeriodicSource(mSubsystemsManager, mStateManager);
-        mComponents.getExtraComponents().forEach(IComponent::onConstruct);
+        mComponents.constructExtras();
         mSubsystemsManager.constructAll();
         mLoopsManager.startObservers();
-        mSubsystemsManager.reportAll();
         mSubsystemsManager.zeroAllSensors();
     }
 

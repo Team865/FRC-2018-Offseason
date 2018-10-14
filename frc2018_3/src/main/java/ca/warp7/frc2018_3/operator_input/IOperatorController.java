@@ -9,4 +9,6 @@ interface IOperatorController extends ICheesyDriveInput {
     boolean driveShouldShift();
 
     boolean driveShouldReverse();
+
+    IntakeMode getIntakeMode();
 }

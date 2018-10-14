@@ -5,7 +5,7 @@ import ca.warp7.frc.commons.scheduler.IAction;
 import ca.warp7.frc.commons.scheduler.ScheduleBuilder;
 import ca.warp7.frc2018_3.auto.actions.DriveForDistanceAction;
 import ca.warp7.frc2018_3.auto.actions.DriveForTimeAction;
-import ca.warp7.frc2018_3.constants.RobotMap;
+import ca.warp7.frc2018_3.Constants;
 
 public class TestDriveMode implements IAutoMode {
     @Override
@@ -14,7 +14,7 @@ public class TestDriveMode implements IAutoMode {
         return new ScheduleBuilder()
                 .chain()
                 .addToEnd(new DriveForTimeAction(0.5, 0.5, 0.5))
-                .addToEnd(new DriveForDistanceAction(RobotMap.PID.uniformDrivePID, 5, 30))
+                .addToEnd(new DriveForDistanceAction(Constants.kUniformDrivePID, 5, 30))
                 .getAction();
     }
 }

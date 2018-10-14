@@ -1,12 +1,11 @@
 package ca.warp7.frc2018_3.subsystems;
 
-import ca.warp7.frc.commons.core.Functions;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
-import ca.warp7.frc2018_3.constants.RobotMap;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import static ca.warp7.frc.commons.core.Functions.limit;
+import static ca.warp7.frc2018_3.Constants.kClimberPins;
 
 /**
  * Lets us climb the bar in endgame. No encoders or PID for this
@@ -27,7 +26,7 @@ public class Climber implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, RobotMap.RIO.climberPins);
+        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kClimberPins);
     }
 
     @Override

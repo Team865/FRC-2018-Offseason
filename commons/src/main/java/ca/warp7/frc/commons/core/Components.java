@@ -38,8 +38,8 @@ class Components {
         return mSubsystems;
     }
 
-    List<IComponent> getExtraComponents() {
-        return mExtraComponents;
+    void constructExtras(){
+        mExtraComponents.forEach(IComponent::onConstruct);
     }
 
     void createAll(){

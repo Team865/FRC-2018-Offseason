@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj.Encoder;
 
 import static ca.warp7.frc.commons.core.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.core.Functions.limit;
-import static ca.warp7.frc2018_3.constants.RobotMap.DriveConstants.*;
-import static ca.warp7.frc2018_3.constants.RobotMap.RIO.*;
+import static ca.warp7.frc2018_3.Constants.*;
 
 /**
  * Controls the motors turing the wheels in the drive train
@@ -52,15 +51,15 @@ public class Drive implements ISubsystem {
             mInputState.demandedRightSpeed = rightSpeedDemand;
         });
 
-        mLeftMotorGroup = new MotorGroup(WPI_VictorSPX.class, driveLeftPins);
-        mRightMotorGroup = new MotorGroup(WPI_VictorSPX.class, driveRightPins);
+        mLeftMotorGroup = new MotorGroup(WPI_VictorSPX.class, kDriveLeftPins);
+        mRightMotorGroup = new MotorGroup(WPI_VictorSPX.class, kDriveRightPins);
         mRightMotorGroup.setInverted(true);
 
-        mLeftEncoder = Creator.encoder(driveLeftEncoderChannels, true, EncodingType.k4X);
-        mLeftEncoder.setDistancePerPulse(inchesPerTick);
+        mLeftEncoder = Creator.encoder(kDriveLeftEncoderChannels, true, EncodingType.k4X);
+        mLeftEncoder.setDistancePerPulse(kInchesPerTick);
 
-        mRightEncoder = Creator.encoder(driveRightEncoderChannels, false, EncodingType.k4X);
-        mRightEncoder.setDistancePerPulse(inchesPerTick);
+        mRightEncoder = Creator.encoder(kDriveRightEncoderChannels, false, EncodingType.k4X);
+        mRightEncoder.setDistancePerPulse(kInchesPerTick);
     }
 
     @Override
@@ -93,10 +92,10 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onOutput() {
-        double limitedLeft = limit(mCurrentState.leftSpeed, preDriftSpeedLimit);
-        double limitedRight = limit(mCurrentState.rightSpeed, preDriftSpeedLimit);
-        mLeftMotorGroup.set(limit(limitedLeft * leftDriftOffset, kAbsoluteMaxOutputPower));
-        mRightMotorGroup.set(limit(limitedRight * rightDriftOffset, kAbsoluteMaxOutputPower));
+        double limitedLeft = limit(mCurrentState.leftSpeed, kPreDriftSpeedLimit);
+        double limitedRight = limit(mCurrentState.rightSpeed, kPreDriftSpeedLimit);
+        mLeftMotorGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutputPower));
+        mRightMotorGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutputPower));
     }
 
     @Override
