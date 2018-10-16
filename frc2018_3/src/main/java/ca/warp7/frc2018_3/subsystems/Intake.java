@@ -53,8 +53,8 @@ public class Intake implements ISubsystem {
 
     @Override
     public void onUpdateState() {
-        mCurrentState.leftSpeed += (mCurrentState.leftSpeed - mInputState.demandedLeftSpeed) / 6.0;
-        mCurrentState.rightSpeed += (mCurrentState.rightSpeed - mInputState.demandedRightSpeed) / 6.0;
+        mCurrentState.leftSpeed += (mInputState.demandedLeftSpeed - mCurrentState.leftSpeed) / 6.0;
+        mCurrentState.rightSpeed += (mInputState.demandedRightSpeed - mCurrentState.rightSpeed) / 6.0;
     }
 
     @Override

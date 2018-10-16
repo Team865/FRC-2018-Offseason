@@ -37,6 +37,9 @@ public class CheesyDrive {
         mInputState.wheel = controls.getWheel();
         mInputState.throttle = controls.getThrottle();
         mInputState.quickTurn = controls.shouldQuickTurn();
+        if (mInputState.quickTurn) {
+            mInputState.wheel = -mInputState.wheel;
+        }
         mInputState.altQuickTurn = controls.shouldAltQuickTurn();
     }
 

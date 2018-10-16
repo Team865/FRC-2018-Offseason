@@ -63,14 +63,14 @@ public class Robot extends IterativeRobot {
         liftRTS.start();
     }
 
-    private int pin = -1;
+    private int pin = 0;
 
     public void autonomousInit() {
         System.out.println("robot.java autonomousInit()");
         lift.zeroEncoder();
         lift.setLoc(0);
         auto = new AutonomousBase();
-        pin = autoSelector();
+        //pin = autoSelector();
         drive.resetDistance();
         navx.resetAngle();
         lift.disableSpeedLimit = true;

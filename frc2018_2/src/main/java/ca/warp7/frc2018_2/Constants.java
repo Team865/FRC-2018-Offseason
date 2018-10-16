@@ -43,10 +43,10 @@ public class Constants {
     public static int DRIVE_TICKS_PER_REV = 256; //256
     public static double DRIVE_INCHES_PER_TICK = WHEEL_CIRCUMFERENCE / DRIVE_TICKS_PER_REV;
 
-    public static double RIGHT_DRIFT_OFFSET = 1;
-    public static double LEFT_DRIFT_OFFSET = 0.951;//0.825
+    public static double RIGHT_DRIFT_OFFSET = 1.0;
+    public static double LEFT_DRIFT_OFFSET = 1.0;//0.825
 
-    public static double LIFT_HEIGHT = 13300;
+    public static double LIFT_HEIGHT = 14050;
     public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
 
     public static final int LIFT_ENCODER_A = 4;

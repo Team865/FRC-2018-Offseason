@@ -21,6 +21,9 @@ public final class Constants {
 
     public static final Pins kClimberPins = pins(9, 0);
 
+    public static final Pins kArmPin = pin(8);
+    public static final Pins kArmEncoderChannel = channels(7);
+
     public static final PIDValues kUniformDrivePID = new PIDValues(0, 0, 0);
 
     public static final double kLeftDriftOffset = 1.0;

@@ -36,15 +36,16 @@ public class AutonomousBase {
         //stuffs()	: literally just drives 4 meters
 
         if (pin == 0) { // None
-            if (gameData.equals("RRR")) {
-                baseLine();
-            } else if (gameData.equals("LLL")) {
-                baseLine();
-            } else if (gameData.equals("LRL")) {
-                baseLine();
-            } else if (gameData.equals("RLR")) {
-                baseLine();
-            }
+//            if (gameData.equals("RRR")) {
+//                baseLine();
+//            } else if (gameData.equals("LLL")) {
+//                baseLine();
+//            } else if (gameData.equals("LRL")) {
+//                baseLine();
+//            } else if (gameData.equals("RLR")) {
+//                baseLine();
+//            }
+            V2_LeftStart_doubleScaleLeft();
         } else if (pin == 1) { // Left
             // System.out.println("pin 1 active :Left:");
             if (gameData.equals("RRR")) {
@@ -604,7 +605,7 @@ public class AutonomousBase {
                 if (autoFunc.driveDistanceNoStop(90, 0, true)) {
                     autoFunc.setSpeedLimit(0.27);
                     lift.overrideIntake = true;
-                    intake.setSpeed(1);
+                    intake.setSpeed(0.5);
                     step++;
                 }
                 break;
@@ -875,7 +876,7 @@ public class AutonomousBase {
     private void baseLine() {
         switch (step) { // turn
             case (0):
-                if (autoFunc.driveDistance(325, 0, 15, true))
+                if (autoFunc.driveDistance(425, 0, 15, true))
                     step++;
                 break;
         }

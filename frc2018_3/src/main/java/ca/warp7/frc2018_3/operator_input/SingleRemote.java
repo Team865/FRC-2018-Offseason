@@ -18,12 +18,12 @@ public class SingleRemote implements IOperatorController {
 
     @Override
     public double getWheel() {
-        return -mDriver.getX(kRight);
+        return mDriver.getX(kRight);
     }
 
     @Override
     public double getThrottle() {
-        return mDriver.getY(kLeft);
+        return -mDriver.getY(kLeft);
     }
 
     @Override
@@ -74,7 +74,15 @@ public class SingleRemote implements IOperatorController {
     @Override
     public double getClimberSpeed() {
         if (mDriver.getBButton() == HELD_DOWN){
-            return -mDriver.getY(kLeft); // This overrides Cheesy Drive
+            return -mDriver.getY(kRight); // This overrides Cheesy Drive
+        }
+        return 0;
+    }
+
+    @Override
+    public double getArmSpeed() {
+        if (mDriver.getXButton() == HELD_DOWN) {
+            return -mDriver.getY(kRight); // This overrides Cheesy Drive
         }
         return 0;
     }

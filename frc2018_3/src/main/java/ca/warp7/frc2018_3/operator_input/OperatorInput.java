@@ -63,5 +63,6 @@ public class OperatorInput {
         // operator RIGHT y-axis when operator B button HELD_DOWN exclusive or
         // driver LEFT y-axis when driver B button HELD_DOWN or 0
         climber.setSpeed(mController.getClimberSpeed());
+        armClimber.setSpeed(mController.getArmSpeed());
     }
 }
