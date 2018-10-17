@@ -2,8 +2,8 @@
 .gradle/
 build/
 out/
-.md
-.iml
-.ipr
-.properties
-.DS_STORE
+*.iml
+*.ipr
+*.properties
+*.properties
+*.DS_STORE

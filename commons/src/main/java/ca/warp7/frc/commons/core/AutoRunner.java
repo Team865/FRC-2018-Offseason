@@ -10,7 +10,12 @@ import edu.wpi.first.wpilibj.Timer;
 
 class AutoRunner {
 
+    static final double kMaxAutoTimeoutSeconds = 15;
+
     private static final long kAutoLoopDeltaMilliseconds = 20;
+
+    static class NoAutoException extends Exception {
+    }
 
     /**
      * The main action to run, extracted from the mode
@@ -18,25 +23,19 @@ class AutoRunner {
     private IAction mMainAction;
 
     /**
-     * The thread that autos are run on.
-     * If this is null, then no autos are
-     * or should be running
+     * The thread that autos are run on. If this is null, then no autos are or should be running
      */
-    private Thread mRunThread;
+    private Thread mRunThread = null;
 
-    AutoRunner() {
-        mRunThread = null;
-    }
+    /**
+     * Sets an explicit timeout to the auto phase for safety and testing
+     */
+    private double mExplicitTimeout;
 
-    void setAutoMode(IAutoMode mode) {
-        // Make sure that autos are not currently running
-        // And make sure mode doesn't throw a NullPointerException
-        if (mRunThread == null && mode != null) {
-            mMainAction = mode.getMainAction();
-        } else {
-            mMainAction = null;
-        }
-    }
+    /**
+     * When true, doesn't end auto unless the driver station calls teleopInit
+     */
+    private boolean mOverrideExplicitTimeout;
 
     /**
      * Start running the auto action.
@@ -71,28 +70,49 @@ class AutoRunner {
 
                 mMainAction.onStart();
 
-                // If the thread is interrupted, it checks both during the start of the
-                // while loop and while it's running Thread.sleep
+                // Loop forever until an exit condition is met
+                while (true) {
 
-                while (!Thread.currentThread().isInterrupted() && !mMainAction.shouldFinish()) {
+                    // Stop priority #1: Check if the onStop method has been called to terminate this thread
+                    if (Thread.currentThread().isInterrupted()) {
+                        break;
+                    }
 
+                    // Stop priority #2: Check for explicit timeouts used in setAutoMode
+                    if (!mOverrideExplicitTimeout) {
+                        if ((Timer.getFPGATimestamp() - startTime) >= mExplicitTimeout) {
+                            break;
+                        }
+                    }
+
+                    // Stop priority #3: Check if the action should finish
+                    // Note the main action may have recursive actions under it and all of those actions
+                    // should contribute to this check
+                    if (mMainAction.shouldFinish()) {
+                        break;
+                    }
+
+                    // Update the action now after no exit conditions are met
                     mMainAction.onUpdate();
 
                     try {
-                        // Sleep so update is not called so often
+
+                        // Delay for 20ms so the update function is not called so often
                         Thread.sleep(kAutoLoopDeltaMilliseconds);
+
                     } catch (InterruptedException e) {
+
                         // Breaks out the loop instead of returning so that onStop can be called
                         break;
+
                     }
                 }
 
-                double timeDiff = Timer.getFPGATimestamp() - startTime;
-
-                System.out.println(String.format("Auto ending after %.2fs", timeDiff));
-
                 mMainAction.onStop();
 
+                System.out.println(String.format("Auto end after %.2fs", Timer.getFPGATimestamp() - startTime));
+
+                // Assign null to the thread so this runner can be called again
                 mRunThread = null;
             });
 
@@ -109,6 +129,31 @@ class AutoRunner {
         }
     }
 
-    static class NoAutoException extends Exception {
+    /**
+     * Sets the auto mode
+     *
+     * @param mode           the {@link IAutoMode} that provides the main action
+     * @param timeOutSeconds the number of seconds before the auto program times out
+     */
+    void setAutoMode(IAutoMode mode, double timeOutSeconds) {
+
+        // Make sure that autos are not currently running
+        // And make sure mode doesn't throw a NullPointerException
+        if (mRunThread == null && mode != null) {
+
+            mMainAction = mode.getMainAction();
+            mExplicitTimeout = timeOutSeconds;
+
+            // Wait for Driver Station only if timeout is infinity
+            mOverrideExplicitTimeout = mExplicitTimeout == Double.POSITIVE_INFINITY;
+
+            if (mExplicitTimeout >= kMaxAutoTimeoutSeconds || mExplicitTimeout < 0) {
+                mExplicitTimeout = kMaxAutoTimeoutSeconds;
+            }
+
+        } else {
+            // Now onStart will throw NoAutosException
+            mMainAction = null;
+        }
     }
 }

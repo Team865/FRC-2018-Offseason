@@ -36,7 +36,7 @@ public abstract class Robot extends IterativeRobotWrapper {
     @Override
     public final void startCompetition() {
         this.displayQualifier();
-        setComponents(Components.tryReflectComponentsFromPackage(getPackageName()));
+        this.setComponents(Components.tryReflectComponentsFromPackage(getPackageName()));
         sAccessor = new InstanceAccessor();
         this.onCreate();
         if (mComponents.hasClass() && mLoopsManager.hasOIRunner()) {
@@ -76,7 +76,7 @@ public abstract class Robot extends IterativeRobotWrapper {
         try {
             mAutoRunner.onStart();
         } catch (final AutoRunner.NoAutoException e) {
-            printError("The auto mode will do nothing!");
+            printError("There is not a specified main action!!!");
         }
     }
 
@@ -107,12 +107,15 @@ public abstract class Robot extends IterativeRobotWrapper {
         mLoopsManager.setOIRunner(OIRunner);
     }
 
+    protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
+    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
+
     /**
      * Sets the auto mode for the robot. See {@link IAutoMode}.
      */
     @SuppressWarnings("SameParameterValue")
-    protected final void setAutoMode(IAutoMode mode) {
-        mAutoRunner.setAutoMode(mode);
+    protected final void setAutoMode(IAutoMode mode, double timeoutSec) {
+        mAutoRunner.setAutoMode(mode, timeoutSec);
     }
 
     /**

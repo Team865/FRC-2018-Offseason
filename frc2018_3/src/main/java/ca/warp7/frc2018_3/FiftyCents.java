@@ -9,8 +9,7 @@ public class FiftyCents extends Robot {
     @Override
     protected void onCreate() {
         System.out.println("Hello me is robit!");
-
-        setAutoMode(new Baseline());
+        setAutoMode(new Baseline(), kMaxAutoTimeout);
         setOIRunner(new OperatorInput(new DualRemote())::onUpdate);
     }
 }
