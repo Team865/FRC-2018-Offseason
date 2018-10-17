@@ -45,7 +45,7 @@ public class ArmClimber implements ISubsystem {
 
     @Override
     public void onUpdateState() {
-        mCurrentState.speed += (mInputState.demandedSpeed - mCurrentState.speed) / 20.0;
+        mCurrentState.speed += (mInputState.demandedSpeed - mCurrentState.speed) / 10;
     }
 
     @Override

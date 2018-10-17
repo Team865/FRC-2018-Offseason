@@ -53,7 +53,7 @@ public class SingleRemote implements IOperatorController {
 
     @Override
     public IntakeMode getIntakeMode() {
-        if (mDriver.getTrigger(kRight) == HELD_DOWN || mDriver.getDpad(90) == HELD_DOWN) {
+        if (mDriver.getTrigger(kRight) == HELD_DOWN) {
 
             return IntakeMode.INTAKE;
 
@@ -81,8 +81,8 @@ public class SingleRemote implements IOperatorController {
 
     @Override
     public double getArmSpeed() {
-        if (mDriver.getXButton() == HELD_DOWN) {
-            return -mDriver.getY(kRight); // This overrides Cheesy Drive
+        if (mDriver.getBumper(kLeft) == HELD_DOWN) {
+            return mDriver.getY(kRight); // This overrides Cheesy Drive
         }
         return 0;
     }
