@@ -12,6 +12,8 @@ public class DriveForDistanceAction implements IAction {
     private final double mDistance;
     private final PIDValues mPID;
 
+    private int mTicks;
+
     public DriveForDistanceAction(PIDValues pidValues, double distance, double tolerance) {
         mPID = pidValues;
         mDistance = distance;
@@ -20,7 +22,14 @@ public class DriveForDistanceAction implements IAction {
 
     @Override
     public boolean shouldFinish() {
-        return !drive.shouldBeginPIDLoop() || drive.isWithinDistanceRange(mDistance, mTolerance);
+        if (!drive.shouldBeginPIDLoop()) {
+            return true;
+        }
+
+        boolean isWithinTolerance = drive.isWithinDistanceRange(mDistance, mTolerance);
+
+        if (isWithinTolerance) mTicks++;
+        return mTicks > 17;
     }
 
     @Override
@@ -34,7 +43,6 @@ public class DriveForDistanceAction implements IAction {
 
     @Override
     public void onStart() {
-        // Reset the encoders and start the PIDLoop
         drive.onZeroSensors();
         drive.setPIDTargetDistance(mPID, mDistance);
     }

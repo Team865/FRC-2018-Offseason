@@ -5,9 +5,7 @@ import ca.warp7.frc.commons.wpi_wrapper.IterativeRobotWrapper;
 /**
  * Base class for managing all the robot's stuff
  */
-
 public abstract class Robot extends IterativeRobotWrapper {
-
     /**
      * Contains utilities to initialize the components of the robot. See {@link Components}
      */
@@ -100,27 +98,18 @@ public abstract class Robot extends IterativeRobotWrapper {
      */
     protected abstract void onCreate();
 
-    /**
-     * Sets the Operator Input runner, which gets input from controllers and pass them to subsystems
-     */
+    protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
+    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
+
     protected final void setOIRunner(Runnable OIRunner) {
         mLoopsManager.setOIRunner(OIRunner);
     }
 
-    protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
-    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
-
-    /**
-     * Sets the auto mode for the robot. See {@link IAutoMode}.
-     */
     @SuppressWarnings("SameParameterValue")
     protected final void setAutoMode(IAutoMode mode, double timeoutSec) {
         mAutoRunner.setAutoMode(mode, timeoutSec);
     }
 
-    /**
-     * Sets the components class
-     */
     @SuppressWarnings("WeakerAccess")
     protected final void setComponents(Class<?> componentsClass) {
         mComponents.setClass(componentsClass);
@@ -130,16 +119,16 @@ public abstract class Robot extends IterativeRobotWrapper {
      * Prints an object to System.out
      */
     @SuppressWarnings("WeakerAccess")
-    public static void printLine(Object object) {
-        sAccessor.report(null, ReportType.PRINT_LINE, object);
+    public static void printLine(Object o) {
+        sAccessor.report(null, ReportType.PRINT_LINE, o);
     }
 
     /**
      * Prints an error to System.err
      */
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    public static void printError(Object object) {
-        sAccessor.report(null, ReportType.ERROR_PRINT_LINE, object);
+    @SuppressWarnings("WeakerAccess")
+    public static void printError(Object o) {
+        sAccessor.report(null, ReportType.ERROR_PRINT_LINE, o);
     }
 
     /**
@@ -149,9 +138,6 @@ public abstract class Robot extends IterativeRobotWrapper {
         sAccessor.report(owner, reportType, state);
     }
 
-    /**
-     * A static accessor that refers to the Robot instance
-     */
     private static InstanceAccessor sAccessor;
 
     private class InstanceAccessor {

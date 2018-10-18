@@ -9,6 +9,6 @@ public class BaselinePID implements IAutoMode {
 
     @Override
     public IAction getMainAction() {
-        return new DriveForDistanceAction(new PIDValues(0.02, 0.0013, 0.23), 10, 3);
+        return new DriveForDistanceAction(new PIDValues(0.018, 0.00001, 0.23), 50, 1);
     }
 }

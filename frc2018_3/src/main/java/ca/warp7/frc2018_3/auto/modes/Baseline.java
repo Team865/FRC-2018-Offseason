@@ -8,6 +8,6 @@ public class Baseline implements IAutoMode {
 
     @Override
     public IAction getMainAction() {
-        return new DriveForTimeAction(15, 0.2, 0.2);
+        return new DriveForTimeAction(8, 0.2, 0.2);
     }
 }

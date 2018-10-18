@@ -9,7 +9,7 @@ public final class Constants {
 
     public static final Pins kDriveLeftPins = pins(3, 4);
     public static final Pins kDriveRightPins = pins(5, 1);
-    public static final Pins kDriveLeftEncoderChannels = channels(2, 3);
+    public static final Pins kDriveLeftEncoderChannels = channels(4, 5);
     public static final Pins kDriveRightEncoderChannels = channels(0, 1);
 
     public static final Pins kPneumaticsShifterSolenoidPin = pin(1);

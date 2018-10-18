@@ -25,7 +25,7 @@ import static ca.warp7.frc2018_3.Constants.*;
 public class Drive implements ISubsystem {
 
     private static final double kAbsoluteMaxOutputPower = 1.0;
-    private static final double kMaximumPIDPower = 0.5;
+    private static final double kMaximumPIDPower = 0.7;
     private static final double kRampIntervalMultiplier = 0.5;
     private static final double kMinRampRate = 1.0E-04;
     private static final double kMinOutputPower = 1.0E-3;
@@ -78,8 +78,9 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onMeasure() {
-        mCurrentState.measuredLeftDistance = mLeftEncoder.getDistance();
-        mCurrentState.measuredRightDistance = mRightEncoder.getDistance();
+        mCurrentState.measuredLeftDistance = mLeftEncoder.getDistance() * -1;
+        mCurrentState.measuredRightDistance = mRightEncoder.getDistance() * -1;
+//        System.out.printf("%s, %s\n", mCurrentState.measuredLeftDistance, mCurrentState.measuredRightDistance);
     }
 
     @Override
@@ -119,15 +120,13 @@ public class Drive implements ISubsystem {
 
         if (mCurrentState.isOpenLoop) {
 
-            if (mCurrentState.isReversed) {
-                mInputState.demandedLeftSpeed *= -1;
-                mInputState.demandedRightSpeed *= -1;
-            }
+            double demandedLeft = mInputState.demandedLeftSpeed * (mCurrentState.isReversed ? -1 : 1);
+            double demandedRight = mInputState.demandedRightSpeed * (mCurrentState.isReversed ? -1 : 1);
+
+            double leftSpeedDiff = demandedLeft - mCurrentState.leftSpeed;
+            double rightSpeedDiff = demandedRight - mCurrentState.rightSpeed;
 
             // Apply a linear ramp constraint to the demanded speeds
-
-            double leftSpeedDiff = mInputState.demandedLeftSpeed - mCurrentState.leftSpeed;
-            double rightSpeedDiff = mInputState.demandedRightSpeed - mCurrentState.rightSpeed;
 
             mCurrentState.leftSpeed += constrainMinimum(Math.min(kMaxLinearRampRate,
                     Math.abs(leftSpeedDiff * kRampIntervalMultiplier)) * Math.signum(leftSpeedDiff), kMinRampRate);
@@ -149,10 +148,11 @@ public class Drive implements ISubsystem {
             mInputState.leftPIDValues.copyTo(mCurrentState.leftMiniPID);
             mInputState.rightPIDValues.copyTo(mCurrentState.rightMiniPID);
 
-            mCurrentState.leftSpeed = mCurrentState.leftMiniPID
-                    .getOutput(mCurrentState.measuredLeftDistance, mInputState.targetLeftDistance);
-            mCurrentState.rightSpeed = mCurrentState.rightMiniPID
-                    .getOutput(mCurrentState.measuredRightDistance, mInputState.targetRightDistance);
+            mCurrentState.leftMiniPID.setSetpoint(mInputState.targetLeftDistance);
+            mCurrentState.rightMiniPID.setSetpoint(mInputState.targetRightDistance);
+
+            mCurrentState.leftSpeed = mCurrentState.leftMiniPID.getOutput(mCurrentState.measuredLeftDistance);
+            mCurrentState.rightSpeed = mCurrentState.rightMiniPID.getOutput(mCurrentState.measuredRightDistance);
 
         } else {
 
@@ -192,8 +192,8 @@ public class Drive implements ISubsystem {
         mInputState.targetLeftDistance = targetDistance;
         mInputState.targetRightDistance = targetDistance;
 
-        mCurrentState.leftMiniPID.setOutputRampRate(kMaxLinearRampRate);
-        mCurrentState.rightMiniPID.setOutputRampRate(kMaxLinearRampRate);
+//        mCurrentState.leftMiniPID.setOutputRampRate(kMaxLinearRampRate);
+//        mCurrentState.rightMiniPID.setOutputRampRate(kMaxLinearRampRate);
         mCurrentState.leftMiniPID.setOutputLimits(kMaximumPIDPower);
         mCurrentState.rightMiniPID.setOutputLimits(kMaximumPIDPower);
     }
@@ -205,6 +205,7 @@ public class Drive implements ISubsystem {
 
     public synchronized boolean isWithinDistanceRange(double distanceRange, double tolerance) {
         double average = (mCurrentState.measuredLeftDistance + mCurrentState.measuredRightDistance) / 2;
+//        System.out.printf("average: %s\n", average);
         return Math.abs(distanceRange - average) < Math.abs(tolerance);
     }
 

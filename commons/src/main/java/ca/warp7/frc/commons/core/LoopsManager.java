@@ -2,7 +2,7 @@ package ca.warp7.frc.commons.core;
 
 class LoopsManager {
 
-    private static final double kObservationLooperDelta = 0.5;
+    private static final double kObservationLooperDelta = 0.05;
     private final Looper mStateObservationLooper = new Looper(kObservationLooperDelta);
 
     private static final double kInputLooperDelta = 0.02;
