@@ -99,6 +99,6 @@ public class Lift {
     }
 
     public boolean isBottom() {
-        return (boolean) liftHallaffect.get();//is lift at bottom
+        return liftHallaffect.get();//is lift at bottom
     }
 }

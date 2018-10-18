@@ -4,7 +4,6 @@ package ca.warp7.frc2018_2;
 import ca.warp7.frc2018_2.auto.AutonomousBase;
 import ca.warp7.frc2018_2.controls.ControlsBase;
 import ca.warp7.frc2018_2.controls.DualRemote;
-import ca.warp7.frc2018_2.misc.RTS;
 import ca.warp7.frc2018_2.subsystems.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,10 +56,10 @@ public class Robot extends IterativeRobot {
         a2 = new AnalogInput(2);
         a3 = new AnalogInput(3);
 
-        RTS liftRTS = new RTS("liftRTS", 8);
-        Runnable liftPer = () -> lift.periodic();
-        liftRTS.addTask(liftPer);
-        liftRTS.start();
+		/*RTS liftRTS = new RTS("liftRTS", 60);
+		Runnable liftPer = () -> lift.periodic();
+		liftRTS.addTask(liftPer);
+		liftRTS.start();*/
     }
 
     private int pin = 0;
@@ -75,9 +74,12 @@ public class Robot extends IterativeRobot {
         navx.resetAngle();
         lift.disableSpeedLimit = true;
         drive.setGear(false);
+        if (limelight.getCamMode() == 0)
+            limelight.switchCamera();
     }
 
     public void autonomousPeriodic() {
+        lift.periodic();
         String gameData = driverStation.getGameSpecificMessage();
         auto.autonomousPeriodic(gameData, pin);//pin
     }
@@ -93,6 +95,8 @@ public class Robot extends IterativeRobot {
         //navx.resetDisplacement();
         compressor.setClosedLoopControl(true);
         drive.resetDistance();
+        if (limelight.getCamMode() == 0)
+            limelight.switchCamera();
     }
 
     public void teleopPeriodic() {
@@ -103,7 +107,7 @@ public class Robot extends IterativeRobot {
             controls.periodic();
             limelight.mutiPipeline();
             intake.periodic();
-
+            lift.periodic();
             double b = lift.getEncoderVal();
             if (a < b)
                 a = b;
