@@ -48,15 +48,15 @@ class ActionGraph implements IAction, ITriggerSender {
 
     @Override
     public void onUpdate() {
-        for (ActionTrigger trigger : mPeriodicTriggers) {
-            mActionNodes.forEach(actionMode -> actionMode.testTrigger(trigger));
-        }
         for (ActionNode node : mActionNodes) {
             if (node.shouldFinish()) {
                 node.onStop();
             } else {
                 node.onUpdate();
             }
+        }
+        for (ActionTrigger trigger : mPeriodicTriggers) {
+            mActionNodes.forEach(actionMode -> actionMode.testTrigger(trigger));
         }
         mActionNodes.removeIf(ActionNode::isDone);
         mPeriodicTriggers.clear();
@@ -69,6 +69,8 @@ class ActionGraph implements IAction, ITriggerSender {
 
     @Override
     public void sendTrigger(ActionTrigger trigger) {
-        mPeriodicTriggers.add(trigger);
+        if (trigger != null) {
+            mPeriodicTriggers.add(trigger);
+        }
     }
 }

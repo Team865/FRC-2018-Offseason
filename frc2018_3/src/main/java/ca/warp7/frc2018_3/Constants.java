@@ -21,7 +21,7 @@ public final class Constants {
     public static final Pins kClimberPins = pins(9, 0);
 
     public static final Pins kArmPin = pin(6);
-    public static final Pins kArmEncoderChannel = channels(7);
+    public static final Pins kArmEncoderChannel = channels(6, 7);
 
     public static final double kLeftDriftOffset = 1.0;
     public static final double kRightDriftOffset = 1.0;
