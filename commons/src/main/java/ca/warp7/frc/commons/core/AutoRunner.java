@@ -18,6 +18,11 @@ class AutoRunner {
     }
 
     /**
+     * The auto mode that can create the action on demand
+     */
+    private IAutoMode mAutoMode;
+
+    /**
      * The main action to run, extracted from the mode
      */
     private IAction mMainAction;
@@ -38,96 +43,68 @@ class AutoRunner {
     private boolean mOverrideExplicitTimeout;
 
     /**
-     * Start running the auto action.
-     * <p>
-     * The mechanism which each action is running on means that
-     * there cannot be blocking operations in both
-     * {@link IAction#onUpdate()} and {@link IAction#onStop()}
-     * or auto may not end on time</p>
-     * <p>
-     * The proper code mechanism should use implement {@link IAction}
-     * for a monitoring/locking purpose, and the actual feed forward
-     * and feedback loops should be run instead in the IO loops. This
-     * would also make the actual periodic delay not very relevant</p>
+     * The periodic Runnable for the auto program
      *
-     * @throws NoAutoException when the auto mode is null
+     * <p>The mechanism in which actions are running means that there cannot be blocking operations in
+     * both {@link IAction#onUpdate()} and {@link IAction#onStop()} or auto may not end on time</p>
+     *
+     * <p>The proper code mechanism should use implement {@link IAction}for a monitoring/locking purpose,
+     * and the actual IO loops should be run instead in the IO looper. This would also make the actual
+     * periodic delay not very relevant</p>
      */
-    void onStart() throws NoAutoException {
+    private Runnable mPeriodicRunner = () -> {
 
-        // Make sure an auto exists
-        if (mMainAction == null) {
-            throw new NoAutoException();
-        }
+        System.out.println("Auto starting");
 
-        // Make sure autos are not running right now
-        if (mRunThread == null) {
+        double startTime = Timer.getFPGATimestamp();
 
-            mRunThread = new Thread(() -> {
+        mMainAction.onStart();
 
-                System.out.println("Auto starting");
+        // Loop forever until an exit condition is met
+        while (true) {
 
-                double startTime = Timer.getFPGATimestamp();
+            // Stop priority #1: Check if the onStop method has been called to terminate this thread
+            if (Thread.currentThread().isInterrupted()) {
+                break;
+            }
 
-                mMainAction.onStart();
-
-                // Loop forever until an exit condition is met
-                while (true) {
-
-                    // Stop priority #1: Check if the onStop method has been called to terminate this thread
-                    if (Thread.currentThread().isInterrupted()) {
-                        break;
-                    }
-
-                    // Stop priority #2: Check for explicit timeouts used in setAutoMode
-                    if (!mOverrideExplicitTimeout) {
-                        if ((Timer.getFPGATimestamp() - startTime) >= mExplicitTimeout) {
-                            break;
-                        }
-                    }
-
-                    // Stop priority #3: Check if the action should finish
-                    // Note the main action may have recursive actions under it and all of those actions
-                    // should contribute to this check
-                    if (mMainAction.shouldFinish()) {
-                        break;
-                    }
-
-                    // Update the action now after no exit conditions are met
-                    mMainAction.onUpdate();
-
-                    try {
-
-                        // Delay for 20ms so the update function is not called so often
-                        Thread.sleep(kAutoLoopDeltaMilliseconds);
-
-                    } catch (InterruptedException e) {
-
-                        // Breaks out the loop instead of returning so that onStop can be called
-                        break;
-
-                    }
+            // Stop priority #2: Check for explicit timeouts used in setAutoMode
+            if (!mOverrideExplicitTimeout) {
+                if ((Timer.getFPGATimestamp() - startTime) >= mExplicitTimeout) {
+                    break;
                 }
+            }
 
-                mMainAction.onStop();
+            // Stop priority #3: Check if the action should finish
+            // Note the main action may have recursive actions under it and all of those actions
+            // should contribute to this check
+            if (mMainAction.shouldFinish()) {
+                break;
+            }
 
-                System.out.println(String.format("Auto end after %.2fs", Timer.getFPGATimestamp() - startTime));
+            // Update the action now after no exit conditions are met
+            mMainAction.onUpdate();
 
-                // Assign null to the thread so this runner can be called again
-                mRunThread = null;
-            });
+            try {
 
-            mRunThread.start();
+                // Delay for 20ms so the update function is not called so often
+                Thread.sleep(kAutoLoopDeltaMilliseconds);
+
+            } catch (InterruptedException e) {
+
+                // Breaks out the loop instead of returning so that onStop can be called
+                break;
+
+            }
         }
-    }
 
-    /**
-     * Stops the thread if it is running and nullify the variables
-     */
-    void onStop() {
-        if (mRunThread != null) {
-            mRunThread.interrupt();
-        }
-    }
+        mMainAction.onStop();
+
+        System.out.println(String.format("Auto end after %.3fs", Timer.getFPGATimestamp() - startTime));
+
+        // Assign null to the thread so this runner can be called again
+        mRunThread = null;
+    };
 
     /**
      * Sets the auto mode
@@ -141,19 +118,63 @@ class AutoRunner {
         // And make sure mode doesn't throw a NullPointerException
         if (mRunThread == null && mode != null) {
 
-            mMainAction = mode.getMainAction();
+            mAutoMode = mode;
             mExplicitTimeout = timeOutSeconds;
 
             // Wait for Driver Station only if timeout is infinity
             mOverrideExplicitTimeout = mExplicitTimeout == Double.POSITIVE_INFINITY;
 
+            // Limit the explicit timeout to make it reasonable
             if (mExplicitTimeout >= kMaxAutoTimeoutSeconds || mExplicitTimeout < 0) {
                 mExplicitTimeout = kMaxAutoTimeoutSeconds;
             }
 
         } else {
             // Now onStart will throw NoAutosException
+            mAutoMode = null;
             mMainAction = null;
+            mExplicitTimeout = 0;
+        }
+    }
+
+    /**
+     * Start running the auto action.
+     *
+     * @throws NoAutoException when there is no auto to run
+     */
+    void onStart() throws NoAutoException {
+
+        // Make sure there is a mode to create the main action from
+        if (mAutoMode == null) {
+            throw new NoAutoException();
+        }
+
+        // Use the mode to create the actual action to run
+        // This is used so that the main action can be run multiple times
+        // even if the robot code is not restarted
+        mMainAction = mAutoMode.getMainAction();
+
+        // Make sure a valid action is returned by the mode
+        if (mMainAction == null) {
+            throw new NoAutoException();
+        }
+
+        // Make sure autos are not running right now before continuing
+        if (mRunThread != null) {
+            return;
+        }
+
+        // Create and start the thread;
+        mRunThread = new Thread(mPeriodicRunner);
+        mRunThread.start();
+    }
+
+    /**
+     * Stops the thread if it is running and nullify the variables
+     */
+    void onStop() {
+        if (mRunThread != null) {
+            mRunThread.interrupt();
         }
     }
 }

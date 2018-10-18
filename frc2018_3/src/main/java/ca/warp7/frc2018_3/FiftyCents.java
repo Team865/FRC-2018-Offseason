@@ -11,7 +11,7 @@ public class FiftyCents extends Robot {
         System.out.println("Hello me is robit!");
         //setAutoMode(new BaselinePID(), 10);
         //setAutoMode(() -> new OuttakeCube(0.5, -0.75), 1);
-        setAutoMode(new OneSwitch(), 5);
+        setAutoMode(new OneSwitch(), 15);
         setOIRunner(new OperatorInput(new DualRemote())::onUpdate);
     }
 }

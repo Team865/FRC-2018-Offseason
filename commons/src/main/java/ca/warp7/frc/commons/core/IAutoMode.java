@@ -5,7 +5,7 @@ import ca.warp7.frc.commons.scheduler.IAction;
 import ca.warp7.frc.commons.scheduler.ScheduleBuilder;
 
 /**
- * Essentially a wrapper to get an action, no other mechanisms
+ * Essentially a wrapper to create an action, no other mechanisms
  * included. There are other classes that help with scheduling
  * mechanisms such as {@link ScheduleBuilder}
  * and {@link ActionSeries}
