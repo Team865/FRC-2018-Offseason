@@ -64,5 +64,6 @@ public class OperatorInput {
         // driver LEFT y-axis when driver B button HELD_DOWN or 0
         climber.setSpeed(mController.getClimberSpeed());
         armClimber.setSpeed(mController.getArmSpeed());
+        armLift.setLoc(mController.getArmDistance());
     }
 }

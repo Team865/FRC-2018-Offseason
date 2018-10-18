@@ -30,5 +30,13 @@ public class DualRemote extends SingleRemote {
 
         return super.getArmSpeed();
     }
+    @Override
+    public double getArmDistance() {
+        if (mOperator.getYButton() == ButtonState.HELD_DOWN) {
+            return mOperator.getY(kLeft); // This overrides Cheesy Drive
+        }
+
+        return super.getArmSpeed();
+    }
 
 }

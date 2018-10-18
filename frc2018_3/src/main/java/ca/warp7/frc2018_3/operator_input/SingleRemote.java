@@ -88,6 +88,14 @@ public class SingleRemote implements IOperatorController {
     }
 
     @Override
+    public double getArmDistance() {
+        if (mDriver.getYButton() == HELD_DOWN) {
+            return mDriver.getY(kRight); // This overrides Cheesy Drive
+        }
+        return 0;
+    }
+
+    @Override
     public boolean intakeShouldTogglePiston() {
         return mDriver.getAButton() == PRESSED;
     }

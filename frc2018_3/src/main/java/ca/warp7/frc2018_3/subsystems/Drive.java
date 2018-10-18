@@ -80,7 +80,7 @@ public class Drive implements ISubsystem {
     public synchronized void onMeasure() {
         mCurrentState.measuredLeftDistance = mLeftEncoder.getDistance() * -1;
         mCurrentState.measuredRightDistance = mRightEncoder.getDistance() * -1;
-//        System.out.printf("%s, %s\n", mCurrentState.measuredLeftDistance, mCurrentState.measuredRightDistance);
+//        System.out.printf("%s, %s\n", mCurrentState.measuredDistance, mCurrentState.measuredRightDistance);
     }
 
     @Override
