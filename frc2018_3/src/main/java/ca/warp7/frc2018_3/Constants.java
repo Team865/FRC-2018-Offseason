@@ -1,6 +1,5 @@
 package ca.warp7.frc2018_3;
 
-import ca.warp7.frc.commons.state.PIDValues;
 import ca.warp7.frc.commons.state.Pins;
 
 import static ca.warp7.frc.commons.state.Pins.*;
@@ -23,8 +22,6 @@ public final class Constants {
 
     public static final Pins kArmPin = pin(6);
     public static final Pins kArmEncoderChannel = channels(7);
-
-    public static final PIDValues kUniformDrivePID = new PIDValues(0, 0, 0);
 
     public static final double kLeftDriftOffset = 1.0;
     public static final double kRightDriftOffset = 1.0;

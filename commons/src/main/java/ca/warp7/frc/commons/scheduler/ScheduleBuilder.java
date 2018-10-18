@@ -27,6 +27,8 @@ public class ScheduleBuilder {
         ActionTrigger currentEndTrigger;
         currentEndTrigger = mCurrentNode == null ? mActionGraph.getEntryPoint() : mCurrentNode.getOnEndTrigger();
 
+        System.out.println("current end trigger: " + currentEndTrigger);
+
         ActionTrigger actualStarterTrigger;
         if (currentEndTrigger == null) {
             actualStarterTrigger = mActionGraph.createTrigger(mCurrentNode.getName());
@@ -34,6 +36,8 @@ public class ScheduleBuilder {
         } else {
             actualStarterTrigger = currentEndTrigger;
         }
+
+        System.out.println("actual starter trigger:" + actualStarterTrigger);
 
         node.setStarterTrigger(actualStarterTrigger);
         mActionGraph.addNode(node);
@@ -46,12 +50,12 @@ public class ScheduleBuilder {
         return this;
     }
 
-    public ScheduleBuilder hold() {
+    public ScheduleBuilder startParallel() {
         mPostCallMode = PostCallMode.HOLD;
         return this;
     }
 
-    public ScheduleBuilder chain() {
+    public ScheduleBuilder startSeries() {
         mPostCallMode = PostCallMode.CHAIN;
         return this;
     }

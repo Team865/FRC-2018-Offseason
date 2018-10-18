@@ -12,7 +12,7 @@ public class TestDriveMode implements IAutoMode {
     public IAction getMainAction() {
 
         return new ScheduleBuilder()
-                .chain()
+                .startSeries()
                 .addToEnd(new DriveForTimeAction(0.5, 0.5, 0.5))
                 .addToEnd(new DriveForDistanceAction(RobotMap.PID.uniformDrivePID, 5, 30))
                 .getAction();

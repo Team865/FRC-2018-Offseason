@@ -23,4 +23,9 @@ class ActionTrigger {
     public int hashCode() {
         return mName.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return mName;
+    }
 }

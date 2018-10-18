@@ -192,8 +192,8 @@ public class Drive implements ISubsystem {
         mInputState.targetLeftDistance = targetDistance;
         mInputState.targetRightDistance = targetDistance;
 
-//        mCurrentState.leftMiniPID.setOutputRampRate(kMaxLinearRampRate);
-//        mCurrentState.rightMiniPID.setOutputRampRate(kMaxLinearRampRate);
+        mCurrentState.leftMiniPID.setOutputRampRate(kMaxLinearRampRate);
+        mCurrentState.rightMiniPID.setOutputRampRate(kMaxLinearRampRate);
         mCurrentState.leftMiniPID.setOutputLimits(kMaximumPIDPower);
         mCurrentState.rightMiniPID.setOutputLimits(kMaximumPIDPower);
     }
