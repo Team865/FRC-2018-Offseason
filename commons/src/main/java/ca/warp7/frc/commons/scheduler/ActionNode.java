@@ -33,7 +33,7 @@ class ActionNode implements IAction {
     }
 
     void testTrigger(ActionTrigger trigger) {
-        System.out.println("Testing " + trigger + " against " + mStarterTrigger);
+        // System.out.println("Testing " + trigger + " against " + mStarterTrigger);
         if (mStarterTrigger != null && mStarterTrigger.equals(trigger)) {
             mIsActive = true;
             onStart();

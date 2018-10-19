@@ -1,7 +1,6 @@
 package ca.warp7.frc.commons.scheduler;
 
-@SuppressWarnings("unused")
-public class ScheduleBuilder {
+public class CompositeAction {
 
     private enum PostCallMode {
         CHAIN, HOLD
@@ -11,23 +10,21 @@ public class ScheduleBuilder {
     private ActionNode mCurrentNode;
     private PostCallMode mPostCallMode;
 
-    public ScheduleBuilder() {
+    public CompositeAction() {
         mActionGraph = new ActionGraph();
         mCurrentNode = null;
         mPostCallMode = PostCallMode.CHAIN;
     }
 
-    public IAction getAction() {
+    public IAction getActionGraph() {
         return mActionGraph;
     }
 
-    public ScheduleBuilder addToEnd(IAction action) {
+    public CompositeAction add(IAction action) {
         ActionNode node = new ActionNode(mActionGraph, action);
 
         ActionTrigger currentEndTrigger;
         currentEndTrigger = mCurrentNode == null ? mActionGraph.getEntryPoint() : mCurrentNode.getOnEndTrigger();
-
-        System.out.println("current end trigger: " + currentEndTrigger);
 
         ActionTrigger actualStarterTrigger;
         if (currentEndTrigger == null) {
@@ -36,8 +33,6 @@ public class ScheduleBuilder {
         } else {
             actualStarterTrigger = currentEndTrigger;
         }
-
-        System.out.println("actual starter trigger:" + actualStarterTrigger);
 
         node.setStarterTrigger(actualStarterTrigger);
         mActionGraph.addNode(node);
@@ -50,12 +45,12 @@ public class ScheduleBuilder {
         return this;
     }
 
-    public ScheduleBuilder startParallel() {
+    public CompositeAction startParallel() {
         mPostCallMode = PostCallMode.HOLD;
         return this;
     }
 
-    public ScheduleBuilder startSeries() {
+    public CompositeAction startSeries() {
         mPostCallMode = PostCallMode.CHAIN;
         return this;
     }

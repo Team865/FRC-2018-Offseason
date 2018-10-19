@@ -12,9 +12,7 @@ import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 
 import static ca.warp7.frc.commons.core.Functions.limit;
-import static ca.warp7.frc2018_3.Constants.kArmEncoderChannel;
-import static ca.warp7.frc2018_3.Constants.kArmInchesPerTick;
-import static ca.warp7.frc2018_3.Constants.kArmPin;
+import static ca.warp7.frc2018_3.Constants.*;
 
 /**
  * Based on climber subsystem (for testing purposes)
@@ -30,7 +28,7 @@ public class Arm implements ISubsystem {
     private final CurrentState mCurrentState = new CurrentState();
 
     private MotorGroup mArmMotor;
-    public Encoder mArmEncoder;
+    private Encoder mArmEncoder;
 
     @Override
     public void onConstruct() {
@@ -79,7 +77,7 @@ public class Arm implements ISubsystem {
         Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
     }
 
-    public void zeroEncoder(){
+    private void zeroEncoder() {
         mArmEncoder.reset();
     }
 
