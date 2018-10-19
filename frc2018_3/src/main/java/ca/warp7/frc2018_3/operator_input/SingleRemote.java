@@ -109,4 +109,9 @@ public class SingleRemote implements IOperatorController {
     public boolean grapplingHookShouldDeploy() {
         return mDriver.getStartButton() == HELD_DOWN;
     }
+
+    @Override
+    public double getActualClimberSpeed() {
+        return 0;
+    }
 }

@@ -43,4 +43,9 @@ public class DualRemote extends SingleRemote {
     public boolean grapplingHookShouldDeploy() {
         return super.grapplingHookShouldDeploy() || mOperator.getStartButton() == HELD_DOWN;
     }
+
+    @Override
+    public double getActualClimberSpeed() {
+        return mOperator.getStartButton() == HELD_DOWN ? mOperator.getY(kLeft) : 0;
+    }
 }

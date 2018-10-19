@@ -22,6 +22,8 @@ public final class Constants {
 
     public static final Pins kClimberPins = pins(9, 0);
 
+    public static final Pins kActualClimberPins = pin(8);
+
     public static final Pins kArmPin = pin(6);
     public static final Pins kArmEncoderChannel = channels(6, 7);
 

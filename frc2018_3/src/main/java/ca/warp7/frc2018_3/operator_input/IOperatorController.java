@@ -23,4 +23,6 @@ interface IOperatorController extends ICheesyDriveInput {
     boolean cameraShouldSwitch();
 
     boolean grapplingHookShouldDeploy();
+
+    double getActualClimberSpeed();
 }
