@@ -24,6 +24,7 @@ public class Pneumatics implements ISubsystem {
         mCompressor = new Compressor(kPneumaticsCompressorPin.first());
         mShifterSolenoid = new Solenoid(kPneumaticsShifterSolenoidPin.first());
         mShifterSolenoid.set(false);
+        mCompressor.setClosedLoopControl(true);
     }
 
     @Override

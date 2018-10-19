@@ -8,12 +8,11 @@ import ca.warp7.frc2018_3.auto.actions.DriveForDistanceAction;
 import ca.warp7.frc2018_3.auto.actions.OuttakeCube;
 
 public class OneSwitch implements IAutoMode {
-
     @Override
     public IAction getMainAction() {
         return new CompositeAction()
                 .startSeries()
-                .add(new DriveForDistanceAction(new PIDValues(0.018, 0.00001, 0.23), 103, 3))
+                .add(new DriveForDistanceAction(new PIDValues(0.018, 0.00001, 0.23), 103, 5))
                 .add(new OuttakeCube(0.5, -0.75))
                 .getActionGraph();
     }

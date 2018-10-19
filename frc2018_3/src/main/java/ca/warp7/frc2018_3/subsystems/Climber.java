@@ -15,7 +15,7 @@ import static ca.warp7.frc2018_3.Constants.kClimberPins;
 
 public class Climber implements ISubsystem {
 
-    private static final double kAbsoluteMaxOutputPower = 1.0;
+    private static final double kAbsoluteMaxOutputPower = 0.4;
 
     @InputStateField
     private final InputState mInputState = new InputState();
