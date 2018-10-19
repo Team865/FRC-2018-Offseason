@@ -69,7 +69,7 @@ public class Robot extends IterativeRobot {
         lift.zeroEncoder();
         lift.setLoc(0);
         auto = new AutonomousBase();
-        //pin = autoSelector();
+        pin = autoSelector();
         drive.resetDistance();
         navx.resetAngle();
         lift.disableSpeedLimit = true;

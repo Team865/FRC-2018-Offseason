@@ -36,16 +36,15 @@ public class AutonomousBase {
         //stuffs()	: literally just drives 4 meters
 
         if (pin == 0) { // None
-//            if (gameData.equals("RRR")) {
-//                baseLine();
-//            } else if (gameData.equals("LLL")) {
-//                baseLine();
-//            } else if (gameData.equals("LRL")) {
-//                baseLine();
-//            } else if (gameData.equals("RLR")) {
-//                baseLine();
-//            }
-            V2_LeftStart_doubleScaleLeft();
+            if (gameData.equals("RRR")) {
+                baseLine();
+            } else if (gameData.equals("LLL")) {
+                baseLine();
+            } else if (gameData.equals("LRL")) {
+                baseLine();
+            } else if (gameData.equals("RLR")) {
+                baseLine();
+            }
         } else if (pin == 1) { // Left
             // System.out.println("pin 1 active :Left:");
             if (gameData.equals("RRR")) {

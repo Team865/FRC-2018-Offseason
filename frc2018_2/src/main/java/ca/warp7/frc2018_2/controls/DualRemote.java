@@ -63,7 +63,7 @@ public class DualRemote extends ControlsBase {
             if (intakeTracking && lift.isBottom() && intake.getSpeed() > 0.4)
                 drive.trackCube(driver.getY(kLeft), 4);
             else
-                drive.cheesyDrive(driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
+                drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
         }
     }
 }
