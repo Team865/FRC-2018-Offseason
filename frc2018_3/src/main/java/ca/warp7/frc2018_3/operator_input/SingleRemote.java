@@ -71,6 +71,7 @@ public class SingleRemote implements IOperatorController {
         }
     }
 
+    /*
     @Override
     public double getClimberSpeed() {
         if (mDriver.getBButton() == HELD_DOWN){
@@ -78,7 +79,7 @@ public class SingleRemote implements IOperatorController {
         }
         return 0;
     }
-
+    */
     @Override
     public double getArmSpeed() {
         if (mDriver.getBumper(kLeft) == HELD_DOWN) {
@@ -87,6 +88,7 @@ public class SingleRemote implements IOperatorController {
         return 0;
     }
 
+    /*
     @Override
     public double getArmDistance() {
         if (mDriver.getYButton() == HELD_DOWN) {
@@ -94,7 +96,7 @@ public class SingleRemote implements IOperatorController {
         }
         return 0;
     }
-
+    */
     @Override
     public boolean intakeShouldTogglePiston() {
         return mDriver.getAButton() == PRESSED;

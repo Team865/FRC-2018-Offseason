@@ -14,6 +14,7 @@ public class DualRemote extends SingleRemote {
         mOperator = new XboxController(1);
     }
 
+    /*
     @Override
     public double getClimberSpeed() {
         if (mOperator.getBButton() == ButtonState.HELD_DOWN) {
@@ -21,7 +22,7 @@ public class DualRemote extends SingleRemote {
         }
         return super.getClimberSpeed(); // Hands control to driver after operator
     }
-
+    */
     @Override
     public double getArmSpeed() {
         if (mOperator.getAButton() == ButtonState.HELD_DOWN) {
@@ -30,6 +31,7 @@ public class DualRemote extends SingleRemote {
 
         return super.getArmSpeed();
     }
+    /*
     @Override
     public double getArmDistance() {
         if (mOperator.getYButton() == ButtonState.HELD_DOWN) {
@@ -38,5 +40,5 @@ public class DualRemote extends SingleRemote {
 
         return super.getArmSpeed();
     }
-
+    */
 }

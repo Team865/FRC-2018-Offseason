@@ -12,12 +12,14 @@ interface IOperatorController extends ICheesyDriveInput {
 
     IntakeMode getIntakeMode();
 
+    /*
     double getClimberSpeed();
-
+    */
     double getArmSpeed();
 
+    /*
     double getArmDistance();
-
+    */
     boolean intakeShouldTogglePiston();
 
     boolean cameraShouldSwitch();
