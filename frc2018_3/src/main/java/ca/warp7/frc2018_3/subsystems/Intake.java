@@ -35,7 +35,7 @@ public class Intake implements ISubsystem {
         mIntakeMotorLeft = new MotorGroup(WPI_VictorSPX.class, kIntakeLeftPin);
         mIntakeMotorRight = new MotorGroup(WPI_VictorSPX.class, kIntakeRightPin);
         mIntakeMotorRight.setInverted(true);
-        mIntakePistons = new Solenoid(kIntakePiston.first());
+        mIntakePistons = new Solenoid(kIntakePistonSolenoidPin.first());
         mPhotoSensor = new LimelightPhotoSensor(limelight, 1);
     }
 

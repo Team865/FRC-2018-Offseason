@@ -21,4 +21,6 @@ interface IOperatorController extends ICheesyDriveInput {
     boolean intakeShouldTogglePiston();
 
     boolean cameraShouldSwitch();
+
+    boolean grapplingHookShouldDeploy();
 }

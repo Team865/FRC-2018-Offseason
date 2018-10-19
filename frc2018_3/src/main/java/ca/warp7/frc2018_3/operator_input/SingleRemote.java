@@ -104,4 +104,9 @@ public class SingleRemote implements IOperatorController {
     public boolean cameraShouldSwitch() {
         return mDriver.getXButton() == PRESSED;
     }
+
+    @Override
+    public boolean grapplingHookShouldDeploy() {
+        return mDriver.getStartButton() == HELD_DOWN;
+    }
 }

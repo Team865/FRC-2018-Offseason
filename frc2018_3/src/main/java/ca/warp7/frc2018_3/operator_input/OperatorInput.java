@@ -65,5 +65,7 @@ public class OperatorInput {
         climber.setSpeed(mController.getClimberSpeed());
         armClimber.setSpeed(mController.getArmSpeed());
         armLift.setLoc(mController.getArmDistance());
+
+        pneumatics.setGrapplingHook(mController.grapplingHookShouldDeploy());
     }
 }

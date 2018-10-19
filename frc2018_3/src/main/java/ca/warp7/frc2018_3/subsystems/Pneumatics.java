@@ -6,8 +6,7 @@ import ca.warp7.frc.commons.core.Robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 
-import static ca.warp7.frc2018_3.Constants.kPneumaticsCompressorPin;
-import static ca.warp7.frc2018_3.Constants.kPneumaticsShifterSolenoidPin;
+import static ca.warp7.frc2018_3.Constants.*;
 
 public class Pneumatics implements ISubsystem {
 
@@ -18,11 +17,14 @@ public class Pneumatics implements ISubsystem {
 
     private Compressor mCompressor;
     private Solenoid mShifterSolenoid;
+    private Solenoid mGrapplingHookSolenoid;
 
     @Override
     public void onConstruct() {
         mCompressor = new Compressor(kPneumaticsCompressorPin.first());
         mShifterSolenoid = new Solenoid(kPneumaticsShifterSolenoidPin.first());
+        mGrapplingHookSolenoid = new Solenoid(kGrapplingHookSolenoidPin.first());
+        mGrapplingHookSolenoid.set(false);
         mShifterSolenoid.set(false);
         mCompressor.setClosedLoopControl(true);
     }
@@ -31,6 +33,7 @@ public class Pneumatics implements ISubsystem {
     public synchronized void onDisabled() {
         mInputState.shouldBeginClosedLoop = false;
         mInputState.shouldSolenoidBeOnForShifter = false;
+        mInputState.shouldDeployGrapplingHook = false;
     }
 
     @Override
@@ -48,6 +51,8 @@ public class Pneumatics implements ISubsystem {
         } else if (mShifterSolenoid.get()) {
             mShifterSolenoid.set(false);
         }
+
+        mGrapplingHookSolenoid.set(mInputState.shouldDeployGrapplingHook);
     }
 
     @Override
@@ -72,9 +77,15 @@ public class Pneumatics implements ISubsystem {
         mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
     }
 
+    @InputStateModifier
+    public synchronized void setGrapplingHook(boolean shouldDeploy) {
+        mInputState.shouldDeployGrapplingHook = shouldDeploy;
+    }
+
     private static class InputState {
         boolean shouldBeginClosedLoop;
         boolean shouldSolenoidBeOnForShifter;
+        boolean shouldDeployGrapplingHook;
     }
 
     private static class CurrentState {
