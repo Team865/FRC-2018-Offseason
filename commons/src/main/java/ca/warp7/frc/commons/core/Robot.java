@@ -71,11 +71,7 @@ public abstract class Robot extends IterativeRobotWrapper {
         mSubsystemsManager.onAutonomousInit();
         mLoopsManager.disableController();
         mLoopsManager.enable();
-        try {
-            mAutoRunner.onStart();
-        } catch (final AutoRunner.NoAutoException e) {
-            printError("There is not a specified main action!!!");
-        }
+        mAutoRunner.onStart();
     }
 
     @Override

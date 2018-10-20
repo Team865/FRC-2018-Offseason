@@ -1,6 +1,7 @@
 package ca.warp7.frc.commons.core;
 
 import ca.warp7.frc.commons.scheduler.IAction;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -14,9 +15,6 @@ class AutoRunner {
 
     private static final long kAutoLoopDeltaMilliseconds = 20;
 
-    static class NoAutoException extends Exception {
-    }
-
     /**
      * The auto mode that can create the action on demand
      */
@@ -25,7 +23,7 @@ class AutoRunner {
     /**
      * The main action to run, extracted from the mode
      */
-    private IAction mMainAction;
+    private IAction mAction;
 
     /**
      * The thread that autos are run on. If this is null, then no autos are or should be running
@@ -58,7 +56,7 @@ class AutoRunner {
 
         double startTime = Timer.getFPGATimestamp();
 
-        mMainAction.onStart();
+        mAction.onStart();
 
         // Loop forever until an exit condition is met
         while (true) {
@@ -78,12 +76,12 @@ class AutoRunner {
             // Stop priority #3: Check if the action should finish
             // Note the main action may have recursive actions under it and all of those actions
             // should contribute to this check
-            if (mMainAction.shouldFinish()) {
+            if (mAction.shouldFinish()) {
                 break;
             }
 
             // Update the action now after no exit conditions are met
-            mMainAction.onUpdate();
+            mAction.onUpdate();
 
             try {
 
@@ -98,11 +96,12 @@ class AutoRunner {
             }
         }
 
-        mMainAction.onStop();
+        mAction.onStop();
 
-        System.out.println(String.format("Auto end after %.3fs", Timer.getFPGATimestamp() - startTime));
+        System.out.printf("Auto program ending after %.3fs \n", Timer.getFPGATimestamp() - startTime);
 
         // Assign null to the thread so this runner can be called again
+        // without robot code restarting
         mRunThread = null;
     };
 
@@ -121,8 +120,9 @@ class AutoRunner {
             mAutoMode = mode;
             mExplicitTimeout = timeOutSeconds;
 
-            // Wait for Driver Station only if timeout is infinity
-            mOverrideExplicitTimeout = mExplicitTimeout == Double.POSITIVE_INFINITY;
+            // Wait for Driver Station only if timeout is infinity or the FMS is present
+            boolean hasFMS = DriverStation.getInstance().isFMSAttached();
+            mOverrideExplicitTimeout = hasFMS || timeOutSeconds == Double.POSITIVE_INFINITY;
 
             // Limit the explicit timeout to make it reasonable
             if (mExplicitTimeout >= kMaxAutoTimeoutSeconds || mExplicitTimeout < 0) {
@@ -132,35 +132,36 @@ class AutoRunner {
         } else {
             // Now onStart will throw NoAutosException
             mAutoMode = null;
-            mMainAction = null;
+            mAction = null;
             mExplicitTimeout = 0;
         }
     }
 
     /**
-     * Start running the auto action.
-     *
-     * @throws NoAutoException when there is no auto to run
+     * Check there is an auto mode and start running the auto action
      */
-    void onStart() throws NoAutoException {
+    void onStart() {
+
+        // Make sure autos are not running right now before continuing
+        if (mRunThread != null) {
+            System.err.println("ERROR an auto program is already running!!!");
+            return;
+        }
 
         // Make sure there is a mode to create the main action from
         if (mAutoMode == null) {
-            throw new NoAutoException();
+            System.err.println("ERROR There is no Auto Mode!!!");
+            return;
         }
 
         // Use the mode to create the actual action to run
         // This is used so that the main action can be run multiple times
         // even if the robot code is not restarted
-        mMainAction = mAutoMode.getMainAction();
+        mAction = mAutoMode.getMainAction();
 
         // Make sure a valid action is returned by the mode
-        if (mMainAction == null) {
-            throw new NoAutoException();
-        }
-
-        // Make sure autos are not running right now before continuing
-        if (mRunThread != null) {
+        if (mAction == null) {
+            System.err.println("WARNING there isn't a action returned by the mode!!!");
             return;
         }
 
