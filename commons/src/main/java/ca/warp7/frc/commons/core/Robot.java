@@ -3,39 +3,21 @@ package ca.warp7.frc.commons.core;
 import ca.warp7.frc.commons.wpi_wrapper.IterativeRobotWrapper;
 
 /**
- * Base class for managing all the robot's stuff
+ * Base class for managing all the robot's stuff. Extend this class
+ * to create a robot
  */
 public abstract class Robot extends IterativeRobotWrapper {
-    /**
-     * Contains utilities to initialize the components of the robot. See {@link Components}
-     */
+
     private final Components mComponents = new Components();
-
-    /**
-     * Contains an array of subsystems. See {@link SubsystemsManager} for details
-     */
     private final SubsystemsManager mSubsystemsManager = new SubsystemsManager();
-
-    /**
-     * Keeps track of the robot's looper and loops. See {@link LoopsManager} for details
-     */
     private final LoopsManager mLoopsManager = new LoopsManager();
-
-    /**
-     * Keep track of state reporting and sending. See {@link StateManager} for details
-     */
     private final StateManager mStateManager = new StateManager();
-
-    /**
-     * Starts and ends auto programs. See {@link AutoRunner} for details
-     */
     private final AutoRunner mAutoRunner = new AutoRunner();
 
     @Override
     public final void startCompetition() {
-        this.displayQualifier();
+        sState = mStateManager;
         this.setComponents(Components.tryReflectComponentsFromPackage(getPackageName()));
-        sAccessor = new InstanceAccessor();
         this.onCreate();
         if (mComponents.hasClass() && mLoopsManager.hasOIRunner()) {
             super.startCompetition();
@@ -89,13 +71,11 @@ public abstract class Robot extends IterativeRobotWrapper {
         super.testInit();
     }
 
-    /**
-     * Method should call the following three methods to setup the robot
-     */
-    protected abstract void onCreate();
-
+    @SuppressWarnings("unused")
     protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
     protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
+
+    protected abstract void onCreate();
 
     protected final void setOIRunner(Runnable OIRunner) {
         mLoopsManager.setOIRunner(OIRunner);
@@ -111,34 +91,19 @@ public abstract class Robot extends IterativeRobotWrapper {
         mComponents.setClass(componentsClass);
     }
 
-    /**
-     * Prints an object to System.out
-     */
+    private static StateManager sState;
+
     @SuppressWarnings("WeakerAccess")
     public static void printLine(Object o) {
-        sAccessor.report(null, ReportType.PRINT_LINE, o);
+        sState.report(null, StateType.PRINT_LINE, o);
     }
 
-    /**
-     * Prints an error to System.err
-     */
     @SuppressWarnings("WeakerAccess")
     public static void printError(Object o) {
-        sAccessor.report(null, ReportType.ERROR_PRINT_LINE, o);
+        sState.report(null, StateType.ERROR_PRINT_LINE, o);
     }
 
-    /**
-     * See {@link StateManager#report(Object, ReportType, Object)}
-     */
-    public static void reportState(Object owner, ReportType reportType, Object state) {
-        sAccessor.report(owner, reportType, state);
-    }
-
-    private static InstanceAccessor sAccessor;
-
-    private class InstanceAccessor {
-        private void report(Object owner, ReportType reportType, Object state) {
-            mStateManager.report(owner, reportType, state);
-        }
+    public static void reportState(Object owner, StateType type, Object state) {
+        sState.report(owner, type, state);
     }
 }

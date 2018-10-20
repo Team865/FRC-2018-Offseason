@@ -2,8 +2,8 @@ package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.Creator;
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc.commons.state.PIDValues;
 import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -73,8 +73,8 @@ public class Arm implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.reportState(this, StateType.REFLECT_STATE_INPUT, mInputState);
+        Robot.reportState(this, StateType.REFLECT_STATE_CURRENT, mCurrentState);
     }
 
     private void zeroEncoder() {

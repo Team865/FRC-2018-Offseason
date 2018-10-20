@@ -69,7 +69,7 @@ public abstract class IterativeRobotWrapper extends IterativeRobot {
         return getClass().getPackage().getName();
     }
 
-    protected final void displayQualifier() {
+    private void displayQualifier() {
         System.out.print(getClass().getSimpleName() + ": ");
     }
 

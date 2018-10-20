@@ -1,8 +1,8 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -63,8 +63,8 @@ public class Pneumatics implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.reportState(this, StateType.REFLECT_STATE_INPUT, mInputState);
+        Robot.reportState(this, StateType.REFLECT_STATE_CURRENT, mCurrentState);
     }
 
     @InputStateModifier

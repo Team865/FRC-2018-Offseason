@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Use reflection to get the subsystems
+ * Use reflection to initialize the components of the Robot
  */
 
 class Components {

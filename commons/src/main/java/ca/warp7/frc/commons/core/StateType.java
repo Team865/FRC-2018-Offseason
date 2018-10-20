@@ -1,6 +1,6 @@
 package ca.warp7.frc.commons.core;
 
-public enum ReportType {
+public enum StateType {
     /**
      * Reflects the input state of a subsystem
      */

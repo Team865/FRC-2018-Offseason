@@ -1,5 +1,8 @@
 package ca.warp7.frc.commons.core;
 
+/**
+ * Keeps track of the robot's looper and main loops
+ */
 class LoopsManager {
 
     private static final double kObservationLooperDelta = 0.05;

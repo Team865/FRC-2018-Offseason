@@ -4,8 +4,8 @@ import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.commons.core.Creator;
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc.commons.state.PIDValues;
 import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
 import com.stormbots.MiniPID;
@@ -164,8 +164,8 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.reportState(this, StateType.REFLECT_STATE_INPUT, mInputState);
+        Robot.reportState(this, StateType.REFLECT_STATE_CURRENT, mCurrentState);
     }
 
     @InputStateModifier

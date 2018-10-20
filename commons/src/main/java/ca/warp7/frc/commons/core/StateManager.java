@@ -4,6 +4,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Keeps track of state reporting and sending
+ */
 class StateManager {
 
     private static final int kMaxPrintLength = 255;
@@ -24,17 +27,17 @@ class StateManager {
      * Reports a state object
      *
      * @param owner      the owner of the state object, which can modify it
-     * @param reportType The report type. See {@link ReportType}
+     * @param stateType The report type. See {@link StateType}
      * @param state      The state object to be reflected
      */
-    synchronized void report(Object owner, ReportType reportType, Object state) {
+    synchronized void report(Object owner, StateType stateType, Object state) {
         String ownerName, value;
         if (owner != null) {
             ownerName = owner.getClass().getSimpleName();
         } else {
             ownerName = "Robot";
         }
-        switch (reportType) {
+        switch (stateType) {
             case REFLECT_STATE_CURRENT:
                 reflectObject(ownerName, state);
                 break;
