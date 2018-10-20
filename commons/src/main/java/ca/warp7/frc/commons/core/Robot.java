@@ -6,6 +6,7 @@ import ca.warp7.frc.commons.wpi_wrapper.IterativeRobotWrapper;
  * Base class for managing all the robot's stuff. Extend this class
  * to create a robot
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class Robot extends IterativeRobotWrapper {
 
     private final Components mComponents = new Components();
@@ -17,7 +18,7 @@ public abstract class Robot extends IterativeRobotWrapper {
     @Override
     public final void startCompetition() {
         sState = mStateManager;
-        this.setComponents(Components.tryReflectComponentsFromPackage(getPackageName()));
+        this.setComponents(Components.reflectComponentsFromPackageName(getClass().getPackage().getName()));
         this.onCreate();
         if (mComponents.hasClass() && mLoopsManager.hasOIRunner()) {
             super.startCompetition();
@@ -28,7 +29,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 
     @Override
     public final void robotInit() {
-        super.robotInit();
+        mStateManager.logRobotState("Initializing");
         mComponents.createAll();
         mSubsystemsManager.setSubsystems(mComponents.getSubsystems());
         mLoopsManager.setPeriodicSource(mSubsystemsManager, mStateManager);
@@ -40,7 +41,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 
     @Override
     public final void disabledInit() {
-        super.disabledInit();
+        mStateManager.logRobotState("Disabled");
         mAutoRunner.onStop();
         mLoopsManager.disable();
         mSubsystemsManager.disableAll();
@@ -49,7 +50,7 @@ public abstract class Robot extends IterativeRobotWrapper {
 
     @Override
     public final void autonomousInit() {
-        super.autonomousInit();
+        mStateManager.logRobotState("Auto");
         mSubsystemsManager.onAutonomousInit();
         mLoopsManager.disableController();
         mLoopsManager.enable();
@@ -58,20 +59,18 @@ public abstract class Robot extends IterativeRobotWrapper {
 
     @Override
     public final void teleopInit() {
-        super.teleopInit();
+        mStateManager.logRobotState("Teleop");
         mAutoRunner.onStop();
         mSubsystemsManager.onTeleopInit();
         mLoopsManager.enableController();
         mLoopsManager.enable();
     }
 
-    @SuppressWarnings("EmptyMethod")
     @Override
     public void testInit() {
-        super.testInit();
+        mStateManager.logRobotState("Test");
     }
 
-    @SuppressWarnings("unused")
     protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
     protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
 
@@ -81,24 +80,20 @@ public abstract class Robot extends IterativeRobotWrapper {
         mLoopsManager.setOIRunner(OIRunner);
     }
 
-    @SuppressWarnings("SameParameterValue")
     protected final void setAutoMode(IAutoMode mode, double timeoutSec) {
         mAutoRunner.setAutoMode(mode, timeoutSec);
     }
 
-    @SuppressWarnings("WeakerAccess")
     protected final void setComponents(Class<?> componentsClass) {
         mComponents.setClass(componentsClass);
     }
 
     private static StateManager sState;
 
-    @SuppressWarnings("WeakerAccess")
     public static void printLine(Object o) {
         sState.report(null, StateType.PRINT_LINE, o);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static void printError(Object o) {
         sState.report(null, StateType.ERROR_PRINT_LINE, o);
     }

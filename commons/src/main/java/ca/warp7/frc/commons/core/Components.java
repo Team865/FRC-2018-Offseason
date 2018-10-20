@@ -12,7 +12,7 @@ class Components {
 
     private static final String kComponentsClassName = ".Components";
 
-    static Class<?> tryReflectComponentsFromPackage(String packageName) {
+    static Class<?> reflectComponentsFromPackageName(String packageName) {
         String potentialClassName = packageName + kComponentsClassName;
         try {
             return Class.forName(potentialClassName);

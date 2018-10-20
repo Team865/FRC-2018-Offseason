@@ -1,5 +1,8 @@
 package ca.warp7.frc.commons.core;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +18,34 @@ class StateManager {
     private final List<StateObserver> mStateObservers;
     private final PrintStream mAccumulatedPrinter;
     private final PrintStream mAccumulatedError;
+    private String mLoggedRobotState;
+    private double mOldRobotStateTimeStamp;
 
     StateManager() {
         mPrintCounter = 0;
         mStateObservers = new ArrayList<>();
         mAccumulatedPrinter = new PrintStream(System.out, false);
         mAccumulatedError = new PrintStream(System.err, false);
+        mLoggedRobotState = "";
+        mOldRobotStateTimeStamp = Timer.getFPGATimestamp();
+    }
+
+    void logRobotState(String state) {
+        if (state.equals(mLoggedRobotState)) {
+            return;
+        }
+        String oldState = mLoggedRobotState;
+        mLoggedRobotState = state;
+        SmartDashboard.putString("Robot State", state);
+        double newTime = Timer.getFPGATimestamp();
+        double dt = newTime - mOldRobotStateTimeStamp;
+        mOldRobotStateTimeStamp = newTime;
+        System.out.print(getClass().getSimpleName() + " - ");
+        System.out.print("Robot State: " + mLoggedRobotState);
+        if (!oldState.isEmpty()) {
+            System.out.print(String.format(", %.0f seconds after %s began", dt, oldState));
+        }
+        System.out.println();
     }
 
     /**
