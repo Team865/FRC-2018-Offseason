@@ -19,7 +19,7 @@ public interface ILoop {
      * Starts the loop
      */
     default void onStart() {
-        Robot.printLine("Starting Loop: " + getName());
+        Robot.println("Starting Loop: " + getName());
     }
 
     /**
@@ -31,6 +31,6 @@ public interface ILoop {
      * Stops the loop
      */
     default void onStop() {
-        Robot.printLine("Stopping Loop: " + getName());
+        Robot.println("Stopping Loop: " + getName());
     }
 }

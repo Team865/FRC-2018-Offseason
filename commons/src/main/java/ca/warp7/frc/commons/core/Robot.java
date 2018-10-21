@@ -1,104 +1,108 @@
 package ca.warp7.frc.commons.core;
 
-import ca.warp7.frc.commons.wpi_wrapper.IterativeRobotWrapper;
+import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
  * Base class for managing all the robot's stuff. Extend this class
- * to create a robot
+ * to create a runnable robot. See documentation in the class of
+ * each field in this class.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class Robot extends IterativeRobotWrapper {
+public abstract class Robot extends IterativeRobot {
 
     private final Components mComponents = new Components();
-    private final SubsystemsManager mSubsystemsManager = new SubsystemsManager();
-    private final LoopsManager mLoopsManager = new LoopsManager();
-    private final StateManager mStateManager = new StateManager();
+    private final SubsystemsManager mSubsystems = new SubsystemsManager();
+    private final LoopsManager mLoops = new LoopsManager();
+    private final StateManager mState = new StateManager();
     private final AutoRunner mAutoRunner = new AutoRunner();
+
+    protected final double kAutoMaxTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
+    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
+    private static StateManager sState;
 
     @Override
     public final void startCompetition() {
-        sState = mStateManager;
-        this.setComponents(Components.reflectComponentsFromPackageName(getClass().getPackage().getName()));
+        sState = mState;
+        this.setComponents(Components.reflectFromPackageName(getClass().getPackage().getName()));
         this.onCreate();
-        if (mComponents.hasClass() && mLoopsManager.hasOIRunner()) {
+        if (mComponents.hasClass() && mLoops.hasOIRunner()) {
             super.startCompetition();
         } else {
-            printError("Robot is not set up");
+            System.out.println("ERROR Robot code does not have components or teleop code");
         }
     }
 
     @Override
     public final void robotInit() {
-        mStateManager.logRobotState("Initializing");
+        mState.logRobotState("Initializing");
         mComponents.createAll();
-        mSubsystemsManager.setSubsystems(mComponents.getSubsystems());
-        mLoopsManager.setPeriodicSource(mSubsystemsManager, mStateManager);
+        mSubsystems.setSubsystems(mComponents.getSubsystems());
+        mLoops.setPeriodicSource(mSubsystems, mState);
         mComponents.constructExtras();
-        mSubsystemsManager.constructAll();
-        mLoopsManager.startObservers();
-        mSubsystemsManager.zeroAllSensors();
+        mSubsystems.constructAll();
+        mLoops.startObservers();
+        mSubsystems.zeroAllSensors();
     }
 
     @Override
     public final void disabledInit() {
-        mStateManager.logRobotState("Disabled");
-        mAutoRunner.onStop();
-        mLoopsManager.disable();
-        mSubsystemsManager.disableAll();
-        mSubsystemsManager.updateAll();
+        mState.logRobotState("Disabled");
+        mAutoRunner.stop();
+        mLoops.disable();
+        mSubsystems.disableAll();
+        mSubsystems.updateAll();
     }
 
     @Override
     public final void autonomousInit() {
-        mStateManager.logRobotState("Auto");
-        mSubsystemsManager.onAutonomousInit();
-        mLoopsManager.disableController();
-        mLoopsManager.enable();
-        mAutoRunner.onStart();
+        mState.logRobotState("Autonomous");
+        mSubsystems.onAutonomousInit();
+        mLoops.disableController();
+        mLoops.enable();
+        mAutoRunner.start();
     }
 
     @Override
     public final void teleopInit() {
-        mStateManager.logRobotState("Teleop");
-        mAutoRunner.onStop();
-        mSubsystemsManager.onTeleopInit();
-        mLoopsManager.enableController();
-        mLoopsManager.enable();
+        mState.logRobotState("Teleop");
+        mAutoRunner.stop();
+        mSubsystems.onTeleopInit();
+        mLoops.enableController();
+        mLoops.enable();
     }
 
     @Override
-    public void testInit() {
-        mStateManager.logRobotState("Test");
+    public final void testInit() {
+        mState.logRobotState("Test");
     }
-
-    protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
-    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
 
     protected abstract void onCreate();
 
-    protected final void setOIRunner(Runnable OIRunner) {
-        mLoopsManager.setOIRunner(OIRunner);
+    protected final void setTeleop(Runnable runner) {
+        mLoops.setOIRunner(runner);
     }
 
-    protected final void setAutoMode(IAutoMode mode, double timeoutSec) {
-        mAutoRunner.setAutoMode(mode, timeoutSec);
+    protected final void setAutoMode(IAutoMode mode, double timeout) {
+        mAutoRunner.setAutoMode(mode, timeout);
     }
 
-    protected final void setComponents(Class<?> componentsClass) {
-        mComponents.setClass(componentsClass);
+    protected final void setComponents(Class<?> components) {
+        mComponents.setClass(components);
     }
 
-    private static StateManager sState;
-
-    public static void printLine(Object o) {
-        sState.report(null, StateType.PRINT_LINE, o);
+    public static void println(Object o) {
+        sState.report(null, StateType.PRINTLN, o);
     }
 
-    public static void printError(Object o) {
-        sState.report(null, StateType.ERROR_PRINT_LINE, o);
+    public static void warning(Object o) {
+        sState.report(null, StateType.WARNING_PRINTLN, o);
     }
 
-    public static void reportState(Object owner, StateType type, Object state) {
+    public static void error(Object o) {
+        sState.report(null, StateType.ERROR_PRINTLN, o);
+    }
+
+    public static void report(Object owner, StateType type, Object state) {
         sState.report(owner, type, state);
     }
 }

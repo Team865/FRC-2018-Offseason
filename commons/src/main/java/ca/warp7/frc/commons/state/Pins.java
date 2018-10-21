@@ -1,6 +1,7 @@
 package ca.warp7.frc.commons.state;
 
 public class Pins {
+
     private final int[] mPinsArray;
 
     private Pins(int[] pins) {

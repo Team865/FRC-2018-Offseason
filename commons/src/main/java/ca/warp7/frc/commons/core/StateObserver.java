@@ -1,6 +1,7 @@
 package ca.warp7.frc.commons.core;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -8,17 +9,19 @@ import java.util.Map;
 
 class StateObserver {
     private final Object mObservedObject;
-    private final String mObservedPrefix;
     private final Field[] mCachedFields;
     private final Map<String, Object> mObservedMap;
+    private final NetworkTable mTable;
 
-    StateObserver(String prefix, Object object) {
-        mObservedPrefix = prefix;
+    StateObserver(NetworkTable table, Object object) {
         mObservedObject = object;
         mCachedFields = mObservedObject.getClass().getDeclaredFields();
         mObservedMap = new HashMap<>();
+        mTable = table;
         for (Field field : mCachedFields) {
-            field.setAccessible(true);
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
         }
     }
 
@@ -31,24 +34,23 @@ class StateObserver {
             try {
                 String fieldName = stateField.getName();
                 Object value = stateField.get(mObservedObject);
-                String entryKey = mObservedPrefix + "." + fieldName;
-                mObservedMap.put(entryKey, value);
-
+                mObservedMap.put(fieldName, value);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    void updateSmartDashboard() {
+    void updateNetworkTables() {
         for (String entryKey : mObservedMap.keySet()) {
             Object value = mObservedMap.get(entryKey);
+            NetworkTableEntry entry = mTable.getEntry(entryKey);
             if (value instanceof Number) {
-                SmartDashboard.putNumber(entryKey, ((Number) value).doubleValue());
+                entry.setNumber((Number) value);
             } else if (value instanceof Boolean) {
-                SmartDashboard.putBoolean(entryKey, (Boolean) value);
+                entry.setBoolean((Boolean) value);
             } else {
-                SmartDashboard.putString(entryKey, String.valueOf(value));
+                entry.setString(String.valueOf(value));
             }
         }
     }

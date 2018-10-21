@@ -140,7 +140,7 @@ class RobotNamingConventions{
 	public void robotInit() {
 		// Method variables: mixedCase
 		String robotMessage = "Hello me is robit";
-		System.out.println(robotMessage);
+		Robot.print(robotMessage);
 	}
 }
 

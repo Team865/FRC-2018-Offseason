@@ -27,7 +27,7 @@ public final class Wanda extends Robot {
 
         //OperatorInput.setController(new DualRemote(0, 1));
         OperatorInput.setController(new SingleRemote(0));
-        setOIRunner(OperatorInput::onUpdate);
+        setTeleop(OperatorInput::onUpdate);
     }
 }
 

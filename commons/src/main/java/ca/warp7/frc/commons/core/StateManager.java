@@ -1,5 +1,7 @@
 package ca.warp7.frc.commons.core;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -17,17 +19,17 @@ class StateManager {
     private int mPrintCounter;
     private final List<StateObserver> mStateObservers;
     private final PrintStream mAccumulatedPrinter;
-    private final PrintStream mAccumulatedError;
     private String mLoggedRobotState;
     private double mOldRobotStateTimeStamp;
+    private NetworkTable mSubsystemsTable;
 
     StateManager() {
         mPrintCounter = 0;
         mStateObservers = new ArrayList<>();
         mAccumulatedPrinter = new PrintStream(System.out, false);
-        mAccumulatedError = new PrintStream(System.err, false);
         mLoggedRobotState = "";
         mOldRobotStateTimeStamp = Timer.getFPGATimestamp();
+        mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
     }
 
     void logRobotState(String state) {
@@ -51,42 +53,45 @@ class StateManager {
     /**
      * Reports a state object
      *
-     * @param owner      the owner of the state object, which can modify it
-     * @param stateType The report type. See {@link StateType}
-     * @param state      The state object to be reflected
+     * @param owner     the owner of the state object, which can modify it
+     * @param stateType The state type. See {@link StateType}
+     * @param o         The object to report
      */
-    synchronized void report(Object owner, StateType stateType, Object state) {
-        String ownerName, value;
+    synchronized void report(Object owner, StateType stateType, Object o) {
+        String ownerName;
         if (owner != null) {
             ownerName = owner.getClass().getSimpleName();
         } else {
             ownerName = "Robot";
         }
         switch (stateType) {
-            case REFLECT_STATE_CURRENT:
-                reflectObject(ownerName, state);
+            case SUBSYSTEM_STATE:
+                reflectSubsystem(ownerName, o);
                 break;
-            case REFLECT_STATE_INPUT:
-                reflectObject(ownerName + ".in", state);
+            case SUBSYSTEM_INPUT:
+                reflectSubsystem(ownerName + ".in", o);
                 break;
-            case PRINT_LINE:
-                value = String.valueOf(state);
-                if (mPrintCounter <= kMaxPrintLength) {
-                    mPrintCounter += value.length();
-                    mAccumulatedPrinter.println(value);
-                }
+            case PRINTLN:
+                println("", o);
                 break;
-            case ERROR_PRINT_LINE:
-                value = String.valueOf(state);
-                if (mPrintCounter <= kMaxPrintLength) {
-                    mPrintCounter += value.length();
-                    mAccumulatedError.println(value);
-                }
+            case WARNING_PRINTLN:
+                println("WARNING ", o);
+                break;
+            case ERROR_PRINTLN:
+                println("ERROR ", o);
                 break;
         }
     }
 
-    private synchronized void reflectObject(String prefix, Object state) {
+    private synchronized void println(String prefix, Object value) {
+        String stringValue = String.valueOf(value);
+        if (mPrintCounter <= kMaxPrintLength) {
+            mPrintCounter += stringValue.length();
+            mAccumulatedPrinter.println(prefix + stringValue);
+        }
+    }
+
+    private synchronized void reflectSubsystem(String prefix, Object state) {
         boolean foundCachedObserver = false;
         for (StateObserver observer : mStateObservers) {
             if (observer.isSameAs(state)) {
@@ -95,16 +100,17 @@ class StateManager {
             }
         }
         if (!foundCachedObserver) {
-            StateObserver observer = new StateObserver(prefix, state);
+            NetworkTable subTable = mSubsystemsTable.getSubTable(prefix);
+            StateObserver observer = new StateObserver(subTable, state);
             observer.updateData();
             mStateObservers.add(observer);
         }
     }
 
     synchronized void sendAll() {
-        mStateObservers.forEach(StateObserver::updateSmartDashboard);
+        mStateObservers.forEach(StateObserver::updateNetworkTables);
         if (mPrintCounter > kMaxPrintLength) {
-            System.err.println("Printing has exceeded the limit");
+            System.out.println("ERROR Printing has exceeded the limit");
         }
         mPrintCounter = 0;
         mAccumulatedPrinter.flush();

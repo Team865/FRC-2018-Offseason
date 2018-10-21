@@ -130,7 +130,7 @@ class AutoRunner {
             }
 
         } else {
-            // Now onStart will throw NoAutosException
+            // Make so it won't pass the start method's safe check
             mAutoMode = null;
             mAction = null;
             mExplicitTimeout = 0;
@@ -140,7 +140,7 @@ class AutoRunner {
     /**
      * Check there is an auto mode and start running the auto action
      */
-    void onStart() {
+    void start() {
 
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
@@ -173,7 +173,7 @@ class AutoRunner {
     /**
      * Stops the thread if it is running and nullify the variables
      */
-    void onStop() {
+    void stop() {
         if (mRunThread != null) {
             mRunThread.interrupt();
         }

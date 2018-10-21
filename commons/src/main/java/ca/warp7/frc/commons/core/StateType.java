@@ -4,20 +4,26 @@ public enum StateType {
     /**
      * Reflects the input state of a subsystem
      */
-    REFLECT_STATE_INPUT,
+    SUBSYSTEM_INPUT,
 
     /**
      * Reflects the current state of a subsystem
      */
-    REFLECT_STATE_CURRENT,
+    SUBSYSTEM_STATE,
 
     /**
      * Prints a line
      */
-    PRINT_LINE,
+    PRINTLN,
+
+    /**
+     * Prints a warning
+     */
+
+    WARNING_PRINTLN,
 
     /**
      * Prints an error
      */
-    ERROR_PRINT_LINE
+    ERROR_PRINTLN
 }
