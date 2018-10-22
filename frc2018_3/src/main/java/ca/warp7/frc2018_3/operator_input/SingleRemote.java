@@ -1,9 +1,9 @@
 package ca.warp7.frc2018_3.operator_input;
 
-import ca.warp7.frc.commons.wpi_wrapper.XboxController;
+import ca.warp7.frc.commons.XboxController;
 
-import static ca.warp7.frc.commons.state.ButtonState.HELD_DOWN;
-import static ca.warp7.frc.commons.state.ButtonState.PRESSED;
+import static ca.warp7.frc.commons.ButtonState.HELD_DOWN;
+import static ca.warp7.frc.commons.ButtonState.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
@@ -61,7 +61,7 @@ public class SingleRemote implements IOperatorController {
 
             return IntakeMode.SLOW_OUTTAKE;
 
-        } else if (mDriver.getDpad(270) == HELD_DOWN) {
+        } else if (mDriver.getDPad(270) == HELD_DOWN) {
 
             return IntakeMode.FAST_OUTTAKE;
 

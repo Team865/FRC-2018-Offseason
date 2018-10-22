@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_3.auto.actions;
 
 import ca.warp7.frc.commons.scheduler.IAction;
-import ca.warp7.frc.commons.state.PIDValues;
+import ca.warp7.frc.commons.PIDValues;
 
 import static ca.warp7.frc2018_3.Components.drive;
 

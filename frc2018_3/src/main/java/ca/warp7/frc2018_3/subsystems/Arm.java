@@ -1,17 +1,17 @@
 package ca.warp7.frc2018_3.subsystems;
 
-import ca.warp7.frc.commons.core.Creator;
+import ca.warp7.frc.commons.Creator;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.state.PIDValues;
-import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
+import ca.warp7.frc.commons.PIDValues;
+import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.stormbots.MiniPID;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 
-import static ca.warp7.frc.commons.core.Functions.limit;
+import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Constants.*;
 
 /**

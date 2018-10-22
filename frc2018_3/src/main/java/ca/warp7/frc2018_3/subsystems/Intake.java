@@ -3,12 +3,12 @@ package ca.warp7.frc2018_3.subsystems;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
+import ca.warp7.frc.commons.wrapper.MotorGroup;
 import ca.warp7.frc2018_3.sensors.LimelightPhotoSensor;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
 
-import static ca.warp7.frc.commons.core.Functions.limit;
+import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Components.limelight;
 import static ca.warp7.frc2018_3.Constants.*;
 

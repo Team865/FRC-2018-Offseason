@@ -1,8 +1,11 @@
-package ca.warp7.frc.commons.core;
+package ca.warp7.frc.commons;
 
+import ca.warp7.frc.commons.core.ISubsystem;
+import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import edu.wpi.first.wpilibj.SpeedController;
 
-import static ca.warp7.frc.commons.core.Functions.limit;
+import static ca.warp7.frc.commons.Functions.limit;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class GenericMotor implements ISubsystem {

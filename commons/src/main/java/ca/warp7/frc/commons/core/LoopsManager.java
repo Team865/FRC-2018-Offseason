@@ -3,6 +3,7 @@ package ca.warp7.frc.commons.core;
 /**
  * Keeps track of the robot's looper and main loops
  */
+@SuppressWarnings("FieldCanBeLocal")
 class LoopsManager {
 
     private static final double kObservationLooperDelta = 0.05;
@@ -62,16 +63,19 @@ class LoopsManager {
     }
 
     void setPeriodicSource(SubsystemsManager subsystemsManager, StateManager stateManager) {
-        mStateReportingLoop = new NamedLoop("State Reporting", subsystemsManager::reportAll);
-        mStateSenderLoop = new NamedLoop("State Sender", stateManager::sendAll);
+        mStateReportingLoop = subsystemsManager::reportAll;
+        mStateSenderLoop = stateManager::sendAll;
+        mMeasuringLoop = subsystemsManager::measureAll;
+        mControllerInputLoop = mOIRunner::run;
+        mSystemOutputLoop = subsystemsManager::outputAll;
+        mStateUpdaterLoop = subsystemsManager::updateAll;
 
-        mMeasuringLoop = new NamedLoop("System Measuring", subsystemsManager::measureAll);
-        mControllerInputLoop = new NamedLoop("Operator Input", mOIRunner);
-
-        mSystemOutputLoop = new NamedLoop("System Output", subsystemsManager::outputAll);
-        mStateUpdaterLoop = new NamedLoop("State Updater", subsystemsManager::updateAll);
-
-        registerInitialLoops();
+        mStateObservationLooper.registerStartLoop(mStateReportingLoop);
+        mStateObservationLooper.registerLoop(mStateSenderLoop);
+        mStateChangeLooper.registerLoop(mStateUpdaterLoop);
+        mInputLooper.registerStartLoop(mMeasuringLoop);
+        mInputLooper.registerFinalLoop(mControllerInputLoop);
+        mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
     }
 
     void startObservers() {
@@ -94,14 +98,5 @@ class LoopsManager {
 
     void disableController() {
         mInputLooper.registerFinalLoop(null);
-    }
-
-    private void registerInitialLoops() {
-        mStateObservationLooper.registerStartLoop(mStateReportingLoop);
-        mStateObservationLooper.registerLoop(mStateSenderLoop);
-        mStateChangeLooper.registerLoop(mStateUpdaterLoop);
-        mInputLooper.registerStartLoop(mMeasuringLoop);
-        mInputLooper.registerFinalLoop(mControllerInputLoop);
-        mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
     }
 }

@@ -1,4 +1,4 @@
-package ca.warp7.frc.commons.state;
+package ca.warp7.frc.commons;
 
 public class Pins {
 

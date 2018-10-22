@@ -1,6 +1,5 @@
-package ca.warp7.frc.commons.core;
+package ca.warp7.frc.commons;
 
-import ca.warp7.frc.commons.state.Pins;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 

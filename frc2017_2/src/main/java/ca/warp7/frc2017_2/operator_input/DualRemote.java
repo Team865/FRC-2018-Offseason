@@ -1,9 +1,9 @@
 package ca.warp7.frc2017_2.operator_input;
 
-import ca.warp7.frc.commons.wpi_wrapper.XboxController;
+import ca.warp7.frc.commons.XboxController;
 
-import static ca.warp7.frc.commons.state.ButtonState.HELD_DOWN;
-import static ca.warp7.frc.commons.state.ButtonState.KEPT_UP;
+import static ca.warp7.frc.commons.ButtonState.HELD_DOWN;
+import static ca.warp7.frc.commons.ButtonState.KEPT_UP;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
 public class DualRemote extends SingleRemote {
@@ -27,7 +27,7 @@ public class DualRemote extends SingleRemote {
 
     @Override
     public boolean hopperShouldReverse() {
-        return mOperator.getDpad(90) == HELD_DOWN;
+        return mOperator.getDPad(90) == HELD_DOWN;
     }
 
     @Override

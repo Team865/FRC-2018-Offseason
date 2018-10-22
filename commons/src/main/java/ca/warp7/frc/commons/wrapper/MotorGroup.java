@@ -1,6 +1,6 @@
-package ca.warp7.frc.commons.wpi_wrapper;
+package ca.warp7.frc.commons.wrapper;
 
-import ca.warp7.frc.commons.state.Pins;
+import ca.warp7.frc.commons.Pins;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import java.lang.reflect.InvocationTargetException;

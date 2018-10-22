@@ -1,6 +1,6 @@
 package ca.warp7.frc.commons.cheesy_drive;
 
-import ca.warp7.frc.commons.core.Functions;
+import ca.warp7.frc.commons.Functions;
 
 public class CheesyDrive {
 
