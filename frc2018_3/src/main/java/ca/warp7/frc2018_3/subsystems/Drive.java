@@ -160,10 +160,19 @@ public class Drive implements ISubsystem {
     }
 
     @InputModifier
+    @Deprecated
     public synchronized void cheesyDrive(ICheesyDriveInput driver) {
         mInputState.shouldBeginOpenLoop = true;
         mInputState.shouldBeginPIDLoop = false;
         mCheesyDrive.setInputsFromControls(driver);
+        mCheesyDrive.calculateFeed();
+    }
+
+    @InputModifier
+    public synchronized void cheesyDrive(double wheel, double throttle, boolean isQuickTurn) {
+        mInputState.shouldBeginOpenLoop = true;
+        mInputState.shouldBeginPIDLoop = false;
+        mCheesyDrive.setInputs(wheel, throttle, isQuickTurn);
         mCheesyDrive.calculateFeed();
     }
 

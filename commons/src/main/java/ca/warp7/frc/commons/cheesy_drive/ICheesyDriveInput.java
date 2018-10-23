@@ -7,6 +7,4 @@ public interface ICheesyDriveInput {
     double getThrottle();
 
     boolean shouldQuickTurn();
-
-    boolean shouldAltQuickTurn();
 }

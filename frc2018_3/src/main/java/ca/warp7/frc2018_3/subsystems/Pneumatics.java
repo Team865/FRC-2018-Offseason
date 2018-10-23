@@ -78,8 +78,8 @@ public class Pneumatics implements ISubsystem {
     }
 
     @InputModifier
-    public synchronized void setGrapplingHook(boolean shouldDeploy) {
-        mInputState.shouldDeployGrapplingHook = shouldDeploy;
+    public synchronized void setGrapplingHook(boolean shouldDeployGrapplingHook) {
+        mInputState.shouldDeployGrapplingHook = shouldDeployGrapplingHook;
     }
 
     private static class InputState {

@@ -33,18 +33,18 @@ public class CheesyDrive {
         mReceiver = receiver;
     }
 
-    public void setDriveSignalReceiver(ISignalReceiver receiver) {
-        mReceiver = receiver;
+    @Deprecated
+    public void setInputsFromControls(ICheesyDriveInput controls) {
+        setInputs(controls.getWheel(), controls.getThrottle(), controls.shouldQuickTurn());
     }
 
-    public void setInputsFromControls(ICheesyDriveInput controls) {
-        mInputState.wheel = controls.getWheel();
-        mInputState.throttle = controls.getThrottle();
-        mInputState.quickTurn = controls.shouldQuickTurn();
+    public void setInputs(double wheel, double throttle, boolean isQuickTurn) {
+        mInputState.wheel = wheel;
+        mInputState.throttle = throttle;
+        mInputState.quickTurn = isQuickTurn;
         if (mInputState.quickTurn) {
             mInputState.wheel = -mInputState.wheel;
         }
-        mInputState.altQuickTurn = controls.shouldAltQuickTurn();
     }
 
     public void calculateFeed() {
@@ -66,16 +66,7 @@ public class CheesyDrive {
         negInertiaAccumulator = negInertia * negInertiaScalar;
         wheel += negInertiaAccumulator;
 
-        if (mInputState.altQuickTurn) {
-            if (Math.abs(throttle) < 0.2) {
-                double alpha = .1f;
-                mCurrentState.quickStopAccumulator = ((1 - alpha) * mCurrentState.quickStopAccumulator) +
-                        (alpha * Functions.limit(wheel, 1.0) * 5);
-            }
-            overPower = -wheel * .75;
-            angularPower = -wheel * 1;
-
-        } else if (mInputState.quickTurn) {
+        if (mInputState.quickTurn) {
             if (Math.abs(throttle) < 0.2) {
                 double alpha = .1f;
                 mCurrentState.quickStopAccumulator = ((1 - alpha) * mCurrentState.quickStopAccumulator) +
@@ -123,6 +114,5 @@ public class CheesyDrive {
         double wheel;
         double throttle;
         boolean quickTurn;
-        boolean altQuickTurn;
     }
 }

@@ -99,7 +99,7 @@ public class Components implements ISubsystem {
 
     void setControllerLoop(IControllerLoop controllerLoop) {
         mControllerLoop = controllerLoop;
-        mControllerLoop.onInit(this);
+        mControllerLoop.onRegister(this);
     }
 
     void controllerPeriodic() {

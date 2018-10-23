@@ -15,7 +15,7 @@ public class OperatorInput implements IControllerLoop {
     }
 
     @Override
-    public void onInit(Components components) {
+    public void onRegister(Components components) {
         // Do nothing for now
     }
 

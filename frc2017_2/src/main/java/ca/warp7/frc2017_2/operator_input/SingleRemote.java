@@ -32,11 +32,6 @@ public class SingleRemote implements IOperatorController {
     }
 
     @Override
-    public boolean shouldAltQuickTurn() {
-        return false;
-    }
-
-    @Override
     public boolean driveShouldReverse() {
         return mDriver.getStickButton(kRight) == PRESSED;
     }
