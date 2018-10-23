@@ -103,7 +103,7 @@ public class Components implements ISubsystem {
     }
 
     void controllerPeriodic() {
-        mControllers.forEach(IController::updateValues);
+        mControllers.forEach(IController::onUpdateData);
         mControllerLoop.onPeriodic();
     }
 

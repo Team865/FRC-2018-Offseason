@@ -7,28 +7,36 @@ import static ca.warp7.frc.commons.ButtonState.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class XboxController2 implements IController {
 
     private static final double kTriggerDeadBand = 0.5;
+    private static final int kUpPOV = 0;
+    private static final int kRightPOV = 90;
+    private static final int kDownPOV = 180;
+    private static final int kLeftPOV = 270;
 
     private WPILibXboxController mController;
-    private ButtonState mAButton;
-    private ButtonState mBButton;
-    private ButtonState mXButton;
-    private ButtonState mYButton;
-    private ButtonState mLeftBumper;
-    private ButtonState mRightBumper;
-    private ButtonState mLeftTrigger;
-    private ButtonState mRightTrigger;
-    private ButtonState mLeftStickButton;
-    private ButtonState mRightStickButton;
-    private ButtonState mStartButton;
-    private ButtonState mBackButton;
-    private ButtonState mUpDirectionalPad;
-    private ButtonState mRightDirectionalPad;
-    private ButtonState mDownDirectionalPad;
-    private ButtonState mLeftDirectionalPad;
+    private State mState = new State();
+
+    private static class State {
+        private ButtonState AButton;
+        private ButtonState BButton;
+        private ButtonState XButton;
+        private ButtonState YButton;
+        private ButtonState LeftBumper;
+        private ButtonState RightBumper;
+        private ButtonState LeftTrigger;
+        private ButtonState RightTrigger;
+        private ButtonState LeftStickButton;
+        private ButtonState RightStickButton;
+        private ButtonState StartButton;
+        private ButtonState BackButton;
+        private ButtonState UpDirectionalPad;
+        private ButtonState RightDirectionalPad;
+        private ButtonState DownDirectionalPad;
+        private ButtonState LeftDirectionalPad;
+    }
 
     public XboxController2(int portNumber) {
         mController = new WPILibXboxController(portNumber);
@@ -39,103 +47,107 @@ public class XboxController2 implements IController {
     }
 
     @Override
-    public void updateValues() {
-        int POV = mController.getPOV(0);
-        mAButton = compare(mAButton, mController.getAButton());
-        mBButton = compare(mBButton, mController.getBButton());
-        mXButton = compare(mXButton, mController.getXButton());
-        mYButton = compare(mYButton, mController.getYButton());
-        mLeftBumper = compare(mLeftBumper, mController.getBumper(kLeft));
-        mRightBumper = compare(mRightBumper, mController.getBumper(kRight));
-        mLeftTrigger = compare(mLeftTrigger, mController.getTriggerAxis(kLeft) > kTriggerDeadBand);
-        mRightTrigger = compare(mRightTrigger, mController.getTriggerAxis(kRight) > kTriggerDeadBand);
-        mLeftStickButton = compare(mLeftStickButton, mController.getStickButton(kLeft));
-        mRightStickButton = compare(mRightStickButton, mController.getStickButton(kRight));
-        mStartButton = compare(mStartButton, mController.getStartButton());
-        mBackButton = compare(mBackButton, mController.getBackButton());
-        mUpDirectionalPad = compare(mUpDirectionalPad, POV == 0);
-        mRightDirectionalPad = compare(mRightDirectionalPad, POV == 90);
-        mDownDirectionalPad = compare(mDownDirectionalPad, POV == 180);
-        mLeftDirectionalPad = compare(mLeftDirectionalPad, POV == 270);
+    public void onUpdateData() {
+        int POV = mController.getPOV();
+        mState.AButton = compare(mState.AButton, mController.getAButton());
+        mState.BButton = compare(mState.BButton, mController.getBButton());
+        mState.XButton = compare(mState.XButton, mController.getXButton());
+        mState.YButton = compare(mState.YButton, mController.getYButton());
+        mState.LeftBumper = compare(mState.LeftBumper, mController.getBumper(kLeft));
+        mState.RightBumper = compare(mState.RightBumper, mController.getBumper(kRight));
+        mState.LeftTrigger = compare(mState.LeftTrigger, mController.getTriggerAxis(kLeft) > kTriggerDeadBand);
+        mState.RightTrigger = compare(mState.RightTrigger, mController.getTriggerAxis(kRight) > kTriggerDeadBand);
+        mState.LeftStickButton = compare(mState.LeftStickButton, mController.getStickButton(kLeft));
+        mState.RightStickButton = compare(mState.RightStickButton, mController.getStickButton(kRight));
+        mState.StartButton = compare(mState.StartButton, mController.getStartButton());
+        mState.BackButton = compare(mState.BackButton, mController.getBackButton());
+        mState.UpDirectionalPad = compare(mState.UpDirectionalPad, POV == kUpPOV);
+        mState.RightDirectionalPad = compare(mState.RightDirectionalPad, POV == kRightPOV);
+        mState.DownDirectionalPad = compare(mState.DownDirectionalPad, POV == kDownPOV);
+        mState.LeftDirectionalPad = compare(mState.LeftDirectionalPad, POV == kLeftPOV);
+    }
+
+    @Override
+    public void onReportState() {
     }
 
     public ButtonState getAButton() {
-        return mAButton;
+        return mState.AButton;
     }
 
     public ButtonState getBButton() {
-        return mBButton;
+        return mState.BButton;
     }
 
     public ButtonState getXButton() {
-        return mXButton;
+        return mState.XButton;
     }
 
     public ButtonState getYButton() {
-        return mYButton;
+        return mState.YButton;
     }
 
     public ButtonState getLeftBumper() {
-        return mLeftBumper;
+        return mState.LeftBumper;
     }
 
     public ButtonState getLeftTrigger() {
-        return mLeftTrigger;
+        return mState.LeftTrigger;
     }
 
     public ButtonState getLeftStickButton() {
-        return mLeftStickButton;
+        return mState.LeftStickButton;
     }
 
     public ButtonState getRightBumper() {
-        return mRightBumper;
+        return mState.RightBumper;
     }
 
     public ButtonState getRightTrigger() {
-        return mRightTrigger;
+        return mState.RightTrigger;
     }
 
     public ButtonState getRightStickButton() {
-        return mRightStickButton;
+        return mState.RightStickButton;
     }
 
     public ButtonState getStartButton() {
-        return mStartButton;
+        return mState.StartButton;
     }
 
     public ButtonState getBackButton() {
-        return mBackButton;
+        return mState.BackButton;
     }
 
     public ButtonState getUpDirectionalPad() {
-        return mUpDirectionalPad;
+        return mState.UpDirectionalPad;
     }
 
     public ButtonState getRightDirectionalPad() {
-        return mRightDirectionalPad;
+        return mState.RightDirectionalPad;
     }
 
     public ButtonState getDownDirectionalPad() {
-        return mDownDirectionalPad;
+        return mState.DownDirectionalPad;
     }
 
     public ButtonState getLeftDirectionalPad() {
-        return mLeftDirectionalPad;
+        return mState.LeftDirectionalPad;
     }
 
-    public double getLeftX() {
+    public double getLeftXAxis() {
         return mController.getX(kLeft);
     }
 
-    public double getLeftY() {
+    public double getLeftYAxis() {
         return mController.getY(kLeft);
     }
 
-    public double getRightX() {
+    public double getRightXAxis() {
         return mController.getX(kRight);
     }
 
-    public double getRightY() {
+    public double getRightYAxis() {
         return mController.getY(kRight);
     }
 }

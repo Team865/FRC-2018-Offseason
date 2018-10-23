@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import static ca.warp7.frc.commons.ButtonState.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
-@SuppressWarnings("unused")
+@Deprecated
 public class XboxController implements IController {
     private WPILibXboxController mWPILibController;
     private boolean mAButton;
@@ -111,10 +111,6 @@ public class XboxController implements IController {
         mDirectionalPad = newState;
         return newState != previousState ? newState == direction ?
                 PRESSED : RELEASED : newState == direction ? HELD_DOWN : KEPT_UP;
-    }
-
-    public void setRumble(GenericHID.RumbleType type, double d) {
-        mWPILibController.setRumble(type, d);
     }
 
     public double getX(GenericHID.Hand hand) {
