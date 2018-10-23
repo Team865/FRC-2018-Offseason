@@ -28,7 +28,7 @@ public class XboxController implements IController {
         mWPILibController = new WPILibXboxController(portNumber);
     }
 
-    private ButtonState compareBooleanState(boolean previousState, boolean newState) {
+    private static ButtonState compareBooleanState(boolean previousState, boolean newState) {
         return newState != previousState ? newState ? PRESSED : RELEASED : newState ? HELD_DOWN : KEPT_UP;
     }
 

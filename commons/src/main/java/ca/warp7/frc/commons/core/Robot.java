@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public abstract class Robot extends IterativeRobot {
 
     private final Components mComponents = new Components();
+    private final AutoRunner mAutoRunner = new AutoRunner();
     private final LoopsManager mLoops = new LoopsManager();
     private final StateManager mState = new StateManager();
-    private final AutoRunner mAutoRunner = new AutoRunner();
 
+    private static StateManager sState;
     protected final double kAutoMaxTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
     protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
-    private static StateManager sState;
 
     @Override
     public final void startCompetition() {
@@ -34,12 +34,10 @@ public abstract class Robot extends IterativeRobot {
     @Override
     public final void robotInit() {
         mState.logRobotState("Initializing");
-        mComponents.createAll();
+        mComponents.allocateObjects();
         mLoops.setPeriodicSource(mComponents, mState);
-        mComponents.constructExtras();
         mComponents.onConstruct();
         mLoops.startObservers();
-        mComponents.onZeroSensors();
     }
 
     @Override
@@ -48,7 +46,6 @@ public abstract class Robot extends IterativeRobot {
         mAutoRunner.stop();
         mLoops.disable();
         mComponents.onDisabled();
-        mComponents.onUpdateState();
     }
 
     @Override

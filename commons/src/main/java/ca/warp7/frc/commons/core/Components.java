@@ -34,20 +34,19 @@ public class Components implements ISubsystem {
     private List<ISubsystem> mSubsystems = new ArrayList<>();
     private List<IComponent> mExtraComponents = new ArrayList<>();
     private List<IController> mControllers = new ArrayList<>();
-
-    /**
-     * A procedure passed into the {@link LoopsManager} runner called in teleop
-     */
     private IControllerLoop mControllerLoop;
 
     @Override
     public void onConstruct() {
+        mExtraComponents.forEach(IComponent::onConstruct);
         mSubsystems.forEach(ISubsystem::onConstruct);
+        this.onZeroSensors();
     }
 
     @Override
     public void onDisabled() {
         mSubsystems.forEach(ISubsystem::onDisabled);
+        this.onUpdateState();
     }
 
     @Override
@@ -93,24 +92,19 @@ public class Components implements ISubsystem {
         return mComponentsClass != null;
     }
 
+    @SuppressWarnings("unused")
     public void registerController(IController controller) {
         mControllers.add(controller);
     }
 
-    /**
-     * Sets the Operator Input loop, which should get input from controllers and
-     * pass them to subsystems
-     */
     void setControllerLoop(IControllerLoop controllerLoop) {
         mControllerLoop = controllerLoop;
         mControllerLoop.onInit(this);
     }
 
-    ILoop getControllerLoop() {
-        return () -> {
-            mControllers.forEach(IController::updateValues);
-            mControllerLoop.onPeriodic();
-        };
+    void controllerPeriodic() {
+        mControllers.forEach(IController::updateValues);
+        mControllerLoop.onPeriodic();
     }
 
     boolean hasControlLoop() {
@@ -121,11 +115,7 @@ public class Components implements ISubsystem {
         return mSubsystems;
     }
 
-    void constructExtras() {
-        mExtraComponents.forEach(IComponent::onConstruct);
-    }
-
-    void createAll() {
+    void allocateObjects() {
         if (mComponentsClass != null) {
             Field[] componentFields = mComponentsClass.getFields();
             for (Field componentField : componentFields) {

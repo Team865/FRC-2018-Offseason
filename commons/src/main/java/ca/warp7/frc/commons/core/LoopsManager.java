@@ -51,7 +51,7 @@ class LoopsManager {
         mMeasuringLoop = components::onMeasure;
         mSystemOutputLoop = components::onOutput;
         mStateUpdaterLoop = components::onUpdateState;
-        mControllerLoop = components.getControllerLoop();
+        mControllerLoop = components::controllerPeriodic;
 
         mStateObservationLooper.registerStartLoop(mStateReportingLoop);
         mStateObservationLooper.registerLoop(mStateSenderLoop);
