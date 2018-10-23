@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public abstract class Robot extends IterativeRobot {
 
     private final Components mComponents = new Components();
-    private final SubsystemsManager mSubsystems = new SubsystemsManager();
     private final LoopsManager mLoops = new LoopsManager();
     private final StateManager mState = new StateManager();
     private final AutoRunner mAutoRunner = new AutoRunner();
@@ -36,12 +35,11 @@ public abstract class Robot extends IterativeRobot {
     public final void robotInit() {
         mState.logRobotState("Initializing");
         mComponents.createAll();
-        mSubsystems.setSubsystems(mComponents.getSubsystems());
-        mLoops.setPeriodicSource(mSubsystems, mComponents, mState);
+        mLoops.setPeriodicSource(mComponents, mState);
         mComponents.constructExtras();
-        mSubsystems.constructAll();
+        mComponents.onConstruct();
         mLoops.startObservers();
-        mSubsystems.zeroAllSensors();
+        mComponents.onZeroSensors();
     }
 
     @Override
@@ -49,14 +47,14 @@ public abstract class Robot extends IterativeRobot {
         mState.logRobotState("Disabled");
         mAutoRunner.stop();
         mLoops.disable();
-        mSubsystems.disableAll();
-        mSubsystems.updateAll();
+        mComponents.onDisabled();
+        mComponents.onUpdateState();
     }
 
     @Override
     public final void autonomousInit() {
         mState.logRobotState("Autonomous");
-        mSubsystems.onAutonomousInit();
+        mComponents.onAutonomousInit();
         mLoops.disableController();
         mLoops.enable();
         mAutoRunner.start();
@@ -66,7 +64,7 @@ public abstract class Robot extends IterativeRobot {
     public final void teleopInit() {
         mState.logRobotState("Teleop");
         mAutoRunner.stop();
-        mSubsystems.onTeleopInit();
+        mComponents.onTeleopInit();
         mLoops.enableController();
         mLoops.enable();
     }

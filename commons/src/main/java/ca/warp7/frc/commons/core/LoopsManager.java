@@ -45,12 +45,12 @@ class LoopsManager {
      */
     private ILoop mSystemOutputLoop;
 
-    void setPeriodicSource(SubsystemsManager subsystemsManager, Components components, StateManager stateManager) {
-        mStateReportingLoop = subsystemsManager::reportAll;
+    void setPeriodicSource(Components components, StateManager stateManager) {
+        mStateReportingLoop = components::onReportState;
         mStateSenderLoop = stateManager::sendAll;
-        mMeasuringLoop = subsystemsManager::measureAll;
-        mSystemOutputLoop = subsystemsManager::outputAll;
-        mStateUpdaterLoop = subsystemsManager::updateAll;
+        mMeasuringLoop = components::onMeasure;
+        mSystemOutputLoop = components::onOutput;
+        mStateUpdaterLoop = components::onUpdateState;
         mControllerLoop = components.getControllerLoop();
 
         mStateObservationLooper.registerStartLoop(mStateReportingLoop);

@@ -12,7 +12,7 @@ import java.util.List;
  * Use reflection to initialize the components of the Robot
  */
 
-public class Components {
+public class Components implements ISubsystem {
 
     private static final String kComponentsClassName = ".Components";
 
@@ -39,6 +39,51 @@ public class Components {
      * A procedure passed into the {@link LoopsManager} runner called in teleop
      */
     private IControllerLoop mControllerLoop;
+
+    @Override
+    public void onConstruct() {
+        mSubsystems.forEach(ISubsystem::onConstruct);
+    }
+
+    @Override
+    public void onDisabled() {
+        mSubsystems.forEach(ISubsystem::onDisabled);
+    }
+
+    @Override
+    public void onAutonomousInit() {
+        mSubsystems.forEach(ISubsystem::onAutonomousInit);
+    }
+
+    @Override
+    public void onTeleopInit() {
+        mSubsystems.forEach(ISubsystem::onTeleopInit);
+    }
+
+    @Override
+    public void onMeasure() {
+        mSubsystems.forEach(ISubsystem::onMeasure);
+    }
+
+    @Override
+    public void onZeroSensors() {
+        mSubsystems.forEach(ISubsystem::onZeroSensors);
+    }
+
+    @Override
+    public void onOutput() {
+        mSubsystems.forEach(ISubsystem::onOutput);
+    }
+
+    @Override
+    public void onUpdateState() {
+        mSubsystems.forEach(ISubsystem::onUpdateState);
+    }
+
+    @Override
+    public void onReportState() {
+        mSubsystems.forEach(ISubsystem::onReportState);
+    }
 
     void setClass(Class<?> componentsClass) {
         mComponentsClass = componentsClass;

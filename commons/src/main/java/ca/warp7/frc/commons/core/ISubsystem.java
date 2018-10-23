@@ -26,12 +26,12 @@ package ca.warp7.frc.commons.core;
  * then the parent class should be abstract</p>
  *
  * <p>This interface defines all the callbacks a subsystem should have, including handlers for
- * input, output, init, disabled, resetting, debugging, and state updating. It is managed by the
- * {@link SubsystemsManager} and called periodically by the {@link LoopsManager} class during
+ * input, output, init, disabled, resetting, debugging, and state updating. It is managed by
+ * {@link Components} and called periodically by the {@link LoopsManager} class during
  * different phases of robot runtime</p>
  *
  * <p>All the methods except onConstruct are empty default methods. Choose the appropriate one to
- * implement. They will be called properly by the {@link SubsystemsManager} regardless which
+ * implement. They will be called properly by {@link Components} regardless which
  * methods are implemented</p>
  *
  * <p>A good implementation strategy is define specific object classes that holds the input state
@@ -45,7 +45,7 @@ package ca.warp7.frc.commons.core;
  * that the periodic functions are not blocking operations as to prevent leaking.</p>
  *
  * @see Robot
- * @see SubsystemsManager
+ * @see Components
  */
 
 
