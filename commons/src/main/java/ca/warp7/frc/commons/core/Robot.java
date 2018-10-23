@@ -52,7 +52,6 @@ public abstract class Robot extends IterativeRobot {
     public final void autonomousInit() {
         mState.logRobotState("Autonomous");
         mComponents.onAutonomousInit();
-        mLoops.disableController();
         mLoops.enable();
         mAutoRunner.start();
     }
@@ -62,7 +61,6 @@ public abstract class Robot extends IterativeRobot {
         mState.logRobotState("Teleop");
         mAutoRunner.stop();
         mComponents.onTeleopInit();
-        mLoops.enableController();
         mLoops.enable();
     }
 

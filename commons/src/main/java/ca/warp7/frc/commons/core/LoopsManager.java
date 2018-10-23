@@ -15,11 +15,6 @@ class LoopsManager {
     private static final double kStateChangeLooperDelta = 0.02;
     private final Looper mStateChangeLooper = new Looper(kStateChangeLooperDelta);
 
-    /**
-     * Loop asking the callback to process the controller input
-     */
-    private ILoop mControllerPeriodic;
-
     void setPeriodicSource(Components components, StateManager stateManager) {
         /*
           Loop that sends data to the driver station
@@ -45,19 +40,20 @@ class LoopsManager {
         /*
           Updates the controllers
          */
-        ILoop mControllerUpdate = components::controllerUpdate;
+        ILoop controllerDataUpdateLoop = components::controllerUpdate;
 
-        mControllerPeriodic = components::controllerPeriodic;
+        /*
+          Loop asking the callback to process the controller input
+         */
+        ILoop controllerPeriodicLoop = components::controllerPeriodic;
 
-        mStateObservationLooper.registerStartLoop(stateReportingLoop);
+        mStateObservationLooper.registerLoop(stateReportingLoop);
         mStateObservationLooper.registerLoop(stateSenderLoop);
-        
-        mInputLooper.registerStartLoop(measuringLoop);
-        mInputLooper.registerLoop(mControllerUpdate);
-        mInputLooper.registerFinalLoop(mControllerPeriodic);
-
+        mInputLooper.registerLoop(measuringLoop);
+        mInputLooper.registerLoop(controllerDataUpdateLoop);
+        mInputLooper.registerLoop(controllerPeriodicLoop);
         mStateChangeLooper.registerLoop(stateUpdaterLoop);
-        mStateChangeLooper.registerFinalLoop(systemOutputLoop);
+        mStateChangeLooper.registerLoop(systemOutputLoop);
     }
 
     void startObservers() {
@@ -66,19 +62,11 @@ class LoopsManager {
 
     void disable() {
         mStateChangeLooper.stopLoops();
-        mInputLooper.stopLoops();
+        mInputLooper.stopLoops(); //TODO try removing this?
     }
 
     void enable() {
         mStateChangeLooper.startLoops();
         mInputLooper.startLoops();
-    }
-
-    void enableController() {
-        mInputLooper.registerFinalLoop(mControllerPeriodic);
-    }
-
-    void disableController() {
-        mInputLooper.registerFinalLoop(null);
     }
 }

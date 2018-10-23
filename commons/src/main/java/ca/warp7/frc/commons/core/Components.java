@@ -35,6 +35,7 @@ public class Components implements ISubsystem {
     private List<IComponent> mExtraComponents = new ArrayList<>();
     private List<IController> mControllers = new ArrayList<>();
     private IControllerLoop mControllerLoop;
+    private boolean mControllerEnabled;
 
     @Override
     public void onConstruct() {
@@ -47,16 +48,19 @@ public class Components implements ISubsystem {
     public void onDisabled() {
         mSubsystems.forEach(ISubsystem::onDisabled);
         this.onUpdateState();
+        mControllerEnabled = false;
     }
 
     @Override
     public void onAutonomousInit() {
         mSubsystems.forEach(ISubsystem::onAutonomousInit);
+        mControllerEnabled = false;
     }
 
     @Override
     public void onTeleopInit() {
         mSubsystems.forEach(ISubsystem::onTeleopInit);
+        mControllerEnabled = true;
     }
 
     @Override
@@ -103,7 +107,9 @@ public class Components implements ISubsystem {
     }
 
     void controllerPeriodic() {
-        mControllerLoop.onPeriodic();
+        if (mControllerEnabled) {
+            mControllerLoop.onPeriodic();
+        }
     }
 
     void controllerUpdate() {
