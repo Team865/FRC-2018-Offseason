@@ -56,8 +56,8 @@ public abstract class GenericMotor implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.report(this, StateType.SUBSYSTEM_INPUT, mInputState);
-        Robot.report(this, StateType.SUBSYSTEM_STATE, mCurrentState);
+        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
+        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
     }
 
     static class InputState {

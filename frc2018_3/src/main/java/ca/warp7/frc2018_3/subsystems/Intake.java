@@ -59,8 +59,8 @@ public class Intake implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.report(this, StateType.SUBSYSTEM_INPUT, mInputState);
-        Robot.report(this, StateType.SUBSYSTEM_STATE, mCurrentState);
+        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
+        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
     }
 
     public void setSpeed(double speed) {

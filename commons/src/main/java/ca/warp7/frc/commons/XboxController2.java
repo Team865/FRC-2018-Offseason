@@ -1,6 +1,8 @@
 package ca.warp7.frc.commons;
 
 import ca.warp7.frc.commons.core.IController;
+import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc.commons.wrapper.WPILibXboxController;
 
 import static ca.warp7.frc.commons.ButtonState.*;
@@ -38,8 +40,8 @@ public class XboxController2 implements IController {
         private ButtonState LeftDirectionalPad;
     }
 
-    public XboxController2(int portNumber) {
-        mController = new WPILibXboxController(portNumber);
+    public XboxController2(int port) {
+        mController = new WPILibXboxController(port);
     }
 
     private static ButtonState compare(ButtonState old, boolean bool) {
@@ -65,10 +67,7 @@ public class XboxController2 implements IController {
         mState.RightDirectionalPad = compare(mState.RightDirectionalPad, POV == kRightPOV);
         mState.DownDirectionalPad = compare(mState.DownDirectionalPad, POV == kDownPOV);
         mState.LeftDirectionalPad = compare(mState.LeftDirectionalPad, POV == kLeftPOV);
-    }
-
-    @Override
-    public void onReportState() {
+        Robot.report(String.format("XboxController[%s]", mController.getPort()), StateType.COMPONENT_STATE, mState);
     }
 
     public ButtonState getAButton() {

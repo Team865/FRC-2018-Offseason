@@ -3,7 +3,7 @@ package ca.warp7.frc.commons.core;
 /**
  * Keeps track of the robot's looper and main loops
  */
-@SuppressWarnings("FieldCanBeLocal")
+//@SuppressWarnings("FieldCanBeLocal")
 class LoopsManager {
 
     private static final double kObservationLooperDelta = 0.05;
@@ -16,49 +16,48 @@ class LoopsManager {
     private final Looper mStateChangeLooper = new Looper(kStateChangeLooperDelta);
 
     /**
-     * Loop asking each system to report its state
-     */
-    private ILoop mStateReportingLoop;
-
-    /**
-     * Loop that sends data to the driver station
-     */
-    private ILoop mStateSenderLoop;
-
-    /**
-     * Loop asking each system to read sensor values
-     */
-    private ILoop mMeasuringLoop;
-
-    /**
      * Loop asking the callback to process the controller input
      */
-    private ILoop mControllerLoop;
-
-    /**
-     * Loop asking each system to modify its current state based on its input
-     */
-    private ILoop mStateUpdaterLoop;
-
-    /**
-     * Loop asking each system to perform its output
-     */
-    private ILoop mSystemOutputLoop;
+    private ILoop mControllerPeriodic;
 
     void setPeriodicSource(Components components, StateManager stateManager) {
-        mStateReportingLoop = components::onReportState;
-        mStateSenderLoop = stateManager::sendAll;
-        mMeasuringLoop = components::onMeasure;
-        mSystemOutputLoop = components::onOutput;
-        mStateUpdaterLoop = components::onUpdateState;
-        mControllerLoop = components::controllerPeriodic;
+        /*
+          Loop that sends data to the driver station
+         */
+        ILoop stateSenderLoop = stateManager::sendAll;
+        /*
+          Loop asking each system to report its state
+         */
+        ILoop stateReportingLoop = components::onReportState;
+        /*
+          Loop asking each system to read sensor values
+         */
+        ILoop measuringLoop = components::onMeasure;
+        /*
+          Loop asking each system to perform its output
+         */
+        ILoop systemOutputLoop = components::onOutput;
+        /*
+          Loop asking each system to modify its current state based on its input
+         */
+        ILoop stateUpdaterLoop = components::onUpdateState;
 
-        mStateObservationLooper.registerStartLoop(mStateReportingLoop);
-        mStateObservationLooper.registerLoop(mStateSenderLoop);
-        mStateChangeLooper.registerLoop(mStateUpdaterLoop);
-        mInputLooper.registerStartLoop(mMeasuringLoop);
-        mInputLooper.registerFinalLoop(mControllerLoop);
-        mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
+        /*
+          Updates the controllers
+         */
+        ILoop mControllerUpdate = components::controllerUpdate;
+
+        mControllerPeriodic = components::controllerPeriodic;
+
+        mStateObservationLooper.registerStartLoop(stateReportingLoop);
+        mStateObservationLooper.registerLoop(stateSenderLoop);
+        
+        mInputLooper.registerStartLoop(measuringLoop);
+        mInputLooper.registerLoop(mControllerUpdate);
+        mInputLooper.registerFinalLoop(mControllerPeriodic);
+
+        mStateChangeLooper.registerLoop(stateUpdaterLoop);
+        mStateChangeLooper.registerFinalLoop(systemOutputLoop);
     }
 
     void startObservers() {
@@ -76,7 +75,7 @@ class LoopsManager {
     }
 
     void enableController() {
-        mInputLooper.registerFinalLoop(mControllerLoop);
+        mInputLooper.registerFinalLoop(mControllerPeriodic);
     }
 
     void disableController() {

@@ -6,7 +6,4 @@ package ca.warp7.frc.commons.core;
 public interface IController {
     default void onUpdateData() {
     }
-
-    default void onReportState() {
-    }
 }

@@ -2,14 +2,14 @@ package ca.warp7.frc.commons.core;
 
 public enum StateType {
     /**
-     * Reflects the input state of a subsystem
+     * Reflects the input state of a component
      */
-    SUBSYSTEM_INPUT,
+    COMPONENT_INPUT,
 
     /**
-     * Reflects the current state of a subsystem
+     * Reflects the current state of a component
      */
-    SUBSYSTEM_STATE,
+    COMPONENT_STATE,
 
     /**
      * Prints a line

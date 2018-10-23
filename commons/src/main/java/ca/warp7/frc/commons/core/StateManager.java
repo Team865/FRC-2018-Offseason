@@ -58,18 +58,14 @@ class StateManager {
      * @param o         The object to report
      */
     synchronized void report(Object owner, StateType stateType, Object o) {
-        String ownerName;
-        if (owner != null) {
-            ownerName = owner.getClass().getSimpleName();
-        } else {
-            ownerName = "Robot";
-        }
+        String ownerName = (owner != null) ? ((owner instanceof String) ?
+                owner.toString() : owner.getClass().getSimpleName()) : "UnclassifiedOwner";
         switch (stateType) {
-            case SUBSYSTEM_STATE:
-                reflectSubsystem(ownerName, o);
+            case COMPONENT_STATE:
+                reflectComponent(ownerName, o);
                 break;
-            case SUBSYSTEM_INPUT:
-                reflectSubsystem(ownerName + ".in", o);
+            case COMPONENT_INPUT:
+                reflectComponent(ownerName + ".in", o);
                 break;
             case PRINTLN:
                 println("", o);
@@ -91,7 +87,7 @@ class StateManager {
         }
     }
 
-    private synchronized void reflectSubsystem(String prefix, Object state) {
+    private synchronized void reflectComponent(String prefix, Object state) {
         boolean foundCachedObserver = false;
         for (StateObserver observer : mStateObservers) {
             if (observer.isSameAs(state)) {
