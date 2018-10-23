@@ -33,7 +33,7 @@ class LoopsManager {
     /**
      * Loop asking the callback to process the controller input
      */
-    private ILoop mControllerInputLoop;
+    private ILoop mControllerLoop;
 
     /**
      * Loop asking each system to modify its current state based on its input
@@ -45,36 +45,19 @@ class LoopsManager {
      */
     private ILoop mSystemOutputLoop;
 
-    /**
-     * A procedure passed into the {@link LoopsManager} runner called in teleop
-     */
-    private Runnable mOIRunner;
-
-    /**
-     * Sets the Operator Input runner, which should get input from controllers and
-     * pass them to subsystems
-     */
-    void setOIRunner(Runnable OIRunner) {
-        mOIRunner = OIRunner;
-    }
-
-    boolean hasOIRunner(){
-        return mOIRunner != null;
-    }
-
-    void setPeriodicSource(SubsystemsManager subsystemsManager, StateManager stateManager) {
+    void setPeriodicSource(SubsystemsManager subsystemsManager, Components components, StateManager stateManager) {
         mStateReportingLoop = subsystemsManager::reportAll;
         mStateSenderLoop = stateManager::sendAll;
         mMeasuringLoop = subsystemsManager::measureAll;
-        mControllerInputLoop = mOIRunner::run;
         mSystemOutputLoop = subsystemsManager::outputAll;
         mStateUpdaterLoop = subsystemsManager::updateAll;
+        mControllerLoop = components.getControllerLoop();
 
         mStateObservationLooper.registerStartLoop(mStateReportingLoop);
         mStateObservationLooper.registerLoop(mStateSenderLoop);
         mStateChangeLooper.registerLoop(mStateUpdaterLoop);
         mInputLooper.registerStartLoop(mMeasuringLoop);
-        mInputLooper.registerFinalLoop(mControllerInputLoop);
+        mInputLooper.registerFinalLoop(mControllerLoop);
         mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
     }
 
@@ -93,7 +76,7 @@ class LoopsManager {
     }
 
     void enableController() {
-        mInputLooper.registerFinalLoop(mControllerInputLoop);
+        mInputLooper.registerFinalLoop(mControllerLoop);
     }
 
     void disableController() {

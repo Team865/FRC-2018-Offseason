@@ -1,12 +1,14 @@
 package ca.warp7.frc.commons;
 
+import ca.warp7.frc.commons.core.IController;
 import ca.warp7.frc.commons.wrapper.WPILibXboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 
 import static ca.warp7.frc.commons.ButtonState.*;
+import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
 @SuppressWarnings("unused")
-public class XboxController {
+public class XboxController implements IController {
     private WPILibXboxController mWPILibController;
     private boolean mAButton;
     private boolean mBButton;
@@ -59,9 +61,9 @@ public class XboxController {
     }
 
     public ButtonState getBumper(GenericHID.Hand hand) {
-        boolean previousState = hand == GenericHID.Hand.kLeft ? mLeftBumper : mRightBumper;
+        boolean previousState = hand == kLeft ? mLeftBumper : mRightBumper;
         boolean newState = mWPILibController.getBumper(hand);
-        if (hand == GenericHID.Hand.kLeft)
+        if (hand == kLeft)
             mLeftBumper = newState;
         else
             mRightBumper = newState;
@@ -69,9 +71,9 @@ public class XboxController {
     }
 
     public ButtonState getTrigger(GenericHID.Hand hand) {
-        boolean previousState = hand == GenericHID.Hand.kLeft ? mLeftTrigger : mRightTrigger;
+        boolean previousState = hand == kLeft ? mLeftTrigger : mRightTrigger;
         boolean newState = mWPILibController.getTriggerAxis(hand) >= 0.5;
-        if (hand == GenericHID.Hand.kLeft)
+        if (hand == kLeft)
             mLeftTrigger = newState;
         else
             mRightTrigger = newState;
@@ -79,10 +81,10 @@ public class XboxController {
     }
 
     public ButtonState getStickButton(GenericHID.Hand hand) {
-        boolean previousState = hand == GenericHID.Hand.kLeft ?
+        boolean previousState = hand == kLeft ?
                 mLeftStickButton : mRightStickButton;
         boolean newState = mWPILibController.getStickButton(hand);
-        if (hand == GenericHID.Hand.kLeft)
+        if (hand == kLeft)
             mLeftStickButton = newState;
         else
             mRightStickButton = newState;

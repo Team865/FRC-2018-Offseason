@@ -43,6 +43,9 @@ package ca.warp7.frc.commons.core;
  * <p>Finally, it is very important that implementations of these methods are <b>synchronized</b>
  * because they are most often called from different threads. It's also important
  * that the periodic functions are not blocking operations as to prevent leaking.</p>
+ *
+ * @see Robot
+ * @see SubsystemsManager
  */
 
 
@@ -64,15 +67,16 @@ public interface ISubsystem {
     }
 
     /**
-     * <p>Marks a method in a subsystem class that directly alters its input state</p>
+     * <p>Marks a method in a subsystem class that directly alters its input state,
+     * either as an input from a controller or an autonomous action</p>
      */
-    @interface InputStateModifier {
+    @interface InputModifier {
     }
 
     /**
      * <p>Marks a the subsystems and components class of a robot</p>
      */
-    @interface RobotComponentsPool {
+    @interface RobotComponents {
     }
 
     /**

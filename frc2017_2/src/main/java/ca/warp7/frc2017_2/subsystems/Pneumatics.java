@@ -67,12 +67,12 @@ public class Pneumatics implements ISubsystem {
         Robot.report(this, StateType.SUBSYSTEM_STATE, mCurrentState);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void toggleClosedLoop() {
         mInputState.shouldBeginClosedLoop = !mCurrentState.isClosedLoop;
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setShift(boolean shouldSolenoidBeOnForShifter) {
         mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
     }

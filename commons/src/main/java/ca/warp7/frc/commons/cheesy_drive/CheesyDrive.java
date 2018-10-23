@@ -29,6 +29,10 @@ public class CheesyDrive {
         return passes == 1 ? scaled : sinScale(scaled, nonLinearity, passes - 1, lim);
     }
 
+    public CheesyDrive(ISignalReceiver receiver) {
+        mReceiver = receiver;
+    }
+
     public void setDriveSignalReceiver(ISignalReceiver receiver) {
         mReceiver = receiver;
     }

@@ -13,7 +13,7 @@ public class FiftyCents extends Robot {
         //setAutoMode(new BaselinePID(), 10);
         //setAutoMode(() -> new OuttakeCube(0.5, -0.75), 1);
         setAutoMode(new OneSwitch('R'), 15);
-        setTeleop(new OperatorInput(new DualRemote())::onUpdate);
+        setControllerLoop(new OperatorInput(new DualRemote()));
     }
 
 }

@@ -1,10 +1,12 @@
 package ca.warp7.frc2018_3.operator_input;
 
+import ca.warp7.frc.commons.core.Components;
+import ca.warp7.frc.commons.core.IControllerLoop;
 import ca.warp7.frc2018_3.subsystems.Intake;
 
 import static ca.warp7.frc2018_3.Components.*;
 
-public class OperatorInput {
+public class OperatorInput implements IControllerLoop {
 
     private IOperatorController mController;
 
@@ -12,7 +14,13 @@ public class OperatorInput {
         mController = controller;
     }
 
-    public void onUpdate() {
+    @Override
+    public void onInit(Components components) {
+        // Do nothing for now
+    }
+
+    @Override
+    public void onPeriodic() {
 
         // driver BACK button PRESSED
         if (mController.compressorShouldSwitch()) {

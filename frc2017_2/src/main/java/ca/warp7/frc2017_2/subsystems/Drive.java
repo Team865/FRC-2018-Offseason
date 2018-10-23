@@ -1,12 +1,12 @@
 package ca.warp7.frc2017_2.subsystems;
 
+import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
-import ca.warp7.frc.commons.Creator;
+import ca.warp7.frc.commons.core.Components;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.stormbots.MiniPID;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -45,9 +45,7 @@ public class Drive implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mCheesyDrive = new CheesyDrive();
-
-        mCheesyDrive.setDriveSignalReceiver((leftSpeedDemand, rightSpeedDemand) -> {
+        mCheesyDrive = new CheesyDrive((leftSpeedDemand, rightSpeedDemand) -> {
             mInputState.demandedLeftSpeed = leftSpeedDemand;
             mInputState.demandedRightSpeed = rightSpeedDemand;
         });
@@ -56,10 +54,10 @@ public class Drive implements ISubsystem {
         mRightMotorGroup = new MotorGroup(VictorSP.class, driveRightPins);
         mRightMotorGroup.setInverted(true);
 
-        mLeftEncoder = Creator.encoder(driveLeftEncoderChannels, true, EncodingType.k4X);
+        mLeftEncoder = Components.encoder(driveLeftEncoderChannels, true, EncodingType.k4X);
         mLeftEncoder.setDistancePerPulse(inchesPerTick);
 
-        mRightEncoder = Creator.encoder(driveRightEncoderChannels, false, EncodingType.k4X);
+        mRightEncoder = Components.encoder(driveRightEncoderChannels, false, EncodingType.k4X);
         mRightEncoder.setDistancePerPulse(inchesPerTick);
     }
 
@@ -168,7 +166,7 @@ public class Drive implements ISubsystem {
         Robot.report(this, StateType.SUBSYSTEM_STATE, mCurrentState);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void cheesyDrive(ICheesyDriveInput driver) {
         mInputState.shouldBeginOpenLoop = true;
         mInputState.shouldBeginPIDLoop = false;
@@ -176,7 +174,7 @@ public class Drive implements ISubsystem {
         mCheesyDrive.calculateFeed();
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
         mInputState.shouldBeginOpenLoop = true;
         mInputState.shouldBeginPIDLoop = false;
@@ -184,7 +182,7 @@ public class Drive implements ISubsystem {
         mInputState.demandedRightSpeed = rightSpeedDemand;
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
         mInputState.shouldBeginOpenLoop = false;
         mInputState.shouldBeginPIDLoop = true;
@@ -199,7 +197,7 @@ public class Drive implements ISubsystem {
         mCurrentState.rightMiniPID.setOutputLimits(kMaximumPIDPower);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setReversed(boolean reversed) {
         mInputState.shouldReverse = reversed;
     }

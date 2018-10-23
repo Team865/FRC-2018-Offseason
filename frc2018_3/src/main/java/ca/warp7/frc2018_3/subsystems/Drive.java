@@ -1,12 +1,12 @@
 package ca.warp7.frc2018_3.subsystems;
 
+import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
-import ca.warp7.frc.commons.Creator;
+import ca.warp7.frc.commons.core.Components;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.stormbots.MiniPID;
@@ -29,7 +29,7 @@ public class Drive implements ISubsystem {
     private static final double kRampIntervalMultiplier = 0.5;
     private static final double kMinRampRate = 1.0E-04;
     private static final double kMinOutputPower = 1.0E-3;
-    private static final double kMaxLinearRampRate = 1.0 / 4;
+    private static final double kMaxLinearRampRate = 1.0 / 5;
 
     @InputStateField
     private final InputState mInputState = new InputState();
@@ -44,21 +44,19 @@ public class Drive implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mCheesyDrive = new CheesyDrive();
-
-        mCheesyDrive.setDriveSignalReceiver((leftSpeedDemand, rightSpeedDemand) -> {
-            mInputState.demandedLeftSpeed = leftSpeedDemand;
-            mInputState.demandedRightSpeed = rightSpeedDemand;
+        mCheesyDrive = new CheesyDrive((left, right) -> {
+            mInputState.demandedLeftSpeed = left;
+            mInputState.demandedRightSpeed = right;
         });
 
         mLeftMotorGroup = new MotorGroup(WPI_VictorSPX.class, kDriveLeftPins);
         mRightMotorGroup = new MotorGroup(WPI_VictorSPX.class, kDriveRightPins);
         mRightMotorGroup.setInverted(true);
 
-        mLeftEncoder = Creator.encoder(kDriveLeftEncoderChannels, true, EncodingType.k4X);
+        mLeftEncoder = Components.encoder(kDriveLeftEncoderChannels, true, EncodingType.k4X);
         mLeftEncoder.setDistancePerPulse(kInchesPerTick);
 
-        mRightEncoder = Creator.encoder(kDriveRightEncoderChannels, false, EncodingType.k4X);
+        mRightEncoder = Components.encoder(kDriveRightEncoderChannels, false, EncodingType.k4X);
         mRightEncoder.setDistancePerPulse(kInchesPerTick);
     }
 
@@ -122,7 +120,6 @@ public class Drive implements ISubsystem {
 
             double demandedLeft = mInputState.demandedLeftSpeed * (mCurrentState.isReversed ? -1 : 1);
             double demandedRight = mInputState.demandedRightSpeed * (mCurrentState.isReversed ? -1 : 1);
-
             double leftSpeedDiff = demandedLeft - mCurrentState.leftSpeed;
             double rightSpeedDiff = demandedRight - mCurrentState.rightSpeed;
 
@@ -130,14 +127,11 @@ public class Drive implements ISubsystem {
 
             mCurrentState.leftSpeed += constrainMinimum(Math.min(kMaxLinearRampRate,
                     Math.abs(leftSpeedDiff * kRampIntervalMultiplier)) * Math.signum(leftSpeedDiff), kMinRampRate);
-            mCurrentState.leftSpeed = constrainMinimum(mCurrentState.leftSpeed, kMinOutputPower);
-
             mCurrentState.rightSpeed += constrainMinimum(Math.min(kMaxLinearRampRate,
                     Math.abs(rightSpeedDiff * kRampIntervalMultiplier)) * Math.signum(rightSpeedDiff), kMinRampRate);
-            mCurrentState.rightSpeed = constrainMinimum(mCurrentState.rightSpeed, kMinOutputPower);
 
-//			mCurrentState.leftSpeed += leftSpeedDiff / 6;
-//			mCurrentState.rightSpeed += rightSpeedDiff / 6;
+            mCurrentState.leftSpeed = constrainMinimum(mCurrentState.leftSpeed, kMinOutputPower);
+            mCurrentState.rightSpeed = constrainMinimum(mCurrentState.rightSpeed, kMinOutputPower);
 
             //For debugging
             //System.out.println(String.format("%.3f, %.3f", mCurrentState.leftSpeed, mCurrentState.rightSpeed));
@@ -147,10 +141,8 @@ public class Drive implements ISubsystem {
 
             mInputState.leftPIDValues.copyTo(mCurrentState.leftMiniPID);
             mInputState.rightPIDValues.copyTo(mCurrentState.rightMiniPID);
-
             mCurrentState.leftMiniPID.setSetpoint(mInputState.targetLeftDistance);
             mCurrentState.rightMiniPID.setSetpoint(mInputState.targetRightDistance);
-
             mCurrentState.leftSpeed = mCurrentState.leftMiniPID.getOutput(mCurrentState.measuredLeftDistance);
             mCurrentState.rightSpeed = mCurrentState.rightMiniPID.getOutput(mCurrentState.measuredRightDistance);
 
@@ -167,7 +159,7 @@ public class Drive implements ISubsystem {
         Robot.report(this, StateType.SUBSYSTEM_STATE, mCurrentState);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void cheesyDrive(ICheesyDriveInput driver) {
         mInputState.shouldBeginOpenLoop = true;
         mInputState.shouldBeginPIDLoop = false;
@@ -175,7 +167,7 @@ public class Drive implements ISubsystem {
         mCheesyDrive.calculateFeed();
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
         mInputState.shouldBeginOpenLoop = true;
         mInputState.shouldBeginPIDLoop = false;
@@ -183,7 +175,7 @@ public class Drive implements ISubsystem {
         mInputState.demandedRightSpeed = rightSpeedDemand;
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
         mInputState.shouldBeginOpenLoop = false;
         mInputState.shouldBeginPIDLoop = true;
@@ -191,14 +183,13 @@ public class Drive implements ISubsystem {
         pidValues.copyTo(mInputState.rightPIDValues);
         mInputState.targetLeftDistance = targetDistance;
         mInputState.targetRightDistance = targetDistance;
-
         mCurrentState.leftMiniPID.setOutputRampRate(kMaxLinearRampRate);
         mCurrentState.rightMiniPID.setOutputRampRate(kMaxLinearRampRate);
         mCurrentState.leftMiniPID.setOutputLimits(kMaximumPIDPower);
         mCurrentState.rightMiniPID.setOutputLimits(kMaximumPIDPower);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setReversed(boolean reversed) {
         mInputState.shouldReverse = reversed;
     }

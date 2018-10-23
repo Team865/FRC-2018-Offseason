@@ -25,7 +25,7 @@ public abstract class Robot extends IterativeRobot {
         sState = mState;
         this.setComponents(Components.reflectFromPackageName(getClass().getPackage().getName()));
         this.onCreate();
-        if (mComponents.hasClass() && mLoops.hasOIRunner()) {
+        if (mComponents.hasClass() && mComponents.hasControlLoop()) {
             super.startCompetition();
         } else {
             System.out.println("ERROR Robot code does not have components or teleop code");
@@ -37,7 +37,7 @@ public abstract class Robot extends IterativeRobot {
         mState.logRobotState("Initializing");
         mComponents.createAll();
         mSubsystems.setSubsystems(mComponents.getSubsystems());
-        mLoops.setPeriodicSource(mSubsystems, mState);
+        mLoops.setPeriodicSource(mSubsystems, mComponents, mState);
         mComponents.constructExtras();
         mSubsystems.constructAll();
         mLoops.startObservers();
@@ -78,8 +78,8 @@ public abstract class Robot extends IterativeRobot {
 
     protected abstract void onCreate();
 
-    protected final void setTeleop(Runnable runner) {
-        mLoops.setOIRunner(runner);
+    protected final void setControllerLoop(IControllerLoop loop) {
+        mComponents.setControllerLoop(loop);
     }
 
     protected final void setAutoMode(IAutoMode mode, double timeout) {

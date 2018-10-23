@@ -5,7 +5,7 @@ import ca.warp7.frc2018_3.sensors.Limelight;
 import ca.warp7.frc2018_3.sensors.Navx;
 import ca.warp7.frc2018_3.subsystems.*;
 
-@ISubsystem.RobotComponentsPool
+@ISubsystem.RobotComponents
 public final class Components {
     public static final Drive drive = new Drive();
     public static final Pneumatics pneumatics = new Pneumatics();
