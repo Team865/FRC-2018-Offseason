@@ -1,8 +1,10 @@
 package ca.warp7.frc2018_3.operator_input;
 
-import ca.warp7.frc.commons.core.Components;
+import ca.warp7.frc.commons.core.IController;
 import ca.warp7.frc.commons.core.IControllerLoop;
 import ca.warp7.frc2018_3.subsystems.Intake;
+
+import java.util.List;
 
 import static ca.warp7.frc2018_3.Components.*;
 
@@ -15,8 +17,8 @@ public class OperatorInput implements IControllerLoop {
     }
 
     @Override
-    public void onRegister(Components components) {
-        // Do nothing for now
+    public List<IController> onCreateControllers() {
+        return null;
     }
 
     @Override

@@ -8,8 +8,8 @@ public final class Constants {
 
     public static final Pins kDriveLeftPins = pins(3, 4);
     public static final Pins kDriveRightPins = pins(5, 1);
-    public static final Pins kDriveLeftEncoderChannels = channels(4, 5);
-    public static final Pins kDriveRightEncoderChannels = channels(0, 1);
+    public static final Pins kDriveLeftEncoder = channels(4, 5);
+    public static final Pins kDriveRightEncoder = channels(0, 1);
 
     public static final Pins kPneumaticsShifterSolenoidPin = pin(1);
     public static final Pins kPneumaticsCompressorPin = pin(0);
@@ -25,7 +25,7 @@ public final class Constants {
     public static final Pins kActualClimberPins = pin(8);
 
     public static final Pins kArmPin = pin(6);
-    public static final Pins kArmEncoderChannel = channels(6, 7);
+    public static final Pins kArmEncoder = channels(6, 7);
 
     public static final double kLeftDriftOffset = 1.0;
     public static final double kRightDriftOffset = 1.0;

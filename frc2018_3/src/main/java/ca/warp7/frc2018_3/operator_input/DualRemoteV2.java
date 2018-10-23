@@ -1,24 +1,27 @@
 package ca.warp7.frc2018_3.operator_input;
 
 import ca.warp7.frc.commons.XboxController2;
-import ca.warp7.frc.commons.core.Components;
+import ca.warp7.frc.commons.core.IController;
 import ca.warp7.frc.commons.core.IControllerLoop;
 import ca.warp7.frc2018_3.subsystems.Intake;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static ca.warp7.frc.commons.ButtonState.HELD_DOWN;
 import static ca.warp7.frc.commons.ButtonState.PRESSED;
 import static ca.warp7.frc2018_3.Components.*;
 
 public class DualRemoteV2 implements IControllerLoop {
+
     private XboxController2 DRIVER;
     private XboxController2 OPERATOR;
 
     @Override
-    public void onRegister(Components components) {
-        DRIVER = new XboxController2(9);
+    public List<IController> onCreateControllers() {
+        DRIVER = new XboxController2(0);
         OPERATOR = new XboxController2(1);
-        components.registerController(DRIVER);
-        components.registerController(OPERATOR);
+        return Arrays.asList(DRIVER, OPERATOR);
     }
 
     @Override

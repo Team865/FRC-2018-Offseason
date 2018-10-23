@@ -12,7 +12,7 @@ import java.util.List;
  * Use reflection to initialize the components of the Robot
  */
 
-public class Components implements ISubsystem {
+class Components implements ISubsystem {
 
     private static final String kComponentsClassName = ".Components";
 
@@ -96,14 +96,12 @@ public class Components implements ISubsystem {
         return mComponentsClass != null;
     }
 
-    @SuppressWarnings("unused")
-    public void registerController(IController controller) {
-        mControllers.add(controller);
-    }
-
     void setControllerLoop(IControllerLoop controllerLoop) {
         mControllerLoop = controllerLoop;
-        mControllerLoop.onRegister(this);
+        mControllers = controllerLoop.onCreateControllers();
+        if (mControllers == null) {
+            mControllers = new ArrayList<>();
+        }
     }
 
     void controllerPeriodic() {

@@ -1,15 +1,15 @@
 package ca.warp7.frc2017_2.subsystems;
 
 import ca.warp7.frc.commons.PIDValues;
+import ca.warp7.frc.commons.Pins;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
-import ca.warp7.frc.commons.core.Components;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.stormbots.MiniPID;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -17,6 +17,7 @@ import static ca.warp7.frc.commons.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2017_2.constants.RobotMap.DriveConstants.*;
 import static ca.warp7.frc2017_2.constants.RobotMap.RIO.*;
+import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 /**
  * Controls the motors turing the wheels in the drive train
@@ -43,6 +44,10 @@ public class Drive implements ISubsystem {
     private Encoder mLeftEncoder;
     private Encoder mRightEncoder;
 
+    private static Encoder encoder(Pins pins, boolean reverse, CounterBase.EncodingType encodingType) {
+        return new Encoder(pins.get(0), pins.get(1), reverse, encodingType);
+    }
+
     @Override
     public void onConstruct() {
         mCheesyDrive = new CheesyDrive((leftSpeedDemand, rightSpeedDemand) -> {
@@ -54,10 +59,10 @@ public class Drive implements ISubsystem {
         mRightMotorGroup = new MotorGroup(VictorSP.class, driveRightPins);
         mRightMotorGroup.setInverted(true);
 
-        mLeftEncoder = Components.encoder(driveLeftEncoderChannels, true, EncodingType.k4X);
+        mLeftEncoder = encoder(driveLeftEncoderChannels, true, k4X);
         mLeftEncoder.setDistancePerPulse(inchesPerTick);
 
-        mRightEncoder = Components.encoder(driveRightEncoderChannels, false, EncodingType.k4X);
+        mRightEncoder = encoder(driveRightEncoderChannels, false, k4X);
         mRightEncoder.setDistancePerPulse(inchesPerTick);
     }
 

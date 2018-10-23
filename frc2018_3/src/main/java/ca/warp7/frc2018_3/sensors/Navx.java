@@ -30,4 +30,8 @@ public class Navx implements IComponent {
     public double getPitch() {
         return ahrs.getPitch();
     }
+
+    public AHRS getAhrs() {
+        return ahrs;
+    }
 }

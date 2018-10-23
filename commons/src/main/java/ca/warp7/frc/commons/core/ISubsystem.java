@@ -54,6 +54,7 @@ public interface ISubsystem {
 
     /**
      * <p>This annotation marks a field to hold the current state of the system.
+     * The current state is the what the subsystem is currently doing and sensing.
      * For clarity, there should only be one of such fields</p>
      */
     @interface CurrentStateField {
@@ -61,6 +62,7 @@ public interface ISubsystem {
 
     /**
      * <p>This annotation marks a field to hold the input state of the system.
+     * The input state is what the robot currently expects the subsystem to do.
      * For clarity, there should only be one of such fields</p>
      */
     @interface InputStateField {
@@ -71,12 +73,6 @@ public interface ISubsystem {
      * either as an input from a controller or an autonomous action</p>
      */
     @interface InputModifier {
-    }
-
-    /**
-     * <p>Marks a the subsystems and components class of a robot</p>
-     */
-    @interface RobotComponents {
     }
 
     /**

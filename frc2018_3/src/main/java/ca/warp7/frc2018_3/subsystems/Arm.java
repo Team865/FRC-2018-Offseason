@@ -1,18 +1,17 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.PIDValues;
-import ca.warp7.frc.commons.core.Components;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.stormbots.MiniPID;
-import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 
 import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Constants.*;
+import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 /**
  * Based on climber subsystem (for testing purposes)
@@ -33,7 +32,7 @@ public class Arm implements ISubsystem {
     @Override
     public void onConstruct() {
         mArmMotor = new MotorGroup(WPI_VictorSPX.class, kArmPin);
-        mArmEncoder = Components.encoder(kArmEncoderChannel, true, CounterBase.EncodingType.k4X);
+        mArmEncoder = new Encoder(kArmEncoder.get(0), kArmEncoder.get(1), true, k4X);
         mArmEncoder.setDistancePerPulse(kArmInchesPerTick);
     }
 
@@ -47,9 +46,10 @@ public class Arm implements ISubsystem {
         mCurrentState.measuredDistance = mArmEncoder.getDistance();
     }
 
-    public void onTeleopInit(){
+    public void onTeleopInit() {
         zeroEncoder();
     }
+
     @Override
     public void onOutput() {
         mArmMotor.set(limit(mCurrentState.speed, kAbsoluteMaxOutputPower));
@@ -67,7 +67,7 @@ public class Arm implements ISubsystem {
 
     }
 
-    public void setLoc(double distance){
+    public void setLoc(double distance) {
         mInputState.targetDistance = distance;
     }
 
