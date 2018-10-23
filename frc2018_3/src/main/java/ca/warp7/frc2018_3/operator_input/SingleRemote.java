@@ -8,6 +8,7 @@ import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
 @SuppressWarnings("WeakerAccess")
+@Deprecated
 public class SingleRemote implements IOperatorController {
 
     private final XboxController mDriver;

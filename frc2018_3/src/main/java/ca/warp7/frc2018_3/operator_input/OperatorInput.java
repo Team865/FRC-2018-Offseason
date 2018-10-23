@@ -8,6 +8,7 @@ import java.util.List;
 
 import static ca.warp7.frc2018_3.Components.*;
 
+@Deprecated
 public class OperatorInput implements IControllerLoop {
 
     private IOperatorController mController;

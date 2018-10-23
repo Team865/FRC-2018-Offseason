@@ -5,6 +5,7 @@ import ca.warp7.frc.commons.XboxController;
 import static ca.warp7.frc.commons.ButtonState.HELD_DOWN;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
+@Deprecated
 public class DualRemote extends SingleRemote {
 
     private final XboxController mOperator;
@@ -30,6 +31,7 @@ public class DualRemote extends SingleRemote {
 
         return super.getArmSpeed();
     }
+
     @Override
     public double getArmDistance() {
         if (mOperator.getYButton() == HELD_DOWN) {

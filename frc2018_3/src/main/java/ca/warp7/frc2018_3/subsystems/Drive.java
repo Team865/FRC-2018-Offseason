@@ -1,5 +1,6 @@
 package ca.warp7.frc2018_3.subsystems;
 
+import ca.warp7.frc.commons.DifferentialWheels;
 import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
@@ -34,11 +35,9 @@ public class Drive implements ISubsystem {
     private final State mState = new State();
 
     private CheesyDrive mCheesyDrive;
-    private MotorGroup mLeftMotorGroup;
-    private MotorGroup mRightMotorGroup;
-    private Encoder mLeftEncoder;
-    private Encoder mRightEncoder;
     private double mLastMeasuredTimeStamp;
+    private DifferentialWheels<MotorGroup> mMotors;
+    private DifferentialWheels<Encoder> mEncoders;
 
     @Override
     public void onConstruct() {
@@ -47,14 +46,17 @@ public class Drive implements ISubsystem {
             mInput.demandedRightPower = right;
         });
 
-        mLeftMotorGroup = new MotorGroup(WPI_VictorSPX.class, kDriveLeftPins);
-        mRightMotorGroup = new MotorGroup(WPI_VictorSPX.class, kDriveRightPins);
-        mRightMotorGroup.setInverted(true);
+        MotorGroup leftMotors = new MotorGroup(WPI_VictorSPX.class, kDriveLeftPins);
+        MotorGroup rightMotors = new MotorGroup(WPI_VictorSPX.class, kDriveRightPins);
+        rightMotors.setInverted(true);
 
-        mLeftEncoder = new Encoder(kDriveLeftEncoder.get(0), kDriveLeftEncoder.get(1), true, k4X);
-        mLeftEncoder.setDistancePerPulse(kInchesPerTick);
-        mRightEncoder = new Encoder(kDriveRightEncoder.get(0), kDriveRightEncoder.get(1), false, k4X);
-        mRightEncoder.setDistancePerPulse(kInchesPerTick);
+        Encoder leftEncoder = new Encoder(kDriveLeftEncoder.get(0), kDriveLeftEncoder.get(1), true, k4X);
+        leftEncoder.setDistancePerPulse(kInchesPerTick);
+        Encoder rightEncoder = new Encoder(kDriveRightEncoder.get(0), kDriveRightEncoder.get(1), false, k4X);
+        rightEncoder.setDistancePerPulse(kInchesPerTick);
+
+        mMotors = new DifferentialWheels<>(leftMotors, rightMotors);
+        mEncoders = new DifferentialWheels<>(leftEncoder, rightEncoder);
     }
 
     @Override
@@ -75,8 +77,8 @@ public class Drive implements ISubsystem {
     public synchronized void onMeasure() {
         double oldLeftDistance = mState.measuredLeftDistance;
         double oldRightDistance = mState.measuredRightDistance;
-        mState.measuredLeftDistance = mLeftEncoder.getDistance() * -1;
-        mState.measuredRightDistance = mRightEncoder.getDistance() * -1;
+        mState.measuredLeftDistance = mEncoders.getLeft().getDistance() * -1;
+        mState.measuredRightDistance = mEncoders.getRight().getDistance() * -1;
         double deltaLeftDistance = mState.measuredLeftDistance - oldLeftDistance;
         double deltaRightDistance = mState.measuredRightDistance - oldRightDistance;
         double now = Timer.getFPGATimestamp();
@@ -92,16 +94,15 @@ public class Drive implements ISubsystem {
     public synchronized void onZeroSensors() {
         mState.measuredLeftDistance = 0.0;
         mState.measuredRightDistance = 0.0;
-        mLeftEncoder.reset();
-        mRightEncoder.reset();
+        mEncoders.apply(Encoder::reset);
     }
 
     @Override
     public synchronized void onOutput() {
         double limitedLeft = limit(mState.leftPower, kPreDriftSpeedLimit);
         double limitedRight = limit(mState.rightPower, kPreDriftSpeedLimit);
-        mLeftMotorGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutputPower));
-        mRightMotorGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutputPower));
+        mMotors.getLeft().set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutputPower));
+        mMotors.getRight().set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutputPower));
     }
 
     @Override

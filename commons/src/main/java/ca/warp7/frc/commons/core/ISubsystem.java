@@ -164,7 +164,8 @@ public interface ISubsystem {
 
     /**
      * <p>Called periodically for the subsystem to report its state, which could involve
-     * printing or sending to the SmartDashboard.</p>
+     * printing or sending to the SmartDashboard. Any calls to {@link Robot#report(Object, StateType, Object)}</p>
+     * should be made inside this method
      *
      * <p>This runs at a slower rate than the other periodic methods.See {@link LoopsManager}.
      * It also runs regardless of whether the Robot is enabled or disabled.</p>
