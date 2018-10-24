@@ -99,7 +99,7 @@ public class Drive implements ISubsystem {
             // Create a sum object
             DifferentialWheels<DtMeasurement> sum = new DifferentialWheels<>(new DtMeasurement(), new DtMeasurement());
             // Add up all the velocity averages
-            mState.velocityAverages.forEach(wheels -> sum.transform(wheels, (DtMeasurement::getAddedInPlace)));
+            mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
             // Calculate the ratio get meters per seconds
             mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
         }

@@ -41,19 +41,26 @@ class StateObserver {
         }
     }
 
+    private void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
+        if (value instanceof Number) {
+            entry.setNumber((Number) value);
+        } else if (value instanceof Boolean) {
+            entry.setBoolean((Boolean) value);
+        } else if (value instanceof String) {
+            entry.setString((String) value);
+        } else if (value.getClass().isEnum()) {
+            entry.setString(value.toString());
+        } else {
+            entry.setString(value.getClass().getSimpleName() + " Object");
+        }
+    }
+
     void updateNetworkTables() {
         for (String entryKey : mObservedMap.keySet()) {
             Object value = mObservedMap.get(entryKey);
-            NetworkTableEntry entry = mTable.getEntry(entryKey);
-            if (value instanceof Number) {
-                entry.setNumber((Number) value);
-            } else if (value instanceof Boolean) {
-                entry.setBoolean((Boolean) value);
-            } else if (value instanceof String) {
-                entry.setString((String) value);
-            } else {
-                entry.setString(value.getClass().getSimpleName() + " Object");
-            }
+            if (value instanceof ICollectiveState) ((ICollectiveState) value).getCollectiveMap().forEach(
+                    (s, object) -> sendNetworkTableValue(mTable.getEntry(entryKey + "/" + s), object));
+            else sendNetworkTableValue(mTable.getEntry(entryKey), value);
         }
     }
 }

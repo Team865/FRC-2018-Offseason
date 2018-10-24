@@ -1,5 +1,8 @@
 package ca.warp7.frc.commons;
 
+import ca.warp7.frc.commons.core.ICollectiveState;
+
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -9,9 +12,10 @@ import java.util.function.Function;
  * objects (motor controllers)
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class DifferentialWheels<T> {
+public class DifferentialWheels<T> implements ICollectiveState {
     private T mLeft;
     private T mRight;
+    private Map<String, Object> collectiveMap;
 
     public DifferentialWheels(T left, T right) {
         this.mLeft = left;
@@ -24,6 +28,13 @@ public class DifferentialWheels<T> {
 
     public T getRight() {
         return mRight;
+    }
+
+    @Override
+    public Map<String, Object> getCollectiveMap() {
+        collectiveMap.put("left", mLeft);
+        collectiveMap.put("right", mRight);
+        return collectiveMap;
     }
 
     public void apply(Consumer<? super T> action) {
@@ -63,8 +74,5 @@ public class DifferentialWheels<T> {
         mRight = differentialWheels.getRight();
     }
 
-    @FunctionalInterface
-    public interface DependantFunction<T, R> {
-        R apply(T t, T other);
-    }
+
 }
