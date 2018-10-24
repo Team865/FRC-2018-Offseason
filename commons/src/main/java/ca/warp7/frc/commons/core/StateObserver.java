@@ -49,8 +49,10 @@ class StateObserver {
                 entry.setNumber((Number) value);
             } else if (value instanceof Boolean) {
                 entry.setBoolean((Boolean) value);
+            } else if (value instanceof String) {
+                entry.setString((String) value);
             } else {
-                entry.setString(String.valueOf(value));
+                entry.setString(value.getClass().getSimpleName() + " Object");
             }
         }
     }

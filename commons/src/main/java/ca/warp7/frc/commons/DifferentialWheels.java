@@ -31,7 +31,40 @@ public class DifferentialWheels<T> {
         action.accept(mRight);
     }
 
-    public <S> DifferentialWheels<S> transform(Function<T, S> function) {
+    public <S> DifferentialWheels<S> transformed(Function<T, S> function) {
         return new DifferentialWheels<>(function.apply(mLeft), function.apply(mRight));
+    }
+
+    public void transform(Function<T, T> function) {
+        mLeft = function.apply(mLeft);
+        mRight = function.apply(mRight);
+    }
+
+    public void transform(DifferentialWheels<T> other, DependantFunction<T, T> function) {
+        mLeft = function.apply(mLeft, other.getLeft());
+        mRight = function.apply(mRight, other.getRight());
+    }
+
+    public void setLeft(T left) {
+        mLeft = left;
+    }
+
+    public void setRight(T right) {
+        mRight = right;
+    }
+
+    public void set(T left, T right) {
+        mLeft = left;
+        mRight = right;
+    }
+
+    public void set(DifferentialWheels<T> differentialWheels) {
+        mLeft = differentialWheels.getLeft();
+        mRight = differentialWheels.getRight();
+    }
+
+    @FunctionalInterface
+    public interface DependantFunction<T, R> {
+        R apply(T t, T other);
     }
 }

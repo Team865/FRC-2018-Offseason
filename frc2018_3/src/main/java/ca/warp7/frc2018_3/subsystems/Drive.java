@@ -1,6 +1,8 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.DifferentialWheels;
+import ca.warp7.frc.commons.DtMeasurement;
+import ca.warp7.frc.commons.IUnit;
 import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
@@ -12,6 +14,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.stormbots.MiniPID;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
+
+import java.util.LinkedList;
 
 import static ca.warp7.frc.commons.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.Functions.limit;
@@ -27,7 +31,7 @@ public class Drive implements ISubsystem {
     private static final double kMinOutputPower = 1.0E-3;
     private static final double kMaxLinearRampRate = 1.0 / 5;
     private static final double kEpsilon = 1.0E-10;
-    private static final double kVelocityMeasurePhase = 50.0;
+    private static final int kVelocityQueueSize = 50;
 
     @InputStateField
     private final Input mInput = new Input();
@@ -50,9 +54,9 @@ public class Drive implements ISubsystem {
         MotorGroup rightMotors = new MotorGroup(WPI_VictorSPX.class, kDriveRightPins);
         rightMotors.setInverted(true);
 
-        Encoder leftEncoder = new Encoder(kDriveLeftEncoder.get(0), kDriveLeftEncoder.get(1), true, k4X);
+        Encoder leftEncoder = new Encoder(kDriveLeftEncoder.get(0), kDriveLeftEncoder.get(1), false, k4X);
         leftEncoder.setDistancePerPulse(kInchesPerTick);
-        Encoder rightEncoder = new Encoder(kDriveRightEncoder.get(0), kDriveRightEncoder.get(1), false, k4X);
+        Encoder rightEncoder = new Encoder(kDriveRightEncoder.get(0), kDriveRightEncoder.get(1), true, k4X);
         rightEncoder.setDistancePerPulse(kInchesPerTick);
 
         mMotors = new DifferentialWheels<>(leftMotors, rightMotors);
@@ -75,18 +79,29 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onMeasure() {
-        double oldLeftDistance = mState.measuredLeftDistance;
-        double oldRightDistance = mState.measuredRightDistance;
-        mState.measuredLeftDistance = mEncoders.getLeft().getDistance() * -1;
-        mState.measuredRightDistance = mEncoders.getRight().getDistance() * -1;
-        double deltaLeftDistance = mState.measuredLeftDistance - oldLeftDistance;
-        double deltaRightDistance = mState.measuredRightDistance - oldRightDistance;
+        double oldLeft = mState.measuredLeftDistance;
+        double oldRight = mState.measuredRightDistance;
+        mState.measuredLeftDistance = mEncoders.getLeft().getDistance();
+        mState.measuredRightDistance = mEncoders.getRight().getDistance();
         double now = Timer.getFPGATimestamp();
-        mState.measuredDt = constrainMinimum(now - mLastMeasuredTimeStamp, kEpsilon);
+        double dt = constrainMinimum(now - mLastMeasuredTimeStamp, kEpsilon);
         mLastMeasuredTimeStamp = now;
-        if (mState.measuredDt != 0) {
-            mState.measuredLeftVelocity += (deltaLeftDistance / mState.measuredDt) * (1 / kVelocityMeasurePhase);
-            mState.measuredRightVelocity += (deltaRightDistance / mState.measuredDt) * (1 / kVelocityMeasurePhase);
+
+        DifferentialWheels<Double> dDistance = new DifferentialWheels<>(
+                mState.measuredLeftDistance - oldLeft, mState.measuredRightDistance - oldRight);
+
+        if (dt != 0) {
+            // Add a new DtMeasurement object to the queue
+            mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
+            if (mState.velocityAverages.size() > kVelocityQueueSize) {
+                mState.velocityAverages.removeFirst();
+            }
+            // Create a sum object
+            DifferentialWheels<DtMeasurement> sum = new DifferentialWheels<>(new DtMeasurement(), new DtMeasurement());
+            // Add up all the velocity averages
+            mState.velocityAverages.forEach(wheels -> sum.transform(wheels, (DtMeasurement::getAddedInPlace)));
+            // Calculate the ratio get meters per seconds
+            mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
         }
     }
 
@@ -242,9 +257,12 @@ public class Drive implements ISubsystem {
         double rightPower;
         double measuredLeftDistance;
         double measuredRightDistance;
-        double measuredDt;
-        double measuredLeftVelocity;
-        double measuredRightVelocity;
+
+        @IUnit.InchesPerSecond
+        final DifferentialWheels<Double> measuredVelocity = new DifferentialWheels<>(0.0, 0.0);
+        @IUnit.InchesPerSecond
+        final LinkedList<DifferentialWheels<DtMeasurement>> velocityAverages = new LinkedList<>();
+
         final MiniPID leftMiniPID = new MiniPID(0, 0, 0, 0);
         final MiniPID rightMiniPID = new MiniPID(0, 0, 0, 0);
     }
