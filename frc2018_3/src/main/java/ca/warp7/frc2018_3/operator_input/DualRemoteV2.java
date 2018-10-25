@@ -47,9 +47,9 @@ public class DualRemoteV2 implements IControllerLoop {
         else intake.setSpeed(0);
 
         // "Climber" that is actually arm
-        if (OPERATOR.getBButton() == HELD_DOWN) climber.setSpeed(OPERATOR.getLeftYAxis());
-        else if (DRIVER.getBButton() == HELD_DOWN) climber.setSpeed(DRIVER.getLeftYAxis());
-        else climber.setSpeed(0);
+        if (OPERATOR.getBButton() == HELD_DOWN) armFromClimber.setSpeed(OPERATOR.getLeftYAxis());
+        else if (DRIVER.getBButton() == HELD_DOWN) armFromClimber.setSpeed(DRIVER.getLeftYAxis());
+        else armFromClimber.setSpeed(0);
 
         // Actual climbing mechanism
         if (OPERATOR.getStartButton() == HELD_DOWN) actualClimber.setSpeed(OPERATOR.getLeftYAxis());

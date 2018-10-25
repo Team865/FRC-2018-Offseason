@@ -11,14 +11,14 @@ public final class Constants {
     public static final Pins kDriveLeftEncoder = channels(4, 5);
     public static final Pins kDriveRightEncoder = channels(0, 1);
 
-    public static final Pins kPneumaticsShifterSolenoidPin = pin(1);
-    public static final Pins kPneumaticsCompressorPin = pin(0);
+    public static final int kPneumaticsCompressorPin = 0;
 
-    public static final Pins kGrapplingHookSolenoidPin = pin(2);
+    public static final int kIntakePistonSolenoidPin = 0;
+    public static final int kDriveShifterSolenoidPin = 1;
+    public static final int kGrapplingHookSolenoidPin = 2;
 
     public static final Pins kIntakeLeftPin = pin(7);
     public static final Pins kIntakeRightPin = pin(2);
-    public static final Pins kIntakePistonSolenoidPin = pin(0);
 
     public static final Pins kClimberPins = pins(9, 0);
 

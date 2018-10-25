@@ -21,9 +21,9 @@ public class Pneumatics implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mCompressor = new Compressor(kPneumaticsCompressorPin.first());
-        mShifterSolenoid = new Solenoid(kPneumaticsShifterSolenoidPin.first());
-        mGrapplingHookSolenoid = new Solenoid(kGrapplingHookSolenoidPin.first());
+        mCompressor = new Compressor(kPneumaticsCompressorPin);
+        mShifterSolenoid = new Solenoid(kDriveShifterSolenoidPin);
+        mGrapplingHookSolenoid = new Solenoid(kGrapplingHookSolenoidPin);
         mGrapplingHookSolenoid.set(false);
         mShifterSolenoid.set(false);
         mCompressor.setClosedLoopControl(true);

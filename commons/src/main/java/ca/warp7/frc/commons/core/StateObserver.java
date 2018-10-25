@@ -42,17 +42,11 @@ class StateObserver {
     }
 
     private void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
-        if (value instanceof Number) {
-            entry.setNumber((Number) value);
-        } else if (value instanceof Boolean) {
-            entry.setBoolean((Boolean) value);
-        } else if (value instanceof String) {
-            entry.setString((String) value);
-        } else if (value.getClass().isEnum()) {
-            entry.setString(value.toString());
-        } else {
-            entry.setString(value.getClass().getSimpleName() + " Object");
-        }
+        if (value instanceof Number) entry.setNumber((Number) value);
+        else if (value instanceof Boolean) entry.setBoolean((Boolean) value);
+        else if (value instanceof String) entry.setString((String) value);
+        else if (value.getClass().isEnum()) entry.setString(value.toString());
+        else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
     void updateNetworkTables() {

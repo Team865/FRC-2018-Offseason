@@ -19,7 +19,7 @@ public class XboxController2 implements IController {
     private static final int kLeftPOV = 270;
 
     private WPILibXboxController mController;
-    private State mState = new State();
+    private State mS = new State();
 
     private static class State {
         private ButtonState AButton;
@@ -44,94 +44,94 @@ public class XboxController2 implements IController {
         mController = new WPILibXboxController(port);
     }
 
-    private static ButtonState compare(ButtonState old, boolean bool) {
+    private static ButtonState update(ButtonState old, boolean bool) {
         return bool ? ((old == PRESSED) ? HELD_DOWN : PRESSED) : ((old == RELEASED) ? KEPT_UP : RELEASED);
     }
 
     @Override
     public void onUpdateData() {
         int POV = mController.getPOV();
-        mState.AButton = compare(mState.AButton, mController.getAButton());
-        mState.BButton = compare(mState.BButton, mController.getBButton());
-        mState.XButton = compare(mState.XButton, mController.getXButton());
-        mState.YButton = compare(mState.YButton, mController.getYButton());
-        mState.LeftBumper = compare(mState.LeftBumper, mController.getBumper(kLeft));
-        mState.RightBumper = compare(mState.RightBumper, mController.getBumper(kRight));
-        mState.LeftTrigger = compare(mState.LeftTrigger, mController.getTriggerAxis(kLeft) > kTriggerDeadBand);
-        mState.RightTrigger = compare(mState.RightTrigger, mController.getTriggerAxis(kRight) > kTriggerDeadBand);
-        mState.LeftStickButton = compare(mState.LeftStickButton, mController.getStickButton(kLeft));
-        mState.RightStickButton = compare(mState.RightStickButton, mController.getStickButton(kRight));
-        mState.StartButton = compare(mState.StartButton, mController.getStartButton());
-        mState.BackButton = compare(mState.BackButton, mController.getBackButton());
-        mState.UpDirectionalPad = compare(mState.UpDirectionalPad, POV == kUpPOV);
-        mState.RightDirectionalPad = compare(mState.RightDirectionalPad, POV == kRightPOV);
-        mState.DownDirectionalPad = compare(mState.DownDirectionalPad, POV == kDownPOV);
-        mState.LeftDirectionalPad = compare(mState.LeftDirectionalPad, POV == kLeftPOV);
-        Robot.report(String.format("XboxController[%s]", mController.getPort()), StateType.COMPONENT_STATE, mState);
+        mS.AButton = update(mS.AButton, mController.getAButton());
+        mS.BButton = update(mS.BButton, mController.getBButton());
+        mS.XButton = update(mS.XButton, mController.getXButton());
+        mS.YButton = update(mS.YButton, mController.getYButton());
+        mS.LeftBumper = update(mS.LeftBumper, mController.getBumper(kLeft));
+        mS.RightBumper = update(mS.RightBumper, mController.getBumper(kRight));
+        mS.LeftTrigger = update(mS.LeftTrigger, mController.getTriggerAxis(kLeft) > kTriggerDeadBand);
+        mS.RightTrigger = update(mS.RightTrigger, mController.getTriggerAxis(kRight) > kTriggerDeadBand);
+        mS.LeftStickButton = update(mS.LeftStickButton, mController.getStickButton(kLeft));
+        mS.RightStickButton = update(mS.RightStickButton, mController.getStickButton(kRight));
+        mS.StartButton = update(mS.StartButton, mController.getStartButton());
+        mS.BackButton = update(mS.BackButton, mController.getBackButton());
+        mS.UpDirectionalPad = update(mS.UpDirectionalPad, POV == kUpPOV);
+        mS.RightDirectionalPad = update(mS.RightDirectionalPad, POV == kRightPOV);
+        mS.DownDirectionalPad = update(mS.DownDirectionalPad, POV == kDownPOV);
+        mS.LeftDirectionalPad = update(mS.LeftDirectionalPad, POV == kLeftPOV);
+        Robot.report(String.format("XboxController[%s]", mController.getPort()), StateType.COMPONENT_STATE, mS);
     }
 
     public ButtonState getAButton() {
-        return mState.AButton;
+        return mS.AButton;
     }
 
     public ButtonState getBButton() {
-        return mState.BButton;
+        return mS.BButton;
     }
 
     public ButtonState getXButton() {
-        return mState.XButton;
+        return mS.XButton;
     }
 
     public ButtonState getYButton() {
-        return mState.YButton;
+        return mS.YButton;
     }
 
     public ButtonState getLeftBumper() {
-        return mState.LeftBumper;
+        return mS.LeftBumper;
     }
 
     public ButtonState getLeftTrigger() {
-        return mState.LeftTrigger;
+        return mS.LeftTrigger;
     }
 
     public ButtonState getLeftStickButton() {
-        return mState.LeftStickButton;
+        return mS.LeftStickButton;
     }
 
     public ButtonState getRightBumper() {
-        return mState.RightBumper;
+        return mS.RightBumper;
     }
 
     public ButtonState getRightTrigger() {
-        return mState.RightTrigger;
+        return mS.RightTrigger;
     }
 
     public ButtonState getRightStickButton() {
-        return mState.RightStickButton;
+        return mS.RightStickButton;
     }
 
     public ButtonState getStartButton() {
-        return mState.StartButton;
+        return mS.StartButton;
     }
 
     public ButtonState getBackButton() {
-        return mState.BackButton;
+        return mS.BackButton;
     }
 
     public ButtonState getUpDirectionalPad() {
-        return mState.UpDirectionalPad;
+        return mS.UpDirectionalPad;
     }
 
     public ButtonState getRightDirectionalPad() {
-        return mState.RightDirectionalPad;
+        return mS.RightDirectionalPad;
     }
 
     public ButtonState getDownDirectionalPad() {
-        return mState.DownDirectionalPad;
+        return mS.DownDirectionalPad;
     }
 
     public ButtonState getLeftDirectionalPad() {
-        return mState.LeftDirectionalPad;
+        return mS.LeftDirectionalPad;
     }
 
     public double getLeftXAxis() {

@@ -73,7 +73,7 @@ public class OperatorInput implements IControllerLoop {
 
         // operator RIGHT y-axis when operator B button HELD_DOWN exclusive or
         // driver LEFT y-axis when driver B button HELD_DOWN or 0
-        climber.setSpeed(mController.getClimberSpeed());
+        armFromClimber.setSpeed(mController.getClimberSpeed());
 //        armClimber.setSpeed(mController.getArmSpeed());
 //        armLift.setLoc(mController.getArmDistance());
         pneumatics.setGrapplingHook(mController.grapplingHookShouldDeploy());

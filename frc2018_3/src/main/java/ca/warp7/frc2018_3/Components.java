@@ -10,10 +10,8 @@ public final class Components {
     public static final Drive drive = new Drive();
     public static final Pneumatics pneumatics = new Pneumatics();
     public static final Intake intake = new Intake();
-    public static final Climber climber = new Climber();
-    public static final ArmClimber armClimber = new ArmClimber();
+    public static final Climber armFromClimber = new Climber();
     public static final ActualClimber actualClimber = new ActualClimber();
-    public static final Arm armLift = new Arm();
     public static final Limelight limelight = new Limelight();
     public static final Navx navx = new Navx();
 }
