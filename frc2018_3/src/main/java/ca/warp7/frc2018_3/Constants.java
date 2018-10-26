@@ -24,12 +24,8 @@ public final class Constants {
 
     public static final Pins kActualClimberPins = pin(8);
 
-    public static final Pins kArmPin = pin(6);
-    public static final Pins kArmEncoder = channels(6, 7);
-
     public static final double kLeftDriftOffset = 1.0;
     public static final double kRightDriftOffset = 1.0;
     public static final double kInchesPerTick = (6 * Math.PI) / 256;
-    public static final double kArmInchesPerTick = (6 * Math.PI) / 256;
     public static final double kPreDriftSpeedLimit = 0.98;
 }

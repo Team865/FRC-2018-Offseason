@@ -1,19 +1,24 @@
 package ca.warp7.frc.commons.core;
 
+import ca.warp7.frc.commons.IUnit;
+import ca.warp7.frc.commons.Unit;
+
 /**
  * Keeps track of the robot's looper and main loops
  */
-//@SuppressWarnings("FieldCanBeLocal")
 class LoopsManager {
 
-    private static final double kObservationLooperDelta = 0.05;
+    @IUnit.Seconds
+    private static final double kObservationLooperDelta = Unit.Hertz.toSeconds(20);
     private final Looper mStateObservationLooper = new Looper(kObservationLooperDelta);
 
-    private static final double kInputLooperDelta = 0.02;
+    @IUnit.Seconds
+    private static final double kInputLooperDelta = Unit.Hertz.toSeconds(50);
     private final Looper mInputLooper = new Looper(kInputLooperDelta);
 
-    private static final double kStateChangeLooperDelta = 0.02;
-    private final Looper mStateChangeLooper = new Looper(kStateChangeLooperDelta);
+    @IUnit.Seconds
+    private static final double kMainLooperDelta = Unit.Hertz.toSeconds(50);
+    private final Looper mMainLooper = new Looper(kMainLooperDelta);
 
     void setPeriodicSource(Components components, StateManager stateManager) {
         /*
@@ -52,21 +57,20 @@ class LoopsManager {
         mInputLooper.registerLoop(measuringLoop);
         mInputLooper.registerLoop(controllerDataUpdateLoop);
         mInputLooper.registerLoop(controllerPeriodicLoop);
-        mStateChangeLooper.registerLoop(stateUpdaterLoop);
-        mStateChangeLooper.registerLoop(systemOutputLoop);
+        mMainLooper.registerLoop(stateUpdaterLoop);
+        mMainLooper.registerLoop(systemOutputLoop);
     }
 
-    void startObservers() {
+    void start() {
         mStateObservationLooper.startLoops();
+        mInputLooper.startLoops();
     }
 
     void disable() {
-        mStateChangeLooper.stopLoops();
-        mInputLooper.stopLoops(); //TODO try removing this?
+        mMainLooper.stopLoops();
     }
 
     void enable() {
-        mStateChangeLooper.startLoops();
-        mInputLooper.startLoops();
+        mMainLooper.startLoops();
     }
 }

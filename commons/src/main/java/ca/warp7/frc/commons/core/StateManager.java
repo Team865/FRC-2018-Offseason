@@ -32,7 +32,7 @@ class StateManager {
         mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
     }
 
-    void logRobotState(String state) {
+    private void logRobotState(String state) {
         if (state.equals(mLoggedRobotState)) {
             return;
         }
@@ -48,6 +48,26 @@ class StateManager {
             System.out.print(String.format(", %.0f seconds after %s began", dt, oldState));
         }
         System.out.println();
+    }
+
+    void logInit() {
+        logRobotState("Initializing");
+    }
+
+    void logDisabled() {
+        logRobotState("Disabled");
+    }
+
+    void logAutonomous() {
+        logRobotState("Autonomous");
+    }
+
+    void logTeleop() {
+        logRobotState("Teleop");
+    }
+
+    void logTest() {
+        logRobotState("Test");
     }
 
     /**

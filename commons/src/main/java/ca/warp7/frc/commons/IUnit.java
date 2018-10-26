@@ -7,4 +7,12 @@ public interface IUnit {
 
     @interface InchesPerSecond {
     }
+
+    @interface Hertz {
+
+    }
+
+    @interface Seconds {
+    }
+
 }

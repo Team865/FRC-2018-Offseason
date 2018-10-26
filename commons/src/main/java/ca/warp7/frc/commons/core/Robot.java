@@ -22,27 +22,23 @@ public abstract class Robot extends IterativeRobot {
     @Override
     public final void startCompetition() {
         sState = mState;
-        this.setComponents(Components.reflectFromPackageName(getClass().getPackage().getName()));
+        mLoops.setPeriodicSource(mComponents, mState);
+        mComponents.reflectFromPackage(getClass().getPackage().getName());
         this.onCreate();
-        if (mComponents.hasClass() && mComponents.hasControlLoop()) {
-            super.startCompetition();
-        } else {
-            System.out.println("ERROR Robot code does not have components or teleop code");
-        }
+        if (mComponents.readyForStart()) super.startCompetition();
+        else System.out.println("ERROR Robot code does not have components or teleop code");
     }
 
     @Override
     public final void robotInit() {
-        mState.logRobotState("Initializing");
-        mComponents.allocateObjects();
-        mLoops.setPeriodicSource(mComponents, mState);
+        mState.logInit();
         mComponents.onConstruct();
-        mLoops.startObservers();
+        mLoops.start();
     }
 
     @Override
     public final void disabledInit() {
-        mState.logRobotState("Disabled");
+        mState.logDisabled();
         mAutoRunner.stop();
         mLoops.disable();
         mComponents.onDisabled();
@@ -50,7 +46,7 @@ public abstract class Robot extends IterativeRobot {
 
     @Override
     public final void autonomousInit() {
-        mState.logRobotState("Autonomous");
+        mState.logAutonomous();
         mComponents.onAutonomousInit();
         mLoops.enable();
         mAutoRunner.start();
@@ -58,7 +54,7 @@ public abstract class Robot extends IterativeRobot {
 
     @Override
     public final void teleopInit() {
-        mState.logRobotState("Teleop");
+        mState.logTeleop();
         mAutoRunner.stop();
         mComponents.onTeleopInit();
         mLoops.enable();
@@ -66,7 +62,7 @@ public abstract class Robot extends IterativeRobot {
 
     @Override
     public final void testInit() {
-        mState.logRobotState("Test");
+        mState.logTest();
     }
 
     protected abstract void onCreate();

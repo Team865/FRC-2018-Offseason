@@ -3,7 +3,7 @@ package ca.warp7.frc.commons;
 import ca.warp7.frc.commons.core.IController;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.wrapper.WPILibXboxController;
+import edu.wpi.first.wpilibj.XboxController;
 
 import static ca.warp7.frc.commons.ButtonState.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -18,7 +18,7 @@ public class XboxController2 implements IController {
     private static final int kDownPOV = 180;
     private static final int kLeftPOV = 270;
 
-    private WPILibXboxController mController;
+    private XboxController mController;
     private State mS = new State();
 
     private static class State {
@@ -41,7 +41,7 @@ public class XboxController2 implements IController {
     }
 
     public XboxController2(int port) {
-        mController = new WPILibXboxController(port);
+        mController = new XboxController(port);
     }
 
     private static ButtonState update(ButtonState old, boolean bool) {
@@ -132,6 +132,14 @@ public class XboxController2 implements IController {
 
     public ButtonState getLeftDirectionalPad() {
         return mS.LeftDirectionalPad;
+    }
+
+    public double getLeftTriggerAxis() {
+        return mController.getTriggerAxis(kLeft);
+    }
+
+    public double getRightTriggerAxis() {
+        return mController.getTriggerAxis(kRight);
     }
 
     public double getLeftXAxis() {
