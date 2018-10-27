@@ -15,13 +15,13 @@ public abstract class Robot extends IterativeRobot {
     private final LoopsManager mLoops = new LoopsManager();
     private final StateManager mState = new StateManager();
 
-    private static StateManager sState;
+    private static StateManager state;
     protected final double kAutoMaxTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
     protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
 
     @Override
     public final void startCompetition() {
-        sState = mState;
+        state = mState;
         mLoops.setPeriodicSource(mComponents, mState);
         mComponents.reflectFromPackage(getClass().getPackage().getName());
         this.onCreate();
@@ -80,18 +80,18 @@ public abstract class Robot extends IterativeRobot {
     }
 
     public static void println(Object o) {
-        sState.report(null, StateType.PRINTLN, o);
+        state.report(null, StateType.PRINTLN, o);
     }
 
     public static void warning(Object o) {
-        sState.report(null, StateType.WARNING_PRINTLN, o);
+        state.report(null, StateType.WARNING_PRINTLN, o);
     }
 
     public static void error(Object o) {
-        sState.report(null, StateType.ERROR_PRINTLN, o);
+        state.report(null, StateType.ERROR_PRINTLN, o);
     }
 
-    public static void report(Object owner, StateType type, Object state) {
-        sState.report(owner, type, state);
+    public static void report(Object owner, StateType type, Object o) {
+        state.report(owner, type, o);
     }
 }

@@ -4,18 +4,12 @@ import ca.warp7.frc.commons.core.IComponent;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
-public class Navx implements IComponent {
+public class NavX implements IComponent {
     private AHRS ahrs;
 
     @Override
     public void onConstruct() {
         ahrs = new AHRS(SPI.Port.kMXP);
-
-        if (!ahrs.isConnected()) {
-            System.out.println("Navx is not Connected");
-        } else if (ahrs.isCalibrating()) {
-            System.out.println("Calibrating Navx");
-        }
         ahrs.zeroYaw();
     }
 

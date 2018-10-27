@@ -34,4 +34,6 @@ public final class Constants {
     public static final double kRightDriftOffset = 1.0;
     public static final double kInchesPerTick = (6 * Math.PI) / 256;
     public static final double kPreDriftSpeedLimit = 0.98;
+
+    public static final int kConfigTimeout = 100;
 }

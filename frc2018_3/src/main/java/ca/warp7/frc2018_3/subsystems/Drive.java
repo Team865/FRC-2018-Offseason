@@ -11,6 +11,7 @@ import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 import com.stormbots.MiniPID;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -20,6 +21,7 @@ import java.util.LinkedList;
 
 import static ca.warp7.frc.commons.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.Functions.limit;
+import static ca.warp7.frc2018_3.Components.navX;
 import static ca.warp7.frc2018_3.Constants.*;
 import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
@@ -49,6 +51,8 @@ public class Drive implements ISubsystem {
     private SpeedControllerGroup mLeftGroup;
     private SpeedControllerGroup mRightGroup;
     private DifferentialWheels<Encoder> mEncoders;
+    private AHRS mAHRS;
+    private final boolean mUseVictorConfig = false;
 
     private static Encoder configEncoder(int channelA, int channelB, boolean reversed) {
         Encoder encoder = new Encoder(channelA, channelB, reversed, k4X);
@@ -57,7 +61,22 @@ public class Drive implements ISubsystem {
         return encoder;
     }
 
-    private void configMotors() {
+    private static void configMaster(WPI_VictorSPX victor) {
+        victor.enableVoltageCompensation(true);
+        victor.configVoltageCompSaturation(12.0, kConfigTimeout);
+        victor.configNeutralDeadband(0.04, kConfigTimeout);
+        victor.configOpenloopRamp(0.0, kConfigTimeout);
+        victor.configClosedloopRamp(0.0, kConfigTimeout);
+        victor.configPeakOutputForward(kAbsoluteMaxOutput, kConfigTimeout);
+        victor.configPeakOutputReverse(kAbsoluteMaxOutput, kConfigTimeout);
+        victor.configNominalOutputForward(kOutputPowerEpsilon, kConfigTimeout);
+        victor.configNominalOutputReverse(kOutputPowerEpsilon, kConfigTimeout);
+    }
+
+    @SuppressWarnings("unused")
+    private void configAll() {
+        configMaster(mLeftMaster);
+        configMaster(mRightMaster);
         mLeftSlave.set(ControlMode.Follower, mLeftMaster.getDeviceID());
         mRightSlave.set(ControlMode.Follower, mRightMaster.getDeviceID());
     }
@@ -74,15 +93,19 @@ public class Drive implements ISubsystem {
         mRightMaster = new WPI_VictorSPX(kDriveRightMaster);
         mRightSlave = new WPI_VictorSPX(kDriveRightSlave);
 
-        configMotors();
-
-        mLeftGroup = new SpeedControllerGroup(mLeftMaster, mLeftSlave);
-        mRightGroup = new SpeedControllerGroup(mRightMaster, mRightSlave);
+        if (mUseVictorConfig) {
+            configAll();
+        } else {
+            mLeftGroup = new SpeedControllerGroup(mLeftMaster, mLeftSlave);
+            mRightGroup = new SpeedControllerGroup(mRightMaster, mRightSlave);
+            mRightGroup.setInverted(true);
+        }
 
         Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false);
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
 
         mEncoders = new DifferentialWheels<>(leftEncoder, rightEncoder);
+        mAHRS = navX.getAhrs();
     }
 
     @Override
@@ -96,7 +119,6 @@ public class Drive implements ISubsystem {
         mInput.targetRightDistance = 0;
         mInput.leftPIDValues.reset();
         mInput.rightPIDValues.reset();
-        onZeroSensors();
     }
 
     @Override
@@ -127,6 +149,10 @@ public class Drive implements ISubsystem {
         }
 
         mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
+
+        mState.accelerationX = mAHRS.getWorldLinearAccelX();
+        mState.accelerationY = mAHRS.getWorldLinearAccelY();
+        mState.accelerationZ = mAHRS.getWorldLinearAccelZ();
     }
 
     @Override
@@ -140,8 +166,13 @@ public class Drive implements ISubsystem {
     public synchronized void onOutput() {
         double limitedLeft = limit(mState.leftPower, kPreDriftSpeedLimit);
         double limitedRight = limit(mState.rightPower, kPreDriftSpeedLimit);
-        mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
-        mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
+        if (mUseVictorConfig) {
+            mLeftMaster.set(ControlMode.PercentOutput, limitedLeft * kLeftDriftOffset);
+            mRightMaster.set(ControlMode.PercentOutput, limitedRight * kRightDriftOffset);
+        } else {
+            mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
+            mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
+        }
     }
 
     @Override
@@ -281,6 +312,9 @@ public class Drive implements ISubsystem {
         double rightPower;
         double measuredLeftDistance;
         double measuredRightDistance;
+        double accelerationX;
+        double accelerationY;
+        double accelerationZ;
 
         @IUnit.InchesPerSecond
         final DifferentialWheels<Double> measuredVelocity = new DifferentialWheels<>(0.0, 0.0);
