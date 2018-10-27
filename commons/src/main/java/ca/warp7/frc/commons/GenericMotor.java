@@ -10,9 +10,9 @@ import static ca.warp7.frc.commons.Functions.limit;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class GenericMotor implements ISubsystem {
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private SpeedController mMotor;

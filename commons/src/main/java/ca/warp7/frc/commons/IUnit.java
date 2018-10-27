@@ -8,11 +8,13 @@ public interface IUnit {
     @interface InchesPerSecond {
     }
 
+    @interface InchesPerSecondSquared {
+    }
+
     @interface Hertz {
 
     }
 
     @interface Seconds {
     }
-
 }

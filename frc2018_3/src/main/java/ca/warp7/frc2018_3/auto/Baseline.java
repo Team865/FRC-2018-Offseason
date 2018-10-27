@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_3.auto.modes;
+package ca.warp7.frc2018_3.auto;
 
 import ca.warp7.frc.commons.core.IAutoMode;
 import ca.warp7.frc.commons.scheduler.IAction;

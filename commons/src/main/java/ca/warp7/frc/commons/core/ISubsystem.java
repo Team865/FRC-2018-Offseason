@@ -50,14 +50,14 @@ package ca.warp7.frc.commons.core;
 
 
 @SuppressWarnings("EmptyMethod")
-public interface ISubsystem {
+public interface ISubsystem extends IComponent {
 
     /**
      * <p>This annotation marks a field to hold the current state of the system.
      * The current state is the what the subsystem is currently doing and sensing.
      * For clarity, there should only be one of such fields</p>
      */
-    @interface CurrentStateField {
+    @interface StateField {
     }
 
     /**
@@ -65,7 +65,7 @@ public interface ISubsystem {
      * The input state is what the robot currently expects the subsystem to do.
      * For clarity, there should only be one of such fields</p>
      */
-    @interface InputStateField {
+    @interface InputField {
     }
 
     /**
@@ -74,21 +74,6 @@ public interface ISubsystem {
      */
     @interface InputModifier {
     }
-
-    /**
-     * <p>Called when constructing the subsystem</p>
-     *
-     * <p>This method should connect any hardware components such as motors, gyros,
-     * and encoders and perform any initial settings such as their direction.
-     * This method should be used instead of class constructors since subsystems are often
-     * created statically and it is preferred to initialize the systems in the proper order.
-     * In other words, this is a "deferred" constructor</p>
-     *
-     * <p>There are some special cases where it is necessary to configure a system a certain
-     * way as soon as possible after the program starts (e.g. charging pneumatics). In these
-     * cases it is okay to do that in this method</p>
-     */
-    void onConstruct();
 
     /**
      * <p>Called when the robot is disabled</p>

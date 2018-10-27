@@ -13,9 +13,9 @@ public class ActualClimber implements ISubsystem {
 
     private static final double kAbsoluteMaxOutputPower = 1.0;
 
-    @ISubsystem.InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @ISubsystem.CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private MotorGroup mClimberMotors;

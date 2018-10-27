@@ -21,7 +21,7 @@ class Components implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        this.allocateObjects();
+        this.collectObjects();
         mExtraComponents.forEach(IComponent::onConstruct);
         mSubsystems.forEach(ISubsystem::onConstruct);
         this.onZeroSensors();
@@ -97,7 +97,7 @@ class Components implements ISubsystem {
         mControllers.forEach(IController::onUpdateData);
     }
 
-    private void allocateObjects() {
+    private void collectObjects() {
         if (mComponentsClass != null) {
             Field[] componentFields = mComponentsClass.getFields();
             for (Field componentField : componentFields) {
@@ -114,9 +114,16 @@ class Components implements ISubsystem {
                         }
                     }
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    System.out.println("ERROR Illegal Access collecting objects");
                 }
             }
+            int subsystemsSize = mSubsystems.size();
+            int componentsSize = mExtraComponents.size();
+            int skipped = componentFields.length - subsystemsSize - componentsSize;
+            System.out.println(String.format("Collected %d subsystems, %d extra components, and skipped %d fields",
+                    subsystemsSize, componentsSize, skipped));
+        } else {
+            System.out.println("ERROR No objects to collect");
         }
     }
 

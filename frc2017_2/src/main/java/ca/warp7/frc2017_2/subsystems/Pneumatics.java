@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 public class Pneumatics implements ISubsystem {
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private Compressor mCompressor;

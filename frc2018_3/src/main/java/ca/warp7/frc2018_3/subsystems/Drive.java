@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.stormbots.MiniPID;
+import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
@@ -23,7 +24,6 @@ import static ca.warp7.frc.commons.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Components.navX;
 import static ca.warp7.frc2018_3.Constants.*;
-import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 public class Drive implements ISubsystem {
 
@@ -37,9 +37,9 @@ public class Drive implements ISubsystem {
 
     private static final int kVelocityAverageQueueSize = 5;
 
-    @InputStateField
+    @InputField
     private final Input mInput = new Input();
-    @CurrentStateField
+    @StateField
     private final State mState = new State();
 
     private CheesyDrive mCheesyDrive;
@@ -55,7 +55,7 @@ public class Drive implements ISubsystem {
     private final boolean mUseVictorConfig = false;
 
     private static Encoder configEncoder(int channelA, int channelB, boolean reversed) {
-        Encoder encoder = new Encoder(channelA, channelB, reversed, k4X);
+        Encoder encoder = new Encoder(channelA, channelB, reversed, CounterBase.EncodingType.k4X);
         encoder.setDistancePerPulse(kInchesPerTick);
         encoder.reset();
         return encoder;
@@ -134,6 +134,9 @@ public class Drive implements ISubsystem {
         DifferentialWheels<Double> dDistance = new DifferentialWheels<>(
                 mState.measuredLeftDistance - oldLeft, mState.measuredRightDistance - oldRight);
 
+        DifferentialWheels<Double> previousRate = new DifferentialWheels<>(mState.encoderRate);
+        mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
+
         if (dt != 0) {
             // Add a new DtMeasurement object to the queue
             mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
@@ -146,9 +149,10 @@ public class Drive implements ISubsystem {
             mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
             // Calculate the ratio get meters per seconds
             mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
-        }
 
-        mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
+            mState.encoderAcceleration.set(mState.encoderRate.transformed(previousRate,
+                    (rateNow, ratePrev) -> (rateNow - ratePrev) / dt));
+        }
 
         mState.accelerationX = mAHRS.getWorldLinearAccelX();
         mState.accelerationY = mAHRS.getWorldLinearAccelY();
@@ -317,12 +321,15 @@ public class Drive implements ISubsystem {
         double accelerationZ;
 
         @IUnit.InchesPerSecond
-        final DifferentialWheels<Double> measuredVelocity = new DifferentialWheels<>(0.0, 0.0);
+        final DifferentialWheels<Double> measuredVelocity = DifferentialWheels.zeroes();
         @IUnit.InchesPerSecond
         final LinkedList<DifferentialWheels<DtMeasurement>> velocityAverages = new LinkedList<>();
 
         @IUnit.InchesPerSecond
-        DifferentialWheels<Double> encoderRate = new DifferentialWheels<>(0.0, 0.0);
+        final DifferentialWheels<Double> encoderRate = DifferentialWheels.zeroes();
+
+        @IUnit.InchesPerSecondSquared
+        final DifferentialWheels<Double> encoderAcceleration = DifferentialWheels.zeroes();
 
         final MiniPID leftMiniPID = new MiniPID(0, 0, 0, 0);
         final MiniPID rightMiniPID = new MiniPID(0, 0, 0, 0);

@@ -33,9 +33,9 @@ public class Drive implements ISubsystem {
     private static final double kMinOutputPower = 1.0E-3;
     private static final double kMaxLinearRampRate = 1.0 / 4;
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private CheesyDrive mCheesyDrive;

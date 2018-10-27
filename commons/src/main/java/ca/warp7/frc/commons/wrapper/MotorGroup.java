@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import static java.util.Arrays.stream;
 
+@Deprecated
 public class MotorGroup implements SpeedController {
 
     private SpeedController[] mMotors;

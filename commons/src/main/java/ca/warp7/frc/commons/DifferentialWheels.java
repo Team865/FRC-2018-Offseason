@@ -2,6 +2,7 @@ package ca.warp7.frc.commons;
 
 import ca.warp7.frc.commons.core.ICollectiveState;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,9 +18,20 @@ public class DifferentialWheels<T> implements ICollectiveState {
     private T mRight;
     private Map<String, Object> collectiveMap;
 
+    public static DifferentialWheels<Double> zeroes() {
+        return new DifferentialWheels<>(0d, 0d);
+    }
+
     public DifferentialWheels(T left, T right) {
         this.mLeft = left;
         this.mRight = right;
+        collectiveMap = new HashMap<>();
+    }
+
+    public DifferentialWheels(DifferentialWheels<T> other) {
+        mLeft = other.mLeft;
+        mRight = other.mRight;
+        collectiveMap = new HashMap<>();
     }
 
     public T getLeft() {
@@ -51,6 +63,11 @@ public class DifferentialWheels<T> implements ICollectiveState {
         mRight = function.apply(mRight);
     }
 
+    public <S> DifferentialWheels<S> transformed(DifferentialWheels<T> other, DependantFunction<T, S> function) {
+        return new DifferentialWheels<>(function.apply(mLeft, other.getLeft()),
+                function.apply(mRight, other.getRight()));
+    }
+
     public void transform(DifferentialWheels<T> other, DependantFunction<T, T> function) {
         mLeft = function.apply(mLeft, other.getLeft());
         mRight = function.apply(mRight, other.getRight());
@@ -73,6 +90,4 @@ public class DifferentialWheels<T> implements ICollectiveState {
         mLeft = differentialWheels.getLeft();
         mRight = differentialWheels.getRight();
     }
-
-
 }

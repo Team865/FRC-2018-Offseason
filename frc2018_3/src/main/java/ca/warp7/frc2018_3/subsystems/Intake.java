@@ -20,9 +20,9 @@ public class Intake implements ISubsystem {
     public static final double kFastOuttakePower = -0.95;
     public static final double kSlowOuttakePower = -0.65;
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private MotorGroup mIntakeMotorRight;
