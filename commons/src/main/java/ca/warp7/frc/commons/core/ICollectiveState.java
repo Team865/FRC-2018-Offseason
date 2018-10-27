@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface ICollectiveState {
 
-    Map<String, Object> getCollectiveMap();
+    Map<String, Object> getCollection();
 
     @FunctionalInterface
     interface DependantFunction<T, R> {

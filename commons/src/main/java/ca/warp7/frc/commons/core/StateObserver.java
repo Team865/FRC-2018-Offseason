@@ -52,7 +52,7 @@ class StateObserver {
     void updateNetworkTables() {
         for (String entryKey : mObservedMap.keySet()) {
             Object value = mObservedMap.get(entryKey);
-            if (value instanceof ICollectiveState) ((ICollectiveState) value).getCollectiveMap().forEach(
+            if (value instanceof ICollectiveState) ((ICollectiveState) value).getCollection().forEach(
                     (s, object) -> sendNetworkTableValue(mTable.getEntry(entryKey + "/" + s), object));
             else sendNetworkTableValue(mTable.getEntry(entryKey), value);
         }

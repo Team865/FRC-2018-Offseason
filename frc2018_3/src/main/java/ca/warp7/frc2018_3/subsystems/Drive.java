@@ -9,10 +9,11 @@ import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.wrapper.MotorGroup;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.stormbots.MiniPID;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.LinkedList;
@@ -24,14 +25,15 @@ import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k4X;
 
 public class Drive implements ISubsystem {
 
-    private static final double kAbsoluteMaxOutputPower = 1.0;
+    private static final double kAbsoluteMaxOutput = 1.0;
     private static final double kMaximumPIDPower = 0.7;
     private static final double kRampIntervalMultiplier = 0.5;
-    private static final double kMinRampRate = 1.0E-04;
-    private static final double kMinOutputPower = 1.0E-3;
     private static final double kMaxLinearRampRate = 1.0 / 5;
-    private static final double kEpsilon = 1.0E-10;
-    private static final int kVelocityQueueSize = 50;
+    private static final double kRampRateEpsilon = 1.0E-04;
+    private static final double kOutputPowerEpsilon = 1.0E-3;
+    private static final double kTimeDeltaEpsilon = 1.0E-10;
+
+    private static final int kVelocityAverageQueueSize = 5;
 
     @InputStateField
     private final Input mInput = new Input();
@@ -40,8 +42,25 @@ public class Drive implements ISubsystem {
 
     private CheesyDrive mCheesyDrive;
     private double mLastMeasuredTimeStamp;
-    private DifferentialWheels<MotorGroup> mMotors;
+    private WPI_VictorSPX mLeftMaster;
+    private WPI_VictorSPX mLeftSlave;
+    private WPI_VictorSPX mRightMaster;
+    private WPI_VictorSPX mRightSlave;
+    private SpeedControllerGroup mLeftGroup;
+    private SpeedControllerGroup mRightGroup;
     private DifferentialWheels<Encoder> mEncoders;
+
+    private static Encoder configEncoder(int channelA, int channelB, boolean reversed) {
+        Encoder encoder = new Encoder(channelA, channelB, reversed, k4X);
+        encoder.setDistancePerPulse(kInchesPerTick);
+        encoder.reset();
+        return encoder;
+    }
+
+    private void configMotors() {
+        mLeftSlave.set(ControlMode.Follower, mLeftMaster.getDeviceID());
+        mRightSlave.set(ControlMode.Follower, mRightMaster.getDeviceID());
+    }
 
     @Override
     public void onConstruct() {
@@ -50,16 +69,19 @@ public class Drive implements ISubsystem {
             mInput.demandedRightPower = right;
         });
 
-        MotorGroup leftMotors = new MotorGroup(WPI_VictorSPX.class, kDriveLeftPins);
-        MotorGroup rightMotors = new MotorGroup(WPI_VictorSPX.class, kDriveRightPins);
-        rightMotors.setInverted(true);
+        mLeftMaster = new WPI_VictorSPX(kDriveLeftMaster);
+        mLeftSlave = new WPI_VictorSPX(kDriveLeftSlave);
+        mRightMaster = new WPI_VictorSPX(kDriveRightMaster);
+        mRightSlave = new WPI_VictorSPX(kDriveRightSlave);
 
-        Encoder leftEncoder = new Encoder(kDriveLeftEncoder.get(0), kDriveLeftEncoder.get(1), false, k4X);
-        leftEncoder.setDistancePerPulse(kInchesPerTick);
-        Encoder rightEncoder = new Encoder(kDriveRightEncoder.get(0), kDriveRightEncoder.get(1), true, k4X);
-        rightEncoder.setDistancePerPulse(kInchesPerTick);
+        configMotors();
 
-        mMotors = new DifferentialWheels<>(leftMotors, rightMotors);
+        mLeftGroup = new SpeedControllerGroup(mLeftMaster, mLeftSlave);
+        mRightGroup = new SpeedControllerGroup(mRightMaster, mRightSlave);
+
+        Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false);
+        Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
+
         mEncoders = new DifferentialWheels<>(leftEncoder, rightEncoder);
     }
 
@@ -84,7 +106,7 @@ public class Drive implements ISubsystem {
         mState.measuredLeftDistance = mEncoders.getLeft().getDistance();
         mState.measuredRightDistance = mEncoders.getRight().getDistance();
         double now = Timer.getFPGATimestamp();
-        double dt = constrainMinimum(now - mLastMeasuredTimeStamp, kEpsilon);
+        double dt = constrainMinimum(now - mLastMeasuredTimeStamp, kTimeDeltaEpsilon);
         mLastMeasuredTimeStamp = now;
 
         DifferentialWheels<Double> dDistance = new DifferentialWheels<>(
@@ -93,7 +115,7 @@ public class Drive implements ISubsystem {
         if (dt != 0) {
             // Add a new DtMeasurement object to the queue
             mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
-            if (mState.velocityAverages.size() > kVelocityQueueSize) {
+            if (mState.velocityAverages.size() > kVelocityAverageQueueSize) {
                 mState.velocityAverages.removeFirst();
             }
             // Create a sum object
@@ -103,6 +125,8 @@ public class Drive implements ISubsystem {
             // Calculate the ratio get meters per seconds
             mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
         }
+
+        mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
     }
 
     @Override
@@ -116,8 +140,8 @@ public class Drive implements ISubsystem {
     public synchronized void onOutput() {
         double limitedLeft = limit(mState.leftPower, kPreDriftSpeedLimit);
         double limitedRight = limit(mState.rightPower, kPreDriftSpeedLimit);
-        mMotors.getLeft().set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutputPower));
-        mMotors.getRight().set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutputPower));
+        mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
+        mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
     }
 
     @Override
@@ -147,12 +171,12 @@ public class Drive implements ISubsystem {
             double rightSpeedDiff = demandedRight - mState.rightPower;
 
             mState.leftPower += constrainMinimum(Math.min(kMaxLinearRampRate,
-                    Math.abs(leftSpeedDiff * kRampIntervalMultiplier)) * Math.signum(leftSpeedDiff), kMinRampRate);
+                    Math.abs(leftSpeedDiff * kRampIntervalMultiplier)) * Math.signum(leftSpeedDiff), kRampRateEpsilon);
             mState.rightPower += constrainMinimum(Math.min(kMaxLinearRampRate,
-                    Math.abs(rightSpeedDiff * kRampIntervalMultiplier)) * Math.signum(rightSpeedDiff), kMinRampRate);
+                    Math.abs(rightSpeedDiff * kRampIntervalMultiplier)) * Math.signum(rightSpeedDiff), kRampRateEpsilon);
 
-            mState.leftPower = constrainMinimum(mState.leftPower, kMinOutputPower);
-            mState.rightPower = constrainMinimum(mState.rightPower, kMinOutputPower);
+            mState.leftPower = constrainMinimum(mState.leftPower, kOutputPowerEpsilon);
+            mState.rightPower = constrainMinimum(mState.rightPower, kOutputPowerEpsilon);
 
             //For debugging
             //System.out.println(String.format("%.3f, %.3f", mState.leftPower, mState.rightPower));
@@ -262,6 +286,9 @@ public class Drive implements ISubsystem {
         final DifferentialWheels<Double> measuredVelocity = new DifferentialWheels<>(0.0, 0.0);
         @IUnit.InchesPerSecond
         final LinkedList<DifferentialWheels<DtMeasurement>> velocityAverages = new LinkedList<>();
+
+        @IUnit.InchesPerSecond
+        DifferentialWheels<Double> encoderRate = new DifferentialWheels<>(0.0, 0.0);
 
         final MiniPID leftMiniPID = new MiniPID(0, 0, 0, 0);
         final MiniPID rightMiniPID = new MiniPID(0, 0, 0, 0);

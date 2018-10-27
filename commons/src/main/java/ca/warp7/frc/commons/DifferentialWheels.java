@@ -31,7 +31,7 @@ public class DifferentialWheels<T> implements ICollectiveState {
     }
 
     @Override
-    public Map<String, Object> getCollectiveMap() {
+    public Map<String, Object> getCollection() {
         collectiveMap.put("left", mLeft);
         collectiveMap.put("right", mRight);
         return collectiveMap;

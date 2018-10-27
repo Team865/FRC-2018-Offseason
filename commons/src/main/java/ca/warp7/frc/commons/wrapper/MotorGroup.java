@@ -24,8 +24,9 @@ public class MotorGroup implements SpeedController {
         }
     }
 
-    public MotorGroup(Class<? extends SpeedController> type, Pins pins) {
+    public MotorGroup(Class<? extends SpeedController> type, Pins pins, boolean inverted) {
         this(pins.array(), type);
+        setInverted(inverted);
     }
 
     @Override

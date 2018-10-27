@@ -2,14 +2,20 @@ package ca.warp7.frc2018_3;
 
 import ca.warp7.frc.commons.Pins;
 
-import static ca.warp7.frc.commons.Pins.*;
+import static ca.warp7.frc.commons.Pins.pin;
+import static ca.warp7.frc.commons.Pins.pins;
 
 public final class Constants {
 
-    public static final Pins kDriveLeftPins = pins(3, 4);
-    public static final Pins kDriveRightPins = pins(5, 1);
-    public static final Pins kDriveLeftEncoder = channels(4, 5);
-    public static final Pins kDriveRightEncoder = channels(0, 1);
+    public static final int kDriveLeftMaster = 3;
+    public static final int kDriveLeftSlave = 4;
+    public static final int kDriveRightMaster = 5;
+    public static final int kDriveRightSlave = 1;
+
+    public static final int kDriveLeftEncoderA = 4;
+    public static final int kDriveLeftEncoderB = 5;
+    public static final int kDriveRightEncoderA = 0;
+    public static final int kDriveRightEncoderB = 1;
 
     public static final int kPneumaticsCompressorPin = 0;
 
