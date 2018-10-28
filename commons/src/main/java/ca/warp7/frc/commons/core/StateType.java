@@ -20,10 +20,10 @@ public enum StateType {
      * Prints a warning
      */
 
-    WARNING_PRINTLN,
+    WARNING,
 
     /**
      * Prints an error
      */
-    ERROR_PRINTLN
+    ERROR
 }

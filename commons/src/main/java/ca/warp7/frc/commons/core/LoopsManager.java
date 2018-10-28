@@ -20,11 +20,11 @@ class LoopsManager {
     private static final double kMainLooperDelta = Unit.Hertz.toSeconds(50);
     private final Looper mMainLooper = new Looper(kMainLooperDelta);
 
-    void setPeriodicSource(Components components, StateManager stateManager) {
+    void setComponentsSource(Components components) {
         /*
           Loop that sends data to the driver station
          */
-        ILoop stateSenderLoop = stateManager::sendAll;
+        ILoop stateSenderLoop = Robot.state::sendAll;
         /*
           Loop asking each system to report its state
          */

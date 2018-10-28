@@ -75,7 +75,7 @@ class Components implements ISubsystem {
         mComponentsClass = componentsClass;
     }
 
-    boolean readyForStart() {
+    boolean isReadyToStart() {
         return mComponentsClass != null && mControllerLoop != null;
     }
 

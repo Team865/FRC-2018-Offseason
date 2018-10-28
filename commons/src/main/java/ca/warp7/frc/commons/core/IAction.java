@@ -1,6 +1,4 @@
-package ca.warp7.frc.commons.scheduler;
-
-import ca.warp7.frc.commons.core.ISubsystem;
+package ca.warp7.frc.commons.core;
 
 /**
  * An interface that describes an iterative action that has a start, loop, and end.

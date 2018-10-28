@@ -1,6 +1,5 @@
 package ca.warp7.frc.commons.core;
 
-import ca.warp7.frc.commons.scheduler.IAction;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -11,8 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 class AutoRunner {
 
-    static final double kMaxAutoTimeoutSeconds = 15;
-
+    private static final double kMaxAutoTimeoutSeconds = 15;
     private static final long kAutoLoopDeltaMilliseconds = 20;
 
     /**

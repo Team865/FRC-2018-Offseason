@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_3.auto;
 
 import ca.warp7.frc.commons.core.IAutoMode;
-import ca.warp7.frc.commons.scheduler.IAction;
+import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc2018_3.auto.actions.DriveForTimeAction;
 
 public class Baseline implements IAutoMode {

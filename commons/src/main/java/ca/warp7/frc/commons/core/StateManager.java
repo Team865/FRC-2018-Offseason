@@ -16,23 +16,26 @@ class StateManager {
 
     private static final int kMaxPrintLength = 255;
 
+    private final List<StateObserver> mStateObservers = new ArrayList<>();
+    private final PrintStream mPrintStream = new PrintStream(System.out, false);
+
     private int mPrintCounter;
-    private final List<StateObserver> mStateObservers;
-    private final PrintStream mAccumulatedPrinter;
     private String mLoggedRobotState;
     private double mOldRobotStateTimeStamp;
     private NetworkTable mSubsystemsTable;
+    private Robot mAttachedRobot;
 
-    StateManager() {
+    void attachRobotInstance(Robot robot){
+        mAttachedRobot = robot;
+        mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
         mPrintCounter = 0;
-        mStateObservers = new ArrayList<>();
-        mAccumulatedPrinter = new PrintStream(System.out, false);
         mLoggedRobotState = "";
         mOldRobotStateTimeStamp = Timer.getFPGATimestamp();
-        mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
+        mAttachedRobot = null;
     }
 
     private void logRobotState(String state) {
+        assertRobotAttached();
         if (state.equals(mLoggedRobotState)) {
             return;
         }
@@ -78,36 +81,21 @@ class StateManager {
      * @param o         The object to report
      */
     synchronized void report(Object owner, StateType stateType, Object o) {
-        String ownerName = (owner != null) ? ((owner instanceof String) ?
+        assertRobotAttached();
+        String name = (owner != null) ? ((owner instanceof String) ?
                 owner.toString() : owner.getClass().getSimpleName()) : "UnclassifiedOwner";
-        switch (stateType) {
-            case COMPONENT_STATE:
-                reflectComponent(ownerName, o);
-                break;
-            case COMPONENT_INPUT:
-                reflectComponent(ownerName + ".in", o);
-                break;
-            case PRINTLN:
-                println("", o);
-                break;
-            case WARNING_PRINTLN:
-                println("WARNING ", o);
-                break;
-            case ERROR_PRINTLN:
-                println("ERROR ", o);
-                break;
-        }
+        report0(name, stateType, o);
     }
 
-    private synchronized void println(String prefix, Object value) {
+    private void println(String prefix, Object value) {
         String stringValue = String.valueOf(value);
         if (mPrintCounter <= kMaxPrintLength) {
             mPrintCounter += stringValue.length();
-            mAccumulatedPrinter.println(prefix + stringValue);
+            mPrintStream.println(prefix + stringValue);
         }
     }
 
-    private synchronized void reflectComponent(String prefix, Object state) {
+    private void reflectComponent(String prefix, Object state) {
         boolean foundCachedObserver = false;
         for (StateObserver observer : mStateObservers) {
             if (observer.isSameAs(state)) {
@@ -123,12 +111,39 @@ class StateManager {
         }
     }
 
+    private void assertRobotAttached(){
+        if (mAttachedRobot == null){
+            System.out.println("ERROR no Robot instance attached!!!");
+        }
+    }
+
+    private void report0(String name, StateType type, Object o){
+        switch (type) {
+            case COMPONENT_STATE:
+                reflectComponent(name, o);
+                break;
+            case COMPONENT_INPUT:
+                reflectComponent(name + ".in", o);
+                break;
+            case PRINTLN:
+                println("", o);
+                break;
+            case WARNING:
+                println("WARNING ", o);
+                break;
+            case ERROR:
+                println("ERROR ", o);
+                mPrintStream.flush();
+                break;
+        }
+    }
+
     synchronized void sendAll() {
         mStateObservers.forEach(StateObserver::updateNetworkTables);
         if (mPrintCounter > kMaxPrintLength) {
             System.out.println("ERROR Printing has exceeded the limit");
         }
         mPrintCounter = 0;
-        mAccumulatedPrinter.flush();
+        mPrintStream.flush();
     }
 }

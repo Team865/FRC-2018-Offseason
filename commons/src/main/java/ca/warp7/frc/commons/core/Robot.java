@@ -12,57 +12,53 @@ public abstract class Robot extends IterativeRobot {
 
     private final Components mComponents = new Components();
     private final AutoRunner mAutoRunner = new AutoRunner();
-    private final LoopsManager mLoops = new LoopsManager();
-    private final StateManager mState = new StateManager();
-
-    private static StateManager state;
-    protected final double kAutoMaxTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
-    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
+    private final LoopsManager mLoopsManager = new LoopsManager();
+    static final StateManager state = new StateManager();
 
     @Override
     public final void startCompetition() {
-        state = mState;
-        mLoops.setPeriodicSource(mComponents, mState);
+        state.attachRobotInstance(this);
+        mLoopsManager.setComponentsSource(mComponents);
         mComponents.reflectFromPackage(getClass().getPackage().getName());
         this.onCreate();
-        if (mComponents.readyForStart()) super.startCompetition();
+        if (mComponents.isReadyToStart()) super.startCompetition();
         else System.out.println("ERROR Robot code does not have components or teleop code");
     }
 
     @Override
     public final void robotInit() {
-        mState.logInit();
+        state.logInit();
         mComponents.onConstruct();
-        mLoops.start();
+        mLoopsManager.start();
     }
 
     @Override
     public final void disabledInit() {
-        mState.logDisabled();
+        state.logDisabled();
         mAutoRunner.stop();
-        mLoops.disable();
+        mLoopsManager.disable();
         mComponents.onDisabled();
     }
 
     @Override
     public final void autonomousInit() {
-        mState.logAutonomous();
+        state.logAutonomous();
         mComponents.onAutonomousInit();
-        mLoops.enable();
+        mLoopsManager.enable();
         mAutoRunner.start();
     }
 
     @Override
     public final void teleopInit() {
-        mState.logTeleop();
+        state.logTeleop();
         mAutoRunner.stop();
         mComponents.onTeleopInit();
-        mLoops.enable();
+        mLoopsManager.enable();
     }
 
     @Override
     public final void testInit() {
-        mState.logTest();
+        state.logTest();
     }
 
     protected abstract void onCreate();
@@ -71,8 +67,8 @@ public abstract class Robot extends IterativeRobot {
         mComponents.setControllerLoop(loop);
     }
 
-    protected final void setAutoMode(IAutoMode mode, double timeout) {
-        mAutoRunner.setAutoMode(mode, timeout);
+    protected final void setAutoMode(IAutoMode mode, double testTimeout) {
+        mAutoRunner.setAutoMode(mode, testTimeout);
     }
 
     protected final void setComponents(Class<?> components) {
@@ -84,11 +80,11 @@ public abstract class Robot extends IterativeRobot {
     }
 
     public static void warning(Object o) {
-        state.report(null, StateType.WARNING_PRINTLN, o);
+        state.report(null, StateType.WARNING, o);
     }
 
     public static void error(Object o) {
-        state.report(null, StateType.ERROR_PRINTLN, o);
+        state.report(null, StateType.ERROR, o);
     }
 
     public static void report(Object owner, StateType type, Object o) {

@@ -2,7 +2,7 @@ package ca.warp7.frc2017_2.auto.test_modes;
 
 import ca.warp7.frc.commons.core.IAutoMode;
 import ca.warp7.frc.commons.scheduler.CompositeAction;
-import ca.warp7.frc.commons.scheduler.IAction;
+import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc2017_2.auto.actions.DriveForDistanceAction;
 import ca.warp7.frc2017_2.auto.actions.DriveForTimeAction;
 import ca.warp7.frc2017_2.constants.RobotMap;
