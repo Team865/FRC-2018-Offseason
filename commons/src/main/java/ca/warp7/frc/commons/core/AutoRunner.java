@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 class AutoRunner {
 
     private static final double kMaxAutoTimeoutSeconds = 15;
-    private static final long kAutoLoopDeltaMilliseconds = 20;
+    private static final long kDefaultLoopDelta = 20;
 
     /**
      * The auto mode that can create the action on demand
@@ -83,8 +83,12 @@ class AutoRunner {
 
             try {
 
-                // Delay for 20ms so the update function is not called so often
-                Thread.sleep(kAutoLoopDeltaMilliseconds);
+                // Delay for a certain amount of time so the update function is not called so often
+                if (mAction.shouldAcceptLoopManagement()) {
+                    mAction.onSleep();
+                } else {
+                    Thread.sleep(kDefaultLoopDelta);
+                }
 
             } catch (InterruptedException e) {
 

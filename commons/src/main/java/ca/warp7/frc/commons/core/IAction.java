@@ -38,4 +38,18 @@ public interface IAction {
      */
     default void onStop() {
     }
+
+    /**
+     * Used to determine if the action wants to control the loop sleep time
+     */
+    default boolean shouldAcceptLoopManagement() {
+        return false;
+    }
+
+    /**
+     * Called for the action to sleep before updating
+     */
+    default void onSleep() throws InterruptedException {
+        Thread.sleep(0);
+    }
 }
