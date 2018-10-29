@@ -3,6 +3,7 @@ package ca.warp7.frc.commons.core;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +23,7 @@ class StateManager {
 
     private static final int kMaxPrintLength = 255;
     private static final double kTriggerDeadBand = 0.5;
+    private static final double kStateEpsilon = 0.01;
     private static final int kUpPOV = 0;
     private static final int kRightPOV = 90;
     private static final int kDownPOV = 180;
@@ -35,8 +37,9 @@ class StateManager {
     private String mLoggedRobotState;
     private double mOldRobotStateTimeStamp;
     private NetworkTable mSubsystemsTable;
+    private DriverStation mDriverStation;
+    private int mNoDataCount;
     private Robot mAttachedRobot;
-
 
     void attachRobotInstance(Robot robot) {
         mAttachedRobot = robot;
@@ -44,7 +47,7 @@ class StateManager {
         mPrintCounter = 0;
         mLoggedRobotState = "";
         mOldRobotStateTimeStamp = Timer.getFPGATimestamp();
-        mAttachedRobot = null;
+        mDriverStation = DriverStation.getInstance();
     }
 
     private void logRobotState(String state) {
@@ -107,6 +110,7 @@ class StateManager {
         }
         XboxControllerPair newPair = new XboxControllerPair(port);
         mControllers.add(newPair);
+        resetControllerData(newPair.state);
         return newPair.state;
     }
 
@@ -197,45 +201,81 @@ class StateManager {
     }
 
     private static void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
-        if (value instanceof Number) entry.setNumber((Number) value);
-        else if (value instanceof Boolean) entry.setBoolean((Boolean) value);
+        if (value instanceof Number) {
+            double n = ((Number) value).doubleValue();
+            if (Math.abs(n) < kStateEpsilon) n = 0;
+            entry.setNumber(n);
+        } else if (value instanceof Boolean) entry.setBoolean((Boolean) value);
         else if (value instanceof String) entry.setString((String) value);
         else if (value.getClass().isEnum()) entry.setString(value.toString());
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
-    private static int update(int old, boolean bool) {
-        return bool ? ((old == Pressed) ? HeldDown : Pressed) : ((old == Released) ? KeptUp : Released);
+    private static int update(int oldState, boolean newState) {
+        return newState ? ((oldState == Pressed || oldState == HeldDown) ? HeldDown : Pressed) :
+                ((oldState == Released || oldState == KeptUp) ? KeptUp : Released);
+    }
+
+    private void resetControllerData(XboxControlsState S) {
+        S.AButton = KeptUp;
+        S.BButton = KeptUp;
+        S.XButton = KeptUp;
+        S.YButton = KeptUp;
+        S.LeftBumper = KeptUp;
+        S.RightBumper = KeptUp;
+        S.LeftTrigger = KeptUp;
+        S.RightTrigger = KeptUp;
+        S.LeftStickButton = KeptUp;
+        S.RightStickButton = KeptUp;
+        S.StartButton = KeptUp;
+        S.BackButton = KeptUp;
+        S.UpDirectionalPad = KeptUp;
+        S.RightDirectionalPad = KeptUp;
+        S.DownDirectionalPad = KeptUp;
+        S.LeftDirectionalPad = KeptUp;
+        S.LeftTriggerAxis = 0;
+        S.RightTriggerAxis = 0;
+        S.LeftXAxis = 0;
+        S.LeftYAxis = 0;
+        S.RightXAxis = 0;
+        S.RightYAxis = 0;
+    }
+
+    private void collectIndividualController(XboxControlsState S, XboxController C) {
+        int POV = C.getPOV();
+        S.AButton = update(S.AButton, C.getAButton());
+        S.BButton = update(S.BButton, C.getBButton());
+        S.XButton = update(S.XButton, C.getXButton());
+        S.YButton = update(S.YButton, C.getYButton());
+        S.LeftBumper = update(S.LeftBumper, C.getBumper(kLeft));
+        S.RightBumper = update(S.RightBumper, C.getBumper(kRight));
+        S.LeftTrigger = update(S.LeftTrigger, C.getTriggerAxis(kLeft) > kTriggerDeadBand);
+        S.RightTrigger = update(S.RightTrigger, C.getTriggerAxis(kRight) > kTriggerDeadBand);
+        S.LeftStickButton = update(S.LeftStickButton, C.getStickButton(kLeft));
+        S.RightStickButton = update(S.RightStickButton, C.getStickButton(kRight));
+        S.StartButton = update(S.StartButton, C.getStartButton());
+        S.BackButton = update(S.BackButton, C.getBackButton());
+        S.UpDirectionalPad = update(S.UpDirectionalPad, POV == kUpPOV);
+        S.RightDirectionalPad = update(S.RightDirectionalPad, POV == kRightPOV);
+        S.DownDirectionalPad = update(S.DownDirectionalPad, POV == kDownPOV);
+        S.LeftDirectionalPad = update(S.LeftDirectionalPad, POV == kLeftPOV);
+        S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
+        S.RightTriggerAxis = C.getTriggerAxis(kRight);
+        S.LeftXAxis = C.getX(kLeft);
+        S.LeftYAxis = C.getY(kLeft);
+        S.RightXAxis = C.getX(kRight);
+        S.RightYAxis = C.getY(kRight);
     }
 
     synchronized void collectControllerData() {
+        if (!mDriverStation.isNewControlData()) mNoDataCount++;
+        else mNoDataCount = 0;
         for (XboxControllerPair pair : mControllers) {
-            XboxControlsState S = pair.state;
-            XboxController C = pair.controller;
-            int POV = pair.controller.getPOV();
-            S.AButton = update(S.AButton, C.getAButton());
-            S.BButton = update(S.BButton, C.getBButton());
-            S.XButton = update(S.XButton, C.getXButton());
-            S.YButton = update(S.YButton, C.getYButton());
-            S.LeftBumper = update(S.LeftBumper, C.getBumper(kLeft));
-            S.RightBumper = update(S.RightBumper, C.getBumper(kRight));
-            S.LeftTrigger = update(S.LeftTrigger, C.getTriggerAxis(kLeft) > kTriggerDeadBand);
-            S.RightTrigger = update(S.RightTrigger, C.getTriggerAxis(kRight) > kTriggerDeadBand);
-            S.LeftStickButton = update(S.LeftStickButton, C.getStickButton(kLeft));
-            S.RightStickButton = update(S.RightStickButton, C.getStickButton(kRight));
-            S.StartButton = update(S.StartButton, C.getStartButton());
-            S.BackButton = update(S.BackButton, C.getBackButton());
-            S.UpDirectionalPad = update(S.UpDirectionalPad, POV == kUpPOV);
-            S.RightDirectionalPad = update(S.RightDirectionalPad, POV == kRightPOV);
-            S.DownDirectionalPad = update(S.DownDirectionalPad, POV == kDownPOV);
-            S.LeftDirectionalPad = update(S.LeftDirectionalPad, POV == kLeftPOV);
-            S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
-            S.RightTriggerAxis = C.getTriggerAxis(kRight);
-            S.LeftXAxis = C.getX(kLeft);
-            S.LeftYAxis = C.getY(kLeft);
-            S.RightXAxis = C.getX(kRight);
-            S.RightYAxis = C.getY(kRight);
-            reflectComponent(String.format("XboxController[%d]", pair.port), S);
+            if (mNoDataCount >= 10) {
+                resetControllerData(pair.state);
+                mNoDataCount = 0;
+            } else collectIndividualController(pair.state, pair.controller);
+            reflectComponent(String.format("XboxController[%d]", pair.port), pair.state);
         }
     }
 

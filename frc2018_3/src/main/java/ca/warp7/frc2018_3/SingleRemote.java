@@ -7,10 +7,9 @@ import ca.warp7.frc2018_3.subsystems.Intake;
 
 import static ca.warp7.frc2018_3.Components.*;
 
-public class DualRemote implements IControls {
+public class SingleRemote implements IControls {
 
     private XboxControlsState Driver = Robot.getXboxController(0);
-    private XboxControlsState Operator = Robot.getXboxController(1);
 
     @Override
     public void periodic() {
@@ -33,13 +32,8 @@ public class DualRemote implements IControls {
         else if (Driver.RightTrigger == HeldDown) intake.setSpeed(Intake.kIntakePower);
         else intake.setSpeed(0);
 
-        // Arm lift
-        if (Operator.BButton == HeldDown) armLift.setSpeed(Operator.LeftYAxis);
-        else if (Driver.BButton == HeldDown) armLift.setSpeed(Driver.LeftYAxis);
+        // ArmLift
+        if (Driver.BButton == HeldDown) armLift.setSpeed(Driver.LeftYAxis);
         else armLift.setSpeed(0);
-
-        // Climber
-        if (Operator.StartButton == HeldDown) climber.setSpeed(Operator.LeftYAxis);
-        else climber.setSpeed(0);
     }
 }

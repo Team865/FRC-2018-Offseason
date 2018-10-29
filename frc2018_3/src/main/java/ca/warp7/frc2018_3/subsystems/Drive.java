@@ -38,7 +38,7 @@ public class Drive implements ISubsystem {
     private static final double kWheelRadius = 3.0;
     private static final double kWheelBaseRadius = 12.50;
     private static final double kEncoderTicksPerRevolution = 256.0;
-    private static final double kPreDriftSpeedLimit = 0.98;
+    private static final double kPreDriftSpeedLimit = 1.0;
     private static final double kVoltageCompensationSaturation = 12.0;
     private static final double kNeutralDeadBand = 0.04;
     private static final double kRampSecondsFromNeutralToFull = 0;
@@ -88,6 +88,7 @@ public class Drive implements ISubsystem {
         mRightMaster.setInverted(true);
         mLeftSlave.set(ControlMode.Follower, mLeftMaster.getDeviceID());
         mRightSlave.set(ControlMode.Follower, mRightMaster.getDeviceID());
+        mRightSlave.setInverted(true);
     }
 
     @Override
@@ -135,7 +136,6 @@ public class Drive implements ISubsystem {
     public synchronized void onMeasure() {
         mState.accelerationX = mAHRS.getWorldLinearAccelX();
         mState.accelerationY = mAHRS.getWorldLinearAccelY();
-        mState.accelerationZ = mAHRS.getWorldLinearAccelZ();
         double oldYaw = mState.yaw;
         mState.yaw = mAHRS.getYaw();
         mState.leftVoltage = mLeftMaster.getMotorOutputVoltage();
@@ -232,6 +232,8 @@ public class Drive implements ISubsystem {
         if (mIsUsingNativeVictorAPI) {
             mLeftMaster.set(ControlMode.PercentOutput, limitedLeft * kLeftDriftOffset);
             mRightMaster.set(ControlMode.PercentOutput, limitedRight * kRightDriftOffset);
+            mLeftSlave.follow(mLeftMaster);
+            mRightSlave.follow(mRightMaster);
         } else {
             mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
             mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
@@ -321,7 +323,6 @@ public class Drive implements ISubsystem {
         double rightDistance;
         double accelerationX;
         double accelerationY;
-        double accelerationZ;
         double yaw;
         double yawChangeVelocity;
         double chassisLinearVelocity;

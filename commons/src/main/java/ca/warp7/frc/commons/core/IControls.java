@@ -5,10 +5,10 @@ package ca.warp7.frc.commons.core;
  */
 public interface IControls {
 
-    int Pressed = 0;
-    int Released = 1;
-    int HeldDown = 2;
-    int KeptUp = 3;
+    int Pressed = 9;
+    int HeldDown = 19;
+    int Released = 10;
+    int KeptUp = 0;
 
     void periodic();
 }

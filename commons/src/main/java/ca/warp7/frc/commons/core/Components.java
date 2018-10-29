@@ -110,7 +110,7 @@ class Components implements ISubsystem {
             int subsystemsSize = mSubsystems.size();
             int componentsSize = mExtraComponents.size();
             int skipped = componentFields.length - subsystemsSize - componentsSize;
-            System.out.println(String.format("Collected %d subsystems, %d extra components, and skipped %d fields",
+            System.out.println(String.format("Components - Collected %d subsystems, %d extra components, and skipped %d fields",
                     subsystemsSize, componentsSize, skipped));
         } else {
             System.out.println("ERROR No objects to collect");
