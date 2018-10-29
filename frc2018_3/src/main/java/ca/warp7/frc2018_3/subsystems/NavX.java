@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_3.sensors;
+package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.IComponent;
 import com.kauailabs.navx.frc.AHRS;
@@ -10,22 +10,9 @@ public class NavX implements IComponent {
     @Override
     public void onConstruct() {
         ahrs = new AHRS(SPI.Port.kMXP);
-        ahrs.zeroYaw();
     }
 
-    public double getAngle() {
-        return ahrs.getAngle();
-    }
-
-    public void resetAngle() {
-        ahrs.reset();
-    }
-
-    public double getPitch() {
-        return ahrs.getPitch();
-    }
-
-    public AHRS getAhrs() {
+    AHRS getAhrs() {
         return ahrs;
     }
 }

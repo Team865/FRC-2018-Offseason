@@ -101,4 +101,10 @@ public abstract class Robot extends IterativeRobot {
     public static XboxControlsState getXboxController(int port) {
         return state.createXboxController(port);
     }
+
+    public static void registerSelectableAutoModes(IAutoMode... modes) {
+    }
+
+    public static void registerComponents(IComponent... components) {
+    }
 }

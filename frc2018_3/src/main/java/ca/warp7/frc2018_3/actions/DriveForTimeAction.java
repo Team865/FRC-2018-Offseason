@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_3.auto.actions;
+package ca.warp7.frc2018_3.actions;
 
 import ca.warp7.frc.commons.core.IAction;
 import edu.wpi.first.wpilibj.Timer;

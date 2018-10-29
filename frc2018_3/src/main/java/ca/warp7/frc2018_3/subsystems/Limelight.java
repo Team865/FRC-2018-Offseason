@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_3.sensors;
+package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.IComponent;
 import edu.wpi.first.networktables.NetworkTable;
@@ -46,7 +46,7 @@ public class Limelight implements IComponent {
         return skew;
     }
 
-    boolean foundObject() {
+    private boolean foundObject() {
         int found = (int) table.getEntry("tv").getDouble(0);
         return found == 1;
     }

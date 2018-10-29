@@ -35,13 +35,13 @@ public class DualRemote implements IControls {
         else if (DRIVER.RightTrigger == HELD_DOWN) intake.setSpeed(Intake.kIntakePower);
         else intake.setSpeed(0);
 
-        // "Climber" that is actually arm
-        if (OPERATOR.BButton == HELD_DOWN) armFromClimber.setSpeed(OPERATOR.LeftYAxis);
-        else if (DRIVER.BButton == HELD_DOWN) armFromClimber.setSpeed(DRIVER.LeftYAxis);
-        else armFromClimber.setSpeed(0);
+        // Arm lift
+        if (OPERATOR.BButton == HELD_DOWN) armLift.setSpeed(OPERATOR.LeftYAxis);
+        else if (DRIVER.BButton == HELD_DOWN) armLift.setSpeed(DRIVER.LeftYAxis);
+        else armLift.setSpeed(0);
 
-        // Actual climbing mechanism
-        if (OPERATOR.StartButton == HELD_DOWN) actualClimber.setSpeed(OPERATOR.LeftYAxis);
-        else actualClimber.setSpeed(0);
+        // Climber
+        if (OPERATOR.StartButton == HELD_DOWN) climber.setSpeed(OPERATOR.LeftYAxis);
+        else climber.setSpeed(0);
     }
 }

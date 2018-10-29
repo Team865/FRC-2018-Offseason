@@ -4,12 +4,10 @@ import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc.commons.wrapper.MotorGroup;
-import ca.warp7.frc2018_3.sensors.LimelightPhotoSensor;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
 
 import static ca.warp7.frc.commons.Functions.limit;
-import static ca.warp7.frc2018_3.Components.limelight;
 import static ca.warp7.frc2018_3.Constants.*;
 
 public class Intake implements ISubsystem {
@@ -28,7 +26,6 @@ public class Intake implements ISubsystem {
     private MotorGroup mIntakeMotorRight;
     private MotorGroup mIntakeMotorLeft;
     private Solenoid mIntakePistons;
-    private LimelightPhotoSensor mPhotoSensor;
 
     @Override
     public void onConstruct() {
@@ -36,7 +33,6 @@ public class Intake implements ISubsystem {
         mIntakeMotorRight = new MotorGroup(WPI_VictorSPX.class, kIntakeRightPin);
         mIntakeMotorRight.setInverted(true);
         mIntakePistons = new Solenoid(kIntakePistonSolenoidPin);
-        mPhotoSensor = new LimelightPhotoSensor(limelight, 1);
     }
 
     @Override
@@ -68,16 +64,8 @@ public class Intake implements ISubsystem {
         mInputState.demandedRightSpeed = speed;
     }
 
-    public double getSpeed() {
-        return mIntakeMotorRight.get();
-    }
-
     public void togglePiston() {
         mIntakePistons.set(!mIntakePistons.get());
-    }
-
-    public boolean hasCube() {
-        return mPhotoSensor.isTriggered();
     }
 
     static class InputState {

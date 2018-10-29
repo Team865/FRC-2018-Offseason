@@ -1,11 +1,11 @@
 package ca.warp7.frc2018_3.auto;
 
 import ca.warp7.frc.commons.PIDValues;
+import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.IAutoMode;
 import ca.warp7.frc.commons.scheduler.CompositeAction;
-import ca.warp7.frc.commons.core.IAction;
-import ca.warp7.frc2018_3.auto.actions.DriveForDistanceAction;
-import ca.warp7.frc2018_3.auto.actions.OuttakeCube;
+import ca.warp7.frc2018_3.actions.DriveForDistanceAction;
+import ca.warp7.frc2018_3.actions.OuttakeCube;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class OneSwitch implements IAutoMode {

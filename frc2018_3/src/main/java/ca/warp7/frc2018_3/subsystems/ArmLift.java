@@ -7,11 +7,11 @@ import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import static ca.warp7.frc.commons.Functions.limit;
-import static ca.warp7.frc2018_3.Constants.kActualClimberPins;
+import static ca.warp7.frc2018_3.Constants.kClimberPins;
 
-public class ActualClimber implements ISubsystem {
+public class ArmLift implements ISubsystem {
 
-    private static final double kAbsoluteMaxOutputPower = 1.0;
+    private static final double kAbsoluteMaxOutputPower = 0.8;
 
     @InputField
     private final InputState mInputState = new InputState();
@@ -26,7 +26,7 @@ public class ActualClimber implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kActualClimberPins);
+        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kClimberPins);
     }
 
     @Override

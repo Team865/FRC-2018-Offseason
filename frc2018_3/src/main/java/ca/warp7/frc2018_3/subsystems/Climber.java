@@ -7,15 +7,11 @@ import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import static ca.warp7.frc.commons.Functions.limit;
-import static ca.warp7.frc2018_3.Constants.kClimberPins;
-
-/**
- * Lets us climb the bar in endgame. No encoders or PID for this
- */
+import static ca.warp7.frc2018_3.Constants.kActualClimberPins;
 
 public class Climber implements ISubsystem {
 
-    private static final double kAbsoluteMaxOutputPower = 0.8;
+    private static final double kAbsoluteMaxOutputPower = 1.0;
 
     @InputField
     private final InputState mInputState = new InputState();
@@ -30,7 +26,7 @@ public class Climber implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kClimberPins);
+        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kActualClimberPins);
     }
 
     @Override
