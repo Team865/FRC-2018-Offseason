@@ -2,7 +2,6 @@ package ca.warp7.frc2018_3;
 
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc2018_3.auto.OneSwitch;
-import ca.warp7.frc2018_3.operator_input.DualRemoteV2;
 
 public class FiftyCents extends Robot {
 
@@ -12,7 +11,7 @@ public class FiftyCents extends Robot {
         //setAutoMode(new BaselinePID(), 10);
         //setAutoMode(() -> new OuttakeCube(0.5, -0.75), 1);
         setAutoMode(new OneSwitch('R'), 15);
-        setControllerLoop(new DualRemoteV2());
+        setControllerLoop(new DualRemote());
     }
 
 }

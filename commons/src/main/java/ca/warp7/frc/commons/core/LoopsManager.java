@@ -25,39 +25,42 @@ class LoopsManager {
           Loop that sends data to the driver station
          */
         ILoop stateSenderLoop = Robot.state::sendAll;
+        mStateObservationLooper.registerLoop(stateSenderLoop);
+
         /*
           Loop asking each system to report its state
          */
         ILoop stateReportingLoop = components::onReportState;
+        mStateObservationLooper.registerLoop(stateReportingLoop);
+
         /*
           Loop asking each system to read sensor values
          */
         ILoop measuringLoop = components::onMeasure;
-        /*
-          Loop asking each system to perform its output
-         */
-        ILoop systemOutputLoop = components::onOutput;
-        /*
-          Loop asking each system to modify its current state based on its input
-         */
-        ILoop stateUpdaterLoop = components::onUpdateState;
+        mInputLooper.registerLoop(measuringLoop);
 
         /*
           Updates the controllers
          */
-        ILoop controllerDataUpdateLoop = components::controllerUpdate;
+        ILoop collectControllerDataLoop = Robot.state::collectControllerData;
+        mInputLooper.registerLoop(collectControllerDataLoop);
 
         /*
           Loop asking the callback to process the controller input
          */
         ILoop controllerPeriodicLoop = components::controllerPeriodic;
-
-        mStateObservationLooper.registerLoop(stateReportingLoop);
-        mStateObservationLooper.registerLoop(stateSenderLoop);
-        mInputLooper.registerLoop(measuringLoop);
-        mInputLooper.registerLoop(controllerDataUpdateLoop);
         mInputLooper.registerLoop(controllerPeriodicLoop);
+
+        /*
+          Loop asking each system to modify its current state based on its input
+         */
+        ILoop stateUpdaterLoop = components::onUpdateState;
         mMainLooper.registerLoop(stateUpdaterLoop);
+
+        /*
+          Loop asking each system to perform its output
+         */
+        ILoop systemOutputLoop = components::onOutput;
         mMainLooper.registerLoop(systemOutputLoop);
     }
 

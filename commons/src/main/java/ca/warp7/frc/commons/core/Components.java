@@ -15,8 +15,7 @@ class Components implements ISubsystem {
     private Class<?> mComponentsClass;
     private List<ISubsystem> mSubsystems = new ArrayList<>();
     private List<IComponent> mExtraComponents = new ArrayList<>();
-    private List<IController> mControllers = new ArrayList<>();
-    private IControllerLoop mControllerLoop;
+    private IControls mControllerLoop;
     private boolean mControllerEnabled;
 
     @Override
@@ -78,22 +77,14 @@ class Components implements ISubsystem {
         return mComponentsClass != null && mControllerLoop != null;
     }
 
-    void setControllerLoop(IControllerLoop controllerLoop) {
+    void setControllerLoop(IControls controllerLoop) {
         mControllerLoop = controllerLoop;
-        mControllers = controllerLoop.onCreateControllers();
-        if (mControllers == null) {
-            mControllers = new ArrayList<>();
-        }
     }
 
     void controllerPeriodic() {
         if (mControllerEnabled) {
-            mControllerLoop.onPeriodic();
+            mControllerLoop.periodic();
         }
-    }
-
-    void controllerUpdate() {
-        mControllers.forEach(IController::onUpdateData);
     }
 
     private void collectObjects() {

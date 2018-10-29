@@ -1,14 +1,14 @@
 package ca.warp7.frc.commons;
 
-import ca.warp7.frc.commons.core.IController;
+import ca.warp7.frc.commons.core.ButtonState;
 import ca.warp7.frc.commons.wrapper.WPILibXboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 
-import static ca.warp7.frc.commons.ButtonState.*;
+import static ca.warp7.frc.commons.core.ButtonState.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
 @Deprecated
-public class XboxController implements IController {
+public class XboxController {
     private WPILibXboxController mWPILibController;
     private boolean mAButton;
     private boolean mBButton;

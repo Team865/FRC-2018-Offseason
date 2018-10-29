@@ -1,4 +1,4 @@
-package ca.warp7.frc.commons;
+package ca.warp7.frc.commons.core;
 
 /**
  * The state of a controller button

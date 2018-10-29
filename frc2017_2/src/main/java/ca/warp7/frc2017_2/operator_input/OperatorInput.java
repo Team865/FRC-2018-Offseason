@@ -1,33 +1,17 @@
 package ca.warp7.frc2017_2.operator_input;
 
-import ca.warp7.frc.commons.core.IController;
-import ca.warp7.frc.commons.core.IControllerLoop;
-
-import java.util.List;
-
 import static ca.warp7.frc2017_2.Components.drive;
 import static ca.warp7.frc2017_2.Components.pneumatics;
 
 public class OperatorInput {
 
     private static IOperatorController sController;
-    public static IControllerLoop controllerLoop = new IControllerLoop() {
-        @Override
-        public List<IController> onCreateControllers() {
-            return null;
-        }
-
-        @Override
-        public void onPeriodic() {
-            onUpdate();
-        }
-    };
 
     public static void setController(IOperatorController controller) {
         sController = controller;
     }
 
-    private static void onUpdate() {
+    public static void onUpdate() {
 
         // driver BACK button PRESSED
         if (sController.compressorShouldSwitch()) {

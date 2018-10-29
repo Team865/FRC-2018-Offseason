@@ -6,6 +6,7 @@ import ca.warp7.frc2018_3.sensors.NavX;
 import ca.warp7.frc2018_3.subsystems.*;
 
 @RobotComponents
+@SuppressWarnings("WeakerAccess")
 public final class Components {
     public static final Drive drive = new Drive();
     public static final Pneumatics pneumatics = new Pneumatics();

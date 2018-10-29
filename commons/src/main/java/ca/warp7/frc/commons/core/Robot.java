@@ -65,7 +65,7 @@ public abstract class Robot extends IterativeRobot {
 
     protected abstract void onCreate();
 
-    protected final void setControllerLoop(IControllerLoop loop) {
+    protected final void setControllerLoop(IControls loop) {
         mComponents.setControllerLoop(loop);
     }
 
@@ -98,7 +98,7 @@ public abstract class Robot extends IterativeRobot {
         state.report(owner, COMPONENT_STATE, _state);
     }
 
-    public static XboxControlsState getXboxControllerState(int port) {
-        return new XboxControlsState();
+    public static XboxControlsState getXboxController(int port) {
+        return state.createXboxController(port);
     }
 }

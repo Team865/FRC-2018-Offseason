@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.PrintStream;
@@ -13,11 +14,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ca.warp7.frc.commons.core.ButtonState.*;
+import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
+import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
+
 class StateManager {
 
     private static final int kMaxPrintLength = 255;
+    private static final double kTriggerDeadBand = 0.5;
+    private static final int kUpPOV = 0;
+    private static final int kRightPOV = 90;
+    private static final int kDownPOV = 180;
+    private static final int kLeftPOV = 270;
 
     private final List<StateObserver> mStateObservers = new ArrayList<>();
+    private final List<XboxControllerPair> mControllers = new ArrayList<>();
     private final PrintStream mPrintStream = new PrintStream(System.out, false);
 
     private int mPrintCounter;
@@ -86,6 +97,17 @@ class StateManager {
         String name = (owner != null) ? ((owner instanceof String) ?
                 owner.toString() : owner.getClass().getSimpleName()) : "UnclassifiedOwner";
         report0(name, stateType, o);
+    }
+
+    XboxControlsState createXboxController(int port) {
+        for (XboxControllerPair pair : mControllers) {
+            if (pair.port == port) {
+                return pair.state;
+            }
+        }
+        XboxControllerPair newPair = new XboxControllerPair(port);
+        mControllers.add(newPair);
+        return newPair.state;
     }
 
     private void println(String prefix, Object value) {
@@ -182,6 +204,41 @@ class StateManager {
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
+    private static ButtonState update(ButtonState old, boolean bool) {
+        return bool ? ((old == PRESSED) ? HELD_DOWN : PRESSED) : ((old == RELEASED) ? KEPT_UP : RELEASED);
+    }
+
+    synchronized void collectControllerData() {
+        for (XboxControllerPair pair : mControllers) {
+            XboxControlsState S = pair.state;
+            XboxController C = pair.controller;
+            int POV = pair.controller.getPOV();
+            S.AButton = update(S.AButton, C.getAButton());
+            S.BButton = update(S.BButton, C.getBButton());
+            S.XButton = update(S.XButton, C.getXButton());
+            S.YButton = update(S.YButton, C.getYButton());
+            S.LeftBumper = update(S.LeftBumper, C.getBumper(kLeft));
+            S.RightBumper = update(S.RightBumper, C.getBumper(kRight));
+            S.LeftTrigger = update(S.LeftTrigger, C.getTriggerAxis(kLeft) > kTriggerDeadBand);
+            S.RightTrigger = update(S.RightTrigger, C.getTriggerAxis(kRight) > kTriggerDeadBand);
+            S.LeftStickButton = update(S.LeftStickButton, C.getStickButton(kLeft));
+            S.RightStickButton = update(S.RightStickButton, C.getStickButton(kRight));
+            S.StartButton = update(S.StartButton, C.getStartButton());
+            S.BackButton = update(S.BackButton, C.getBackButton());
+            S.UpDirectionalPad = update(S.UpDirectionalPad, POV == kUpPOV);
+            S.RightDirectionalPad = update(S.RightDirectionalPad, POV == kRightPOV);
+            S.DownDirectionalPad = update(S.DownDirectionalPad, POV == kDownPOV);
+            S.LeftDirectionalPad = update(S.LeftDirectionalPad, POV == kLeftPOV);
+            S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
+            S.RightTriggerAxis = C.getTriggerAxis(kRight);
+            S.LeftXAxis = C.getX(kLeft);
+            S.LeftYAxis = C.getY(kLeft);
+            S.RightXAxis = C.getX(kRight);
+            S.RightYAxis = C.getY(kRight);
+            reflectComponent(String.format("XboxController[%d]", pair.port), S);
+        }
+    }
+
     private static class StateObserver {
         private final Object object;
         private final Field[] fields;
@@ -193,6 +250,18 @@ class StateManager {
             fields = this.object.getClass().getDeclaredFields();
             map = new HashMap<>();
             this.table = table;
+        }
+    }
+
+    private static class XboxControllerPair {
+        private final XboxController controller;
+        private final XboxControlsState state;
+        private int port;
+
+        private XboxControllerPair(int port) {
+            this.port = port;
+            this.controller = new XboxController(port);
+            this.state = new XboxControlsState();
         }
     }
 }
