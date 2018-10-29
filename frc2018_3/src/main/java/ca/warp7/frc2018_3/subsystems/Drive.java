@@ -26,6 +26,8 @@ import static ca.warp7.frc2018_3.Constants.*;
 
 public class Drive implements ISubsystem {
 
+    private static final int kConfigTimeout = 100;
+    private static final int kVelocityQueueSize = 5;
     private static final double kAbsoluteMaxOutput = 1.0;
     private static final double kMaximumPIDPower = 0.7;
     private static final double kMaxLinearRampRate = 1.0 / 20;
@@ -158,7 +160,7 @@ public class Drive implements ISubsystem {
         mState.chassisAngularVelocity = (kWheelRadius * velocityDiff) / (2.0 * kWheelBaseRadius);
         if (dt != 0) {
             mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
-            if (mState.velocityAverages.size() > 5) mState.velocityAverages.removeFirst();
+            if (mState.velocityAverages.size() > kVelocityQueueSize) mState.velocityAverages.removeFirst();
             DifferentialWheels<DtMeasurement> sum = new DifferentialWheels<>(new DtMeasurement(), new DtMeasurement());
             mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
             mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));

@@ -3,11 +3,11 @@ package ca.warp7.frc2018_3.subsystems;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.wpilibj.SpeedController;
 
 import static ca.warp7.frc.commons.Functions.limit;
-import static ca.warp7.frc2018_3.Constants.kActualClimberPins;
+import static ca.warp7.frc2018_3.Constants.kClimberPins;
 
 public class Climber implements ISubsystem {
 
@@ -18,7 +18,7 @@ public class Climber implements ISubsystem {
     @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
-    private MotorGroup mClimberMotors;
+    private SpeedController mClimberMotors;
 
     public void setSpeed(double speed) {
         mInputState.demandedSpeed = speed;
@@ -26,7 +26,7 @@ public class Climber implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kActualClimberPins);
+        mClimberMotors = new WPI_VictorSPX(kClimberPins);
     }
 
     @Override

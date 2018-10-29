@@ -1,10 +1,5 @@
 package ca.warp7.frc2018_3;
 
-import ca.warp7.frc.commons.Pins;
-
-import static ca.warp7.frc.commons.Pins.pin;
-import static ca.warp7.frc.commons.Pins.pins;
-
 public final class Constants {
 
     public static final int kDriveLeftMaster = 3;
@@ -22,10 +17,10 @@ public final class Constants {
     public static final int kDriveShifterSolenoidPin = 1;
     public static final int kGrapplingHookSolenoidPin = 2;
 
-    public static final Pins kIntakeLeftPin = pin(7);
-    public static final Pins kIntakeRightPin = pin(2);
-    public static final Pins kClimberPins = pins(9, 0);
-    public static final Pins kActualClimberPins = pin(8);
+    public static final int kIntakeLeftPin = 7;
+    public static final int kIntakeRightPin = 2;
+    public static final int kArmLiftPinA = 9;
+    public static final int kArmLiftPinB = 0;
+    public static final int kClimberPins = 8;
 
-    public static final int kConfigTimeout = 100;
 }

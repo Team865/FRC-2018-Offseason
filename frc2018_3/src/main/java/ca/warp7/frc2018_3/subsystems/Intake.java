@@ -3,9 +3,9 @@ package ca.warp7.frc2018_3.subsystems;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.StateType;
-import ca.warp7.frc.commons.wrapper.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedController;
 
 import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Constants.*;
@@ -23,14 +23,14 @@ public class Intake implements ISubsystem {
     @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
-    private MotorGroup mIntakeMotorRight;
-    private MotorGroup mIntakeMotorLeft;
+    private SpeedController mIntakeMotorRight;
+    private SpeedController mIntakeMotorLeft;
     private Solenoid mIntakePistons;
 
     @Override
     public void onConstruct() {
-        mIntakeMotorLeft = new MotorGroup(WPI_VictorSPX.class, kIntakeLeftPin);
-        mIntakeMotorRight = new MotorGroup(WPI_VictorSPX.class, kIntakeRightPin);
+        mIntakeMotorLeft = new WPI_VictorSPX(kIntakeLeftPin);
+        mIntakeMotorRight = new WPI_VictorSPX(kIntakeRightPin);
         mIntakeMotorRight.setInverted(true);
         mIntakePistons = new Solenoid(kIntakePistonSolenoidPin);
     }
