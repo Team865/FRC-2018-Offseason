@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ca.warp7.frc.commons.core.ButtonState.*;
+import static ca.warp7.frc.commons.core.IControls.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
@@ -204,8 +204,8 @@ class StateManager {
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
-    private static ButtonState update(ButtonState old, boolean bool) {
-        return bool ? ((old == PRESSED) ? HELD_DOWN : PRESSED) : ((old == RELEASED) ? KEPT_UP : RELEASED);
+    private static int update(int old, boolean bool) {
+        return bool ? ((old == Pressed) ? HeldDown : Pressed) : ((old == Released) ? KeptUp : Released);
     }
 
     synchronized void collectControllerData() {

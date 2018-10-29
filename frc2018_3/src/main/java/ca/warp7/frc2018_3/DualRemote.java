@@ -5,43 +5,41 @@ import ca.warp7.frc.commons.core.Robot;
 import ca.warp7.frc.commons.core.XboxControlsState;
 import ca.warp7.frc2018_3.subsystems.Intake;
 
-import static ca.warp7.frc.commons.core.ButtonState.HELD_DOWN;
-import static ca.warp7.frc.commons.core.ButtonState.PRESSED;
 import static ca.warp7.frc2018_3.Components.*;
 
 public class DualRemote implements IControls {
 
-    private XboxControlsState DRIVER = Robot.getXboxController(0);
-    private XboxControlsState OPERATOR = Robot.getXboxController(1);
+    private XboxControlsState Driver = Robot.getXboxController(0);
+    private XboxControlsState Operator = Robot.getXboxController(1);
 
     @Override
     public void periodic() {
         // Limelight
-        if (DRIVER.XButton == PRESSED) limelight.switchCamera();
+        if (Driver.XButton == Pressed) limelight.switchCamera();
 
         // Pneumatics
-        if (DRIVER.BackButton == PRESSED) pneumatics.toggleClosedLoop();
-        pneumatics.setShouldSolenoidBeOnForShifter(DRIVER.RightBumper != HELD_DOWN);
-        pneumatics.setGrapplingHook(DRIVER.StartButton == HELD_DOWN);
+        if (Driver.BackButton == Pressed) pneumatics.toggleClosedLoop();
+        pneumatics.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
+        pneumatics.setGrapplingHook(Driver.StartButton == HeldDown);
 
         // Driving
-        drive.setReversed(DRIVER.RightStickButton == PRESSED);
-        drive.cheesyDrive(DRIVER.RightXAxis * -1, DRIVER.LeftXAxis, DRIVER.LeftBumper == HELD_DOWN);
+        drive.setReversed(Driver.RightStickButton == Pressed);
+        drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftXAxis, Driver.LeftBumper == HeldDown);
 
         // Intake
-        if (DRIVER.AButton == PRESSED) intake.togglePiston();
-        if (DRIVER.LeftDirectionalPad == HELD_DOWN) intake.setSpeed(Intake.kSlowOuttakePower);
-        else if (DRIVER.LeftTrigger == HELD_DOWN) intake.setSpeed(Intake.kFastOuttakePower);
-        else if (DRIVER.RightTrigger == HELD_DOWN) intake.setSpeed(Intake.kIntakePower);
+        if (Driver.AButton == Pressed) intake.togglePiston();
+        if (Driver.LeftDirectionalPad == HeldDown) intake.setSpeed(Intake.kSlowOuttakePower);
+        else if (Driver.LeftTrigger == HeldDown) intake.setSpeed(Intake.kFastOuttakePower);
+        else if (Driver.RightTrigger == HeldDown) intake.setSpeed(Intake.kIntakePower);
         else intake.setSpeed(0);
 
         // Arm lift
-        if (OPERATOR.BButton == HELD_DOWN) armLift.setSpeed(OPERATOR.LeftYAxis);
-        else if (DRIVER.BButton == HELD_DOWN) armLift.setSpeed(DRIVER.LeftYAxis);
+        if (Operator.BButton == HeldDown) armLift.setSpeed(Operator.LeftYAxis);
+        else if (Driver.BButton == HeldDown) armLift.setSpeed(Driver.LeftYAxis);
         else armLift.setSpeed(0);
 
         // Climber
-        if (OPERATOR.StartButton == HELD_DOWN) climber.setSpeed(OPERATOR.LeftYAxis);
+        if (Operator.StartButton == HeldDown) climber.setSpeed(Operator.LeftYAxis);
         else climber.setSpeed(0);
     }
 }

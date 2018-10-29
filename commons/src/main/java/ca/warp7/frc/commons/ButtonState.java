@@ -1,8 +1,9 @@
-package ca.warp7.frc.commons.core;
+package ca.warp7.frc.commons;
 
 /**
  * The state of a controller button
  */
+@Deprecated
 public enum ButtonState {
 
     /**
