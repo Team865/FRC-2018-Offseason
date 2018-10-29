@@ -30,7 +30,6 @@ class Components implements ISubsystem {
     @Override
     public void onDisabled() {
         mSubsystems.forEach(ISubsystem::onDisabled);
-        this.onUpdateState();
         mControllerEnabled = false;
     }
 

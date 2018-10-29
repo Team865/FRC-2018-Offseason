@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_3.auto.actions;
 
-import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.PIDValues;
+import ca.warp7.frc.commons.core.IAction;
 
 import static ca.warp7.frc2018_3.Components.drive;
 
@@ -22,7 +22,7 @@ public class DriveForDistanceAction implements IAction {
 
     @Override
     public boolean shouldFinish() {
-        if (!drive.shouldBeginPIDLoop()) {
+        if (!drive.shouldBeginLinearPID()) {
             return true;
         }
 

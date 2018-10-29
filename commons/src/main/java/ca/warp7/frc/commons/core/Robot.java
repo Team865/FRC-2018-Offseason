@@ -2,6 +2,8 @@ package ca.warp7.frc.commons.core;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
+import static ca.warp7.frc.commons.core.StateType.*;
+
 /**
  * Base class for managing all the robot's stuff. Extend this class
  * to create a runnable robot. See documentation in the class of
@@ -76,18 +78,23 @@ public abstract class Robot extends IterativeRobot {
     }
 
     public static void println(Object o) {
-        state.report(null, StateType.PRINTLN, o);
+        state.report(null, PRINTLN, o);
     }
 
     public static void warning(Object o) {
-        state.report(null, StateType.WARNING, o);
+        state.report(null, WARNING, o);
     }
 
     public static void error(Object o) {
-        state.report(null, StateType.ERROR, o);
+        state.report(null, ERROR, o);
     }
 
     public static void report(Object owner, StateType type, Object o) {
         state.report(owner, type, o);
+    }
+
+    public static void reportInputAndState(Object owner, Object input, Object _state) {
+        state.report(owner, COMPONENT_INPUT, input);
+        state.report(owner, COMPONENT_STATE, _state);
     }
 }
