@@ -1,17 +1,18 @@
 package ca.warp7.frc.commons.core;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Keeps track of state reporting and sending
- */
 class StateManager {
 
     private static final int kMaxPrintLength = 255;
@@ -25,7 +26,8 @@ class StateManager {
     private NetworkTable mSubsystemsTable;
     private Robot mAttachedRobot;
 
-    void attachRobotInstance(Robot robot){
+
+    void attachRobotInstance(Robot robot) {
         mAttachedRobot = robot;
         mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
         mPrintCounter = 0;
@@ -35,8 +37,7 @@ class StateManager {
     }
 
     private void logRobotState(String state) {
-        assertRobotAttached();
-        if (state.equals(mLoggedRobotState)) {
+        if (assertRobotAttached() || state.equals(mLoggedRobotState)) {
             return;
         }
         String oldState = mLoggedRobotState;
@@ -81,7 +82,7 @@ class StateManager {
      * @param o         The object to report
      */
     synchronized void report(Object owner, StateType stateType, Object o) {
-        assertRobotAttached();
+        if (assertRobotAttached()) return;
         String name = (owner != null) ? ((owner instanceof String) ?
                 owner.toString() : owner.getClass().getSimpleName()) : "UnclassifiedOwner";
         report0(name, stateType, o);
@@ -95,29 +96,48 @@ class StateManager {
         }
     }
 
-    private void reflectComponent(String prefix, Object state) {
+    private void reflectComponent(String prefix, Object componentState) {
         boolean foundCachedObserver = false;
         for (StateObserver observer : mStateObservers) {
-            if (observer.isSameAs(state)) {
-                observer.updateData();
+            if (observer.object == componentState) {
+                updateObserverData(observer);
                 foundCachedObserver = true;
             }
         }
         if (!foundCachedObserver) {
             NetworkTable subTable = mSubsystemsTable.getSubTable(prefix);
-            StateObserver observer = new StateObserver(subTable, state);
-            observer.updateData();
+            StateObserver observer = new StateObserver(subTable, componentState);
+            for (Field field : observer.fields) {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+            }
+            updateObserverData(observer);
             mStateObservers.add(observer);
         }
     }
 
-    private void assertRobotAttached(){
-        if (mAttachedRobot == null){
-            System.out.println("ERROR no Robot instance attached!!!");
+    private void updateObserverData(StateObserver observer) {
+        for (Field stateField : observer.fields) {
+            try {
+                String fieldName = stateField.getName();
+                Object value = stateField.get(observer.object);
+                observer.map.put(fieldName, value);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void report0(String name, StateType type, Object o){
+    private boolean assertRobotAttached() {
+        if (mAttachedRobot == null) {
+            System.out.println("ERROR no Robot instance attached!!!");
+            return true;
+        }
+        return false;
+    }
+
+    private void report0(String name, StateType type, Object o) {
         switch (type) {
             case COMPONENT_STATE:
                 reflectComponent(name, o);
@@ -139,11 +159,40 @@ class StateManager {
     }
 
     synchronized void sendAll() {
-        mStateObservers.forEach(StateObserver::updateNetworkTables);
+        for (StateObserver observer : mStateObservers) {
+            for (String entryKey : observer.map.keySet()) {
+                Object value = observer.map.get(entryKey);
+                if (value instanceof ICollectiveState) ((ICollectiveState) value).getCollection().forEach(
+                        (s, object) -> sendNetworkTableValue(observer.table.getEntry(entryKey + "/" + s), object));
+                else sendNetworkTableValue(observer.table.getEntry(entryKey), value);
+            }
+        }
         if (mPrintCounter > kMaxPrintLength) {
             System.out.println("ERROR Printing has exceeded the limit");
         }
         mPrintCounter = 0;
         mPrintStream.flush();
+    }
+
+    private static void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
+        if (value instanceof Number) entry.setNumber((Number) value);
+        else if (value instanceof Boolean) entry.setBoolean((Boolean) value);
+        else if (value instanceof String) entry.setString((String) value);
+        else if (value.getClass().isEnum()) entry.setString(value.toString());
+        else entry.setString(value.getClass().getSimpleName() + " Object");
+    }
+
+    private static class StateObserver {
+        private final Object object;
+        private final Field[] fields;
+        private final Map<String, Object> map;
+        private final NetworkTable table;
+
+        StateObserver(NetworkTable table, Object object) {
+            this.object = object;
+            fields = this.object.getClass().getDeclaredFields();
+            map = new HashMap<>();
+            this.table = table;
+        }
     }
 }

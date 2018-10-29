@@ -97,4 +97,8 @@ public abstract class Robot extends IterativeRobot {
         state.report(owner, COMPONENT_INPUT, input);
         state.report(owner, COMPONENT_STATE, _state);
     }
+
+    public static XboxControlsState getXboxControllerState(int port) {
+        return new XboxControlsState();
+    }
 }
