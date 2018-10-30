@@ -15,11 +15,12 @@ import static ca.warp7.frc2018_2.Constants.*;
 public class Lift {
     private MotorGroup LiftMotorRight;
     private MotorGroup LiftMotorLeft;
+    private MotorGroup ActivationMotor;
     private Encoder liftEncoder;
     private DigitalInput liftHallaffect;
     private MiniPID liftPID;
     private double targetH;
-
+    public boolean activationSpeedIsRamped = false;
     private Intake intake = Robot.intake;
     private Drive drive = Robot.drive;
     public boolean overrideIntake = false;
@@ -28,6 +29,8 @@ public class Lift {
     public Lift() {
         LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
         LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
+        ActivationMotor = new MotorGroup(ACTIVATION_MOTOR_IDS, WPI_VictorSPX.class);
+        ActivationMotor.setInverted(false);
         LiftMotorLeft.setInverted(true);
         LiftMotorRight.setInverted(true);
 
@@ -41,10 +44,20 @@ public class Lift {
 
     private double ramp = 0;
     private final double rampSpeed = 6;
+    private final double activationRampSpeed = 6;
 
     public void setSpeed(double speed) {
         LiftMotorLeft.set(speed);
         LiftMotorRight.set(speed);
+    }
+
+    public void setActivationSpeed(double speed){
+        ActivationMotor.set(speed);
+    }
+
+    public void activationRamp(double speed){
+        ramp += (speed - ramp) / rampSpeed;
+        ActivationMotor.set(ramp);
     }
 
     public void rampSpeed(double speed) {
@@ -73,6 +86,7 @@ public class Lift {
 
 
         double scaledLift = getEncoderVal() / LIFT_HEIGHT;
+
         double speed = liftPID.getOutput(scaledLift);
         if (scaledLift > 0.2)
             System.out.println("speed= " + speed + " height= " + scaledLift + "setP= " + targetH);
