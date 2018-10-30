@@ -1,7 +1,6 @@
 package ca.warp7.frc.commons.core;
 
 import ca.warp7.frc.commons.scheduler.CompositeAction;
-import ca.warp7.frc.commons.scheduler.IAction;
 
 /**
  * Essentially a wrapper to create an action, no other mechanisms

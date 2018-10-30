@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 }
 
-def ROBOT_CLASS = "ca.warp7.frc2018_3.FiftyCents"
+def ROBOT_CLASS = "ca.warp7.frc2018_3._FiftyCents"
 
 deploy {
     targets {

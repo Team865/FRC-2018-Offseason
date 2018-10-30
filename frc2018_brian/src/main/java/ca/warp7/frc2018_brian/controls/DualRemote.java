@@ -21,7 +21,7 @@ public class DualRemote extends ControlsBase {
             intake.rampSpeed(0);
         }
 
-        //if (driver.getDpad(180) == PRESSED)
+        //if (driver.getDPad(180) == PRESSED)
         //intakeTracking = !intakeTracking;
 
         if (driver.getStickButton(kRight) == PRESSED)

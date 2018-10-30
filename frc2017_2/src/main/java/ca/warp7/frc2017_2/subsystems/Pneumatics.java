@@ -1,17 +1,17 @@
 package ca.warp7.frc2017_2.subsystems;
 
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import ca.warp7.frc2017_2.constants.RobotMap;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Pneumatics implements ISubsystem {
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private Compressor mCompressor;
@@ -63,16 +63,16 @@ public class Pneumatics implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
+        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void toggleClosedLoop() {
         mInputState.shouldBeginClosedLoop = !mCurrentState.isClosedLoop;
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setShift(boolean shouldSolenoidBeOnForShifter) {
         mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
     }

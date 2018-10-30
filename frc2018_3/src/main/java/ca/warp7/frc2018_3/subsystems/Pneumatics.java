@@ -1,35 +1,39 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.StateType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 
-import static ca.warp7.frc2018_3.Constants.kPneumaticsCompressorPin;
-import static ca.warp7.frc2018_3.Constants.kPneumaticsShifterSolenoidPin;
+import static ca.warp7.frc2018_3.Constants.*;
 
 public class Pneumatics implements ISubsystem {
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
     private Compressor mCompressor;
     private Solenoid mShifterSolenoid;
+    private Solenoid mGrapplingHookSolenoid;
 
     @Override
     public void onConstruct() {
-        mCompressor = new Compressor(kPneumaticsCompressorPin.first());
-        mShifterSolenoid = new Solenoid(kPneumaticsShifterSolenoidPin.first());
+        mCompressor = new Compressor(kPneumaticsCompressorPin);
+        mShifterSolenoid = new Solenoid(kDriveShifterSolenoidPin);
+        mGrapplingHookSolenoid = new Solenoid(kGrapplingHookSolenoidPin);
+        mGrapplingHookSolenoid.set(false);
         mShifterSolenoid.set(false);
+        mCompressor.setClosedLoopControl(true);
     }
 
     @Override
     public synchronized void onDisabled() {
         mInputState.shouldBeginClosedLoop = false;
         mInputState.shouldSolenoidBeOnForShifter = false;
+        mInputState.shouldDeployGrapplingHook = false;
     }
 
     @Override
@@ -47,6 +51,8 @@ public class Pneumatics implements ISubsystem {
         } else if (mShifterSolenoid.get()) {
             mShifterSolenoid.set(false);
         }
+
+        mGrapplingHookSolenoid.set(mInputState.shouldDeployGrapplingHook);
     }
 
     @Override
@@ -57,23 +63,29 @@ public class Pneumatics implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
+        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void toggleClosedLoop() {
         mInputState.shouldBeginClosedLoop = !mCurrentState.isClosedLoop;
     }
 
-    @InputStateModifier
+    @InputModifier
     public synchronized void setShouldSolenoidBeOnForShifter(boolean shouldSolenoidBeOnForShifter) {
         mInputState.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
+    }
+
+    @InputModifier
+    public synchronized void setGrapplingHook(boolean shouldDeployGrapplingHook) {
+        mInputState.shouldDeployGrapplingHook = shouldDeployGrapplingHook;
     }
 
     private static class InputState {
         boolean shouldBeginClosedLoop;
         boolean shouldSolenoidBeOnForShifter;
+        boolean shouldDeployGrapplingHook;
     }
 
     private static class CurrentState {

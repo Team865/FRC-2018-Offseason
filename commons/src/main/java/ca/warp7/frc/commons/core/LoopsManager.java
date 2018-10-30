@@ -1,104 +1,79 @@
 package ca.warp7.frc.commons.core;
 
+import ca.warp7.frc.commons.IUnit;
+import ca.warp7.frc.commons.Unit;
+
+/**
+ * Keeps track of the robot's looper and main loops
+ */
 class LoopsManager {
 
-    private static final double kObservationLooperDelta = 0.05;
+    @IUnit.Seconds
+    private static final double kObservationLooperDelta = Unit.Hertz.toSeconds(20);
     private final Looper mStateObservationLooper = new Looper(kObservationLooperDelta);
 
-    private static final double kInputLooperDelta = 0.02;
+    @IUnit.Seconds
+    private static final double kInputLooperDelta = Unit.Hertz.toSeconds(50);
     private final Looper mInputLooper = new Looper(kInputLooperDelta);
 
-    private static final double kStateChangeLooperDelta = 0.02;
-    private final Looper mStateChangeLooper = new Looper(kStateChangeLooperDelta);
+    @IUnit.Seconds
+    private static final double kMainLooperDelta = Unit.Hertz.toSeconds(50);
+    private final Looper mMainLooper = new Looper(kMainLooperDelta);
 
-    /**
-     * Loop asking each system to report its state
-     */
-    private ILoop mStateReportingLoop;
+    void setComponentsSource(Components components) {
+        /*
+          Loop that sends data to the driver station
+         */
+        ILoop stateSenderLoop = Robot.state::sendAll;
+        mStateObservationLooper.registerLoop(stateSenderLoop);
 
-    /**
-     * Loop that sends data to the driver station
-     */
-    private ILoop mStateSenderLoop;
+        /*
+          Loop asking each system to report its state
+         */
+        ILoop stateReportingLoop = components::onReportState;
+        mStateObservationLooper.registerLoop(stateReportingLoop);
 
-    /**
-     * Loop asking each system to read sensor values
-     */
-    private ILoop mMeasuringLoop;
+        /*
+          Loop asking each system to read sensor values
+         */
+        ILoop measuringLoop = components::onMeasure;
+        mInputLooper.registerLoop(measuringLoop);
 
-    /**
-     * Loop asking the callback to process the controller input
-     */
-    private ILoop mControllerInputLoop;
+        /*
+          Updates the controllers
+         */
+        ILoop collectControllerDataLoop = Robot.state::collectControllerData;
+        mInputLooper.registerLoop(collectControllerDataLoop);
 
-    /**
-     * Loop asking each system to modify its current state based on its input
-     */
-    private ILoop mStateUpdaterLoop;
+        /*
+          Loop asking the callback to process the controller input
+         */
+        ILoop controllerPeriodicLoop = components::controllerPeriodic;
+        mInputLooper.registerLoop(controllerPeriodicLoop);
 
-    /**
-     * Loop asking each system to perform its output
-     */
-    private ILoop mSystemOutputLoop;
+        /*
+          Loop asking each system to modify its current state based on its input
+         */
+        ILoop stateUpdaterLoop = components::onUpdateState;
+        mMainLooper.registerLoop(stateUpdaterLoop);
 
-    /**
-     * A procedure passed into the {@link LoopsManager} runner called in teleop
-     */
-    private Runnable mOIRunner;
-
-    /**
-     * Sets the Operator Input runner, which should get input from controllers and
-     * pass them to subsystems
-     */
-    void setOIRunner(Runnable OIRunner) {
-        mOIRunner = OIRunner;
+        /*
+          Loop asking each system to perform its output
+         */
+        ILoop systemOutputLoop = components::onOutput;
+        mMainLooper.registerLoop(systemOutputLoop);
     }
 
-    boolean hasOIRunner(){
-        return mOIRunner != null;
-    }
-
-    void setPeriodicSource(SubsystemsManager subsystemsManager, StateManager stateManager) {
-        mStateReportingLoop = new NamedLoop("State Reporting", subsystemsManager::reportAll);
-        mStateSenderLoop = new NamedLoop("State Sender", stateManager::sendAll);
-
-        mMeasuringLoop = new NamedLoop("System Measuring", subsystemsManager::measureAll);
-        mControllerInputLoop = new NamedLoop("Operator Input", mOIRunner);
-
-        mSystemOutputLoop = new NamedLoop("System Output", subsystemsManager::outputAll);
-        mStateUpdaterLoop = new NamedLoop("State Updater", subsystemsManager::updateAll);
-
-        registerInitialLoops();
-    }
-
-    void startObservers() {
+    void start() {
         mStateObservationLooper.startLoops();
-    }
-
-    void disable() {
-        mStateChangeLooper.stopLoops();
-        mInputLooper.stopLoops();
-    }
-
-    void enable() {
-        mStateChangeLooper.startLoops();
         mInputLooper.startLoops();
     }
 
-    void enableController() {
-        mInputLooper.registerFinalLoop(mControllerInputLoop);
+    void disable() {
+        mMainLooper.stopLoops();
     }
 
-    void disableController() {
-        mInputLooper.registerFinalLoop(null);
-    }
-
-    private void registerInitialLoops() {
-        mStateObservationLooper.registerStartLoop(mStateReportingLoop);
-        mStateObservationLooper.registerLoop(mStateSenderLoop);
-        mStateChangeLooper.registerLoop(mStateUpdaterLoop);
-        mInputLooper.registerStartLoop(mMeasuringLoop);
-        mInputLooper.registerFinalLoop(mControllerInputLoop);
-        mStateChangeLooper.registerFinalLoop(mSystemOutputLoop);
+    void enable() {
+        mMainLooper.startLoops();
     }
 }

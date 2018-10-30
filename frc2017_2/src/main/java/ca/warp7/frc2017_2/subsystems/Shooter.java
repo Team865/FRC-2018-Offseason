@@ -2,7 +2,7 @@ package ca.warp7.frc2017_2.subsystems;
 
 
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
+import ca.warp7.frc.commons.wrapper.MotorGroup;
 import ca.warp7.frc2017_2.constants.RobotMap.RIO;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;

@@ -1,148 +1,110 @@
 package ca.warp7.frc.commons.core;
 
-import ca.warp7.frc.commons.wpi_wrapper.IterativeRobotWrapper;
+import edu.wpi.first.wpilibj.IterativeRobot;
+
+import static ca.warp7.frc.commons.core.StateType.*;
 
 /**
- * Base class for managing all the robot's stuff
+ * Base class for managing all the robot's stuff. Extend this class
+ * to create a runnable robot. See documentation in the class of
+ * each field in this class.
  */
-public abstract class Robot extends IterativeRobotWrapper {
-    /**
-     * Contains utilities to initialize the components of the robot. See {@link Components}
-     */
+@SuppressWarnings({"WeakerAccess", "unused"})
+public abstract class Robot extends IterativeRobot {
+
     private final Components mComponents = new Components();
-
-    /**
-     * Contains an array of subsystems. See {@link SubsystemsManager} for details
-     */
-    private final SubsystemsManager mSubsystemsManager = new SubsystemsManager();
-
-    /**
-     * Keeps track of the robot's looper and loops. See {@link LoopsManager} for details
-     */
-    private final LoopsManager mLoopsManager = new LoopsManager();
-
-    /**
-     * Keep track of state reporting and sending. See {@link StateManager} for details
-     */
-    private final StateManager mStateManager = new StateManager();
-
-    /**
-     * Starts and ends auto programs. See {@link AutoRunner} for details
-     */
     private final AutoRunner mAutoRunner = new AutoRunner();
+    private final LoopsManager mLoopsManager = new LoopsManager();
+    static final StateManager state = new StateManager();
 
     @Override
     public final void startCompetition() {
-        this.displayQualifier();
-        this.setComponents(Components.tryReflectComponentsFromPackage(getPackageName()));
-        sAccessor = new InstanceAccessor();
+        state.attachRobotInstance(this);
+        mLoopsManager.setComponentsSource(mComponents);
+        mComponents.reflectFromPackage(getClass().getPackage().getName());
         this.onCreate();
-        if (mComponents.hasClass() && mLoopsManager.hasOIRunner()) {
-            super.startCompetition();
-        } else {
-            printError("Robot is not set up");
-        }
+        if (mComponents.isReadyToStart()) super.startCompetition();
+        else System.out.println("ERROR Robot code does not have components or teleop code");
     }
 
     @Override
     public final void robotInit() {
-        super.robotInit();
-        mComponents.createAll();
-        mSubsystemsManager.setSubsystems(mComponents.getSubsystems());
-        mLoopsManager.setPeriodicSource(mSubsystemsManager, mStateManager);
-        mComponents.constructExtras();
-        mSubsystemsManager.constructAll();
-        mLoopsManager.startObservers();
-        mSubsystemsManager.zeroAllSensors();
+        state.logInit();
+        mComponents.onConstruct();
+        mLoopsManager.start();
     }
 
     @Override
     public final void disabledInit() {
-        super.disabledInit();
-        mAutoRunner.onStop();
+        state.logDisabled();
+        mAutoRunner.stop();
         mLoopsManager.disable();
-        mSubsystemsManager.disableAll();
-        mSubsystemsManager.updateAll();
+        mComponents.onDisabled();
     }
 
     @Override
     public final void autonomousInit() {
-        super.autonomousInit();
-        mSubsystemsManager.onAutonomousInit();
-        mLoopsManager.disableController();
+        state.logAutonomous();
+        mComponents.onAutonomousInit();
         mLoopsManager.enable();
-        try {
-            mAutoRunner.onStart();
-        } catch (final AutoRunner.NoAutoException e) {
-            printError("There is not a specified main action!!!");
-        }
+        mAutoRunner.start();
     }
 
     @Override
     public final void teleopInit() {
-        super.teleopInit();
-        mAutoRunner.onStop();
-        mSubsystemsManager.onTeleopInit();
-        mLoopsManager.enableController();
+        state.logTeleop();
+        mAutoRunner.stop();
+        mComponents.onTeleopInit();
         mLoopsManager.enable();
     }
 
-    @SuppressWarnings("EmptyMethod")
     @Override
-    public void testInit() {
-        super.testInit();
+    public final void testInit() {
+        state.logTest();
     }
 
-    /**
-     * Method should call the following three methods to setup the robot
-     */
     protected abstract void onCreate();
 
-    protected final double kMaxAutoTimeout = AutoRunner.kMaxAutoTimeoutSeconds;
-    protected final double kAutoWaitForDriverStation = Double.POSITIVE_INFINITY;
-
-    protected final void setOIRunner(Runnable OIRunner) {
-        mLoopsManager.setOIRunner(OIRunner);
+    protected final void setControllerLoop(IControls loop) {
+        mComponents.setControllerLoop(loop);
     }
 
-    @SuppressWarnings("SameParameterValue")
-    protected final void setAutoMode(IAutoMode mode, double timeoutSec) {
-        mAutoRunner.setAutoMode(mode, timeoutSec);
+    protected final void setAutoMode(IAutoMode mode, double testTimeout) {
+        mAutoRunner.setAutoMode(mode, testTimeout);
     }
 
-    @SuppressWarnings("WeakerAccess")
-    protected final void setComponents(Class<?> componentsClass) {
-        mComponents.setClass(componentsClass);
+    protected final void setComponents(Class<?> components) {
+        mComponents.setClass(components);
     }
 
-    /**
-     * Prints an object to System.out
-     */
-    @SuppressWarnings("WeakerAccess")
-    public static void printLine(Object o) {
-        sAccessor.report(null, ReportType.PRINT_LINE, o);
+    public static void println(Object o) {
+        state.report(null, PRINTLN, o);
     }
 
-    /**
-     * Prints an error to System.err
-     */
-    @SuppressWarnings("WeakerAccess")
-    public static void printError(Object o) {
-        sAccessor.report(null, ReportType.ERROR_PRINT_LINE, o);
+    public static void warning(Object o) {
+        state.report(null, WARNING, o);
     }
 
-    /**
-     * See {@link StateManager#report(Object, ReportType, Object)}
-     */
-    public static void reportState(Object owner, ReportType reportType, Object state) {
-        sAccessor.report(owner, reportType, state);
+    public static void error(Object o) {
+        state.report(null, ERROR, o);
     }
 
-    private static InstanceAccessor sAccessor;
+    public static void report(Object owner, StateType type, Object o) {
+        state.report(owner, type, o);
+    }
 
-    private class InstanceAccessor {
-        private void report(Object owner, ReportType reportType, Object state) {
-            mStateManager.report(owner, reportType, state);
-        }
+    public static void reportInputAndState(Object owner, Object input, Object _state) {
+        state.report(owner, COMPONENT_INPUT, input);
+        state.report(owner, COMPONENT_STATE, _state);
+    }
+
+    public static XboxControlsState getXboxController(int port) {
+        return state.createXboxController(port);
+    }
+
+    public static void registerSelectableAutoModes(IAutoMode... modes) {
+    }
+
+    public static void registerComponents(IComponent... components) {
     }
 }

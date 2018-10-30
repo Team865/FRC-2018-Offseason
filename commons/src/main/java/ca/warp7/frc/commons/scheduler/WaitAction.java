@@ -1,5 +1,6 @@
 package ca.warp7.frc.commons.scheduler;
 
+import ca.warp7.frc.commons.core.IAction;
 import edu.wpi.first.wpilibj.Timer;
 
 public class WaitAction implements IAction {

@@ -1,5 +1,7 @@
 package ca.warp7.frc.commons.scheduler;
 
+import ca.warp7.frc.commons.core.IAction;
+
 public class CompositeAction {
 
     private enum PostCallMode {

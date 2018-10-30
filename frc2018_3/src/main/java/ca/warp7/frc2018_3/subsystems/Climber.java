@@ -1,28 +1,24 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
-import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
+import ca.warp7.frc.commons.core.StateType;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.wpilibj.SpeedController;
 
-import static ca.warp7.frc.commons.core.Functions.limit;
+import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Constants.kClimberPins;
-
-/**
- * Lets us climb the bar in endgame. No encoders or PID for this
- */
 
 public class Climber implements ISubsystem {
 
     private static final double kAbsoluteMaxOutputPower = 1.0;
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
-    private MotorGroup mClimberMotors;
+    private SpeedController mClimberMotors;
 
     public void setSpeed(double speed) {
         mInputState.demandedSpeed = speed;
@@ -30,7 +26,7 @@ public class Climber implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mClimberMotors = new MotorGroup(WPI_VictorSPX.class, kClimberPins);
+        mClimberMotors = new WPI_VictorSPX(kClimberPins);
     }
 
     @Override
@@ -50,8 +46,8 @@ public class Climber implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
+        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
     }
 
     static class InputState {

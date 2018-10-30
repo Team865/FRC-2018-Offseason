@@ -23,11 +23,11 @@ public final class Wanda extends Robot {
         DefaultMap.configure();
 
         //setAutoMode(new NothingMode());
-        setAutoMode(() -> new DriveForTimeAction(2, -0, -0.5), kAutoWaitForDriverStation);
+        setAutoMode(() -> new DriveForTimeAction(2, -0, -0.5), 10);
 
         //OperatorInput.setController(new DualRemote(0, 1));
         OperatorInput.setController(new SingleRemote(0));
-        setOIRunner(OperatorInput::onUpdate);
+        setControllerLoop(OperatorInput::onUpdate);
     }
 }
 

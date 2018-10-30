@@ -1,4 +1,5 @@
-# The 2018 Off-season Robot 
+# The 2018 Off-season Project 
+
 ```text
 ﻿    ██╗    ██╗ █████╗ ██████╗ ██████╗ ███████╗
     ██║    ██║██╔══██╗██╔══██╗██╔══██╗╚════██║
@@ -14,7 +15,6 @@ that will become official in 2019. It automatically downloads the required libra
 and can manage multiple sub-projects. It also lets us use any IDE to develop our robot
 code.
 
-
 ##### Important
 GradleRIO uses [https://raw.githubusercontent.com](https://raw.githubusercontent.com) to
 download some of its libraries, however it's blocked by the school board's network policy.
@@ -28,9 +28,6 @@ Download it here: [Java Development Kit](http://www.oracle.com/technetwork/java/
 We also need the [FRC Update Suite](http://wpilib.screenstepslive.com/s/4485/m/13503/l/599670-installing-the-frc-2017-update-suite-all-languages)
 for the Driver Station, RoboRIO Imaging Tool, and the mDNS driver for connecting to the robot network, as well as the 
 [Radio Configuration Utility](https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/144986-programming-your-radio).
-
-, 
-, and  Also download and install the 
 
 ##### Preferred Environment
 The preferred IDE for this project is [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (Version 2018.2 or higher).
@@ -59,12 +56,19 @@ the libraries
 ##### Using IntelliJ to Build and Deploy
 Find the Gradle Tab in IntelliJ (shown by Navigate > Tool Buttons),
 there is list of tasks available for gradle to run.
-Find the specific module to be built and
+Find the specific module/project to be built and
 navigate to Tasks > build > build under that module. 
 Run it by double clicking.
 It will download all the required libraries. At this point the
 project is ready for programming. To deploy, run the task at 
 Tasks > embeddedTools > deploy.
+
+### Project Organization
+
+This project uses the Gradle Multi-Project build system to manage separable 
+and/or reusable portions of the code into various projects. The ```:commons```
+project includes reusable code used by all robot code and can be included 
+by specifying ```compile project(":commons")``` in the dependencies
 
 ### Programming Resources
 A list of some relevant resources, not sorted in any order
@@ -86,35 +90,6 @@ A list of some relevant resources, not sorted in any order
 - [Programming Forum](https://www.chiefdelphi.com/forums/forumdisplay.php?f=51) - Chief Delphi
 - [Looper and Loops](https://github.com/FRC-Team-955/Team955RobotLib/wiki/Looper-and-Loops) - By Team 955
 - [PID Loops Theory](https://github.com/FRC-Team-955/Team955RobotLib/wiki/PIDF-Loop) - By Team 955
-
-### Package Organization
-
-- Reusable code are put in subpackages under the ```ca.warp7.frc_commons``` packages. 
-These include internal code useful to all robots such as the looping mechanism,
-state observers, and autonomous runners. 
-
-  - The entry point is located at ```Robot```
-  - ```.frc.core``` also has classes that manage subsystems, autos, loops,
-  and accumulating states.
-  - Autonomous action scheduling are managed in ```.frc.scheduler```
-  - The custom speed controller and Xbox controller are in ```.frc.wpi_wrapper```
-  - Most other packages in ```.frc``` are for support data structures
-
-- Code for specific robots are in packages named ```ca.warp7.frc20xx```. 
-Replace ```20xx``` with the year of the game the robot is designed for.
-If it is a second robot for that year, add ```_r2``` to the end. If it is
-a second codebase for the same robot, add ```_v2``` to the end.
-
-- The ROBOT_CLASS is saved to the top level of the previously said 
-package. There should not be other files at this level. There could, however,
-be another copy of the ROBOT_CLASS with different constants configuration.
-
-- Subsystems are in the ```subsystems``` package of the robot package
-
-- Auto modes and actions are in the ```auto.modes``` and ```auto.actions``` packages respectively.
-Test modes go in the ```auto.test_modes``` package
-
-- Constants and RobotMap are in the ```constants``` package.
 
 ### Java Naming Conventions
 
@@ -140,7 +115,7 @@ class RobotNamingConventions{
 	public void robotInit() {
 		// Method variables: mixedCase
 		String robotMessage = "Hello me is robit";
-		System.out.println(robotMessage);
+		Robot.print(robotMessage);
 	}
 }
 

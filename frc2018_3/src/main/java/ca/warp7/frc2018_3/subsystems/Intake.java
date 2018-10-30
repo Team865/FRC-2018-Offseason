@@ -1,15 +1,13 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.ReportType;
 import ca.warp7.frc.commons.core.Robot;
-import ca.warp7.frc.commons.wpi_wrapper.MotorGroup;
-import ca.warp7.frc2018_3.sensors.LimelightPhotoSensor;
+import ca.warp7.frc.commons.core.StateType;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedController;
 
-import static ca.warp7.frc.commons.core.Functions.limit;
-import static ca.warp7.frc2018_3.Components.limelight;
+import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc2018_3.Constants.*;
 
 public class Intake implements ISubsystem {
@@ -20,23 +18,21 @@ public class Intake implements ISubsystem {
     public static final double kFastOuttakePower = -0.95;
     public static final double kSlowOuttakePower = -0.65;
 
-    @InputStateField
+    @InputField
     private final InputState mInputState = new InputState();
-    @CurrentStateField
+    @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
-    private MotorGroup mIntakeMotorRight;
-    private MotorGroup mIntakeMotorLeft;
+    private SpeedController mIntakeMotorRight;
+    private SpeedController mIntakeMotorLeft;
     private Solenoid mIntakePistons;
-    private LimelightPhotoSensor mPhotoSensor;
 
     @Override
     public void onConstruct() {
-        mIntakeMotorLeft = new MotorGroup(WPI_VictorSPX.class, kIntakeLeftPin);
-        mIntakeMotorRight = new MotorGroup(WPI_VictorSPX.class, kIntakeRightPin);
+        mIntakeMotorLeft = new WPI_VictorSPX(kIntakeLeftPin);
+        mIntakeMotorRight = new WPI_VictorSPX(kIntakeRightPin);
         mIntakeMotorRight.setInverted(true);
-        mIntakePistons = new Solenoid(kIntakePiston.first());
-        mPhotoSensor = new LimelightPhotoSensor(limelight, 1);
+        mIntakePistons = new Solenoid(kIntakePistonSolenoidPin);
     }
 
     @Override
@@ -59,8 +55,8 @@ public class Intake implements ISubsystem {
 
     @Override
     public void onReportState() {
-        Robot.reportState(this, ReportType.REFLECT_STATE_INPUT, mInputState);
-        Robot.reportState(this, ReportType.REFLECT_STATE_CURRENT, mCurrentState);
+        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
+        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
     }
 
     public void setSpeed(double speed) {
@@ -68,16 +64,8 @@ public class Intake implements ISubsystem {
         mInputState.demandedRightSpeed = speed;
     }
 
-    public double getSpeed() {
-        return mIntakeMotorRight.get();
-    }
-
     public void togglePiston() {
         mIntakePistons.set(!mIntakePistons.get());
-    }
-
-    public boolean hasCube() {
-        return mPhotoSensor.isTriggered();
     }
 
     static class InputState {
