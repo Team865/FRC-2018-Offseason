@@ -21,9 +21,14 @@ public class SingleRemote implements IControls {
         pneumatics.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
         pneumatics.setGrapplingHook(Driver.StartButton == HeldDown);
 
-        // Driving
+        // Driving/ArmLift
         drive.setReversed(Driver.RightStickButton == Pressed);
-        drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
+        if (Driver.BButton == HeldDown) {
+            armLift.setSpeed(Driver.LeftYAxis);
+        } else {
+            armLift.setSpeed(0);
+            drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
+        }
 
         // Intake
         if (Driver.AButton == Pressed) intake.togglePiston();
@@ -31,9 +36,5 @@ public class SingleRemote implements IControls {
         else if (Driver.LeftTrigger == HeldDown) intake.setSpeed(Intake.kFastOuttakePower);
         else if (Driver.RightTrigger == HeldDown) intake.setSpeed(Intake.kIntakePower);
         else intake.setSpeed(0);
-
-        // ArmLift
-        if (Driver.BButton == HeldDown) armLift.setSpeed(Driver.LeftYAxis);
-        else armLift.setSpeed(0);
     }
 }
