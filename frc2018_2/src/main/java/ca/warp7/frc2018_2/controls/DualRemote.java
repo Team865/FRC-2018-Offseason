@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_2.controls;
 
 import ca.warp7.frc2018_2.Robot;
-
+import ca.warp7.frc2018_2.Constants;
 import static ca.warp7.frc2018_2.controls.Control.DOWN;
 import static ca.warp7.frc2018_2.controls.Control.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -55,6 +55,18 @@ public class DualRemote extends ControlsBase {
 
         if (operator.getBButton() == DOWN)
             climber.setSpeed(operator.getY(kRight) * -1);
+
+        double actuationSpeedInput = operator.getY(kLeft);
+        if (!lift.actuationSpeedIsRamped)
+            if (actuationSpeedInput <=  Constants.ACTUATION_MOTOR_SPEED_LIMIT)
+                lift.setActuationSpeed(actuationSpeedInput);
+            else
+                lift.setActuationSpeed(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
+        else
+            if (actuationSpeedInput <=  Constants.ACTUATION_MOTOR_SPEED_LIMIT)
+                lift.actuationRamp(actuationSpeedInput);
+            else
+                lift.actuationRamp(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
 
         if (driver.getBButton() == DOWN) {
             climber.setSpeed(driver.getY(kLeft) * -1);
