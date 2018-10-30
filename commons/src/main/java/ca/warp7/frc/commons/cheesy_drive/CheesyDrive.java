@@ -8,6 +8,7 @@ public class CheesyDrive {
     private final CurrentState mCurrentState = new CurrentState();
 
     private ISignalReceiver mReceiver;
+    private boolean mApplyInternalDeadband = true;
 
     private static double deadBand(double n) {
         return Math.abs(n) < 0.18 ? 0 : (n - (0.18 * Math.signum(n))) * 1.22;
@@ -33,12 +34,21 @@ public class CheesyDrive {
         mReceiver = receiver;
     }
 
+    public void disableInternalDeadband() {
+        mApplyInternalDeadband = false;
+    }
+
     @Deprecated
     public void setInputsFromControls(ICheesyDriveInput controls) {
         setInputs(controls.getWheel(), controls.getThrottle(), controls.shouldQuickTurn());
     }
 
-    public void setInputs(double wheel, double throttle, boolean isQuickTurn) {
+    public void cheesyDrive(double wheel, double throttle, boolean isQuickTurn) {
+        setInputs(wheel, throttle, isQuickTurn);
+        calculateFeed();
+    }
+
+    private void setInputs(double wheel, double throttle, boolean isQuickTurn) {
         mInputState.wheel = wheel;
         mInputState.throttle = throttle;
         mInputState.quickTurn = isQuickTurn;
@@ -55,8 +65,14 @@ public class CheesyDrive {
         double negInertiaAccumulator;
         double overPower, angularPower;
 
-        double wheel = deadBand(mInputState.wheel);
-        double throttle = deadBand(mInputState.throttle);
+        double wheel, throttle;
+        if (mApplyInternalDeadband) {
+            wheel = deadBand(mInputState.wheel);
+            throttle = deadBand(mInputState.throttle);
+        } else {
+            wheel = mInputState.wheel;
+            throttle = mInputState.throttle;
+        }
 
         negInertia = wheel - mCurrentState.oldWheel;
         mCurrentState.oldWheel = wheel;
