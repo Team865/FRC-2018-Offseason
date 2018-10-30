@@ -13,22 +13,22 @@ import java.util.function.Function;
  * objects (motor controllers)
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class DifferentialWheels<T> implements ICollectiveState {
+public class DifferentialVector<T> implements ICollectiveState {
     private T mLeft;
     private T mRight;
     private Map<String, Object> collectiveMap;
 
-    public static DifferentialWheels<Double> zeroes() {
-        return new DifferentialWheels<>(0d, 0d);
+    public static DifferentialVector<Double> zeroes() {
+        return new DifferentialVector<>(0d, 0d);
     }
 
-    public DifferentialWheels(T left, T right) {
+    public DifferentialVector(T left, T right) {
         this.mLeft = left;
         this.mRight = right;
         collectiveMap = new HashMap<>();
     }
 
-    public DifferentialWheels(DifferentialWheels<T> other) {
+    public DifferentialVector(DifferentialVector<T> other) {
         mLeft = other.mLeft;
         mRight = other.mRight;
         collectiveMap = new HashMap<>();
@@ -54,23 +54,22 @@ public class DifferentialWheels<T> implements ICollectiveState {
         action.accept(mRight);
     }
 
-    public <S> DifferentialWheels<S> transformed(Function<T, S> function) {
-        return new DifferentialWheels<>(function.apply(mLeft), function.apply(mRight));
+    public <S> DifferentialVector<S> transformed(Function<T, S> f) {
+        return new DifferentialVector<>(f.apply(mLeft), f.apply(mRight));
     }
 
-    public void transform(Function<T, T> function) {
-        mLeft = function.apply(mLeft);
-        mRight = function.apply(mRight);
+    public void transform(Function<T, T> f) {
+        mLeft = f.apply(mLeft);
+        mRight = f.apply(mRight);
     }
 
-    public <S> DifferentialWheels<S> transformed(DifferentialWheels<T> other, DependantFunction<T, S> function) {
-        return new DifferentialWheels<>(function.apply(mLeft, other.getLeft()),
-                function.apply(mRight, other.getRight()));
+    public <S> DifferentialVector<S> transformed(DifferentialVector<T> other, TransformFunction<T, S> f) {
+        return new DifferentialVector<>(f.apply(mLeft, other.getLeft()), f.apply(mRight, other.getRight()));
     }
 
-    public void transform(DifferentialWheels<T> other, DependantFunction<T, T> function) {
-        mLeft = function.apply(mLeft, other.getLeft());
-        mRight = function.apply(mRight, other.getRight());
+    public void transform(DifferentialVector<T> other, TransformFunction<T, T> f) {
+        mLeft = f.apply(mLeft, other.getLeft());
+        mRight = f.apply(mRight, other.getRight());
     }
 
     public void setLeft(T left) {
@@ -86,8 +85,8 @@ public class DifferentialWheels<T> implements ICollectiveState {
         mRight = right;
     }
 
-    public void set(DifferentialWheels<T> differentialWheels) {
-        mLeft = differentialWheels.getLeft();
-        mRight = differentialWheels.getRight();
+    public void set(DifferentialVector<T> differentialVector) {
+        mLeft = differentialVector.getLeft();
+        mRight = differentialVector.getRight();
     }
 }
