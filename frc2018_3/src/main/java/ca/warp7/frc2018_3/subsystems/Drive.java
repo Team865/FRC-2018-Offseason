@@ -41,7 +41,7 @@ public class Drive implements ISubsystem {
     private static final double kPreDriftSpeedLimit = 1.0;
     private static final double kVoltageCompensationSaturation = 12.0;
     private static final double kNeutralDeadBand = 0.04;
-    private static final double kRampSecondsFromNeutralToFull = 0;
+    private static final double kRampSecondsFromNeutralToFull = 0.4;
     private AHRS mAHRS;
     private CheesyDrive mCheesyDrive;
     private VictorSPX mLeftMaster;
@@ -91,6 +91,13 @@ public class Drive implements ISubsystem {
         mRightSlave.setInverted(true);
     }
 
+    private void resetAllVictors() {
+        mLeftMaster.set(ControlMode.PercentOutput, 0);
+        mRightMaster.set(ControlMode.PercentOutput, 0);
+        mLeftSlave.set(ControlMode.PercentOutput, 0);
+        mRightSlave.set(ControlMode.PercentOutput, 0);
+    }
+
     @Override
     public void onConstruct() {
         mLeftMaster = createVictor(kDriveLeftMaster);
@@ -103,8 +110,9 @@ public class Drive implements ISubsystem {
         mAHRS = navX.getAhrs();
         if (mIsUsingNativeVictorAPI) configAll();
         else {
-            mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster), cast(mLeftSlave));
-            mRightGroup = new SpeedControllerGroup(cast(mRightMaster), cast(mRightSlave));
+            resetAllVictors();
+            mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster));
+            mRightGroup = new SpeedControllerGroup(cast(mRightMaster));
             mRightGroup.setInverted(true);
         }
         mCheesyDrive = new CheesyDrive((left, right) -> {

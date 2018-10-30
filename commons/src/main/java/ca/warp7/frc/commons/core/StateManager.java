@@ -6,7 +6,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -56,7 +55,6 @@ class StateManager {
         }
         String oldState = mLoggedRobotState;
         mLoggedRobotState = state;
-        SmartDashboard.putString("Robot State", state);
         double newTime = Timer.getFPGATimestamp();
         double dt = newTime - mOldRobotStateTimeStamp;
         mOldRobotStateTimeStamp = newTime;
@@ -122,7 +120,7 @@ class StateManager {
         }
     }
 
-    private void reflectComponent(String prefix, Object componentState) {
+    private void report0(String prefix, Object componentState) {
         boolean foundCachedObserver = false;
         for (StateObserver observer : mStateObservers) {
             if (observer.object == componentState) {
@@ -133,11 +131,7 @@ class StateManager {
         if (!foundCachedObserver) {
             NetworkTable subTable = mSubsystemsTable.getSubTable(prefix);
             StateObserver observer = new StateObserver(subTable, componentState);
-            for (Field field : observer.fields) {
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-            }
+            for (Field field : observer.fields) if (!field.isAccessible()) field.setAccessible(true);
             updateObserverData(observer);
             mStateObservers.add(observer);
         }
@@ -166,10 +160,10 @@ class StateManager {
     private void report0(String name, StateType type, Object o) {
         switch (type) {
             case COMPONENT_STATE:
-                reflectComponent(name, o);
+                report0(name, o);
                 break;
             case COMPONENT_INPUT:
-                reflectComponent(name + ".in", o);
+                report0(name + ".in", o);
                 break;
             case PRINTLN:
                 println("", o);
@@ -193,9 +187,7 @@ class StateManager {
                 else sendNetworkTableValue(observer.table.getEntry(entryKey), value);
             }
         }
-        if (mPrintCounter > kMaxPrintLength) {
-            System.out.println("ERROR Printing has exceeded the limit");
-        }
+        if (mPrintCounter > kMaxPrintLength) System.out.println("ERROR Printing has exceeded the limit");
         mPrintCounter = 0;
         mPrintStream.flush();
     }
@@ -275,7 +267,7 @@ class StateManager {
                 resetControllerData(pair.state);
                 mNoDataCount = 0;
             } else collectIndividualController(pair.state, pair.controller);
-            reflectComponent(String.format("XboxController[%d]", pair.port), pair.state);
+            report0(String.format("XboxController[%d]", pair.port), pair.state);
         }
     }
 
