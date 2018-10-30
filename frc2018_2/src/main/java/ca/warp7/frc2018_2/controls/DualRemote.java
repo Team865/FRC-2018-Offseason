@@ -56,17 +56,17 @@ public class DualRemote extends ControlsBase {
         if (operator.getBButton() == DOWN)
             climber.setSpeed(operator.getY(kRight) * -1);
 
-        double activationSpeedInput = operator.getY(kLeft);
-        if (!lift.activationSpeedIsRamped)
-            if (activationSpeedInput <=  Constants.ACTIVATION_MOTOR_SPEED_LIMIT)
-                lift.setActivationSpeed(activationSpeedInput);
+        double actuationSpeedInput = operator.getY(kLeft);
+        if (!lift.actuationSpeedIsRamped)
+            if (actuationSpeedInput <=  Constants.ACTUATION_MOTOR_SPEED_LIMIT)
+                lift.setActuationSpeed(actuationSpeedInput);
             else
-                lift.setActivationSpeed(Constants.ACTIVATION_MOTOR_SPEED_LIMIT);
+                lift.setActuationSpeed(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
         else
-            if (activationSpeedInput <=  Constants.ACTIVATION_MOTOR_SPEED_LIMIT)
-                lift.activationRamp(activationSpeedInput);
+            if (actuationSpeedInput <=  Constants.ACTUATION_MOTOR_SPEED_LIMIT)
+                lift.actuationRamp(actuationSpeedInput);
             else
-                lift.activationRamp(Constants.ACTIVATION_MOTOR_SPEED_LIMIT);
+                lift.actuationRamp(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
 
         if (driver.getBButton() == DOWN) {
             climber.setSpeed(driver.getY(kLeft) * -1);
