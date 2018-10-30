@@ -111,8 +111,8 @@ public class Drive implements ISubsystem {
         if (mIsUsingNativeVictorAPI) configAll();
         else {
             resetAllVictors();
-            mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster));
-            mRightGroup = new SpeedControllerGroup(cast(mRightMaster));
+            mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster), cast(mLeftSlave));
+            mRightGroup = new SpeedControllerGroup(cast(mRightMaster), cast(mRightSlave));
             mRightGroup.setInverted(true);
         }
         mCheesyDrive = new CheesyDrive((left, right) -> {

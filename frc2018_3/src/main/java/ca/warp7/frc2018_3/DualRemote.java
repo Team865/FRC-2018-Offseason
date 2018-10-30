@@ -24,11 +24,13 @@ public class DualRemote implements IControls {
 
         // Driving
         drive.setReversed(Driver.RightStickButton == Pressed);
-        drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
+        if (Driver.BButton != HeldDown) {
+            drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
+        }
 
         // Intake
         if (Driver.AButton == Pressed) intake.togglePiston();
-        if (Driver.LeftDirectionalPad == HeldDown) intake.setSpeed(Intake.kSlowOuttakePower);
+        if (Driver.LeftDPad == HeldDown) intake.setSpeed(Intake.kSlowOuttakePower);
         else if (Driver.LeftTrigger == HeldDown) intake.setSpeed(Intake.kFastOuttakePower);
         else if (Driver.RightTrigger == HeldDown) intake.setSpeed(Intake.kIntakePower);
         else intake.setSpeed(0);

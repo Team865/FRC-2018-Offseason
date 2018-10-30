@@ -32,7 +32,7 @@ public class SingleRemote implements IControls {
 
         // Intake
         if (Driver.AButton == Pressed) intake.togglePiston();
-        if (Driver.LeftDirectionalPad == HeldDown) intake.setSpeed(Intake.kSlowOuttakePower);
+        if (Driver.LeftDPad == HeldDown) intake.setSpeed(Intake.kSlowOuttakePower);
         else if (Driver.LeftTrigger == HeldDown) intake.setSpeed(Intake.kFastOuttakePower);
         else if (Driver.RightTrigger == HeldDown) intake.setSpeed(Intake.kIntakePower);
         else intake.setSpeed(0);

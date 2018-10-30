@@ -50,9 +50,7 @@ class StateManager {
     }
 
     private void logRobotState(String state) {
-        if (assertRobotAttached() || state.equals(mLoggedRobotState)) {
-            return;
-        }
+        if (assertRobotAttached() || state.equals(mLoggedRobotState)) return;
         String oldState = mLoggedRobotState;
         mLoggedRobotState = state;
         double newTime = Timer.getFPGATimestamp();
@@ -60,9 +58,7 @@ class StateManager {
         mOldRobotStateTimeStamp = newTime;
         System.out.print(getClass().getSimpleName() + " - ");
         System.out.print("Robot State: " + mLoggedRobotState);
-        if (!oldState.isEmpty()) {
-            System.out.print(String.format(", %.0f seconds after %s began", dt, oldState));
-        }
+        if (!oldState.isEmpty()) System.out.print(String.format(", %.0f seconds after %s began", dt, oldState));
         System.out.println();
     }
 
@@ -101,11 +97,7 @@ class StateManager {
     }
 
     XboxControlsState createXboxController(int port) {
-        for (XboxControllerPair pair : mControllers) {
-            if (pair.port == port) {
-                return pair.state;
-            }
-        }
+        for (XboxControllerPair pair : mControllers) if (pair.port == port) return pair.state;
         XboxControllerPair newPair = new XboxControllerPair(port);
         mControllers.add(newPair);
         resetControllerData(newPair.state);
@@ -221,10 +213,10 @@ class StateManager {
         S.RightStickButton = KeptUp;
         S.StartButton = KeptUp;
         S.BackButton = KeptUp;
-        S.UpDirectionalPad = KeptUp;
-        S.RightDirectionalPad = KeptUp;
-        S.DownDirectionalPad = KeptUp;
-        S.LeftDirectionalPad = KeptUp;
+        S.UpDPad = KeptUp;
+        S.RightDPad = KeptUp;
+        S.DownDPad = KeptUp;
+        S.LeftDPad = KeptUp;
         S.LeftTriggerAxis = 0;
         S.RightTriggerAxis = 0;
         S.LeftXAxis = 0;
@@ -235,28 +227,28 @@ class StateManager {
 
     private void collectIndividualController(XboxControlsState S, XboxController C) {
         int POV = C.getPOV();
-        S.AButton = update(S.AButton, C.getAButton());
-        S.BButton = update(S.BButton, C.getBButton());
-        S.XButton = update(S.XButton, C.getXButton());
-        S.YButton = update(S.YButton, C.getYButton());
-        S.LeftBumper = update(S.LeftBumper, C.getBumper(kLeft));
-        S.RightBumper = update(S.RightBumper, C.getBumper(kRight));
-        S.LeftTrigger = update(S.LeftTrigger, C.getTriggerAxis(kLeft) > kTriggerDeadBand);
-        S.RightTrigger = update(S.RightTrigger, C.getTriggerAxis(kRight) > kTriggerDeadBand);
-        S.LeftStickButton = update(S.LeftStickButton, C.getStickButton(kLeft));
-        S.RightStickButton = update(S.RightStickButton, C.getStickButton(kRight));
-        S.StartButton = update(S.StartButton, C.getStartButton());
-        S.BackButton = update(S.BackButton, C.getBackButton());
-        S.UpDirectionalPad = update(S.UpDirectionalPad, POV == kUpPOV);
-        S.RightDirectionalPad = update(S.RightDirectionalPad, POV == kRightPOV);
-        S.DownDirectionalPad = update(S.DownDirectionalPad, POV == kDownPOV);
-        S.LeftDirectionalPad = update(S.LeftDirectionalPad, POV == kLeftPOV);
         S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
         S.RightTriggerAxis = C.getTriggerAxis(kRight);
         S.LeftXAxis = C.getX(kLeft);
         S.LeftYAxis = C.getY(kLeft);
         S.RightXAxis = C.getX(kRight);
         S.RightYAxis = C.getY(kRight);
+        S.AButton = update(S.AButton, C.getAButton());
+        S.BButton = update(S.BButton, C.getBButton());
+        S.XButton = update(S.XButton, C.getXButton());
+        S.YButton = update(S.YButton, C.getYButton());
+        S.LeftBumper = update(S.LeftBumper, C.getBumper(kLeft));
+        S.RightBumper = update(S.RightBumper, C.getBumper(kRight));
+        S.LeftTrigger = update(S.LeftTrigger, S.LeftTriggerAxis > kTriggerDeadBand);
+        S.RightTrigger = update(S.RightTrigger, S.RightTriggerAxis > kTriggerDeadBand);
+        S.LeftStickButton = update(S.LeftStickButton, C.getStickButton(kLeft));
+        S.RightStickButton = update(S.RightStickButton, C.getStickButton(kRight));
+        S.StartButton = update(S.StartButton, C.getStartButton());
+        S.BackButton = update(S.BackButton, C.getBackButton());
+        S.UpDPad = update(S.UpDPad, POV == kUpPOV);
+        S.RightDPad = update(S.RightDPad, POV == kRightPOV);
+        S.DownDPad = update(S.DownDPad, POV == kDownPOV);
+        S.LeftDPad = update(S.LeftDPad, POV == kLeftPOV);
     }
 
     synchronized void collectControllerData() {

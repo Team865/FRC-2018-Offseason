@@ -14,10 +14,10 @@ public class XboxControlsState {
     public int RightStickButton;
     public int StartButton;
     public int BackButton;
-    public int UpDirectionalPad;
-    public int RightDirectionalPad;
-    public int DownDirectionalPad;
-    public int LeftDirectionalPad;
+    public int UpDPad;
+    public int RightDPad;
+    public int DownDPad;
+    public int LeftDPad;
     public double LeftTriggerAxis;
     public double RightTriggerAxis;
     public double LeftXAxis;
