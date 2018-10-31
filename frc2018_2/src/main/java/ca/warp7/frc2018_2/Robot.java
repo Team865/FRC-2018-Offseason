@@ -18,6 +18,7 @@ public class Robot extends IterativeRobot {
     public static Climber climber;
     public static Lift lift;
     public static Intake intake;
+    public static Wrist wrist;
 
     public static AutonomousBase auto;
     private static ControlsBase controls;
@@ -44,6 +45,7 @@ public class Robot extends IterativeRobot {
         intake = new Intake();
         lift = new Lift();
         climber = new Climber();
+        wrist = new Wrist();
 
         //shutup >:(
         compressor = new Compressor(COMPRESSOR_PIN);

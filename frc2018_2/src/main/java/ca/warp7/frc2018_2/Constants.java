@@ -10,9 +10,9 @@ public class Constants {
     public static final int[] INTAKE_MOTOR_RIGHT_IDS = {6};
     public static final int[] INTAKE_MOTOR_LEFT_IDS = {4};
     public static final int[] LIFT_MOTOR_LEFT_IDS = {0};
-    public static final int[] LIFT_MOTOR_RIGHT_IDS = {7};
+    public static final int[] LIFT_MOTOR_RIGHT_IDS = {0};
     public static final int[] CLIMBER_MOTORS_IDS = {9, 5};
-    public static final int[] ACTUATION_MOTOR_IDS = {10};
+    public static final int[] ACTUATION_MOTOR_IDS = {7};
     public static final double ACTUATION_MOTOR_SPEED_LIMIT = 0.5;
 
     //TODO Update Constants!

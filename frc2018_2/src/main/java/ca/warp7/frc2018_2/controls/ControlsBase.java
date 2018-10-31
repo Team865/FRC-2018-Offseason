@@ -2,10 +2,7 @@ package ca.warp7.frc2018_2.controls;
 
 import ca.warp7.frc2018_2.Robot;
 import ca.warp7.frc2018_2.misc.DataPool;
-import ca.warp7.frc2018_2.subsystems.Climber;
-import ca.warp7.frc2018_2.subsystems.Drive;
-import ca.warp7.frc2018_2.subsystems.Intake;
-import ca.warp7.frc2018_2.subsystems.Lift;
+import ca.warp7.frc2018_2.subsystems.*;
 import edu.wpi.first.wpilibj.Timer;
 
 import static ca.warp7.frc2018_2.Constants.DRIVER_ID;
@@ -21,6 +18,7 @@ public abstract class ControlsBase {
     protected Drive drive;
     protected Intake intake;
     protected Lift lift;
+    protected Wrist wrist;
 
     public ControlsBase() {
         driver = new XboxControllerPlus(DRIVER_ID);
@@ -30,6 +28,7 @@ public abstract class ControlsBase {
         intake = Robot.intake;
         climber = Robot.climber;
         drive = Robot.drive;
+        wrist = Robot.wrist;
     }
 
     abstract public void periodic();

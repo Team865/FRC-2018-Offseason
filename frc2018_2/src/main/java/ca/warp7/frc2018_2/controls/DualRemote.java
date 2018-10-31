@@ -1,7 +1,9 @@
 package ca.warp7.frc2018_2.controls;
 
-import ca.warp7.frc2018_2.Robot;
 import ca.warp7.frc2018_2.Constants;
+import ca.warp7.frc2018_2.Robot;
+import ca.warp7.frc2018_2.misc.Util;
+
 import static ca.warp7.frc2018_2.controls.Control.DOWN;
 import static ca.warp7.frc2018_2.controls.Control.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -56,17 +58,16 @@ public class DualRemote extends ControlsBase {
         if (operator.getBButton() == DOWN)
             climber.setSpeed(operator.getY(kRight) * -1);
 
-        double actuationSpeedInput = operator.getY(kLeft);
-        if (!lift.actuationSpeedIsRamped)
-            if (actuationSpeedInput <=  Constants.ACTUATION_MOTOR_SPEED_LIMIT)
-                lift.setActuationSpeed(actuationSpeedInput);
+        double wristSpeed = Util.deadband(operator.getY(kRight));
+        if (!wrist.actuationSpeedIsRamped)
+            if (wristSpeed <= Constants.ACTUATION_MOTOR_SPEED_LIMIT)
+                wrist.setActuationSpeed(wristSpeed);
             else
-                lift.setActuationSpeed(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
+                wrist.setActuationSpeed(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
+        else if (wristSpeed <= Constants.ACTUATION_MOTOR_SPEED_LIMIT)
+            wrist.actuationRamp(wristSpeed);
         else
-            if (actuationSpeedInput <=  Constants.ACTUATION_MOTOR_SPEED_LIMIT)
-                lift.actuationRamp(actuationSpeedInput);
-            else
-                lift.actuationRamp(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
+            wrist.actuationRamp(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
 
         if (driver.getBButton() == DOWN) {
             climber.setSpeed(driver.getY(kLeft) * -1);

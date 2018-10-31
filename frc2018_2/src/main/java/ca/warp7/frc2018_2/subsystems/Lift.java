@@ -15,12 +15,10 @@ import static ca.warp7.frc2018_2.Constants.*;
 public class Lift {
     private MotorGroup LiftMotorRight;
     private MotorGroup LiftMotorLeft;
-    private MotorGroup ActuationMotor;
     private Encoder liftEncoder;
     private DigitalInput liftHallaffect;
     private MiniPID liftPID;
     private double targetH;
-    public boolean actuationSpeedIsRamped = false;
     private Intake intake = Robot.intake;
     private Drive drive = Robot.drive;
     public boolean overrideIntake = false;
@@ -29,8 +27,6 @@ public class Lift {
     public Lift() {
         LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
         LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
-        ActuationMotor = new MotorGroup(ACTUATION_MOTOR_IDS, WPI_VictorSPX.class);
-        ActuationMotor.setInverted(false);
         LiftMotorLeft.setInverted(true);
         LiftMotorRight.setInverted(true);
 
@@ -49,15 +45,6 @@ public class Lift {
     public void setSpeed(double speed) {
         LiftMotorLeft.set(speed);
         LiftMotorRight.set(speed);
-    }
-
-    public void setActuationSpeed(double speed){
-        ActuationMotor.set(speed);
-    }
-
-    public void actuationRamp(double speed){
-        ramp += (speed - ramp) / rampSpeed;
-        ActuationMotor.set(ramp);
     }
 
     public void rampSpeed(double speed) {
