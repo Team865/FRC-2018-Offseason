@@ -13,7 +13,7 @@ public class DualRemote implements IControls {
     private XboxControlsState Operator = Robot.getXboxController(1);
 
     @Override
-    public void periodic() {
+    public void mainPeriodic() {
         // Limelight
         if (Driver.XButton == Pressed) limelight.switchCamera();
 

@@ -2,6 +2,8 @@ package ca.warp7.frc.commons.core;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
+import java.util.function.Supplier;
+
 import static ca.warp7.frc.commons.core.StateType.*;
 
 /**
@@ -9,7 +11,7 @@ import static ca.warp7.frc.commons.core.StateType.*;
  * to create a runnable robot. See documentation in the class of
  * each field in this class.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+//@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class Robot extends IterativeRobot {
 
     private final Components mComponents = new Components();
@@ -65,16 +67,12 @@ public abstract class Robot extends IterativeRobot {
 
     protected abstract void onCreate();
 
-    protected final void setControllerLoop(IControls loop) {
+    protected final void setTeleop(IControls loop) {
         mComponents.setControllerLoop(loop);
     }
 
     protected final void setAutoMode(IAutoMode mode, double testTimeout) {
         mAutoRunner.setAutoMode(mode, testTimeout);
-    }
-
-    protected final void setComponents(Class<?> components) {
-        mComponents.setClass(components);
     }
 
     public static void println(Object o) {
@@ -102,9 +100,12 @@ public abstract class Robot extends IterativeRobot {
         return state.createXboxController(port);
     }
 
-    public static void registerSelectableAutoModes(IAutoMode... modes) {
+    protected static void registerAutoModes(IAutoMode... modes) {
     }
 
-    public static void registerComponents(IComponent... components) {
+    protected static void registerComponents(IComponent... components) {
+    }
+
+    protected static void setControls(Supplier<IControls> supplier) {
     }
 }

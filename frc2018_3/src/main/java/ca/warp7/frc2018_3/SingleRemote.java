@@ -12,7 +12,7 @@ public class SingleRemote implements IControls {
     private XboxControlsState Driver = Robot.getXboxController(0);
 
     @Override
-    public void periodic() {
+    public void mainPeriodic() {
         // Limelight
         if (Driver.XButton == Pressed) limelight.switchCamera();
 

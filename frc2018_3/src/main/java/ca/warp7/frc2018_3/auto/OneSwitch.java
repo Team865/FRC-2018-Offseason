@@ -28,4 +28,14 @@ public class OneSwitch implements IAutoMode {
         }
         return new DriveForDistanceAction(new PIDValues(0.018, 0.00001, 0.23), 103, 5);
     }
+
+    @Override
+    public boolean isConfigurable() {
+        return true;
+    }
+
+    @Override
+    public String getConfigurationPostfix() {
+        return String.valueOf(side);
+    }
 }

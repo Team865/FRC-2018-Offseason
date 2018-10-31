@@ -10,5 +10,8 @@ public interface IControls {
     int Released = 10;
     int KeptUp = 0;
 
-    void periodic();
+    void mainPeriodic();
+
+    default void testPeriodic() {
+    }
 }
