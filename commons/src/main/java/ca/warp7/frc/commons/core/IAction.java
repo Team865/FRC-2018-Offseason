@@ -52,4 +52,19 @@ public interface IAction {
     default void onSleep() throws InterruptedException {
         Thread.sleep(0);
     }
+
+    /**
+     * Used to determine if the action can estimate the amount of time it will
+     * take to complete itself
+     */
+    default boolean shouldPredictActionDuration() {
+        return false;
+    }
+
+    /**
+     * If the action can predict it, get the predicted duration in seconds
+     */
+    default double getPredictedActionDuration() {
+        return 0;
+    }
 }

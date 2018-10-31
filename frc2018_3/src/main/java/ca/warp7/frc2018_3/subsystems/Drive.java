@@ -4,10 +4,10 @@ import ca.warp7.frc.commons.DifferentialVector;
 import ca.warp7.frc.commons.DtMeasurement;
 import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
-import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -41,9 +41,11 @@ public class Drive implements ISubsystem {
     private static final double kPreDriftSpeedLimit = 1.0;
     private static final double kVoltageCompensationSaturation = 12.0;
     private static final double kNeutralDeadBand = 0.04;
-    private static final double kRampSecondsFromNeutralToFull = 0.4;
-    private AHRS mAHRS;
+    private static final double kOpenLoopRampNeutralToFull = 0.4;
+    private static final double kClosedLoopRampNeutralToFull = 0.4;
+    private static final double kControlsDeadband = 0.2;
     private CheesyDrive mCheesyDrive;
+    private AHRS mAHRS;
     private VictorSPX mLeftMaster;
     private VictorSPX mLeftSlave;
     private VictorSPX mRightMaster;
@@ -70,25 +72,34 @@ public class Drive implements ISubsystem {
         return (WPI_VictorSPX) victorSPX;
     }
 
-    private static void configMaster(VictorSPX victor) {
-        victor.enableVoltageCompensation(true);
-        victor.configVoltageCompSaturation(kVoltageCompensationSaturation, kConfigTimeout);
-        victor.configNeutralDeadband(kNeutralDeadBand, kConfigTimeout);
-        victor.configOpenloopRamp(kRampSecondsFromNeutralToFull, kConfigTimeout);
-        victor.configPeakOutputForward(kAbsoluteMaxOutput, kConfigTimeout);
-        victor.configPeakOutputReverse(kAbsoluteMaxOutput, kConfigTimeout);
-        victor.configNominalOutputForward(kOutputPowerEpsilon, kConfigTimeout);
-        victor.configNominalOutputReverse(kOutputPowerEpsilon, kConfigTimeout);
+    @SuppressWarnings("unused")
+    private static void configMaster(VictorSPX master) {
+        master.setNeutralMode(NeutralMode.Brake);
+        master.enableVoltageCompensation(true);
+        master.configVoltageCompSaturation(kVoltageCompensationSaturation, kConfigTimeout);
+        master.configNeutralDeadband(kNeutralDeadBand, kConfigTimeout);
+        master.configOpenloopRamp(kOpenLoopRampNeutralToFull, kConfigTimeout);
+        master.configClosedloopRamp(kClosedLoopRampNeutralToFull, kConfigTimeout);
+        master.configPeakOutputForward(kAbsoluteMaxOutput, kConfigTimeout);
+        master.configPeakOutputReverse(kAbsoluteMaxOutput, kConfigTimeout);
+        master.configNominalOutputForward(kOutputPowerEpsilon, kConfigTimeout);
+        master.configNominalOutputReverse(kOutputPowerEpsilon, kConfigTimeout);
+    }
+
+    private static double linearScaleDeadband(double n) {
+        return Math.abs(n) < kControlsDeadband ? 0 : (n - Math.copySign(kControlsDeadband, n)) / (1 - kControlsDeadband);
     }
 
     @SuppressWarnings("unused")
     private void configAll() {
-        configMaster(mLeftMaster);
-        configMaster(mRightMaster);
-        mRightMaster.setInverted(true);
+        //configMaster(mLeftMaster);
+        //configMaster(mRightMaster);
+
+        mLeftMaster.setInverted(true);
+        mLeftSlave.setInverted(true);
+
         mLeftSlave.set(ControlMode.Follower, mLeftMaster.getDeviceID());
         mRightSlave.set(ControlMode.Follower, mRightMaster.getDeviceID());
-        mRightSlave.setInverted(true);
     }
 
     private void resetAllVictors() {
@@ -108,9 +119,9 @@ public class Drive implements ISubsystem {
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
         mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
         mAHRS = navX.getAhrs();
+        resetAllVictors();
         if (mIsUsingNativeVictorAPI) configAll();
         else {
-            resetAllVictors();
             mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster), cast(mLeftSlave));
             mRightGroup = new SpeedControllerGroup(cast(mRightMaster), cast(mRightSlave));
             mLeftGroup.setInverted(true);
@@ -119,6 +130,7 @@ public class Drive implements ISubsystem {
             mInput.demandedLeftPercentOutput = left;
             mInput.demandedRightPercentOutput = right;
         });
+        mCheesyDrive.disableInternalDeadband();
     }
 
     @Override
@@ -166,6 +178,7 @@ public class Drive implements ISubsystem {
         double velocityDiff = mState.encoderRate.getLeft() - mState.encoderRate.getRight();
         mState.chassisLinearVelocity = kWheelRadius * velocitySum / 2.0;
         mState.chassisAngularVelocity = (kWheelRadius * velocityDiff) / (2.0 * kWheelBaseRadius);
+
         if (dt != 0) {
             mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
             if (mState.velocityAverages.size() > kVelocityQueueSize) mState.velocityAverages.removeFirst();
@@ -254,20 +267,10 @@ public class Drive implements ISubsystem {
     }
 
     @InputModifier
-    @Deprecated
-    public synchronized void cheesyDrive(ICheesyDriveInput driver) {
-        mInput.shouldBeginOpenLoop = true;
-        mInput.shouldBeginLinearPID = false;
-        mCheesyDrive.setInputsFromControls(driver);
-        mCheesyDrive.calculateFeed();
-    }
-
-    @InputModifier
     public synchronized void cheesyDrive(double wheel, double throttle, boolean isQuickTurn) {
         mInput.shouldBeginOpenLoop = true;
         mInput.shouldBeginLinearPID = false;
-        mCheesyDrive.setInputs(wheel, throttle, isQuickTurn);
-        mCheesyDrive.calculateFeed();
+        mCheesyDrive.cheesyDrive(linearScaleDeadband(wheel), linearScaleDeadband(throttle), isQuickTurn);
     }
 
     @InputModifier

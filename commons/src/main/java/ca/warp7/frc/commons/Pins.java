@@ -1,5 +1,6 @@
 package ca.warp7.frc.commons;
 
+@Deprecated
 public class Pins {
 
     private final int[] mPinsArray;

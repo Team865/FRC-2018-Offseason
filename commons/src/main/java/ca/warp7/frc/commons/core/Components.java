@@ -83,7 +83,7 @@ class Components implements ISubsystem {
 
     void controllerPeriodic() {
         if (mControllerEnabled) {
-            mControllerLoop.periodic();
+            mControllerLoop.mainPeriodic();
         }
     }
 
