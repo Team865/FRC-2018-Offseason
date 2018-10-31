@@ -1,6 +1,6 @@
 package ca.warp7.frc2018_3.subsystems;
 
-import ca.warp7.frc.commons.DifferentialWheels;
+import ca.warp7.frc.commons.DifferentialVector;
 import ca.warp7.frc.commons.DtMeasurement;
 import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
@@ -50,7 +50,7 @@ public class Drive implements ISubsystem {
     private VictorSPX mRightSlave;
     private SpeedControllerGroup mLeftGroup;
     private SpeedControllerGroup mRightGroup;
-    private DifferentialWheels<Encoder> mEncoders;
+    private DifferentialVector<Encoder> mEncoders;
     private final boolean mIsUsingNativeVictorAPI = false;
     private final Input mInput = new Input();
     private final State mState = new State();
@@ -106,14 +106,14 @@ public class Drive implements ISubsystem {
         mRightSlave = createVictor(kDriveRightSlave);
         Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false);
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
-        mEncoders = new DifferentialWheels<>(leftEncoder, rightEncoder);
+        mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
         mAHRS = navX.getAhrs();
         if (mIsUsingNativeVictorAPI) configAll();
         else {
             resetAllVictors();
             mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster), cast(mLeftSlave));
             mRightGroup = new SpeedControllerGroup(cast(mRightMaster), cast(mRightSlave));
-            mRightGroup.setInverted(true);
+            mLeftGroup.setInverted(true);
         }
         mCheesyDrive = new CheesyDrive((left, right) -> {
             mInput.demandedLeftPercentOutput = left;
@@ -159,8 +159,8 @@ public class Drive implements ISubsystem {
         mState.timestamp = timestamp;
         double dLeft = mState.leftDistance - oldLeft;
         double dRight = mState.rightDistance - oldRight;
-        DifferentialWheels<Double> dDistance = new DifferentialWheels<>(dLeft, dRight);
-        DifferentialWheels<Double> oldRate = new DifferentialWheels<>(mState.encoderRate);
+        DifferentialVector<Double> dDistance = new DifferentialVector<>(dLeft, dRight);
+        DifferentialVector<Double> oldRate = new DifferentialVector<>(mState.encoderRate);
         mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
         double velocitySum = mState.encoderRate.getLeft() + mState.encoderRate.getRight();
         double velocityDiff = mState.encoderRate.getLeft() - mState.encoderRate.getRight();
@@ -169,7 +169,7 @@ public class Drive implements ISubsystem {
         if (dt != 0) {
             mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
             if (mState.velocityAverages.size() > kVelocityQueueSize) mState.velocityAverages.removeFirst();
-            DifferentialWheels<DtMeasurement> sum = new DifferentialWheels<>(new DtMeasurement(), new DtMeasurement());
+            DifferentialVector<DtMeasurement> sum = new DifferentialVector<>(new DtMeasurement(), new DtMeasurement());
             mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
             mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
             mState.encoderAcceleration.set(mState.encoderRate.transformed(oldRate, (now, prev) -> (now - prev) / dt));
@@ -339,10 +339,10 @@ public class Drive implements ISubsystem {
         double rightVoltage;
         double maxVoltage;
         double minVoltage;
-        final DifferentialWheels<Double> measuredVelocity = DifferentialWheels.zeroes();
-        final LinkedList<DifferentialWheels<DtMeasurement>> velocityAverages = new LinkedList<>();
-        final DifferentialWheels<Double> encoderRate = DifferentialWheels.zeroes();
-        final DifferentialWheels<Double> encoderAcceleration = DifferentialWheels.zeroes();
+        final DifferentialVector<Double> measuredVelocity = DifferentialVector.zeroes();
+        final LinkedList<DifferentialVector<DtMeasurement>> velocityAverages = new LinkedList<>();
+        final DifferentialVector<Double> encoderRate = DifferentialVector.zeroes();
+        final DifferentialVector<Double> encoderAcceleration = DifferentialVector.zeroes();
         final MiniPID leftLinearPID = new MiniPID(0, 0, 0, 0);
         final MiniPID rightLinearPID = new MiniPID(0, 0, 0, 0);
     }

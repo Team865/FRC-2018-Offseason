@@ -7,7 +7,7 @@ public interface ICollectiveState {
     Map<String, Object> getCollection();
 
     @FunctionalInterface
-    interface DependantFunction<T, R> {
+    interface TransformFunction<T, R> {
         R apply(T t, T other);
     }
 }

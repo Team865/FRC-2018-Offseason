@@ -22,12 +22,11 @@ public class SingleRemote implements IControls {
         pneumatics.setGrapplingHook(Driver.StartButton == HeldDown);
 
         // Driving/ArmLift
-        drive.setReversed(Driver.RightStickButton == Pressed);
-        if (Driver.BButton == HeldDown) {
-            armLift.setSpeed(Driver.LeftYAxis);
-        } else {
+        drive.setReversed(Driver.RightStickButton == HeldDown);
+        if (Driver.BButton == HeldDown) armLift.setSpeed(Driver.LeftYAxis);
+        else {
             armLift.setSpeed(0);
-            drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
+            drive.cheesyDrive(Driver.RightXAxis, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
         }
 
         // Intake

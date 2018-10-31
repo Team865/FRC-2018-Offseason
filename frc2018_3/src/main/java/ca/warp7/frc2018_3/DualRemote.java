@@ -23,9 +23,9 @@ public class DualRemote implements IControls {
         pneumatics.setGrapplingHook(Driver.StartButton == HeldDown);
 
         // Driving
-        drive.setReversed(Driver.RightStickButton == Pressed);
+        drive.setReversed(Driver.RightStickButton == HeldDown);
         if (Driver.BButton != HeldDown) {
-            drive.cheesyDrive(Driver.RightXAxis * -1, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
+            drive.cheesyDrive(Driver.RightXAxis, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
         }
 
         // Intake
