@@ -70,9 +70,13 @@ public class AutonomousBase {
         } else if (pin == 3) { // Right
             //System.out.println("pin 3 active :Right:");
             if (gameData.equals("RRR")) {
+                RightStart_singleScaleRight();
             } else if (gameData.equals("LLL")) {
+                baseLine();
             } else if (gameData.equals("LRL")) {
+                RightStart_singleScaleRight();
             } else if (gameData.equals("RLR")) {
+                baseLine();
             }
         }
 
@@ -462,6 +466,35 @@ public class AutonomousBase {
                 }
                 break;
             case (2):
+                if (autoFunc.driveDistance(327.5, -15, 15, true)) { // drive until intake overhangs the line, measured at 630cm
+                    step++;
+                    autoFunc.setSpeedLimit(0.65);
+                }
+                break;
+            case (3):
+                intake.setSpeed(-1);
+                Timer.delay(0.2);
+                intake.setSpeed(0);
+                lift.setLoc(0);
+                Timer.delay(0.4);
+                step++;
+        } // end switch statement
+    }
+    private void RightStart_singleScaleRight() {
+        switch (step) {
+            case (0): // SETUP-LEFT SIDE OF THE ROBOT SHOULD HAVE ONE FOOT OF CLEARANCE FROM SWITCH
+                lift.disableSpeedLimit = true; // DISABLE SPEEDLIMIT LIFT OVERRIDE
+                lift.setLoc(1); // LIFT
+                autoFunc.setSpeedLimit(1); // SPEEDLIMIT
+                step++;
+                break;
+            case (1):
+                if (autoFunc.driveDistanceNoStop(330, 0, true)) { // drive until intake overhangs the line, measured at 630cm
+                    autoFunc.setSpeedLimit(0.4);
+                    step++;
+                }
+                break;
+            case (2):
                 if (autoFunc.driveDistance(327.5, 15, 15, true)) { // drive until intake overhangs the line, measured at 630cm
                     step++;
                     autoFunc.setSpeedLimit(0.65);
@@ -522,6 +555,7 @@ public class AutonomousBase {
 
         } // end switch statement
     }
+
 
     //SINGLE SCALE RIGHT
     private void LeftStart_singleScaleRight() {
