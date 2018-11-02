@@ -55,6 +55,13 @@ public class DualRemote extends ControlsBase {
         if (operator.getAButton() == DOWN)
             lift.setLoc(operator.getY(kLeft));
 
+        if (operator.getYButton() == DOWN && !lift.isBottom()) {
+            lift.setShouldSlowFall(true);
+            lift.setLoc(0);
+        } else {
+            lift.setShouldSlowFall(false);
+        }
+
         if (operator.getBButton() == DOWN)
             climber.setSpeed(operator.getY(kRight) * -1);
 

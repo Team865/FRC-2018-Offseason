@@ -6,6 +6,7 @@ import ca.warp7.frc2018_2.controls.ControlsBase;
 import ca.warp7.frc2018_2.controls.DualRemote;
 import ca.warp7.frc2018_2.subsystems.*;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static ca.warp7.frc2018_2.Constants.COMPRESSOR_PIN;
@@ -84,6 +85,7 @@ public class Robot extends IterativeRobot {
         lift.periodic();
         String gameData = driverStation.getGameSpecificMessage();
         auto.autonomousPeriodic(gameData, pin);//pin
+        //System.out.println(String.format("WARNING left=%f right=%f", drive.getLeftDistance(), drive.getRightDistance()));
     }
 
     public void teleopInit() {
@@ -105,6 +107,7 @@ public class Robot extends IterativeRobot {
 
         controls = new DualRemote();
         double a = 0;
+        LiveWindow.setEnabled(true);
         while (isOperatorControl() && isEnabled()) {
             controls.periodic();
             limelight.mutiPipeline();
@@ -121,14 +124,17 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putNumber("1", a1.getAverageVoltage());
             SmartDashboard.putNumber("2", a2.getAverageVoltage());
             SmartDashboard.putNumber("3", a3.getAverageVoltage());
-            System.out.println("Lift:" + a);
+            //System.out.println("Lift:" + a);
             SmartDashboard.putNumber("Lift", a);
             SmartDashboard.putNumber("Lift raw", b);
             SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
             SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
             SmartDashboard.putNumber("pitch", navx.getPitch());
+            //System.out.println(String.format("WARNING left=%f right=%f", drive.getLeftDistance(), drive.getRightDistance()));
 
             Timer.delay(0.005);
+            LiveWindow.updateValues();
+            SmartDashboard.updateValues();
         }
     }
 

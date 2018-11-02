@@ -16,13 +16,15 @@ public class Lift {
     private MotorGroup LiftMotorRight;
     private MotorGroup LiftMotorLeft;
     private Encoder liftEncoder;
-    private DigitalInput liftHallaffect;
+    private DigitalInput liftLimitSwitch;
     private MiniPID liftPID;
     private double targetH;
     private Intake intake = Robot.intake;
     private Drive drive = Robot.drive;
     public boolean overrideIntake = false;
     public boolean disableSpeedLimit = false;
+
+    private boolean shouldSlowFall = false;
 
     public Lift() {
         LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
@@ -32,7 +34,7 @@ public class Lift {
 
         liftEncoder = new Encoder(LIFT_ENCODER_A, LIFT_ENCODER_B, false, EncodingType.k4X);
         liftEncoder.setDistancePerPulse(1);
-        liftHallaffect = new DigitalInput(HALL_DIO);
+        liftLimitSwitch = new DigitalInput(HALL_DIO);
         zeroEncoder();
         liftPID = new MiniPID(6.5, 0, 20);
         liftPID.setOutputLimits(-0.4, 1); //kaelan--i changed this on april 24 to let the lift go further down before turning during auto. used to be limited to -0.55
@@ -40,11 +42,14 @@ public class Lift {
 
     private double ramp = 0;
     private final double rampSpeed = 6;
-    private final double actuationRampSpeed = 6;
 
     public void setSpeed(double speed) {
         LiftMotorLeft.set(speed);
         LiftMotorRight.set(speed);
+    }
+
+    public void setShouldSlowFall(boolean shouldSlowFall) {
+        this.shouldSlowFall = shouldSlowFall;
     }
 
     public void rampSpeed(double speed) {
@@ -71,20 +76,23 @@ public class Lift {
         else if (intake.getSpeed() >= 0 && !(overrideIntake)) //added intake override for auto
             intake.rampSpeed(0.3);
 
+        if (shouldSlowFall) {
+            rampSpeed(-0.1);
+        } else {
+            double scaledLift = getEncoderVal() / LIFT_HEIGHT;
 
-        double scaledLift = getEncoderVal() / LIFT_HEIGHT;
+            double speed = liftPID.getOutput(scaledLift);
+            //if (scaledLift > 0.2)
+            //System.out.println("speed= " + speed + " height= " + scaledLift + "setP= " + targetH);
 
-        double speed = liftPID.getOutput(scaledLift);
-        if (scaledLift > 0.2)
-            System.out.println("speed= " + speed + " height= " + scaledLift + "setP= " + targetH);
+            if (!disableSpeedLimit) {
+                double speedLimit = Math.pow(0.30, scaledLift);
+                drive.setSpeedLimit(speedLimit);
+            } else
+                drive.setSpeedLimit(1);
 
-        if (!disableSpeedLimit) {
-            double speedLimit = Math.pow(0.30, scaledLift);
-            drive.setSpeedLimit(speedLimit);
-        } else
-            drive.setSpeedLimit(1);
-
-        rampSpeed(speed);
+            rampSpeed(speed);
+        }
     }
 
     public double getEncoderVal() {
@@ -100,6 +108,6 @@ public class Lift {
     }
 
     public boolean isBottom() {
-        return liftHallaffect.get();//is lift at bottom
+        return !liftLimitSwitch.get();//is lift at bottom
     }
 }
