@@ -167,8 +167,8 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onReportState() {
-        Robot.report(this, StateType.COMPONENT_INPUT, mInputState);
-        Robot.report(this, StateType.COMPONENT_STATE, mCurrentState);
+        Robot.report(this, StateType.ComponentInput, mInputState);
+        Robot.report(this, StateType.ComponentState, mCurrentState);
     }
 
     @InputModifier

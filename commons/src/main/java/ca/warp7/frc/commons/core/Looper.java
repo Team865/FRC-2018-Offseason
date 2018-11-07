@@ -14,10 +14,7 @@ import java.util.List;
 class Looper {
     private final Notifier mNotifier;
     private final List<ILoop> mLoops;
-    private ILoop mStartLoop;
-    private ILoop mFinalLoop;
     private final Object mTaskRunningLock;
-
     private boolean mIsRunning;
     private final double mPeriod;
 
@@ -27,11 +24,7 @@ class Looper {
             public void run() {
                 try {
                     synchronized (mTaskRunningLock) {
-                        if (mIsRunning) {
-                            if (mStartLoop != null) mStartLoop.onLoop();
-                            mLoops.forEach(ILoop::onLoop);
-                            if (mFinalLoop != null) mFinalLoop.onLoop();
-                        }
+                        if (mIsRunning) mLoops.forEach(ILoop::onLoop);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -51,24 +44,10 @@ class Looper {
         }
     }
 
-    synchronized void registerStartLoop(ILoop startLoop) {
-        synchronized (mTaskRunningLock) {
-            mStartLoop = startLoop;
-        }
-    }
-
-    synchronized void registerFinalLoop(ILoop finalLoop) {
-        synchronized (mTaskRunningLock) {
-            mFinalLoop = finalLoop;
-        }
-    }
-
     synchronized void startLoops() {
         if (!mIsRunning) {
             synchronized (mTaskRunningLock) {
-                if (mStartLoop != null) mStartLoop.onStart();
                 mLoops.forEach(ILoop::onStart);
-                if (mFinalLoop != null) mFinalLoop.onStart();
                 mIsRunning = true;
             }
             mNotifier.startPeriodic(mPeriod);
@@ -80,9 +59,7 @@ class Looper {
             mNotifier.stop();
             synchronized (mTaskRunningLock) {
                 mIsRunning = false;
-                if (mStartLoop != null) mStartLoop.onStop();
                 mLoops.forEach(ILoop::onStop);
-                if (mFinalLoop != null) mFinalLoop.onStop();
             }
         }
     }
