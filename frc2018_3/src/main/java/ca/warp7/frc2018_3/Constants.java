@@ -2,10 +2,10 @@ package ca.warp7.frc2018_3;
 
 public final class Constants {
 
-    public static final int kDriveLeftMaster = 3;
-    public static final int kDriveLeftSlave = 4;
-    public static final int kDriveRightMaster = 5;
-    public static final int kDriveRightSlave = 1;
+    public static final int kDriveLeftA = 3;
+    public static final int kDriveLeftB = 4;
+    public static final int kDriveRightA = 5;
+    public static final int kDriveRightB = 1;
 
     public static final int kDriveLeftEncoderA = 4;
     public static final int kDriveLeftEncoderB = 5;

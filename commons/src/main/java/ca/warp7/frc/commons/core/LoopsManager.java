@@ -24,7 +24,7 @@ class LoopsManager {
         /*
           Loop that sends data to the driver station
          */
-        ILoop stateSenderLoop = Robot.state::sendAll;
+        ILoop stateSenderLoop = Robot.getState()::sendAll;
         mStateObservationLooper.registerLoop(stateSenderLoop);
 
         /*
@@ -42,7 +42,7 @@ class LoopsManager {
         /*
           Updates the controllers
          */
-        ILoop collectControllerDataLoop = Robot.state::collectControllerData;
+        ILoop collectControllerDataLoop = Robot.getState()::collectControllerData;
         mInputLooper.registerLoop(collectControllerDataLoop);
 
         /*

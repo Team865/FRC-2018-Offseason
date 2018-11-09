@@ -1,15 +1,18 @@
 package ca.warp7.frc2018_3;
 
 import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.RobotLoader;
 
-import static ca.warp7.frc2018_3.AutoModes.*;
+import static ca.warp7.frc2018_3.Autonomous.*;
 import static ca.warp7.frc2018_3.Components.*;
 
 public class _FiftyCents extends Robot {
-    static {
-        registerComponents(drive, pneumatics, intake, armLift, climber, limelight, navX);
-        registerAutoModes(nothing, baseline, baselinePID, oneSwitchLeft, oneSwitchRight);
-        setControls(DualRemote::new);
+
+    public _FiftyCents() {
+        RobotLoader loader = getLoader();
+        loader.registerComponents(drive, pneumatics, intake, armLift, climber, limelight, navX);
+        loader.registerAutoModes(nothing, baseline, baselinePID, oneSwitchLeft, oneSwitchRight);
+        loader.setControls(DualRemote::new);
     }
 
     @Override

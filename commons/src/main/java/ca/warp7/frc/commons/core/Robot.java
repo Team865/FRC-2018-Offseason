@@ -2,8 +2,6 @@ package ca.warp7.frc.commons.core;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
-import java.util.function.Supplier;
-
 import static ca.warp7.frc.commons.core.StateType.*;
 import static ca.warp7.frc.commons.core.StateType.Error;
 
@@ -18,7 +16,8 @@ public abstract class Robot extends IterativeRobot {
     private final Components mComponents = new Components();
     private final AutoRunner mAutoRunner = new AutoRunner();
     private final LoopsManager mLoopsManager = new LoopsManager();
-    static final StateManager state = new StateManager();
+    private static final StateManager state = new StateManager();
+    private static final RobotLoader loader = new RobotLoader();
 
     @Override
     public final void startCompetition() {
@@ -97,16 +96,11 @@ public abstract class Robot extends IterativeRobot {
         state.report(owner, ComponentState, _state);
     }
 
-    public static XboxControlsState getXboxController(int port) {
-        return state.createXboxController(port);
+    protected static RobotLoader getLoader() {
+        return loader;
     }
 
-    protected static void registerAutoModes(IAutoMode... modes) {
-    }
-
-    protected static void registerComponents(IComponent... components) {
-    }
-
-    protected static void setControls(Supplier<IControls> supplier) {
+    static StateManager getState() {
+        return state;
     }
 }

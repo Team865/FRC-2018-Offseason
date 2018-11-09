@@ -6,4 +6,10 @@ public interface Unit {
             return 1 / (double) hertz;
         }
     }
+
+    interface Degrees {
+        static double toRadians(double degrees) {
+            return degrees / 180.0 * Math.PI;
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_3;
 
 import ca.warp7.frc.commons.core.IControls;
-import ca.warp7.frc.commons.core.Robot;
+import ca.warp7.frc.commons.core.RobotLoader;
 import ca.warp7.frc.commons.core.XboxControlsState;
 import ca.warp7.frc2018_3.subsystems.Intake;
 
@@ -9,8 +9,8 @@ import static ca.warp7.frc2018_3.Components.*;
 
 public class DualRemote implements IControls {
 
-    private XboxControlsState Driver = Robot.getXboxController(0);
-    private XboxControlsState Operator = Robot.getXboxController(1);
+    private XboxControlsState Driver = RobotLoader.createXboxController(0);
+    private XboxControlsState Operator = RobotLoader.createXboxController(1);
 
     @Override
     public void mainPeriodic() {

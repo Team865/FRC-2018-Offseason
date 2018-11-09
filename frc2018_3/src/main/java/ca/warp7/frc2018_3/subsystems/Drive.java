@@ -3,6 +3,7 @@ package ca.warp7.frc2018_3.subsystems;
 import ca.warp7.frc.commons.DifferentialVector;
 import ca.warp7.frc.commons.DtMeasurement;
 import ca.warp7.frc.commons.PIDValues;
+import ca.warp7.frc.commons.Unit;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.core.ISubsystem;
 import ca.warp7.frc.commons.core.Robot;
@@ -46,16 +47,22 @@ public class Drive implements ISubsystem {
     private static final double kAxisDeadband = 0.2;
     private CheesyDrive mCheesyDrive;
     private AHRS mAHRS;
-    private VictorSPX mLeftMaster;
-    private VictorSPX mLeftSlave;
-    private VictorSPX mRightMaster;
-    private VictorSPX mRightSlave;
+    private VictorSPX mLeftA;
+    private VictorSPX mLeftB;
+    private VictorSPX mRightA;
+    private VictorSPX mRightB;
     private SpeedControllerGroup mLeftGroup;
     private SpeedControllerGroup mRightGroup;
     private DifferentialVector<Encoder> mEncoders;
     private final boolean mIsUsingNativeVictorAPI = false;
     private final Input mInput = new Input();
     private final State mState = new State();
+
+    enum SystemAction {
+        Idle,
+        OpenLoop,
+        LinearPID
+    }
 
     private static Encoder configEncoder(int channelA, int channelB, boolean reversed) {
         Encoder encoder = new Encoder(channelA, channelB, reversed, CounterBase.EncodingType.k4X);
@@ -84,48 +91,37 @@ public class Drive implements ISubsystem {
         master.configPeakOutputReverse(kAbsoluteMaxOutput, kConfigTimeout);
         master.configNominalOutputForward(kOutputPowerEpsilon, kConfigTimeout);
         master.configNominalOutputReverse(kOutputPowerEpsilon, kConfigTimeout);
+        master.configForwardSoftLimitEnable(false, kConfigTimeout);
+        master.configReverseSoftLimitEnable(false, kConfigTimeout);
     }
 
     private static double linearScaleDeadband(double n) {
         return Math.abs(n) < kAxisDeadband ? 0 : (n - Math.copySign(kAxisDeadband, n)) / (1 - kAxisDeadband);
     }
 
-    @SuppressWarnings("unused")
     private void configAll() {
-        //configMaster(mLeftMaster);
-        //configMaster(mRightMaster);
-
-        mLeftMaster.setInverted(true);
-        mLeftSlave.setInverted(true);
-
-        mLeftSlave.set(ControlMode.Follower, mLeftMaster.getDeviceID());
-        mRightSlave.set(ControlMode.Follower, mRightMaster.getDeviceID());
-    }
-
-    private void resetAllVictors() {
-        mLeftMaster.set(ControlMode.PercentOutput, 0);
-        mRightMaster.set(ControlMode.PercentOutput, 0);
-        mLeftSlave.set(ControlMode.PercentOutput, 0);
-        mRightSlave.set(ControlMode.PercentOutput, 0);
+        //configMaster(mLeftA);
+        //configMaster(mRightA);
+        mLeftA.setInverted(true);
+        mLeftB.setInverted(true);
+        mLeftB.set(ControlMode.Follower, mLeftA.getDeviceID());
+        mRightB.set(ControlMode.Follower, mRightA.getDeviceID());
     }
 
     @Override
     public void onConstruct() {
-        mLeftMaster = createVictor(kDriveLeftMaster);
-        mLeftSlave = createVictor(kDriveLeftSlave);
-        mRightMaster = createVictor(kDriveRightMaster);
-        mRightSlave = createVictor(kDriveRightSlave);
+        mLeftA = createVictor(kDriveLeftA);
+        mLeftB = createVictor(kDriveLeftB);
+        mRightA = createVictor(kDriveRightA);
+        mRightB = createVictor(kDriveRightB);
         Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false);
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
         mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
         mAHRS = navX.getAhrs();
-        resetAllVictors();
+        mLeftGroup = new SpeedControllerGroup(cast(mLeftA), cast(mLeftB));
+        mRightGroup = new SpeedControllerGroup(cast(mRightA), cast(mRightB));
         if (mIsUsingNativeVictorAPI) configAll();
-        else {
-            mLeftGroup = new SpeedControllerGroup(cast(mLeftMaster), cast(mLeftSlave));
-            mRightGroup = new SpeedControllerGroup(cast(mRightMaster), cast(mRightSlave));
-            mLeftGroup.setInverted(true);
-        }
+        else mLeftGroup.setInverted(true);
         mCheesyDrive = new CheesyDrive(this::openLoopDrive);
         mCheesyDrive.disableInternalDeadband();
     }
@@ -139,8 +135,8 @@ public class Drive implements ISubsystem {
         mInput.targetLeftDistance = 0;
         mInput.targetRightDistance = 0;
         if (mIsUsingNativeVictorAPI) {
-            mLeftMaster.set(ControlMode.Disabled, 0);
-            mRightMaster.set(ControlMode.Disabled, 0);
+            mLeftA.set(ControlMode.Disabled, 0);
+            mRightA.set(ControlMode.Disabled, 0);
         } else {
             mLeftGroup.disable();
             mRightGroup.disable();
@@ -150,14 +146,6 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onMeasure() {
-        mState.accelerationX = mAHRS.getWorldLinearAccelX();
-        mState.accelerationY = mAHRS.getWorldLinearAccelY();
-        double oldYaw = mState.yaw;
-        mState.yaw = mAHRS.getYaw();
-        mState.leftVoltage = mLeftMaster.getMotorOutputVoltage();
-        mState.rightVoltage = mRightMaster.getMotorOutputVoltage();
-        mState.maxVoltage = Math.max(Math.max(mState.leftVoltage, mState.rightVoltage), mState.maxVoltage);
-        mState.minVoltage = Math.min(Math.min(mState.leftVoltage, mState.rightVoltage), mState.minVoltage);
         double oldLeft = mState.leftDistance;
         double oldRight = mState.rightDistance;
         mState.leftDistance = mEncoders.getLeft().getDistance();
@@ -174,22 +162,27 @@ public class Drive implements ISubsystem {
         double velocityDiff = mState.encoderRate.getLeft() - mState.encoderRate.getRight();
         mState.chassisLinearVelocity = kWheelRadius * velocitySum / 2.0;
         mState.chassisAngularVelocity = (kWheelRadius * velocityDiff) / (2.0 * kWheelBaseRadius);
-
-        if (dt != 0) {
-            mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
-            if (mState.velocityAverages.size() > kVelocityQueueSize) mState.velocityAverages.removeFirst();
-            DifferentialVector<DtMeasurement> sum = new DifferentialVector<>(new DtMeasurement(), new DtMeasurement());
-            mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
-            mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
-            mState.encoderAcceleration.set(mState.encoderRate.transformed(oldRate, (now, prev) -> (now - prev) / dt));
-            mState.yawChangeVelocity = (mState.yaw - oldYaw) / dt;
-        }
+        double oldYaw = mState.yaw;
+        mState.yaw = mAHRS.getYaw() + 90;
+        double yawInRadians = Unit.Degrees.toRadians(mState.yaw);
+        double dAverageDistance = (dLeft + dRight) / 2.0;
+        mState.predictedX += Math.cos(yawInRadians) * dAverageDistance;
+        mState.predictedY += Math.sin(yawInRadians) * dAverageDistance;
+        mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
+        if (mState.velocityAverages.size() > kVelocityQueueSize) mState.velocityAverages.removeFirst();
+        DifferentialVector<DtMeasurement> sum = new DifferentialVector<>(new DtMeasurement(), new DtMeasurement());
+        mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
+        mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
+        mState.encoderAcceleration.set(mState.encoderRate.transformed(oldRate, (now, prev) -> (now - prev) / dt));
+        mState.yawChangeVelocity = (mState.yaw - oldYaw) / dt;
     }
 
     @Override
     public synchronized void onZeroSensors() {
         mState.leftDistance = 0.0;
         mState.rightDistance = 0.0;
+        mState.predictedX = 0;
+        mState.predictedY = 0;
         mEncoders.apply(Encoder::reset);
         mAHRS.zeroYaw();
     }
@@ -236,10 +229,10 @@ public class Drive implements ISubsystem {
         double limitedLeft = limit(mState.leftPercentOutput, kPreDriftSpeedLimit);
         double limitedRight = limit(mState.rightPercentOutput, kPreDriftSpeedLimit);
         if (mIsUsingNativeVictorAPI) {
-            mLeftMaster.set(ControlMode.PercentOutput, limitedLeft * kLeftDriftOffset);
-            mRightMaster.set(ControlMode.PercentOutput, limitedRight * kRightDriftOffset);
-            mLeftSlave.follow(mLeftMaster);
-            mRightSlave.follow(mRightMaster);
+            mLeftA.set(ControlMode.PercentOutput, limitedLeft * kLeftDriftOffset);
+            mRightA.set(ControlMode.PercentOutput, limitedRight * kRightDriftOffset);
+            mLeftB.follow(mLeftA);
+            mRightB.follow(mRightA);
         } else {
             mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
             mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
@@ -248,6 +241,16 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onReportState() {
+        mState.accelerationX = mAHRS.getWorldLinearAccelX();
+        mState.accelerationY = mAHRS.getWorldLinearAccelY();
+        mState.leftVoltage = mLeftA.getMotorOutputVoltage();
+        mState.rightVoltage = mRightA.getMotorOutputVoltage();
+        mState.maxVoltage = Math.max(Math.max(mState.leftVoltage, mState.rightVoltage), mState.maxVoltage);
+        mState.minVoltage = Math.min(Math.min(mState.leftVoltage, mState.rightVoltage), mState.minVoltage);
+        mState.leftCurrent = mLeftA.getOutputCurrent();
+        mState.rightCurrent = mRightA.getOutputCurrent();
+        mState.leftTemperature = mLeftA.getTemperature();
+        mState.rightTemperature = mRightA.getTemperature();
         Robot.reportInputAndState(this, mInput, mState);
     }
 
@@ -294,12 +297,6 @@ public class Drive implements ISubsystem {
         return mInput.wantedAction == SystemAction.LinearPID;
     }
 
-    enum SystemAction {
-        Idle,
-        OpenLoop,
-        LinearPID
-    }
-
     static class Input {
         SystemAction wantedAction;
         boolean shouldReverse;
@@ -327,6 +324,12 @@ public class Drive implements ISubsystem {
         double rightVoltage;
         double maxVoltage;
         double minVoltage;
+        double leftCurrent;
+        double rightCurrent;
+        double leftTemperature;
+        double rightTemperature;
+        double predictedX;
+        double predictedY;
         final DifferentialVector<Double> measuredVelocity = DifferentialVector.zeroes();
         final LinkedList<DifferentialVector<DtMeasurement>> velocityAverages = new LinkedList<>();
         final DifferentialVector<Double> encoderRate = DifferentialVector.zeroes();
