@@ -6,7 +6,6 @@ import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.Unit;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.Robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -22,6 +21,7 @@ import java.util.LinkedList;
 
 import static ca.warp7.frc.commons.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.Functions.limit;
+import static ca.warp7.frc.commons.core.Robot.reportInputAndState;
 import static ca.warp7.frc2018_3.Components.navX;
 import static ca.warp7.frc2018_3.Constants.*;
 
@@ -58,7 +58,7 @@ public class Drive implements ISubsystem {
     private final Input mInput = new Input();
     private final State mState = new State();
 
-    enum SystemAction {
+    private enum StateAction {
         Idle,
         OpenLoop,
         LinearPID
@@ -128,12 +128,12 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onDisabled() {
-        mInput.wantedAction = SystemAction.Idle;
-        mInput.demandedRightPercentOutput = 0.0;
-        mInput.demandedLeftPercentOutput = 0.0;
+        mInput.wantedAction = StateAction.Idle;
+        mInput.rightPercentOutputDemand = 0.0;
+        mInput.leftPercentOutputDemand = 0.0;
         mInput.shouldReverse = false;
-        mInput.targetLeftDistance = 0;
-        mInput.targetRightDistance = 0;
+        mInput.leftTargetDistance = 0;
+        mInput.rightTargetDistance = 0;
         if (mIsUsingNativeVictorAPI) {
             mLeftA.set(ControlMode.Disabled, 0);
             mRightA.set(ControlMode.Disabled, 0);
@@ -151,8 +151,8 @@ public class Drive implements ISubsystem {
         mState.leftDistance = mEncoders.getLeft().getDistance();
         mState.rightDistance = mEncoders.getRight().getDistance();
         double timestamp = Timer.getFPGATimestamp();
-        double dt = constrainMinimum(timestamp - mState.timestamp, kTimeDeltaEpsilon);
-        mState.timestamp = timestamp;
+        double dt = constrainMinimum(timestamp - mState._timestamp, kTimeDeltaEpsilon);
+        mState._timestamp = timestamp;
         double dLeft = mState.leftDistance - oldLeft;
         double dRight = mState.rightDistance - oldRight;
         DifferentialVector<Double> dDistance = new DifferentialVector<>(dLeft, dRight);
@@ -162,9 +162,9 @@ public class Drive implements ISubsystem {
         double velocityDiff = mState.encoderRate.getLeft() - mState.encoderRate.getRight();
         mState.chassisLinearVelocity = kWheelRadius * velocitySum / 2.0;
         mState.chassisAngularVelocity = (kWheelRadius * velocityDiff) / (2.0 * kWheelBaseRadius);
-        double oldYaw = mState.yaw;
-        mState.yaw = mAHRS.getYaw() + 90;
-        double yawInRadians = Unit.Degrees.toRadians(mState.yaw);
+        double oldYaw = mState._yaw;
+        mState._yaw = mAHRS.getYaw() + 90;
+        double yawInRadians = Unit.Degrees.toRadians(mState._yaw);
         double dAverageDistance = (dLeft + dRight) / 2.0;
         mState.predictedX += Math.cos(yawInRadians) * dAverageDistance;
         mState.predictedY += Math.sin(yawInRadians) * dAverageDistance;
@@ -174,7 +174,7 @@ public class Drive implements ISubsystem {
         mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
         mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
         mState.encoderAcceleration.set(mState.encoderRate.transformed(oldRate, (now, prev) -> (now - prev) / dt));
-        mState.yawChangeVelocity = (mState.yaw - oldYaw) / dt;
+        mState.yawChangeVelocity = (mState._yaw - oldYaw) / dt;
     }
 
     @Override
@@ -197,8 +197,8 @@ public class Drive implements ISubsystem {
                 mState.rightPercentOutput = 0;
                 break;
             case OpenLoop:
-                double demandedLeft = mInput.demandedLeftPercentOutput * (mState.isReversed ? -1 : 1);
-                double demandedRight = mInput.demandedRightPercentOutput * (mState.isReversed ? -1 : 1);
+                double demandedLeft = mInput.leftPercentOutputDemand * (mState.isReversed ? -1 : 1);
+                double demandedRight = mInput.rightPercentOutputDemand * (mState.isReversed ? -1 : 1);
                 if (mIsUsingNativeVictorAPI) {
                     mState.leftPercentOutput = demandedLeft;
                     mState.rightPercentOutput = demandedRight;
@@ -210,14 +210,12 @@ public class Drive implements ISubsystem {
                 }
                 mState.leftPercentOutput = constrainMinimum(mState.leftPercentOutput, kOutputPowerEpsilon);
                 mState.rightPercentOutput = constrainMinimum(mState.rightPercentOutput, kOutputPowerEpsilon);
-                //System.out.println(String.format("%.3f, %.3f", mState.leftPercentOutput,
-                // mState.rightPercentOutput));
-                //System.out.println(String.format("%.3f, %.3f", mInput.demandedLeftPercentOutput,
-                // mInput.demandedRightPercentOutput));
+                //println(String.format("%.3f, %.3f", mState.leftPercentOutput, mState.rightPercentOutput));
+                //println(String.format("%.3f, %.3f", mInput.leftPercentOutputDemand, mInput.rightPercentOutputDemand));
                 break;
             case LinearPID:
-                mState.leftLinearPID.setSetpoint(mInput.targetLeftDistance);
-                mState.rightLinearPID.setSetpoint(mInput.targetRightDistance);
+                mState.leftLinearPID.setSetpoint(mInput.leftTargetDistance);
+                mState.rightLinearPID.setSetpoint(mInput.rightTargetDistance);
                 mState.leftPercentOutput = mState.leftLinearPID.getOutput(mState.leftDistance);
                 mState.rightPercentOutput = mState.rightLinearPID.getOutput(mState.rightDistance);
                 break;
@@ -251,7 +249,7 @@ public class Drive implements ISubsystem {
         mState.rightCurrent = mRightA.getOutputCurrent();
         mState.leftTemperature = mLeftA.getTemperature();
         mState.rightTemperature = mRightA.getTemperature();
-        Robot.reportInputAndState(this, mInput, mState);
+        reportInputAndState(this, mInput, mState);
     }
 
     @InputModifier
@@ -261,18 +259,18 @@ public class Drive implements ISubsystem {
 
     @InputModifier
     public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
-        mInput.wantedAction = SystemAction.OpenLoop;
-        mInput.demandedLeftPercentOutput = leftSpeedDemand;
-        mInput.demandedRightPercentOutput = rightSpeedDemand;
+        mInput.wantedAction = StateAction.OpenLoop;
+        mInput.leftPercentOutputDemand = leftSpeedDemand;
+        mInput.rightPercentOutputDemand = rightSpeedDemand;
     }
 
     @InputModifier
     public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
-        mInput.wantedAction = SystemAction.LinearPID;
+        mInput.wantedAction = StateAction.LinearPID;
         pidValues.copyTo(mState.leftLinearPID);
         pidValues.copyTo(mState.rightLinearPID);
-        mInput.targetLeftDistance = targetDistance;
-        mInput.targetRightDistance = targetDistance;
+        mInput.leftTargetDistance = targetDistance;
+        mInput.rightTargetDistance = targetDistance;
         mState.leftLinearPID.setOutputRampRate(kMaxLinearRamp);
         mState.rightLinearPID.setOutputRampRate(kMaxLinearRamp);
         mState.leftLinearPID.setOutputLimits(kMaximumPIDPower);
@@ -290,33 +288,33 @@ public class Drive implements ISubsystem {
     }
 
     public boolean shouldBeginOpenLoop() {
-        return mInput.wantedAction == SystemAction.OpenLoop;
+        return mInput.wantedAction == StateAction.OpenLoop;
     }
 
     public boolean shouldBeginLinearPID() {
-        return mInput.wantedAction == SystemAction.LinearPID;
+        return mInput.wantedAction == StateAction.LinearPID;
     }
 
     static class Input {
-        SystemAction wantedAction;
+        StateAction wantedAction;
         boolean shouldReverse;
-        double demandedLeftPercentOutput;
-        double demandedRightPercentOutput;
-        double targetLeftDistance;
-        double targetRightDistance;
+        double leftPercentOutputDemand;
+        double rightPercentOutputDemand;
+        double leftTargetDistance;
+        double rightTargetDistance;
     }
 
     static class State {
-        SystemAction action;
+        StateAction action;
         boolean isReversed;
-        double timestamp;
+        double _timestamp;
         double leftPercentOutput;
         double rightPercentOutput;
         double leftDistance;
         double rightDistance;
         double accelerationX;
         double accelerationY;
-        double yaw;
+        double _yaw;
         double yawChangeVelocity;
         double chassisLinearVelocity;
         double chassisAngularVelocity;

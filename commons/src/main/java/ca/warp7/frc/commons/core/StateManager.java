@@ -133,8 +133,10 @@ class StateManager {
         for (Field stateField : observer.fields) {
             try {
                 String fieldName = stateField.getName();
-                Object value = stateField.get(observer.object);
-                observer.map.put(fieldName, value);
+                if (!fieldName.startsWith("_")) {
+                    Object value = stateField.get(observer.object);
+                    observer.map.put(fieldName, value);
+                }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -195,7 +197,7 @@ class StateManager {
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
-    private static int update(int oldState, boolean newState) {
+    private static int u0(int oldState, boolean newState) {
         return newState ? ((oldState == Pressed || oldState == HeldDown) ? HeldDown : Pressed) :
                 ((oldState == Released || oldState == KeptUp) ? KeptUp : Released);
     }
@@ -233,22 +235,22 @@ class StateManager {
         S.LeftYAxis = C.getY(kLeft);
         S.RightXAxis = C.getX(kRight);
         S.RightYAxis = C.getY(kRight);
-        S.AButton = update(S.AButton, C.getAButton());
-        S.BButton = update(S.BButton, C.getBButton());
-        S.XButton = update(S.XButton, C.getXButton());
-        S.YButton = update(S.YButton, C.getYButton());
-        S.LeftBumper = update(S.LeftBumper, C.getBumper(kLeft));
-        S.RightBumper = update(S.RightBumper, C.getBumper(kRight));
-        S.LeftTrigger = update(S.LeftTrigger, S.LeftTriggerAxis > kTriggerDeadBand);
-        S.RightTrigger = update(S.RightTrigger, S.RightTriggerAxis > kTriggerDeadBand);
-        S.LeftStickButton = update(S.LeftStickButton, C.getStickButton(kLeft));
-        S.RightStickButton = update(S.RightStickButton, C.getStickButton(kRight));
-        S.StartButton = update(S.StartButton, C.getStartButton());
-        S.BackButton = update(S.BackButton, C.getBackButton());
-        S.UpDPad = update(S.UpDPad, POV == kUpPOV);
-        S.RightDPad = update(S.RightDPad, POV == kRightPOV);
-        S.DownDPad = update(S.DownDPad, POV == kDownPOV);
-        S.LeftDPad = update(S.LeftDPad, POV == kLeftPOV);
+        S.AButton = u0(S.AButton, C.getAButton());
+        S.BButton = u0(S.BButton, C.getBButton());
+        S.XButton = u0(S.XButton, C.getXButton());
+        S.YButton = u0(S.YButton, C.getYButton());
+        S.LeftBumper = u0(S.LeftBumper, C.getBumper(kLeft));
+        S.RightBumper = u0(S.RightBumper, C.getBumper(kRight));
+        S.LeftTrigger = u0(S.LeftTrigger, S.LeftTriggerAxis > kTriggerDeadBand);
+        S.RightTrigger = u0(S.RightTrigger, S.RightTriggerAxis > kTriggerDeadBand);
+        S.LeftStickButton = u0(S.LeftStickButton, C.getStickButton(kLeft));
+        S.RightStickButton = u0(S.RightStickButton, C.getStickButton(kRight));
+        S.StartButton = u0(S.StartButton, C.getStartButton());
+        S.BackButton = u0(S.BackButton, C.getBackButton());
+        S.UpDPad = u0(S.UpDPad, POV == kUpPOV);
+        S.RightDPad = u0(S.RightDPad, POV == kRightPOV);
+        S.DownDPad = u0(S.DownDPad, POV == kDownPOV);
+        S.LeftDPad = u0(S.LeftDPad, POV == kLeftPOV);
     }
 
     synchronized void collectControllerData() {
