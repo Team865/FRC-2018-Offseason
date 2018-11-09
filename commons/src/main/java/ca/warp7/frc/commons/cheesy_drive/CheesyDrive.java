@@ -131,4 +131,9 @@ public class CheesyDrive {
         double throttle;
         boolean quickTurn;
     }
+
+    @FunctionalInterface
+    public interface ISignalReceiver {
+        void setDemandedDriveSpeed(double leftSpeedDemand, double rightSpeedDemand);
+    }
 }

@@ -11,18 +11,6 @@ public class Navx {
     private double last_velocity[] = new double[2];
     private double displacement[] = new double[2];
 
-    public Navx(int rate) {
-        ahrs = new AHRS(SPI.Port.kMXP, (byte) rate);
-
-        if (!ahrs.isConnected()) {
-            System.out.println("Navx is not Connected");
-        } else if (ahrs.isCalibrating()) {
-            System.out.println("Calibrating Navx");
-        }
-        ahrs.zeroYaw();
-        resetAngle();
-    }
-
     public Navx() {
         ahrs = new AHRS(SPI.Port.kMXP);
 
@@ -31,7 +19,6 @@ public class Navx {
         } else if (ahrs.isCalibrating()) {
             System.out.println("Calibrating Navx");
         }
-        ahrs.zeroYaw();
     }
 
     private void updateDisplacement() {
@@ -69,7 +56,7 @@ public class Navx {
     }
 
     public double getAngle() {
-        return ahrs.getAngle();
+        return ahrs.getYaw() - yawOffset; // TODO check compatibility with autos
     }
 
     public void stopUpdateDisplacement() {
@@ -101,7 +88,8 @@ public class Navx {
     }
 
     public void resetAngle() {
-        yawOffset += getYaw();
+        yawOffset += ahrs.getYaw();
+        System.out.println("ERROR yaw reset: " + ahrs.getYaw());
         //ahrs.reset();
     }
 
@@ -115,5 +103,18 @@ public class Navx {
 
     public double getPitch() {
         return ahrs.getPitch();
+    }
+
+    private boolean mDisabled;
+
+    public void signalEnable() {
+        if (mDisabled) {
+            ahrs.zeroYaw();
+        }
+        mDisabled = false;
+    }
+
+    public void signalDisable() {
+        mDisabled = true;
     }
 }

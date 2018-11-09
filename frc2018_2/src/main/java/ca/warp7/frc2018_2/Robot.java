@@ -76,7 +76,7 @@ public class Robot extends IterativeRobot {
         auto = new AutonomousBase();
         pin = autoSelector();
         drive.resetDistance();
-
+        navx.signalEnable();
         navx.resetAngle();
         lift.disableSpeedLimit = true;
         drive.setGear(false);
@@ -105,8 +105,8 @@ public class Robot extends IterativeRobot {
         if (limelight.getCamMode() == 0)
             limelight.switchCamera();
         controls = new DualRemote();
+        navx.signalEnable();
         navx.resetAngle();
-
     }
 
     private double a = 0;
@@ -145,6 +145,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
         //if (navx.getDisplacementUpdater().isRunning())
         //navx.stopUpdateDisplacement();
+        navx.signalDisable();
     }
 
     public void testInit() {
