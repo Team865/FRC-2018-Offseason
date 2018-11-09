@@ -84,6 +84,7 @@ public class Robot extends IterativeRobot {
         lift.periodic();
         String gameData = driverStation.getGameSpecificMessage();
         auto.autonomousPeriodic(gameData, pin);//pin
+        //System.out.println(String.format("WARNING left=%f right=%f", drive.getLeftDistance(), drive.getRightDistance()));
     }
 
     public void teleopInit() {
@@ -131,7 +132,7 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putNumber("1", a1.getAverageVoltage());
             SmartDashboard.putNumber("2", a2.getAverageVoltage());
             SmartDashboard.putNumber("3", a3.getAverageVoltage());
-            System.out.println("Lift:" + a);
+            //System.out.println("Lift:" + a);
             SmartDashboard.putNumber("Lift", a);
             SmartDashboard.putNumber("Lift raw", b);
             SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
@@ -142,6 +143,7 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putNumber("Relative y (inches)", rel_y);
 
             old_dist = (drive.getLeftDistance() + drive.getRightDistance()) / 2;
+            //System.out.println(String.format("WARNING left=%f right=%f", drive.getLeftDistance(), drive.getRightDistance()));
             Timer.delay(0.005);
         }
     }

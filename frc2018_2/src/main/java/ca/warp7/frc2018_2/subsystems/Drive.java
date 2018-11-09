@@ -86,7 +86,7 @@ public class Drive {
          * robot should drive in the Y direction. -1 is forward. [-1.0..1.0]
          * :param quickturn: If the robot should drive arcade-drive style
          */
-        System.out.println("rate= " + rightEncoder.getRate());
+        //System.out.println("rate= " + rightEncoder.getRate());
 
         throttle = Util.deadband(throttle);
         wheel = Util.deadband(wheel);

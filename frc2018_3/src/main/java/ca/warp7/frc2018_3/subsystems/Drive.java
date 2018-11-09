@@ -30,7 +30,7 @@ public class Drive implements ISubsystem {
     private static final int kVelocityQueueSize = 5;
     private static final double kAbsoluteMaxOutput = 1.0;
     private static final double kMaximumPIDPower = 0.7;
-    private static final double kMaxLinearRampRate = 1.0 / 20;
+    private static final double kMaxLinearRamp = 1.0 / 20;
     private static final double kOutputPowerEpsilon = 1.0E-3;
     private static final double kTimeDeltaEpsilon = 1.0E-10;
     private static final double kLeftDriftOffset = 1.0;
@@ -43,7 +43,7 @@ public class Drive implements ISubsystem {
     private static final double kNeutralDeadBand = 0.04;
     private static final double kOpenLoopRampNeutralToFull = 0.4;
     private static final double kClosedLoopRampNeutralToFull = 0.4;
-    private static final double kControlsDeadband = 0.2;
+    private static final double kAxisDeadband = 0.2;
     private CheesyDrive mCheesyDrive;
     private AHRS mAHRS;
     private VictorSPX mLeftMaster;
@@ -87,7 +87,7 @@ public class Drive implements ISubsystem {
     }
 
     private static double linearScaleDeadband(double n) {
-        return Math.abs(n) < kControlsDeadband ? 0 : (n - Math.copySign(kControlsDeadband, n)) / (1 - kControlsDeadband);
+        return Math.abs(n) < kAxisDeadband ? 0 : (n - Math.copySign(kAxisDeadband, n)) / (1 - kAxisDeadband);
     }
 
     @SuppressWarnings("unused")
@@ -126,19 +126,15 @@ public class Drive implements ISubsystem {
             mRightGroup = new SpeedControllerGroup(cast(mRightMaster), cast(mRightSlave));
             mLeftGroup.setInverted(true);
         }
-        mCheesyDrive = new CheesyDrive((left, right) -> {
-            mInput.demandedLeftPercentOutput = left;
-            mInput.demandedRightPercentOutput = right;
-        });
+        mCheesyDrive = new CheesyDrive(this::openLoopDrive);
         mCheesyDrive.disableInternalDeadband();
     }
 
     @Override
     public synchronized void onDisabled() {
+        mInput.wantedAction = SystemAction.Idle;
         mInput.demandedRightPercentOutput = 0.0;
         mInput.demandedLeftPercentOutput = 0.0;
-        mInput.shouldBeginOpenLoop = false;
-        mInput.shouldBeginLinearPID = false;
         mInput.shouldReverse = false;
         mInput.targetLeftDistance = 0;
         mInput.targetRightDistance = 0;
@@ -198,51 +194,40 @@ public class Drive implements ISubsystem {
         mAHRS.zeroYaw();
     }
 
-    private synchronized void updateStateType() {
-        if (mInput.shouldBeginOpenLoop) {
-            if (!mState.isOpenLoop) {
-                mState.isOpenLoop = true;
-                mState.isLinearPID = false;
-            }
-        } else if (mInput.shouldBeginLinearPID) {
-            if (!mState.isLinearPID) {
-                mState.isOpenLoop = false;
-                mState.isLinearPID = true;
-            }
-        } else {
-            mState.isLinearPID = false;
-            mState.isOpenLoop = false;
-        }
-    }
-
     @Override
     public synchronized void onUpdateState() {
-        updateStateType();
+        mState.action = mInput.wantedAction;
         mState.isReversed = mInput.shouldReverse;
-        if (mState.isOpenLoop) {
-            double demandedLeft = mInput.demandedLeftPercentOutput * (mState.isReversed ? -1 : 1);
-            double demandedRight = mInput.demandedRightPercentOutput * (mState.isReversed ? -1 : 1);
-            if (mIsUsingNativeVictorAPI) {
-                mState.leftPercentOutput = demandedLeft;
-                mState.rightPercentOutput = demandedRight;
-            } else {
-                double leftDiff = demandedLeft - mState.leftPercentOutput;
-                double rightDiff = demandedRight - mState.rightPercentOutput;
-                mState.leftPercentOutput += Math.min(kMaxLinearRampRate, Math.abs(rightDiff)) * Math.signum(leftDiff);
-                mState.rightPercentOutput += Math.min(kMaxLinearRampRate, Math.abs(rightDiff)) * Math.signum(rightDiff);
-            }
-            mState.leftPercentOutput = constrainMinimum(mState.leftPercentOutput, kOutputPowerEpsilon);
-            mState.rightPercentOutput = constrainMinimum(mState.rightPercentOutput, kOutputPowerEpsilon);
-            //System.out.println(String.format("%.3f, %.3f", mState.leftPercentOutput, mState.rightPercentOutput));
-            //System.out.println(String.format("%.3f, %.3f", mInput.demandedLeftPercentOutput, mInput.demandedRightPercentOutput));
-        } else if (mState.isLinearPID) {
-            mState.leftLinearPID.setSetpoint(mInput.targetLeftDistance);
-            mState.rightLinearPID.setSetpoint(mInput.targetRightDistance);
-            mState.leftPercentOutput = mState.leftLinearPID.getOutput(mState.leftDistance);
-            mState.rightPercentOutput = mState.rightLinearPID.getOutput(mState.rightDistance);
-        } else {
-            mState.leftPercentOutput = 0;
-            mState.rightPercentOutput = 0;
+        switch (mState.action) {
+            case Idle:
+                mState.leftPercentOutput = 0;
+                mState.rightPercentOutput = 0;
+                break;
+            case OpenLoop:
+                double demandedLeft = mInput.demandedLeftPercentOutput * (mState.isReversed ? -1 : 1);
+                double demandedRight = mInput.demandedRightPercentOutput * (mState.isReversed ? -1 : 1);
+                if (mIsUsingNativeVictorAPI) {
+                    mState.leftPercentOutput = demandedLeft;
+                    mState.rightPercentOutput = demandedRight;
+                } else {
+                    double leftDiff = demandedLeft - mState.leftPercentOutput;
+                    double rightDiff = demandedRight - mState.rightPercentOutput;
+                    mState.leftPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(leftDiff);
+                    mState.rightPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(rightDiff);
+                }
+                mState.leftPercentOutput = constrainMinimum(mState.leftPercentOutput, kOutputPowerEpsilon);
+                mState.rightPercentOutput = constrainMinimum(mState.rightPercentOutput, kOutputPowerEpsilon);
+                //System.out.println(String.format("%.3f, %.3f", mState.leftPercentOutput,
+                // mState.rightPercentOutput));
+                //System.out.println(String.format("%.3f, %.3f", mInput.demandedLeftPercentOutput,
+                // mInput.demandedRightPercentOutput));
+                break;
+            case LinearPID:
+                mState.leftLinearPID.setSetpoint(mInput.targetLeftDistance);
+                mState.rightLinearPID.setSetpoint(mInput.targetRightDistance);
+                mState.leftPercentOutput = mState.leftLinearPID.getOutput(mState.leftDistance);
+                mState.rightPercentOutput = mState.rightLinearPID.getOutput(mState.rightDistance);
+                break;
         }
     }
 
@@ -268,29 +253,25 @@ public class Drive implements ISubsystem {
 
     @InputModifier
     public synchronized void cheesyDrive(double wheel, double throttle, boolean isQuickTurn) {
-        mInput.shouldBeginOpenLoop = true;
-        mInput.shouldBeginLinearPID = false;
         mCheesyDrive.cheesyDrive(linearScaleDeadband(wheel), linearScaleDeadband(throttle), isQuickTurn);
     }
 
     @InputModifier
     public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
-        mInput.shouldBeginOpenLoop = true;
-        mInput.shouldBeginLinearPID = false;
+        mInput.wantedAction = SystemAction.OpenLoop;
         mInput.demandedLeftPercentOutput = leftSpeedDemand;
         mInput.demandedRightPercentOutput = rightSpeedDemand;
     }
 
     @InputModifier
     public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
-        mInput.shouldBeginOpenLoop = false;
-        mInput.shouldBeginLinearPID = true;
+        mInput.wantedAction = SystemAction.LinearPID;
         pidValues.copyTo(mState.leftLinearPID);
         pidValues.copyTo(mState.rightLinearPID);
         mInput.targetLeftDistance = targetDistance;
         mInput.targetRightDistance = targetDistance;
-        mState.leftLinearPID.setOutputRampRate(kMaxLinearRampRate);
-        mState.rightLinearPID.setOutputRampRate(kMaxLinearRampRate);
+        mState.leftLinearPID.setOutputRampRate(kMaxLinearRamp);
+        mState.rightLinearPID.setOutputRampRate(kMaxLinearRamp);
         mState.leftLinearPID.setOutputLimits(kMaximumPIDPower);
         mState.rightLinearPID.setOutputLimits(kMaximumPIDPower);
     }
@@ -306,17 +287,22 @@ public class Drive implements ISubsystem {
     }
 
     public boolean shouldBeginOpenLoop() {
-        return mInput.shouldBeginOpenLoop;
+        return mInput.wantedAction == SystemAction.OpenLoop;
     }
 
     public boolean shouldBeginLinearPID() {
-        return mInput.shouldBeginLinearPID;
+        return mInput.wantedAction == SystemAction.LinearPID;
+    }
+
+    enum SystemAction {
+        Idle,
+        OpenLoop,
+        LinearPID
     }
 
     static class Input {
+        SystemAction wantedAction;
         boolean shouldReverse;
-        boolean shouldBeginOpenLoop;
-        boolean shouldBeginLinearPID;
         double demandedLeftPercentOutput;
         double demandedRightPercentOutput;
         double targetLeftDistance;
@@ -324,9 +310,8 @@ public class Drive implements ISubsystem {
     }
 
     static class State {
+        SystemAction action;
         boolean isReversed;
-        boolean isOpenLoop;
-        boolean isLinearPID;
         double timestamp;
         double leftPercentOutput;
         double rightPercentOutput;

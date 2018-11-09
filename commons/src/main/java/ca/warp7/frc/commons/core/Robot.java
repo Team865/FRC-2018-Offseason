@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import java.util.function.Supplier;
 
 import static ca.warp7.frc.commons.core.StateType.*;
+import static ca.warp7.frc.commons.core.StateType.Error;
 
 /**
  * Base class for managing all the robot's stuff. Extend this class
@@ -76,24 +77,24 @@ public abstract class Robot extends IterativeRobot {
     }
 
     public static void println(Object o) {
-        state.report(null, PRINTLN, o);
+        state.report(null, Println, o);
     }
 
     public static void warning(Object o) {
-        state.report(null, WARNING, o);
+        state.report(null, Warning, o);
     }
 
     public static void error(Object o) {
-        state.report(null, ERROR, o);
+        state.report(null, Error, o);
     }
 
     public static void report(Object owner, StateType type, Object o) {
         state.report(owner, type, o);
     }
 
-    public static void reportInputAndState(Object owner, Object input, Object _state) {
-        state.report(owner, COMPONENT_INPUT, input);
-        state.report(owner, COMPONENT_STATE, _state);
+    public static void reportInputAndState(Object owner, Object _input, Object _state) {
+        state.report(owner, ComponentInput, _input);
+        state.report(owner, ComponentState, _state);
     }
 
     public static XboxControlsState getXboxController(int port) {

@@ -33,6 +33,7 @@ dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
+    // compile 'com.google.guava:guava:27.0-jre'
 }
 
 jar {

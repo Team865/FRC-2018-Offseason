@@ -4,26 +4,26 @@ public enum StateType {
     /**
      * Reflects the input state of a component
      */
-    COMPONENT_INPUT,
+    ComponentInput,
 
     /**
      * Reflects the current state of a component
      */
-    COMPONENT_STATE,
+    ComponentState,
 
     /**
      * Prints a line
      */
-    PRINTLN,
+    Println,
 
     /**
      * Prints a warning
      */
 
-    WARNING,
+    Warning,
 
     /**
      * Prints an error
      */
-    ERROR
+    Error
 }

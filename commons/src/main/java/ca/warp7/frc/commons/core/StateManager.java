@@ -151,19 +151,19 @@ class StateManager {
 
     private void report0(String name, StateType type, Object o) {
         switch (type) {
-            case COMPONENT_STATE:
+            case ComponentState:
                 report0(name, o);
                 break;
-            case COMPONENT_INPUT:
+            case ComponentInput:
                 report0(name + ".in", o);
                 break;
-            case PRINTLN:
+            case Println:
                 println("", o);
                 break;
-            case WARNING:
+            case Warning:
                 println("WARNING ", o);
                 break;
-            case ERROR:
+            case Error:
                 println("ERROR ", o);
                 mPrintStream.flush();
                 break;
