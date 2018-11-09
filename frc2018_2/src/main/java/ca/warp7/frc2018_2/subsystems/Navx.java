@@ -105,7 +105,7 @@ public class Navx {
         //ahrs.reset();
     }
 
-    double getAbsYaw() {
+    public double getAbsYaw() {
         return ahrs.getYaw();
     }
 

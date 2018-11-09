@@ -58,8 +58,8 @@ public class Robot extends IterativeRobot {
         a1 = new AnalogInput(1);
         a2 = new AnalogInput(2);
         a3 = new AnalogInput(3);
-        a4 = new AnalogInput(2);
-        a5 = new AnalogInput(3);
+        a4 = new AnalogInput(4);
+        a5 = new AnalogInput(5);
 
 		/*RTS liftRTS = new RTS("liftRTS", 60);
 		Runnable liftPer = () -> lift.periodic();
@@ -104,47 +104,42 @@ public class Robot extends IterativeRobot {
         drive.resetDistance();
         if (limelight.getCamMode() == 0)
             limelight.switchCamera();
+        controls = new DualRemote();
+        navx.resetAngle();
+
     }
+
+    private double a = 0;
 
     public void teleopPeriodic() {
 
-        controls = new DualRemote();
-        double a = 0;
+        controls.periodic();
+        limelight.mutiPipeline();
+        intake.periodic();
+        lift.periodic();
+        double b = lift.getEncoderVal();
+        if (a < b)
+            a = b;
 
-        navx.resetAngle();
+        drive.update_x_y_predictions();
 
-        while (isOperatorControl() && isEnabled()) {
-            controls.periodic();
-            limelight.mutiPipeline();
-            intake.periodic();
-            lift.periodic();
-            double b = lift.getEncoderVal();
-            if (a < b)
-                a = b;
+        SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
+        SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
+        //drive.periodic();
 
-            drive.update_x_y_predictions();
+        SmartDashboard.putNumber("0", a0.getAverageVoltage());
+        SmartDashboard.putNumber("1", a1.getAverageVoltage());
+        SmartDashboard.putNumber("2", a2.getAverageVoltage());
+        SmartDashboard.putNumber("3", a3.getAverageVoltage());
+        //System.out.println("Lift:" + a);
+        SmartDashboard.putNumber("Lift", a);
+        SmartDashboard.putNumber("Lift raw", b);
+        SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
+        SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
+        SmartDashboard.putNumber("Yaw", navx.getAbsYaw());
 
-            SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
-            SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
-            //drive.periodic();
-
-            SmartDashboard.putNumber("0", a0.getAverageVoltage());
-            SmartDashboard.putNumber("1", a1.getAverageVoltage());
-            SmartDashboard.putNumber("2", a2.getAverageVoltage());
-            SmartDashboard.putNumber("3", a3.getAverageVoltage());
-            //System.out.println("Lift:" + a);
-            SmartDashboard.putNumber("Lift", a);
-            SmartDashboard.putNumber("Lift raw", b);
-            SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
-            SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
-            SmartDashboard.putNumber("Yaw", navx.getYaw());
-
-            SmartDashboard.putNumber("X displacement", drive.get_x_displacement());
-            SmartDashboard.putNumber("Y displacement", drive.get_y_displacement());
-
-            //System.out.println(String.format("WARNING left=%f right=%f", drive.getLeftDistance(), drive.getRightDistance()));
-            Timer.delay(0.005);
-        }
+        SmartDashboard.putNumber("X displacement", drive.get_x_displacement());
+        SmartDashboard.putNumber("Y displacement", drive.get_y_displacement());
     }
 
     public void disabledInit() {

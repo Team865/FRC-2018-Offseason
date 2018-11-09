@@ -12,7 +12,7 @@ public class AutonomousBase {
     private Limelight limelight = Robot.limelight;
     private Intake intake = Robot.intake;
     private Lift lift = Robot.lift;
-    private static AutoFunctions autoFunc = new AutoFunctions();
+    public static AutoFunctions autoFunc = new AutoFunctions();
     private static CustomFunctions customFunc = new CustomFunctions();
 
 
