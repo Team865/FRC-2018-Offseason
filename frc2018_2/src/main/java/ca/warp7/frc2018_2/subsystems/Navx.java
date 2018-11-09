@@ -20,6 +20,7 @@ public class Navx {
             System.out.println("Calibrating Navx");
         }
         ahrs.zeroYaw();
+        resetAngle();
     }
 
     public Navx() {
@@ -101,14 +102,15 @@ public class Navx {
 
     public void resetAngle() {
         yawOffset += getYaw();
-        ahrs.reset();
+        //ahrs.reset();
     }
 
-    public double getAbsYaw(){return getYaw()+ yawOffset;
+    double getAbsYaw() {
+        return ahrs.getYaw();
     }
 
     public double getYaw() {
-        return ahrs.getYaw();
+        return (ahrs.getYaw() - yawOffset) % 360 - 180;
     }
 
     public double getPitch() {
