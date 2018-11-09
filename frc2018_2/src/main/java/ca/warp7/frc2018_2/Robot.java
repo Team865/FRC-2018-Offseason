@@ -35,6 +35,8 @@ public class Robot extends IterativeRobot {
     private AnalogInput a1;
     private AnalogInput a2;
     private AnalogInput a3;
+    private AnalogInput a4;
+    private AnalogInput a5;
 
     public void robotInit() {
         System.out.println("Hello me is robit");
@@ -47,7 +49,6 @@ public class Robot extends IterativeRobot {
         climber = new Climber();
         wrist = new Wrist();
 
-        //shutup >:(
         compressor = new Compressor(COMPRESSOR_PIN);
 
         driverStation = DriverStation.getInstance();
@@ -57,6 +58,8 @@ public class Robot extends IterativeRobot {
         a1 = new AnalogInput(1);
         a2 = new AnalogInput(2);
         a3 = new AnalogInput(3);
+        a4 = new AnalogInput(2);
+        a5 = new AnalogInput(3);
 
 		/*RTS liftRTS = new RTS("liftRTS", 60);
 		Runnable liftPer = () -> lift.periodic();
@@ -73,6 +76,7 @@ public class Robot extends IterativeRobot {
         auto = new AutonomousBase();
         pin = autoSelector();
         drive.resetDistance();
+
         navx.resetAngle();
         lift.disableSpeedLimit = true;
         drive.setGear(false);
@@ -108,10 +112,6 @@ public class Robot extends IterativeRobot {
         double a = 0;
 
         navx.zeroYaw();
-        double old_dist = 0;
-        double rel_x = 0;
-        double rel_y = 0;
-        double delta_dist;
 
         while (isOperatorControl() && isEnabled()) {
             controls.periodic();
@@ -122,9 +122,7 @@ public class Robot extends IterativeRobot {
             if (a < b)
                 a = b;
 
-            delta_dist = (drive.getLeftDistance() + drive.getRightDistance()) / 2 - old_dist;
-            rel_x += delta_dist * Math.cos(Math.toRadians(navx.getYaw()));
-            rel_y += delta_dist * Math.sin(Math.toRadians(navx.getYaw()));
+            drive.update_x_y_predictions();
 
             SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
             SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
@@ -139,12 +137,11 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putNumber("Lift raw", b);
             SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
             SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
-            SmartDashboard.putNumber("pitch", navx.getPitch());
+            SmartDashboard.putNumber("Yaw", navx.getYaw());
 
-            SmartDashboard.putNumber("Relative x (inches)", rel_x);
-            SmartDashboard.putNumber("Relative y (inches)", rel_y);
+            SmartDashboard.putNumber("X displacement", drive.get_x_displacement());
+            SmartDashboard.putNumber("Y displacement", drive.get_y_displacement());
 
-            old_dist = (drive.getLeftDistance() + drive.getRightDistance()) / 2;
             //System.out.println(String.format("WARNING left=%f right=%f", drive.getLeftDistance(), drive.getRightDistance()));
             Timer.delay(0.005);
         }
@@ -230,6 +227,14 @@ public class Robot extends IterativeRobot {
         if (a3.getAverageVoltage() > voltage) {
             number = 1;
             voltage = a3.getAverageVoltage();
+        }
+        if (a4.getAverageVoltage() > voltage) {
+            number = 4;
+            voltage = a4.getAverageVoltage();
+        }
+        if (a5.getAverageVoltage() > voltage) {
+            number = 5;
+            voltage = a5.getAverageVoltage();
         }
         System.out.println("volt: " + voltage);
         return number;

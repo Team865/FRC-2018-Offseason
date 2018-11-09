@@ -11,8 +11,8 @@ public class AutonomousBase {
     private Navx navx = Robot.navx;
     private Limelight limelight = Robot.limelight;
     private Intake intake = Robot.intake;
-    public Lift lift = Robot.lift;
-    public static AutoFunctions autoFunc = new AutoFunctions();
+    private Lift lift = Robot.lift;
+    private static AutoFunctions autoFunc = new AutoFunctions();
     private static CustomFunctions customFunc = new CustomFunctions();
 
 
@@ -21,15 +21,18 @@ public class AutonomousBase {
     public void autonomousPeriodic(String gameData, int pin) {
 //PINS: 
         //ALL THE WAY TO THE RIGHT = NONE = BASELINE
-        //ONE CLICK AWAY = LEFT = DOUBLE SCALE
+        //ONE CLICK AWAY = LEFT = DOUBLE SCALE LEFT OR WAIT WITH CUBE IN MIDDLE
         //TWO CLICKS AWAY = MIDDLE = 2SWITCH 1EXCHANGE
-        //THREE CLICKS AWAY = RIGHT = LITERALLY NO AUTO
+        //THREE CLICKS AWAY = LEFT = OUT OF THE WAY SWITCH
+        //FOUR CLICKS AWAY = RIGHT = OUT OF THE WAY SWITCH
 
 //METHODS:
         //baseLine	: Baseline
         //switchLeft	: straight line only
+        //switchRight	: straight line only
         //RADIUS_LeftStart_doubleScaleRight double scale right, uses, new curves and radius curve. consistent on prac bot
         //LeftStart_singleScaleRight()	: DEPRECATED single scale, uses mostly new curves and one old curve. perfectly consistent
+        //RightStart_singleScaleRight()	: DEPRECATED single scale, uses mostly new curves and one old curve. perfectly consistent
         //LeftStart_singleScaleLeft()	: single scale, uses all new curves	: perfectly consistent
         //LeftStart_doubleScaleRight()	: DEPRECATED double scale, mostly new curves one old curve. second cube inconsistent due to curve
         //LeftStart_doubleScaleLeft()	: double scale, all new curves. quite consistent, last cube missed once
@@ -79,7 +82,30 @@ public class AutonomousBase {
                 baseLine();
             }
         }
-
+        else if (pin == 4) { // Left Switch
+            //System.out.println("pin 3 active :Right:");
+            if (gameData.equals("RRR")) {
+                baseLine();
+            } else if (gameData.equals("LLL")) {
+                switchLeft();
+            } else if (gameData.equals("LRL")) {
+                switchLeft();
+            } else if (gameData.equals("RLR")) {
+                baseLine();
+            }
+        }
+        else if (pin == 5) { // Right Switch
+            //System.out.println("pin 3 active :Right:");
+            if (gameData.equals("RRR")) {
+                switchRight();
+            } else if (gameData.equals("LLL")) {
+                baseLine();
+            } else if (gameData.equals("LRL")) {
+                baseLine();
+            } else if (gameData.equals("RLR")) {
+                switchRight();
+            }
+        }
         //stuffs();
 
     }
@@ -375,7 +401,38 @@ public class AutonomousBase {
 
     }
 
+    private void switchRight() {
+        // TODO Auto-generated method stub
+        switch (step) { // turn
+            case (0):
+                lift.zeroEncoder();
+                Timer.delay(0.01);
+                intake.setSpeed(0.45); // INTAKE
+                lift.disableSpeedLimit = true;
+                autoFunc.setSpeedLimit(0.65); // SPEEDLIMIT
+                lift.setLoc(0.5);
+                step++;
+                break;
 
+            case (1):
+                if (autoFunc.driveDistance(420, 0, 15, true))
+                    step++;
+                break;
+            case (2):
+                if (autoFunc.angleRelTurnLiftUpNoShoot(-90, true)) {
+                    step++;
+
+                }
+                break;
+            case (3):
+                if (autoFunc.driveDistance(30, 0, 15, true)) {
+                    step++;
+                    intake.setSpeed(-0.5);
+                }
+                break;
+        }
+
+    }
     //--------------------------------------------------------------WE DONT USE THIS AUTO, WE USE THE RADIUS VERSION
 
     //DOUBLE SCALE RIGHT

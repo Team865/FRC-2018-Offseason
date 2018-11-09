@@ -32,6 +32,11 @@ public class Drive {
 
     private double speedLimit = 0.999;
 
+    private double previous_displacement = 0;
+    private double x_displacement = 0;
+    private double y_displacement = 0;
+    private double displacement_since_last_iteration;
+
     public Drive() {
         drivePool = new DataPool("Drive");
 
@@ -56,6 +61,22 @@ public class Drive {
     public void setGear(boolean gear) {
         if (shifter.get() != gear)
             shifter.set(gear);
+    }
+
+    public void update_x_y_predictions(){
+        double angle = getRotation();
+        previous_displacement = displacement_since_last_iteration;
+        displacement_since_last_iteration = (this.getLeftDistance() + this.getRightDistance())/2 - this.previous_displacement;
+        x_displacement += displacement_since_last_iteration * Math.cos(Math.toRadians(angle));
+        y_displacement += displacement_since_last_iteration * Math.cos(Math.toRadians(angle));
+    }
+
+    public double get_x_displacement(){
+        return this.x_displacement;
+    }
+
+    public double get_y_displacement(){
+        return this.y_displacement;
     }
 
     public void trackCube(double driveSpeed, double angleThresh) {
