@@ -105,6 +105,11 @@ public class Robot extends IterativeRobot {
 
         controls = new DualRemote();
         double a = 0;
+        double old_dist = 0;
+        double rel_x = 0;
+        double rel_y = 0;
+        double delta_dist;
+
         while (isOperatorControl() && isEnabled()) {
             controls.periodic();
             limelight.mutiPipeline();
@@ -113,6 +118,11 @@ public class Robot extends IterativeRobot {
             double b = lift.getEncoderVal();
             if (a < b)
                 a = b;
+
+            delta_dist = (drive.getLeftDistance() + drive.getRightDistance()) / 2 - old_dist;
+            rel_x += delta_dist * Math.cos(Math.toRadians(navx.getPitch()));
+            rel_y += delta_dist * Math.sin(Math.toRadians(navx.getPitch()));
+
             SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
             SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
             //drive.periodic();
@@ -128,6 +138,10 @@ public class Robot extends IterativeRobot {
             SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
             SmartDashboard.putNumber("pitch", navx.getPitch());
 
+            SmartDashboard.putNumber("Relative x (inches)", rel_x);
+            SmartDashboard.putNumber("Relative y (inches)", rel_y);
+
+            old_dist = (drive.getLeftDistance() + drive.getRightDistance()) / 2;
             Timer.delay(0.005);
         }
     }

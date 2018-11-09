@@ -17,14 +17,17 @@ public class DualRemote extends ControlsBase {
     public void periodic() {
         if (driver.getTrigger(kRight) == DOWN) {//intake
             intake.rampSpeed(0.75);
-        } else if (driver.getTrigger(kLeft) == DOWN) {//out take
+        } else if (driver.getTrigger(kLeft) == DOWN) {//outtake
             intake.rampSpeed(-0.5);
+        } else if (driver.getDpad(0) == DOWN) {
+            lift.overrideIntake = true;
+            intake.rampSpeed(-0.1);
         } else if (driver.getDpad(90) == DOWN) {
             lift.overrideIntake = true;
             intake.rampSpeed(0.75);
         } else if (driver.getDpad(270) == DOWN) {
             lift.overrideIntake = true;
-            intake.rampSpeed(-0.75);
+            intake.rampSpeed(-0.95);
         } else {
             lift.overrideIntake = false;
             intake.rampSpeed(0);
