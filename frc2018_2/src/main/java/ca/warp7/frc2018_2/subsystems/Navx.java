@@ -103,6 +103,14 @@ public class Navx {
         ahrs.reset();
     }
 
+    public void zeroYaw() {
+        ahrs.zeroYaw();
+    }
+
+    public double getYaw() {
+        return ahrs.getYaw();
+    }
+
     public double getPitch() {
         return ahrs.getPitch();
     }
