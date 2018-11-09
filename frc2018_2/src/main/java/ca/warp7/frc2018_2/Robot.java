@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
         controls = new DualRemote();
         double a = 0;
 
-        navx.zeroYaw();
+        navx.resetAngle();
 
         while (isOperatorControl() && isEnabled()) {
             controls.periodic();

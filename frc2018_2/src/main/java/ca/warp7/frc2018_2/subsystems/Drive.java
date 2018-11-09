@@ -36,6 +36,10 @@ public class Drive {
     private double x_displacement = 0;
     private double y_displacement = 0;
     private double displacement_since_last_iteration;
+    private double current_displacement;
+    private double yaw_offsset;
+    private double x_target;
+    private double y_target;
 
     public Drive() {
         drivePool = new DataPool("Drive");
@@ -64,11 +68,12 @@ public class Drive {
     }
 
     public void update_x_y_predictions(){
-        double angle = getRotation();
-        previous_displacement = displacement_since_last_iteration;
-        displacement_since_last_iteration = (this.getLeftDistance() + this.getRightDistance())/2 - this.previous_displacement;
+        double angle = navx.getAbsYaw();
+        current_displacement = (this.getLeftDistance() + this.getRightDistance())/ 2;
+        displacement_since_last_iteration = current_displacement - previous_displacement;
         x_displacement += displacement_since_last_iteration * Math.cos(Math.toRadians(angle));
-        y_displacement += displacement_since_last_iteration * Math.cos(Math.toRadians(angle));
+        y_displacement += displacement_since_last_iteration * Math.sin(Math.toRadians(angle));
+        previous_displacement = current_displacement;
     }
 
     public double get_x_displacement(){
@@ -79,6 +84,12 @@ public class Drive {
         return this.y_displacement;
     }
 
+    public void set_x_target(double target){
+        x_target = target;
+    }
+    public void set_y_target(double target){
+        y_target = target;
+    }
     public void trackCube(double driveSpeed, double angleThresh) {
         double cubeAngleOffset = limelight.getXOffset();
         double turnSpeed = 1 - Math.abs(cubeAngleOffset / angleThresh);

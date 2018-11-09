@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.SPI;
 public class Navx {
     private AHRS ahrs;
     private RTS updater;
-
+    private double yawOffset = 0;
     private double last_velocity[] = new double[2];
     private double displacement[] = new double[2];
 
@@ -100,11 +100,11 @@ public class Navx {
     }
 
     public void resetAngle() {
+        yawOffset += getYaw();
         ahrs.reset();
     }
 
-    public void zeroYaw() {
-        ahrs.zeroYaw();
+    public double getAbsYaw(){return getYaw()+ yawOffset;
     }
 
     public double getYaw() {
