@@ -12,10 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.stormbots.MiniPID;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.*;
 
 import java.util.LinkedList;
 
@@ -54,12 +51,13 @@ public class Drive implements ISubsystem {
     private SpeedControllerGroup mLeftGroup;
     private SpeedControllerGroup mRightGroup;
     private DifferentialVector<Encoder> mEncoders;
+    private Solenoid mShifterSolenoid;
     private final boolean mIsUsingNativeVictorAPI = false;
     private final Input mInput = new Input();
     private final State mState = new State();
 
-    private enum StateAction {
-        Idle,
+    private enum Action {
+        Brake,
         OpenLoop,
         LinearPID
     }
@@ -116,24 +114,31 @@ public class Drive implements ISubsystem {
         mRightB = createVictor(kDriveRightB);
         Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false);
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
+
         mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
         mAHRS = navX.getAhrs();
         mLeftGroup = new SpeedControllerGroup(cast(mLeftA), cast(mLeftB));
         mRightGroup = new SpeedControllerGroup(cast(mRightA), cast(mRightB));
         if (mIsUsingNativeVictorAPI) configAll();
         else mLeftGroup.setInverted(true);
+
+        mShifterSolenoid = new Solenoid(kDriveShifterSolenoidPin);
+        mShifterSolenoid.set(true);
+        mShifterSolenoid.set(false);
+
         mCheesyDrive = new CheesyDrive(this::openLoopDrive);
         mCheesyDrive.disableInternalDeadband();
     }
 
     @Override
     public synchronized void onDisabled() {
-        mInput.wantedAction = StateAction.Idle;
         mInput.rightPercentOutputDemand = 0.0;
         mInput.leftPercentOutputDemand = 0.0;
         mInput.shouldReverse = false;
         mInput.leftTargetDistance = 0;
         mInput.rightTargetDistance = 0;
+        mInput.shouldSolenoidBeOnForShifter = false;
+        mShifterSolenoid.set(false);
         if (mIsUsingNativeVictorAPI) {
             mLeftA.set(ControlMode.Disabled, 0);
             mRightA.set(ControlMode.Disabled, 0);
@@ -141,6 +146,7 @@ public class Drive implements ISubsystem {
             mLeftGroup.disable();
             mRightGroup.disable();
         }
+        mInput.wantedAction = Action.Brake;
         onUpdateState();
     }
 
@@ -191,8 +197,9 @@ public class Drive implements ISubsystem {
     public synchronized void onUpdateState() {
         mState.action = mInput.wantedAction;
         mState.isReversed = mInput.shouldReverse;
+        mState.isSolenoidOnForShifter = mInput.shouldSolenoidBeOnForShifter;
         switch (mState.action) {
-            case Idle:
+            case Brake:
                 mState.leftPercentOutput = 0;
                 mState.rightPercentOutput = 0;
                 break;
@@ -235,6 +242,13 @@ public class Drive implements ISubsystem {
             mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
             mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
         }
+        if (mState.isSolenoidOnForShifter) {
+            if (!mShifterSolenoid.get()) {
+                mShifterSolenoid.set(true);
+            }
+        } else if (mShifterSolenoid.get()) {
+            mShifterSolenoid.set(false);
+        }
     }
 
     @Override
@@ -259,14 +273,14 @@ public class Drive implements ISubsystem {
 
     @InputModifier
     public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
-        mInput.wantedAction = StateAction.OpenLoop;
+        mInput.wantedAction = Action.OpenLoop;
         mInput.leftPercentOutputDemand = leftSpeedDemand;
         mInput.rightPercentOutputDemand = rightSpeedDemand;
     }
 
     @InputModifier
     public synchronized void setPIDTargetDistance(PIDValues pidValues, double targetDistance) {
-        mInput.wantedAction = StateAction.LinearPID;
+        mInput.wantedAction = Action.LinearPID;
         pidValues.copyTo(mState.leftLinearPID);
         pidValues.copyTo(mState.rightLinearPID);
         mInput.leftTargetDistance = targetDistance;
@@ -282,22 +296,28 @@ public class Drive implements ISubsystem {
         mInput.shouldReverse = reversed;
     }
 
+    @InputModifier
+    public synchronized void setShouldSolenoidBeOnForShifter(boolean shouldSolenoidBeOnForShifter) {
+        mInput.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
+    }
+
     public synchronized boolean isWithinDistanceRange(double range, double tolerance) {
         return Math.abs(range - mState.leftDistance) < Math.abs(tolerance) &&
                 Math.abs(range - mState.rightDistance) < Math.abs(tolerance);
     }
 
     public boolean shouldBeginOpenLoop() {
-        return mInput.wantedAction == StateAction.OpenLoop;
+        return mInput.wantedAction == Action.OpenLoop;
     }
 
     public boolean shouldBeginLinearPID() {
-        return mInput.wantedAction == StateAction.LinearPID;
+        return mInput.wantedAction == Action.LinearPID;
     }
 
     static class Input {
-        StateAction wantedAction;
+        Action wantedAction;
         boolean shouldReverse;
+        boolean shouldSolenoidBeOnForShifter;
         double leftPercentOutputDemand;
         double rightPercentOutputDemand;
         double leftTargetDistance;
@@ -305,8 +325,9 @@ public class Drive implements ISubsystem {
     }
 
     static class State {
-        StateAction action;
+        Action action;
         boolean isReversed;
+        boolean isSolenoidOnForShifter;
         double _timestamp;
         double leftPercentOutput;
         double rightPercentOutput;

@@ -2,6 +2,7 @@ package ca.warp7.frc.commons.scheduler;
 
 import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.IActionSupplier;
+import ca.warp7.frc.commons.core.IAutoMode;
 
 import java.util.function.BooleanSupplier;
 
@@ -32,4 +33,16 @@ public class CompositeAction implements IAction{
         return false;
     }
 
+    public abstract static class Mode extends CompositeAction implements IAutoMode {
+
+        @Override
+        public IActionSupplier getMainAction() {
+            return null;
+        }
+
+        @Override
+        public IAction get() {
+            return null;
+        }
+    }
 }

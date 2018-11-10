@@ -19,10 +19,10 @@ public class TeleopRemote implements IControls {
 
         // Pneumatics
         if (Driver.BackButton == Pressed) pneumatics.toggleClosedLoop();
-        pneumatics.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
         pneumatics.setGrapplingHook(Driver.StartButton == HeldDown);
 
         // Driving
+        drive.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
         drive.setReversed(Driver.RightStickButton == HeldDown);
         if (Driver.BButton != HeldDown) {
             drive.cheesyDrive(Driver.RightXAxis, Driver.LeftYAxis, Driver.LeftBumper == HeldDown);
