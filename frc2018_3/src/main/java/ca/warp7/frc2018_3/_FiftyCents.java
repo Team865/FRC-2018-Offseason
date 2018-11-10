@@ -7,7 +7,7 @@ public class _FiftyCents extends Robot {
     public _FiftyCents() {
         System.out.println("Hello me is robit!");
         loader.setAutoMode(Autonomous.oneSwitchRight, 15);
-        loader.setTeleop(new TeleopRemote(), 0, 1);
+        loader.setTeleop(new TeleopRemote());
     }
 
     @Override

@@ -5,20 +5,14 @@ public class RobotLoader {
     private IAutoMode mRunningMode;
     private double mTestTimeOut;
     private IControls mTeleop;
-    private int[] mAvailableControls = {};
 
-    public final void setTeleop(IControls loop, int... availableControls) {
+    public final void setTeleop(IControls loop) {
         mTeleop = loop;
-        mAvailableControls = availableControls;
     }
 
     public final void setAutoMode(IAutoMode mode, double testTimeout) {
         mRunningMode = mode;
         mTestTimeOut = testTimeout;
-    }
-
-    int[] getAvailableControls() {
-        return mAvailableControls;
     }
 
     double getTestTimeOut() {
@@ -33,7 +27,7 @@ public class RobotLoader {
         return mRunningMode;
     }
 
-    public static XboxControlsState createXboxController(int controllerPort) {
-        return Robot.getState().createXboxController(controllerPort);
+    public static XboxControlsState createXboxController(int controllerPort, boolean available) {
+        return Robot.getState().createXboxController(available ? controllerPort : -1);
     }
 }

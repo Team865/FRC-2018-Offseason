@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ca.warp7.frc.commons.core.IControls.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -237,13 +239,11 @@ class StateManager {
     }
 
     synchronized void collectControllerData() {
-        int[] available = Robot.loader.getAvailableControls();
-        IntStream stream = Arrays.stream(available);
         for (XboxControllerPair pair : mControllers) {
-            (available.length > 0 ? stream.filter(i -> i == pair.port) : stream).forEach(i -> {
+            if (pair.active) {
                 collectIndividualController(pair.state, pair.controller);
                 report0(String.format("XboxController[%d]", pair.port), pair.state);
-            });
+            }
         }
     }
 
@@ -262,14 +262,18 @@ class StateManager {
     }
 
     private static class XboxControllerPair {
-        private final XboxController controller;
         private final XboxControlsState state;
+        private XboxController controller;
         private int port;
+        private boolean active;
 
         private XboxControllerPair(int port) {
             this.port = port;
-            this.controller = new XboxController(port);
             this.state = new XboxControlsState();
+            if (port >= 0 && port < 6) {
+                active = true;
+                this.controller = new XboxController(port);
+            } else active = false;
         }
     }
 }

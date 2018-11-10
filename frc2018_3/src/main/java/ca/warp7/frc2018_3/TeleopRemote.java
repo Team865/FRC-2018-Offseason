@@ -9,8 +9,8 @@ import static ca.warp7.frc2018_3.Components.*;
 
 public class TeleopRemote implements IControls {
 
-    private XboxControlsState Driver = RobotLoader.createXboxController(0);
-    private XboxControlsState Operator = RobotLoader.createXboxController(1);
+    private XboxControlsState Driver = RobotLoader.createXboxController(0, true);
+    private XboxControlsState Operator = RobotLoader.createXboxController(1, false);
 
     @Override
     public void mainPeriodic() {
