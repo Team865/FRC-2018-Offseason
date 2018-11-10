@@ -1,59 +1,35 @@
 package ca.warp7.frc.commons.scheduler;
 
 import ca.warp7.frc.commons.core.IAction;
+import ca.warp7.frc.commons.core.IActionSupplier;
 
-public class CompositeAction {
+import java.util.function.BooleanSupplier;
 
-    private enum PostCallMode {
-        CHAIN, HOLD
-    }
+public class CompositeAction implements IAction{
 
-    private ActionGraph mActionGraph;
-    private ActionNode mCurrentNode;
-    private PostCallMode mPostCallMode;
-
-    public CompositeAction() {
-        mActionGraph = new ActionGraph();
-        mCurrentNode = null;
-        mPostCallMode = PostCallMode.CHAIN;
-    }
-
-    public IAction getActionGraph() {
-        return mActionGraph;
-    }
-
-    public CompositeAction add(IAction action) {
-        ActionNode node = new ActionNode(mActionGraph, action);
-
-        ActionTrigger currentEndTrigger;
-        currentEndTrigger = mCurrentNode == null ? mActionGraph.getEntryPoint() : mCurrentNode.getOnEndTrigger();
-
-        ActionTrigger actualStarterTrigger;
-        if (currentEndTrigger == null) {
-            actualStarterTrigger = mActionGraph.createTrigger(mCurrentNode.getName());
-            mCurrentNode.setOnEndTrigger(actualStarterTrigger);
-        } else {
-            actualStarterTrigger = currentEndTrigger;
-        }
-
-        node.setStarterTrigger(actualStarterTrigger);
-        mActionGraph.addNode(node);
-
-        switch (mPostCallMode) {
-            case CHAIN:
-                mCurrentNode = node;
-                break;
-        }
+    public CompositeAction add(IActionSupplier... supplier){
         return this;
     }
 
-    public CompositeAction startParallel() {
-        mPostCallMode = PostCallMode.HOLD;
+    public CompositeAction async(IActionSupplier... entryPoints){
         return this;
     }
 
-    public CompositeAction startSeries() {
-        mPostCallMode = PostCallMode.CHAIN;
+    public CompositeAction asyncAny(IActionSupplier... entryPoints){
         return this;
     }
+
+    public CompositeAction waitFor(double seconds){
+        return this;
+    }
+
+    public CompositeAction waitUntil(BooleanSupplier supplier){
+        return this;
+    }
+
+    @Override
+    public boolean shouldFinish() {
+        return false;
+    }
+
 }

@@ -14,11 +14,6 @@ class AutoRunner {
     private static final long kDefaultLoopDelta = 20;
 
     /**
-     * The auto mode that can create the action on demand
-     */
-    private IAutoMode mAutoMode;
-
-    /**
      * The main action to run, extracted from the mode
      */
     private IAction mAction;
@@ -118,10 +113,11 @@ class AutoRunner {
             return;
         }
 
-        mAutoMode = Robot.loader.getRunningMode();
+        // Get the auto mode that can create the action on demand
+        IAutoMode autoMode = Robot.loader.getRunningMode();
 
         // Make sure there is a mode to create the main action from
-        if (mAutoMode == null) {
+        if (autoMode == null) {
             System.err.println("ERROR There is no Auto Mode!!!");
             return;
         }
@@ -140,7 +136,7 @@ class AutoRunner {
         // Use the mode to create the actual action to run
         // This is used so that the main action can be run multiple times
         // even if the robot code is not restarted
-        mAction = mAutoMode.get();
+        mAction = autoMode.get();
 
         // Make sure a valid action is returned by the mode
         if (mAction == null) {

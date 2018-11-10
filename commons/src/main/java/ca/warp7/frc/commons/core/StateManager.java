@@ -13,19 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ca.warp7.frc.commons.core.IControls.*;
-import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
-import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
-
 class StateManager {
 
     private static final int kMaxPrintLength = 255;
-    private static final double kTriggerDeadBand = 0.5;
     private static final double kStateEpsilon = 0.01;
-    private static final int kUpPOV = 0;
-    private static final int kRightPOV = 90;
-    private static final int kDownPOV = 180;
-    private static final int kLeftPOV = 270;
 
     private final List<StateObserver> mStateObservers = new ArrayList<>();
     private final List<XboxControllerPair> mControllers = new ArrayList<>();
@@ -76,16 +67,9 @@ class StateManager {
         logRobotState("Test");
     }
 
-    /**
-     * Reports a state object
-     *
-     * @param owner     the owner of the state object, which can modify it
-     * @param stateType The state type. See {@link StateType}
-     * @param o         The object to report
-     */
     synchronized void report(Object owner, StateType stateType, Object o) {
         String name = (owner != null) ? ((owner instanceof String) ?
-                owner.toString() : owner.getClass().getSimpleName()) : "UnclassifiedOwner";
+                owner.toString() : owner.getClass().getSimpleName()) : "Unknown";
         report0(name, stateType, o);
     }
 
@@ -93,7 +77,7 @@ class StateManager {
         for (XboxControllerPair pair : mControllers) if (pair.port == port) return pair.state;
         XboxControllerPair newPair = new XboxControllerPair(port);
         mControllers.add(newPair);
-        resetControllerData(newPair.state);
+        XboxControlsState.reset(newPair.state);
         return newPair.state;
     }
 
@@ -182,66 +166,10 @@ class StateManager {
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
-    private static int u0(int oldState, boolean newState) {
-        return newState ? ((oldState == Pressed || oldState == HeldDown) ? HeldDown : Pressed) :
-                ((oldState == Released || oldState == KeptUp) ? KeptUp : Released);
-    }
-
-    private static void resetControllerData(XboxControlsState S) {
-        S.AButton = KeptUp;
-        S.BButton = KeptUp;
-        S.XButton = KeptUp;
-        S.YButton = KeptUp;
-        S.LeftBumper = KeptUp;
-        S.RightBumper = KeptUp;
-        S.LeftTrigger = KeptUp;
-        S.RightTrigger = KeptUp;
-        S.LeftStickButton = KeptUp;
-        S.RightStickButton = KeptUp;
-        S.StartButton = KeptUp;
-        S.BackButton = KeptUp;
-        S.UpDPad = KeptUp;
-        S.RightDPad = KeptUp;
-        S.DownDPad = KeptUp;
-        S.LeftDPad = KeptUp;
-        S.LeftTriggerAxis = 0;
-        S.RightTriggerAxis = 0;
-        S.LeftXAxis = 0;
-        S.LeftYAxis = 0;
-        S.RightXAxis = 0;
-        S.RightYAxis = 0;
-    }
-
-    private static void collectIndividualController(XboxControlsState S, XboxController C) {
-        int POV = C.getPOV();
-        S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
-        S.RightTriggerAxis = C.getTriggerAxis(kRight);
-        S.LeftXAxis = C.getX(kLeft);
-        S.LeftYAxis = C.getY(kLeft);
-        S.RightXAxis = C.getX(kRight);
-        S.RightYAxis = C.getY(kRight);
-        S.AButton = u0(S.AButton, C.getAButton());
-        S.BButton = u0(S.BButton, C.getBButton());
-        S.XButton = u0(S.XButton, C.getXButton());
-        S.YButton = u0(S.YButton, C.getYButton());
-        S.LeftBumper = u0(S.LeftBumper, C.getBumper(kLeft));
-        S.RightBumper = u0(S.RightBumper, C.getBumper(kRight));
-        S.LeftTrigger = u0(S.LeftTrigger, S.LeftTriggerAxis > kTriggerDeadBand);
-        S.RightTrigger = u0(S.RightTrigger, S.RightTriggerAxis > kTriggerDeadBand);
-        S.LeftStickButton = u0(S.LeftStickButton, C.getStickButton(kLeft));
-        S.RightStickButton = u0(S.RightStickButton, C.getStickButton(kRight));
-        S.StartButton = u0(S.StartButton, C.getStartButton());
-        S.BackButton = u0(S.BackButton, C.getBackButton());
-        S.UpDPad = u0(S.UpDPad, POV == kUpPOV);
-        S.RightDPad = u0(S.RightDPad, POV == kRightPOV);
-        S.DownDPad = u0(S.DownDPad, POV == kDownPOV);
-        S.LeftDPad = u0(S.LeftDPad, POV == kLeftPOV);
-    }
-
     synchronized void collectControllerData() {
         for (XboxControllerPair pair : mControllers) {
             if (pair.active) {
-                collectIndividualController(pair.state, pair.controller);
+                XboxControlsState.collect(pair.state, pair.controller);
                 report0(String.format("XboxController[%d]", pair.port), pair.state);
             }
         }
@@ -261,13 +189,13 @@ class StateManager {
         }
     }
 
-    private static class XboxControllerPair {
+    static class XboxControllerPair {
         private final XboxControlsState state;
         private XboxController controller;
         private int port;
         private boolean active;
 
-        private XboxControllerPair(int port) {
+        XboxControllerPair(int port) {
             this.port = port;
             this.state = new XboxControlsState();
             if (port >= 0 && port < 6) {
