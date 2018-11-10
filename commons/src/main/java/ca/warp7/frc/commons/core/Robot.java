@@ -65,14 +65,15 @@ public abstract class Robot extends IterativeRobot {
         state.logTest();
     }
 
-    protected abstract void onCreate();
+    protected void onCreate() {
+    }
 
     protected final void setTeleop(IControls loop) {
         mComponents.setControllerLoop(loop);
     }
 
-    protected final void setAutoMode(IAutoMode mode, double testTimeout) {
-        mAutoRunner.setAutoMode(mode, testTimeout);
+    protected final void setAutoMode(IAutoMode mode) {
+        loader.setAutoMode(mode, 15);
     }
 
     public static void println(Object o) {

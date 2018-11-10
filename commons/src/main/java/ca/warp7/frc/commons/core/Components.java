@@ -11,6 +11,7 @@ import java.util.List;
 class Components implements ISubsystem {
 
     private static final String kComponentsClassName = ".Components";
+    private static final String kTeleopClassName = ".TeleopRemote";
 
     private Class<?> mComponentsClass;
     private List<ISubsystem> mSubsystems = new ArrayList<>();
@@ -118,12 +119,19 @@ class Components implements ISubsystem {
     }
 
     void reflectFromPackage(String packageName) {
-        String potentialClassName = packageName + kComponentsClassName;
         try {
+            String potentialClassName = packageName + kComponentsClassName;
             mComponentsClass = Class.forName(potentialClassName);
         } catch (ClassNotFoundException e) {
             System.err.println("Components not found");
             mComponentsClass = null;
+        }
+        try {
+            String potentialClassName = packageName + kTeleopClassName;
+            mControllerLoop = (IControls) Class.forName(potentialClassName).newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | ClassCastException e) {
+            System.err.println("Teleop not found");
+            mControllerLoop = null;
         }
     }
 }

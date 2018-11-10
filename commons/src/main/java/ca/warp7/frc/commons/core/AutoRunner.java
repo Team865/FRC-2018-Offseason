@@ -108,39 +108,7 @@ class AutoRunner {
     };
 
     /**
-     * Sets the auto mode
-     *
-     * @param mode           the {@link IAutoMode} that provides the main action
-     * @param timeOutSeconds the number of seconds before the auto program times out
-     */
-    void setAutoMode(IAutoMode mode, double timeOutSeconds) {
-
-        // Make sure that autos are not currently running
-        // And make sure mode doesn't throw a NullPointerException
-        if (mRunThread == null && mode != null) {
-
-            mAutoMode = mode;
-            mExplicitTimeout = timeOutSeconds;
-
-            // Wait for Driver Station only if timeout is infinity or the FMS is present
-            boolean hasFMS = DriverStation.getInstance().isFMSAttached();
-            mOverrideExplicitTimeout = hasFMS || timeOutSeconds == Double.POSITIVE_INFINITY;
-
-            // Limit the explicit timeout to make it reasonable
-            if (mExplicitTimeout >= kMaxAutoTimeoutSeconds || mExplicitTimeout < 0) {
-                mExplicitTimeout = kMaxAutoTimeoutSeconds;
-            }
-
-        } else {
-            // Make so it won't pass the start method's safe check
-            mAutoMode = null;
-            mAction = null;
-            mExplicitTimeout = 0;
-        }
-    }
-
-    /**
-     * Check there is an auto mode and start running the auto action
+     * Get input from the Robot Loader and starts the auto
      */
     void start() {
 
@@ -150,10 +118,23 @@ class AutoRunner {
             return;
         }
 
+        mAutoMode = Robot.loader.getRunningMode();
+
         // Make sure there is a mode to create the main action from
         if (mAutoMode == null) {
             System.err.println("ERROR There is no Auto Mode!!!");
             return;
+        }
+
+        // Wait for Driver Station only if timeout is infinity or the FMS is present
+        boolean hasFMS = DriverStation.getInstance().isFMSAttached();
+
+        mExplicitTimeout = Robot.loader.getTestTimeOut();
+        mOverrideExplicitTimeout = hasFMS || mExplicitTimeout == Double.POSITIVE_INFINITY;
+
+        // Limit the explicit timeout to make it reasonable
+        if (mExplicitTimeout >= kMaxAutoTimeoutSeconds || mExplicitTimeout < 0) {
+            mExplicitTimeout = kMaxAutoTimeoutSeconds;
         }
 
         // Use the mode to create the actual action to run
