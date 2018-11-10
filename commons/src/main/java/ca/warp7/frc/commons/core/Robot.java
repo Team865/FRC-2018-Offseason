@@ -17,11 +17,11 @@ public abstract class Robot extends IterativeRobot {
     private final AutoRunner mAutoRunner = new AutoRunner();
     private final LoopsManager mLoopsManager = new LoopsManager();
     private static final StateManager state = new StateManager();
-    private static final RobotLoader loader = new RobotLoader();
+    protected static final RobotLoader loader = new RobotLoader();
 
     @Override
     public final void startCompetition() {
-        state.attachRobotInstance(this);
+        state.attach();
         mLoopsManager.setComponentsSource(mComponents);
         mComponents.reflectFromPackage(getClass().getPackage().getName());
         this.onCreate();
@@ -94,10 +94,6 @@ public abstract class Robot extends IterativeRobot {
     public static void reportInputAndState(Object owner, Object _input, Object _state) {
         state.report(owner, ComponentInput, _input);
         state.report(owner, ComponentState, _state);
-    }
-
-    protected static RobotLoader getLoader() {
-        return loader;
     }
 
     static StateManager getState() {

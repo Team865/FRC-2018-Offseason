@@ -3,16 +3,13 @@ package ca.warp7.frc.commons.core;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import static ca.warp7.frc.commons.core.IControls.*;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -36,21 +33,16 @@ class StateManager {
     private String mLoggedRobotState;
     private double mOldRobotStateTimeStamp;
     private NetworkTable mSubsystemsTable;
-    private DriverStation mDriverStation;
-    private int mNoDataCount;
-    private Robot mAttachedRobot;
 
-    void attachRobotInstance(Robot robot) {
-        mAttachedRobot = robot;
+    void attach() {
         mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
         mPrintCounter = 0;
         mLoggedRobotState = "";
         mOldRobotStateTimeStamp = Timer.getFPGATimestamp();
-        mDriverStation = DriverStation.getInstance();
     }
 
     private void logRobotState(String state) {
-        if (assertRobotAttached() || state.equals(mLoggedRobotState)) return;
+        if (state.equals(mLoggedRobotState)) return;
         String oldState = mLoggedRobotState;
         mLoggedRobotState = state;
         double newTime = Timer.getFPGATimestamp();
@@ -90,7 +82,6 @@ class StateManager {
      * @param o         The object to report
      */
     synchronized void report(Object owner, StateType stateType, Object o) {
-        if (assertRobotAttached()) return;
         String name = (owner != null) ? ((owner instanceof String) ?
                 owner.toString() : owner.getClass().getSimpleName()) : "UnclassifiedOwner";
         report0(name, stateType, o);
@@ -104,7 +95,7 @@ class StateManager {
         return newPair.state;
     }
 
-    private void println(String prefix, Object value) {
+    private void println0(String prefix, Object value) {
         String stringValue = String.valueOf(value);
         if (mPrintCounter <= kMaxPrintLength) {
             mPrintCounter += stringValue.length();
@@ -143,14 +134,6 @@ class StateManager {
         }
     }
 
-    private boolean assertRobotAttached() {
-        if (mAttachedRobot == null) {
-            System.out.println("ERROR no Robot instance attached!!!");
-            return true;
-        }
-        return false;
-    }
-
     private void report0(String name, StateType type, Object o) {
         switch (type) {
             case ComponentState:
@@ -160,13 +143,13 @@ class StateManager {
                 report0(name + ".in", o);
                 break;
             case Println:
-                println("", o);
+                println0("", o);
                 break;
             case Warning:
-                println("WARNING ", o);
+                println0("WARNING ", o);
                 break;
             case Error:
-                println("ERROR ", o);
+                println0("ERROR ", o);
                 mPrintStream.flush();
                 break;
         }
@@ -202,7 +185,7 @@ class StateManager {
                 ((oldState == Released || oldState == KeptUp) ? KeptUp : Released);
     }
 
-    private void resetControllerData(XboxControlsState S) {
+    private static void resetControllerData(XboxControlsState S) {
         S.AButton = KeptUp;
         S.BButton = KeptUp;
         S.XButton = KeptUp;
@@ -227,7 +210,7 @@ class StateManager {
         S.RightYAxis = 0;
     }
 
-    private void collectIndividualController(XboxControlsState S, XboxController C) {
+    private static void collectIndividualController(XboxControlsState S, XboxController C) {
         int POV = C.getPOV();
         S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
         S.RightTriggerAxis = C.getTriggerAxis(kRight);
@@ -254,14 +237,13 @@ class StateManager {
     }
 
     synchronized void collectControllerData() {
-        if (!mDriverStation.isNewControlData()) mNoDataCount++;
-        else mNoDataCount = 0;
+        int[] available = Robot.loader.getAvailableControls();
+        IntStream stream = Arrays.stream(available);
         for (XboxControllerPair pair : mControllers) {
-            if (mNoDataCount >= 10) {
-                resetControllerData(pair.state);
-                mNoDataCount = 0;
-            } else collectIndividualController(pair.state, pair.controller);
-            report0(String.format("XboxController[%d]", pair.port), pair.state);
+            (available.length > 0 ? stream.filter(i -> i == pair.port) : stream).forEach(i -> {
+                collectIndividualController(pair.state, pair.controller);
+                report0(String.format("XboxController[%d]", pair.port), pair.state);
+            });
         }
     }
 

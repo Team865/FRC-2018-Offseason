@@ -1,19 +1,39 @@
 package ca.warp7.frc.commons.core;
 
-import java.util.function.Supplier;
-
 public class RobotLoader {
 
-    public void registerAutoModes(IAutoMode... modes) {
+    private IAutoMode mRunningMode;
+    private double mTestTimeOut;
+    private IControls mTeleop;
+    private int[] mAvailableControls = {};
+
+    public final void setTeleop(IControls loop, int... availableControls) {
+        mTeleop = loop;
+        mAvailableControls = availableControls;
     }
 
-    public void registerComponents(IComponent... components) {
+    public final void setAutoMode(IAutoMode mode, double testTimeout) {
+        mRunningMode = mode;
+        mTestTimeOut = testTimeout;
     }
 
-    public void setControls(Supplier<IControls> supplier) {
+    int[] getAvailableControls() {
+        return mAvailableControls;
     }
 
-    public static XboxControlsState createXboxController(int port) {
-        return Robot.getState().createXboxController(port);
+    double getTestTimeOut() {
+        return mTestTimeOut;
+    }
+
+    public IControls getTeleop() {
+        return mTeleop;
+    }
+
+    IAutoMode getRunningMode() {
+        return mRunningMode;
+    }
+
+    public static XboxControlsState createXboxController(int controllerPort) {
+        return Robot.getState().createXboxController(controllerPort);
     }
 }

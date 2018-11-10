@@ -6,6 +6,7 @@ import ca.warp7.frc2018_3.auto.BaselinePID;
 import ca.warp7.frc2018_3.auto.NothingMode;
 import ca.warp7.frc2018_3.auto.OneSwitch;
 
+@SuppressWarnings("unused")
 class Autonomous {
     static final IAutoMode nothing = new NothingMode();
     static final IAutoMode baseline = new Baseline();

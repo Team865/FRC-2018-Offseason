@@ -7,7 +7,7 @@ import ca.warp7.frc2018_3.subsystems.Intake;
 
 import static ca.warp7.frc2018_3.Components.*;
 
-public class DualRemote implements IControls {
+public class TeleopRemote implements IControls {
 
     private XboxControlsState Driver = RobotLoader.createXboxController(0);
     private XboxControlsState Operator = RobotLoader.createXboxController(1);

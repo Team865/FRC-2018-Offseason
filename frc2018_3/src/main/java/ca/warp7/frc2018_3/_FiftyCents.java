@@ -1,24 +1,18 @@
 package ca.warp7.frc2018_3;
 
 import ca.warp7.frc.commons.core.Robot;
-import ca.warp7.frc.commons.core.RobotLoader;
-
-import static ca.warp7.frc2018_3.Autonomous.*;
-import static ca.warp7.frc2018_3.Components.*;
 
 public class _FiftyCents extends Robot {
 
     public _FiftyCents() {
-        RobotLoader loader = getLoader();
-        loader.registerComponents(drive, pneumatics, intake, armLift, climber, limelight, navX);
-        loader.registerAutoModes(nothing, baseline, baselinePID, oneSwitchLeft, oneSwitchRight);
-        loader.setControls(DualRemote::new);
+        System.out.println("Hello me is robit!");
+        loader.setAutoMode(Autonomous.oneSwitchRight, 15);
+        loader.setTeleop(new TeleopRemote(), 0, 1);
     }
 
     @Override
     protected void onCreate() {
-        System.out.println("Hello me is robit!");
-        setAutoMode(oneSwitchRight, 15);
-        setTeleop(new SingleRemote());
+        setAutoMode(Autonomous.oneSwitchRight, 15);
+        setTeleop(new TeleopRemote());
     }
 }

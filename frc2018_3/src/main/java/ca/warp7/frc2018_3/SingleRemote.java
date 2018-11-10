@@ -7,6 +7,7 @@ import ca.warp7.frc2018_3.subsystems.Intake;
 
 import static ca.warp7.frc2018_3.Components.*;
 
+@Deprecated
 public class SingleRemote implements IControls {
 
     private XboxControlsState Driver = RobotLoader.createXboxController(0);
