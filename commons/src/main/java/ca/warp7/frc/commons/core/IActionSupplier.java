@@ -16,7 +16,7 @@ public interface IActionSupplier extends Supplier<IAction> {
     /**
      * Get a post fix identifier so the user can properly select them
      */
-    default String getConfigurationPostfix() {
+    default String getConfiguration() {
         return isConfigurable() ? String.valueOf((int) (Math.random() * 1000)) : "";
     }
 

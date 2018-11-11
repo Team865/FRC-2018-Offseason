@@ -5,6 +5,7 @@ import ca.warp7.frc.commons.DtMeasurement;
 import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.Unit;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
+import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -304,6 +305,10 @@ public class Drive implements ISubsystem {
     public synchronized boolean isWithinDistanceRange(double range, double tolerance) {
         return Math.abs(range - mState.leftDistance) < Math.abs(tolerance) &&
                 Math.abs(range - mState.rightDistance) < Math.abs(tolerance);
+    }
+
+    public boolean isPIDReached(IAction action) {
+        return true;
     }
 
     public boolean shouldBeginOpenLoop() {
