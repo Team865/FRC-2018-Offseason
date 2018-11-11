@@ -10,5 +10,5 @@ public final class Components {
     public static final ArmLift armLift = new ArmLift();
     public static final Climber climber = new Climber();
     public static final Limelight limelight = new Limelight();
-    public static final NavX navX = new NavX();
+    public static final Navx navx = new Navx();
 }

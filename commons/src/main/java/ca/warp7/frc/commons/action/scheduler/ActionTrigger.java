@@ -1,4 +1,4 @@
-package ca.warp7.frc.commons.scheduler;
+package ca.warp7.frc.commons.action.scheduler;
 
 class ActionTrigger {
     private final String mName;

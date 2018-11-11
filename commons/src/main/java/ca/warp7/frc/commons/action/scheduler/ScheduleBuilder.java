@@ -1,7 +1,8 @@
-package ca.warp7.frc.commons.scheduler;
+package ca.warp7.frc.commons.action.scheduler;
 
 import ca.warp7.frc.commons.core.IAction;
 
+@Deprecated
 public class ScheduleBuilder {
 
     private enum PostCallMode {

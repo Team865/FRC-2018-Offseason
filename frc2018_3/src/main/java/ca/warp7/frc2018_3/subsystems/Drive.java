@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import static ca.warp7.frc.commons.Functions.constrainMinimum;
 import static ca.warp7.frc.commons.Functions.limit;
 import static ca.warp7.frc.commons.core.Robot.reportInputAndState;
-import static ca.warp7.frc2018_3.Components.navX;
+import static ca.warp7.frc2018_3.Components.navx;
 import static ca.warp7.frc2018_3.Constants.*;
 
 public class Drive implements ISubsystem {
@@ -116,7 +116,7 @@ public class Drive implements ISubsystem {
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
 
         mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
-        mAHRS = navX.getAhrs();
+        mAHRS = navx.getAhrs();
         mLeftGroup = new SpeedControllerGroup(cast(mLeftA), cast(mLeftB));
         mRightGroup = new SpeedControllerGroup(cast(mRightA), cast(mRightB));
         if (mIsUsingNativeVictorAPI) configAll();

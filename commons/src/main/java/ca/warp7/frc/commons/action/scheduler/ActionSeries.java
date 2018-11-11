@@ -1,4 +1,4 @@
-package ca.warp7.frc.commons.scheduler;
+package ca.warp7.frc.commons.action.scheduler;
 
 import ca.warp7.frc.commons.core.IAction;
 
@@ -12,6 +12,7 @@ import java.util.List;
  * @author Team 254, modified by Team 865
  */
 
+@Deprecated
 public class ActionSeries implements IAction {
 
     private IAction mCurAction;

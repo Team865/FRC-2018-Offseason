@@ -48,6 +48,7 @@ class AutoRunner {
         System.out.println("Auto starting");
 
         double startTime = Timer.getFPGATimestamp();
+        double currentTime = startTime;
 
         mAction.onStart();
 
@@ -59,9 +60,11 @@ class AutoRunner {
                 break;
             }
 
+            currentTime = Timer.getFPGATimestamp() - startTime;
+
             // Stop priority #2: Check for explicit timeouts used in setAutoMode
             if (!mOverrideExplicitTimeout) {
-                if ((Timer.getFPGATimestamp() - startTime) >= mExplicitTimeout) {
+                if (currentTime >= mExplicitTimeout) {
                     break;
                 }
             }
@@ -95,7 +98,11 @@ class AutoRunner {
 
         mAction.onStop();
 
-        System.out.printf("Auto program ending after %.3fs \n", Timer.getFPGATimestamp() - startTime);
+        System.out.printf("Auto program ending after %.3fs\n", currentTime);
+
+        if (currentTime < mExplicitTimeout) {
+            System.out.printf("ERROR Auto program ended early by %.3fs\n", mExplicitTimeout - currentTime);
+        }
 
         // Assign null to the thread so this runner can be called again
         // without robot code restarting
