@@ -6,8 +6,4 @@ class AsyncDetach extends BaseAction {
 
     AsyncDetach(IAction action) {
     }
-
-    @Override
-    public void onStart() {
-    }
 }

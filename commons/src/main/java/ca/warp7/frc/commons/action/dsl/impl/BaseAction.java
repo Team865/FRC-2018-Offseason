@@ -29,13 +29,8 @@ abstract class BaseAction implements IAction {
         if (mParent != null) mParent.onBroadcast(trigger);
         else {
             List<IAction> children = getChildren();
-            if (children != null) {
-                for (IAction child : children) {
-                    if (child instanceof BaseAction) {
-                        ((BaseAction) child).onReceive(trigger);
-                    }
-                }
-            }
+            if (children != null) children.stream().filter(child -> child instanceof BaseAction)
+                    .forEach(child -> ((BaseAction) child).onReceive(trigger));
         }
     }
 

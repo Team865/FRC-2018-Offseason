@@ -6,8 +6,4 @@ class AsyncInverse extends BaseAction {
 
     AsyncInverse(IAction... actions) {
     }
-
-    @Override
-    public void onStart() {
-    }
 }

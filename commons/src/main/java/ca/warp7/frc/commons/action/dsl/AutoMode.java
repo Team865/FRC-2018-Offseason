@@ -85,13 +85,13 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL listen(IAction receiver, Object... triggers) {
-        return queue().listen(receiver);
+    public IActionDSL listenForAny(IAction receiver, Object... of) {
+        return queue().listenForAny(receiver);
     }
 
     @Override
-    public IActionDSL listenForAll(IAction receiver, Object... triggers) {
-        return queue().listenForAll(receiver, triggers);
+    public IActionDSL listenForAll(IAction receiver, Object... of) {
+        return queue().listenForAll(receiver, of);
     }
 
     @Override

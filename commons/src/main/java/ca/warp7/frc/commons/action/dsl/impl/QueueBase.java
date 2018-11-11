@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-abstract class BaseQueue extends BaseAction {
+abstract class QueueBase extends BaseAction {
 
     private final List<IAction> mCandidates = new ArrayList<>();
     private List<IAction> mCachedActionQueue;

@@ -32,9 +32,9 @@ public interface IActionDSL extends IAction {
 
     IActionDSL debug(IAction action);
 
-    IActionDSL listen(IAction receiver, Object... triggers);
+    IActionDSL listenForAny(IAction receiver, Object... of);
 
-    IActionDSL listenForAll(IAction receiver, Object... triggers);
+    IActionDSL listenForAll(IAction receiver, Object... of);
 
     IActionDSL onlyIf(Predicate<IAction> predicate, IAction action);
 

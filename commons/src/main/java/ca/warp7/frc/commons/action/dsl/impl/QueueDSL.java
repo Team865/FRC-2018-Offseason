@@ -7,7 +7,7 @@ import ca.warp7.frc.commons.core.ILoop;
 
 import java.util.function.Predicate;
 
-public class QueueDSL extends BaseQueue implements IActionDSL {
+public class QueueDSL extends QueueBase implements IActionDSL {
 
     public QueueDSL(IAction... actions) {
         queue(actions);
@@ -70,13 +70,13 @@ public class QueueDSL extends BaseQueue implements IActionDSL {
     }
 
     @Override
-    public IActionDSL listen(IAction receiver, Object... triggers) {
-        return queue(new ListenForAny(receiver, triggers));
+    public IActionDSL listenForAny(IAction receiver, Object... of) {
+        return queue(new ListenForAny(receiver, of));
     }
 
     @Override
-    public IActionDSL listenForAll(IAction receiver, Object... triggers) {
-        return queue(new ListenForAll(receiver, triggers));
+    public IActionDSL listenForAll(IAction receiver, Object... of) {
+        return queue(new ListenForAll(receiver, of));
     }
 
     @Override

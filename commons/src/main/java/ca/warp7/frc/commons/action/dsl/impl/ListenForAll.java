@@ -25,7 +25,7 @@ class ListenForAll extends BaseAction {
     @Override
     void onReceive(Object trigger) {
         mTriggers.removeIf(trigger::equals);
-        mReceived = mTriggers.isEmpty();
+        mReceived = !mReceived && mTriggers.isEmpty();
         if (mReceived) mReceiver.onStart();
     }
 
