@@ -8,21 +8,21 @@ import java.util.List;
 
 /**
  * Composite action, running all sub-actions at the same time All actions are started then updated until all actions
- * report being done. {@link ActionSeries}
+ * report being done. {@link SeriesAction}
  *
  * @author Team 254, modified by Team 865
  */
 
 @Deprecated
-public class ParallelActions implements IAction {
+public class ParallelAction implements IAction {
 
     private final List<IAction> mActions;
 
-    public ParallelActions(List<IAction> actions) {
+    public ParallelAction(List<IAction> actions) {
         mActions = new ArrayList<>(actions);
     }
 
-    public ParallelActions(IAction... actions) {
+    public ParallelAction(IAction... actions) {
         mActions = Arrays.asList(actions);
     }
 

@@ -7,23 +7,23 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Executes one action at a time. Useful as a member of {@link ParallelActions}
+ * Executes one action at a time. Useful as a member of {@link ParallelAction}
  *
  * @author Team 254, modified by Team 865
  */
 
 @Deprecated
-public class ActionSeries implements IAction {
+public class SeriesAction implements IAction {
 
     private IAction mCurAction;
     private final List<IAction> mRemainingActions;
 
-    public ActionSeries(List<IAction> actions) {
+    public SeriesAction(List<IAction> actions) {
         mRemainingActions = new ArrayList<>(actions);
         mCurAction = null;
     }
 
-    public ActionSeries(IAction... actions) {
+    public SeriesAction(IAction... actions) {
         mRemainingActions = Arrays.asList(actions);
         mCurAction = null;
     }

@@ -82,11 +82,7 @@ class AutoRunner {
             try {
 
                 // Delay for a certain amount of time so the update function is not called so often
-                if (mAction.shouldAcceptLoopManagement()) {
-                    mAction.onSleep();
-                } else {
-                    Thread.sleep(kDefaultLoopDelta);
-                }
+                Thread.sleep(kDefaultLoopDelta);
 
             } catch (InterruptedException e) {
 
