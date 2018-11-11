@@ -2,6 +2,7 @@ package ca.warp7.frc.commons.core;
 
 import java.util.Map;
 
+@FunctionalInterface
 public interface ICollectiveState {
 
     Map<String, Object> getCollection();

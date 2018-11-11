@@ -2,6 +2,7 @@ package ca.warp7.frc.commons.core;
 
 import java.util.function.Supplier;
 
+@FunctionalInterface
 public interface IActionSupplier extends Supplier<IAction> {
 
     /**

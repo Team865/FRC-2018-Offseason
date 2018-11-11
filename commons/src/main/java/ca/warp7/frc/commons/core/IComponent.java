@@ -4,6 +4,7 @@ package ca.warp7.frc.commons.core;
  * Provides an interface of deferred construction for robot components
  */
 
+@FunctionalInterface
 public interface IComponent {
     /**
      * <p>Called when constructing the subsystem</p>

@@ -6,13 +6,13 @@ package ca.warp7.frc.commons.core;
  * Actions as part of its program
  */
 
+@FunctionalInterface
 public interface IAction extends IActionSupplier {
 
     /**
      * Run code once when the action is started, usually for set up
      */
-    default void onStart() {
-    }
+    void onStart();
 
     /**
      * Returns whether or not the code has finished execution.
@@ -22,7 +22,9 @@ public interface IAction extends IActionSupplier {
      *
      * @return boolean
      */
-    boolean shouldFinish();
+    default boolean shouldFinish() {
+        return true;
+    }
 
     /**
      * Called by runAction in AutoModeBase iteratively until isFinished returns true.

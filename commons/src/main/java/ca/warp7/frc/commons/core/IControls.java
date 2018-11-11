@@ -3,6 +3,8 @@ package ca.warp7.frc.commons.core;
 /**
  * Defines a periodic procedure getting input from the controllers
  */
+
+@FunctionalInterface
 public interface IControls {
 
     int Pressed = 9;

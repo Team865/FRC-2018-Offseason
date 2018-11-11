@@ -29,6 +29,10 @@ public class ActionSeries implements IAction {
     }
 
     @Override
+    public void onStart() {
+    }
+
+    @Override
     public boolean shouldFinish() {
         return mRemainingActions.isEmpty() && mCurAction == null;
     }

@@ -5,6 +5,7 @@ package ca.warp7.frc.commons.core;
  * included. There are other classes that help with scheduling
  * mechanisms
  */
+
 @FunctionalInterface
 public interface IAutoMode extends IActionSupplier {
 
