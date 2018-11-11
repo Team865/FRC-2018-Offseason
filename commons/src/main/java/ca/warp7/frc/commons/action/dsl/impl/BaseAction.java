@@ -25,21 +25,20 @@ abstract class BaseAction implements IAction {
         return null;
     }
 
-    void onBroadcast(String message) {
-        if (mParent != null) mParent.onBroadcast(message);
+    void onBroadcast(Object trigger) {
+        if (mParent != null) mParent.onBroadcast(trigger);
         else {
             List<IAction> children = getChildren();
             if (children != null) {
                 for (IAction child : children) {
                     if (child instanceof BaseAction) {
-                        ((BaseAction) child).onReceive(message);
+                        ((BaseAction) child).onReceive(trigger);
                     }
                 }
             }
         }
     }
 
-    void onReceive(String message) {
-
+    void onReceive(Object trigger) {
     }
 }

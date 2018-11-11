@@ -35,7 +35,7 @@ public class OneSwitch implements IAutoMode {
     }
 
     @Override
-    public String getConfigurationPostfix() {
+    public String getConfiguration() {
         return String.valueOf(side);
     }
 }

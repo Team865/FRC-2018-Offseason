@@ -24,11 +24,13 @@ public interface IActionDSL extends IAction {
 
     IActionDSL asyncUntil(Predicate<IAction> predicate, IAction... actions);
 
-    IActionDSL broadcast(String message);
+    IActionDSL broadcast(Object... triggers);
 
     IActionDSL branch(Predicate<IAction> predicate, IAction ifAction, IAction elseAction);
 
-    IActionDSL listen(IAction receiver, String... triggers);
+    IActionDSL listen(IAction receiver, Object... triggers);
+
+    IActionDSL listenForAll(IAction receiver, Object... triggers);
 
     IActionDSL onlyIf(Predicate<IAction> predicate, IAction action);
 

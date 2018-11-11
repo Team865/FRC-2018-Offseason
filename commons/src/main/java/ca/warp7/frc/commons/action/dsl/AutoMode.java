@@ -51,7 +51,7 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
 
     @Override
     public IActionDSL queue(IAction... actions) {
-        return new QueueDSL();
+        return new QueueDSL(actions);
     }
 
     @Override
@@ -75,13 +75,18 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL broadcast(String message) {
-        return queue().broadcast(message);
+    public IActionDSL broadcast(Object... triggers) {
+        return queue().broadcast(triggers);
     }
 
     @Override
-    public IActionDSL listen(IAction receiver, String... triggers) {
+    public IActionDSL listen(IAction receiver, Object... triggers) {
         return queue().listen(receiver);
+    }
+
+    @Override
+    public IActionDSL listenForAll(IAction receiver, Object... triggers) {
+        return queue().listenForAll(receiver, triggers);
     }
 
     @Override

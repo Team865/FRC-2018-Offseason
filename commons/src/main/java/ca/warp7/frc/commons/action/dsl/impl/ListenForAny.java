@@ -5,13 +5,13 @@ import ca.warp7.frc.commons.core.IAction;
 import java.util.Arrays;
 import java.util.List;
 
-class ListenFor extends BaseAction {
+class ListenForAny extends BaseAction {
 
-    private List<String> mTriggers;
+    private List<Object> mTriggers;
     private IAction mReceiver;
     private boolean mReceived;
 
-    ListenFor(IAction receiver, String... triggers) {
+    ListenForAny(IAction receiver, Object... triggers) {
         mReceiver = receiver;
         mTriggers = Arrays.asList(triggers);
         mReceived = false;
@@ -23,7 +23,7 @@ class ListenFor extends BaseAction {
     }
 
     @Override
-    void onReceive(String message) {
+    void onReceive(Object message) {
         mReceived = mReceived || mTriggers.stream().anyMatch(message::equals);
         if (mReceived) mReceiver.onStart();
     }

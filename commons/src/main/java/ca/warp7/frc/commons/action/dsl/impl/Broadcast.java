@@ -2,14 +2,16 @@ package ca.warp7.frc.commons.action.dsl.impl;
 
 class Broadcast extends BaseAction {
 
-    private String mMessage;
+    private Object[] mTriggers;
 
-    Broadcast(String message) {
-        mMessage = message;
+    Broadcast(Object... message) {
+        mTriggers = message;
     }
 
     @Override
     public void onStart() {
-        onBroadcast(mMessage);
+        for (Object trigger : mTriggers) {
+            onBroadcast(trigger);
+        }
     }
 }

@@ -55,8 +55,8 @@ public class QueueDSL extends BaseQueue implements IActionDSL {
     }
 
     @Override
-    public IActionDSL broadcast(String message) {
-        return queue(new Broadcast(message));
+    public IActionDSL broadcast(Object... triggers) {
+        return queue(new Broadcast(triggers));
     }
 
     @Override
@@ -65,8 +65,13 @@ public class QueueDSL extends BaseQueue implements IActionDSL {
     }
 
     @Override
-    public IActionDSL listen(IAction receiver, String... triggers) {
-        return queue(new ListenFor(receiver, triggers));
+    public IActionDSL listen(IAction receiver, Object... triggers) {
+        return queue(new ListenForAny(receiver, triggers));
+    }
+
+    @Override
+    public IActionDSL listenForAll(IAction receiver, Object... triggers) {
+        return queue(new ListenForAll(receiver, triggers));
     }
 
     @Override
