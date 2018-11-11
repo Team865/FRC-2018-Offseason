@@ -55,8 +55,8 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL verbose(IAction action) {
-        return queue().verbose(action);
+    public IActionDSL debug(IAction action) {
+        return queue().debug(action);
     }
 
     @Override
@@ -77,6 +77,11 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     @Override
     public IActionDSL broadcast(Object... triggers) {
         return queue().broadcast(triggers);
+    }
+
+    @Override
+    public IActionDSL broadcastWhen(Predicate<IAction> predicate, Object... triggers) {
+        return queue().broadcastWhen(predicate, triggers);
     }
 
     @Override

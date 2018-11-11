@@ -26,7 +26,11 @@ public interface IActionDSL extends IAction {
 
     IActionDSL broadcast(Object... triggers);
 
+    IActionDSL broadcastWhen(Predicate<IAction> predicate, Object... triggers);
+
     IActionDSL branch(Predicate<IAction> predicate, IAction ifAction, IAction elseAction);
+
+    IActionDSL debug(IAction action);
 
     IActionDSL listen(IAction receiver, Object... triggers);
 
@@ -35,8 +39,6 @@ public interface IActionDSL extends IAction {
     IActionDSL onlyIf(Predicate<IAction> predicate, IAction action);
 
     IActionDSL queue(IAction... actions);
-
-    IActionDSL verbose(IAction action);
 
     IActionDSL waitFor(double seconds);
 

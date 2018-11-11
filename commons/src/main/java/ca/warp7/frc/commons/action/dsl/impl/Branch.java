@@ -36,4 +36,10 @@ public class Branch implements IAction {
     public boolean shouldFinish() {
         return mSelected.shouldFinish();
     }
+
+    public static class Done implements IAction {
+        @Override
+        public void onStart() {
+        }
+    }
 }

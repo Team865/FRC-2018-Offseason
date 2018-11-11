@@ -60,6 +60,11 @@ public class QueueDSL extends BaseQueue implements IActionDSL {
     }
 
     @Override
+    public IActionDSL broadcastWhen(Predicate<IAction> predicate, Object... triggers) {
+        return waitUntil(predicate).broadcast(triggers);
+    }
+
+    @Override
     public IActionDSL asyncDetach(IAction action) {
         return queue(new AsyncDetach(action));
     }
@@ -76,12 +81,12 @@ public class QueueDSL extends BaseQueue implements IActionDSL {
 
     @Override
     public IActionDSL onlyIf(Predicate<IAction> predicate, IAction action) {
-        return branch(predicate, action, new Done());
+        return branch(predicate, action, new Branch.Done());
     }
 
     @Override
-    public IActionDSL verbose(IAction action) {
-        return queue(new Verbose());
+    public IActionDSL debug(IAction action) {
+        return queue(new Debug());
     }
 
     @Override
