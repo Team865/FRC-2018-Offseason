@@ -1,9 +1,9 @@
 package ca.warp7.frc2017_2.operator_input;
 
-import ca.warp7.frc.commons.XboxController;
+import ca.warp7.frc.XboxController;
 
-import static ca.warp7.frc.commons.ButtonState.HELD_DOWN;
-import static ca.warp7.frc.commons.ButtonState.KEPT_UP;
+import static ca.warp7.frc.ButtonState.HELD_DOWN;
+import static ca.warp7.frc.ButtonState.KEPT_UP;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 
 public class DualRemote extends SingleRemote {

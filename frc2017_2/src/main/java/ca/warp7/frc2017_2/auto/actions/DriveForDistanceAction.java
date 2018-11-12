@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_2.auto.actions;
 
-import ca.warp7.frc.commons.core.IAction;
-import ca.warp7.frc.commons.PIDValues;
+import ca.warp7.frc.PIDValues;
+import ca.warp7.frc.core.IAction;
 
 import static ca.warp7.frc2017_2.Components.drive;
 

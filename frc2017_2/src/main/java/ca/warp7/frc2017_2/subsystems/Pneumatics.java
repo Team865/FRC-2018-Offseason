@@ -1,8 +1,8 @@
 package ca.warp7.frc2017_2.subsystems;
 
-import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.Robot;
-import ca.warp7.frc.commons.core.StateType;
+import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.core.Robot;
+import ca.warp7.frc.core.StateType;
 import ca.warp7.frc2017_2.constants.RobotMap;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;

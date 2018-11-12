@@ -1,8 +1,8 @@
 package ca.warp7.frc2018_3;
 
-import ca.warp7.frc.commons.core.IControls;
-import ca.warp7.frc.commons.core.RobotLoader;
-import ca.warp7.frc.commons.core.XboxControlsState;
+import ca.warp7.frc.core.IControls;
+import ca.warp7.frc.core.RobotLoader;
+import ca.warp7.frc.core.XboxControlsState;
 import ca.warp7.frc2018_3.subsystems.Intake;
 
 import static ca.warp7.frc2018_3.Components.*;

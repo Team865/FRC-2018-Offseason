@@ -1,6 +1,6 @@
 package ca.warp7.frc2017_2.operator_input;
 
-import ca.warp7.frc.commons.cheesy_drive.ICheesyDriveInput;
+import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
 
 interface IOperatorController extends ICheesyDriveInput {
 

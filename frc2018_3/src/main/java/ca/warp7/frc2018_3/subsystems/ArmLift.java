@@ -1,12 +1,12 @@
 package ca.warp7.frc2018_3.subsystems;
 
-import ca.warp7.frc.commons.core.ISubsystem;
-import ca.warp7.frc.commons.core.Robot;
-import ca.warp7.frc.commons.core.StateType;
+import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc.core.Robot;
+import ca.warp7.frc.core.StateType;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-import static ca.warp7.frc.commons.Functions.limit;
+import static ca.warp7.frc.Functions.limit;
 import static ca.warp7.frc2018_3.Constants.kArmLiftPinA;
 import static ca.warp7.frc2018_3.Constants.kArmLiftPinB;
 

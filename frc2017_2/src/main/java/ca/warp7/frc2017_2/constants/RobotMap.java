@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_2.constants;
 
-import ca.warp7.frc.commons.PIDValues;
-import ca.warp7.frc.commons.Pins;
+import ca.warp7.frc.PIDValues;
+import ca.warp7.frc.Pins;
 
 /**
  * Static variables that maps the robot and includes constants

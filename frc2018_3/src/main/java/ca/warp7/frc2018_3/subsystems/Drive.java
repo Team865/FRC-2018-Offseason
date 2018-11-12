@@ -1,12 +1,12 @@
 package ca.warp7.frc2018_3.subsystems;
 
-import ca.warp7.frc.commons.DifferentialVector;
-import ca.warp7.frc.commons.DtMeasurement;
-import ca.warp7.frc.commons.PIDValues;
-import ca.warp7.frc.commons.Unit;
-import ca.warp7.frc.commons.action.dsl.IActionDelegate;
-import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
-import ca.warp7.frc.commons.core.ISubsystem;
+import ca.warp7.frc.DifferentialVector;
+import ca.warp7.frc.DtMeasurement;
+import ca.warp7.frc.PIDValues;
+import ca.warp7.frc.Unit;
+import ca.warp7.frc.action.dsl.def.IActionDelegate;
+import ca.warp7.frc.cheesy_drive.CheesyDrive;
+import ca.warp7.frc.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj.*;
 
 import java.util.LinkedList;
 
-import static ca.warp7.frc.commons.Functions.constrainMinimum;
-import static ca.warp7.frc.commons.Functions.limit;
-import static ca.warp7.frc.commons.core.Robot.reportInputAndState;
+import static ca.warp7.frc.Functions.constrainMinimum;
+import static ca.warp7.frc.Functions.limit;
+import static ca.warp7.frc.core.Robot.reportInputAndState;
 import static ca.warp7.frc2018_3.Components.navx;
 import static ca.warp7.frc2018_3.Constants.*;
 
