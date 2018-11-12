@@ -8,6 +8,7 @@ import ca.warp7.frc2018_3.actions.DriveForDistanceAction;
 import ca.warp7.frc2018_3.actions.OuttakeCube;
 import edu.wpi.first.wpilibj.DriverStation;
 
+@SuppressWarnings("deprecation")
 public class OneSwitch implements IAutoMode {
 
     private char side;

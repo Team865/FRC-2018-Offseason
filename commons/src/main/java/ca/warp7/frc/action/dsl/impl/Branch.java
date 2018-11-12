@@ -18,22 +18,21 @@ class Branch extends BaseAction {
     @Override
     public void onStart() {
         mSelected = mPredicate.test(this) ? mIf : mElse;
-        mSelected.onStart();
+        if (mSelected != null) mSelected.onStart();
     }
 
     @Override
     public void onUpdate() {
-        mSelected.onUpdate();
+        if (mSelected != null) mSelected.onUpdate();
     }
 
     @Override
     public void onStop() {
-        mSelected.onStop();
+        if (mSelected != null) mSelected.onStop();
     }
 
     @Override
     public boolean shouldFinish() {
-        return mSelected.shouldFinish();
+        return mSelected == null || mSelected.shouldFinish();
     }
-
 }

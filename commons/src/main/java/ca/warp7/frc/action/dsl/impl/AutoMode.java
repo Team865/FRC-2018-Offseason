@@ -1,10 +1,10 @@
 package ca.warp7.frc.action.dsl.impl;
 
+import ca.warp7.frc.action.dsl.def.IActionConsumer;
 import ca.warp7.frc.action.dsl.def.IActionDSL;
 import ca.warp7.frc.action.dsl.def.IActionPredicate;
 import ca.warp7.frc.core.IAction;
 import ca.warp7.frc.core.IAutoMode;
-import ca.warp7.frc.core.ILoop;
 
 public abstract class AutoMode implements IAutoMode, IActionDSL {
 
@@ -29,11 +29,6 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncUntil(IActionPredicate predicate, IAction... actions) {
-        return queue().asyncUntil(predicate, actions);
-    }
-
-    @Override
     public IActionDSL branch(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
         return queue().branch(predicate, ifAction, elseAction);
     }
@@ -44,18 +39,13 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL onlyIf(IActionPredicate predicate, IAction action) {
-        return queue().onlyIf(predicate, action);
+    public IActionDSL asyncWatch(IAction action, IActionConsumer consumer) {
+        return queue().asyncWatch(action, consumer);
     }
 
     @Override
     public IActionDSL queue(IAction... actions) {
         return Queue.head(actions);
-    }
-
-    @Override
-    public IActionDSL debug(IAction action) {
-        return queue().debug(action);
     }
 
     @Override
@@ -69,18 +59,13 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncLoop(IAction action, ILoop loop) {
-        return queue().asyncLoop(action, loop);
-    }
-
-    @Override
     public IActionDSL broadcast(Object... triggers) {
         return queue().broadcast(triggers);
     }
 
     @Override
-    public IActionDSL broadcastWhen(IActionPredicate predicate, Object... triggers) {
-        return queue().broadcastWhen(predicate, triggers);
+    public IActionDSL consume(IActionConsumer consumer) {
+        return queue().consume(consumer);
     }
 
     @Override

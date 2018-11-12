@@ -42,9 +42,7 @@ abstract class QueueBase extends BaseAction implements IActionParent {
 
     @Override
     public void onStop() {
-        if (mCurrentAction != null) {
-            mCurrentAction.onStop();
-        }
+        if (mCurrentAction != null) mCurrentAction.onStop();
     }
 
     @Override

@@ -1,13 +1,14 @@
 package ca.warp7.frc.action.dsl.def;
 
 import ca.warp7.frc.core.IAction;
-import ca.warp7.frc.core.ILoop;
 
 /**
  * A declarative, chain-able DSL syntax for scheduling autos
  */
 
+@SuppressWarnings("ALL")
 public interface IActionDSL extends IAction {
+
     IActionDSL async(IAction... actions);
 
     IActionDSL asyncAny(IAction... actions);
@@ -16,29 +17,35 @@ public interface IActionDSL extends IAction {
 
     IActionDSL asyncInverse(IAction... actions);
 
-    IActionDSL asyncLoop(IAction action, ILoop loop);
+    IActionDSL asyncWatch(IAction action, IActionConsumer consumer);
 
     IActionDSL asyncMaster(IAction master, IAction... slaves);
 
-    IActionDSL asyncUntil(IActionPredicate predicate, IAction... actions);
-
     IActionDSL broadcast(Object... triggers);
-
-    IActionDSL broadcastWhen(IActionPredicate predicate, Object... triggers);
 
     IActionDSL branch(IActionPredicate predicate, IAction ifAction, IAction elseAction);
 
-    IActionDSL debug(IAction action);
+    IActionDSL consume(IActionConsumer consumer);
 
     IActionDSL listenForAny(IAction receiver, Object... of);
 
     IActionDSL listenForAll(IAction receiver, Object... of);
-
-    IActionDSL onlyIf(IActionPredicate predicate, IAction action);
 
     IActionDSL queue(IAction... actions);
 
     IActionDSL waitFor(double seconds);
 
     IActionDSL waitUntil(IActionPredicate predicate);
+
+    default IActionDSL onlyIf(IActionPredicate predicate, IAction action) {
+        return branch(predicate, action, null);
+    }
+
+    default IActionDSL asyncUntil(IActionPredicate predicate, IAction... actions) {
+        return asyncMaster(waitUntil(predicate), actions);
+    }
+
+    default IActionDSL broadcastWhen(IActionPredicate predicate, Object... triggers) {
+        return waitUntil(predicate).broadcast(triggers);
+    }
 }

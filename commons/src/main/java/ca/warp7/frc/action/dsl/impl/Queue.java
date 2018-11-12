@@ -1,10 +1,9 @@
 package ca.warp7.frc.action.dsl.impl;
 
+import ca.warp7.frc.action.dsl.def.IActionConsumer;
 import ca.warp7.frc.action.dsl.def.IActionDSL;
-import ca.warp7.frc.action.dsl.def.IActionLoop;
 import ca.warp7.frc.action.dsl.def.IActionPredicate;
 import ca.warp7.frc.core.IAction;
-import ca.warp7.frc.core.ILoop;
 
 class Queue extends QueueBase implements IActionDSL {
 
@@ -32,13 +31,13 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncInverse(IAction... actions) {
-        return queue(new AsyncInverse());
+    public IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action) {
+        return queue(new AsyncDetach(detachedInterval, timeout, action));
     }
 
     @Override
-    public IActionDSL asyncLoop(IAction action, ILoop loop) {
-        return asyncMaster(action, (IActionLoop) loop::onLoop);
+    public IActionDSL asyncInverse(IAction... actions) {
+        return queue(new AsyncInverse(actions));
     }
 
     @Override
@@ -47,8 +46,8 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncUntil(IActionPredicate predicate, IAction... actions) {
-        return asyncMaster(new WaitUntil(predicate), actions);
+    public IActionDSL asyncWatch(IAction action, IActionConsumer consumer) {
+        return null;
     }
 
     @Override
@@ -62,13 +61,8 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL broadcastWhen(IActionPredicate predicate, Object... triggers) {
-        return waitUntil(predicate).broadcast(triggers);
-    }
-
-    @Override
-    public IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action) {
-        return queue(new AsyncDetach(detachedInterval, timeout, action));
+    public IActionDSL consume(IActionConsumer consumer) {
+        return queue(new Consume(consumer));
     }
 
     @Override
@@ -79,16 +73,6 @@ class Queue extends QueueBase implements IActionDSL {
     @Override
     public IActionDSL listenForAll(IAction receiver, Object... of) {
         return queue(new ListenForAll(receiver, of));
-    }
-
-    @Override
-    public IActionDSL onlyIf(IActionPredicate predicate, IAction action) {
-        return branch(predicate, action, new StopAction());
-    }
-
-    @Override
-    public IActionDSL debug(IAction action) {
-        return queue(new Debug());
     }
 
     @Override
