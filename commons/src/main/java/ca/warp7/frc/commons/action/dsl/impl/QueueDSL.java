@@ -65,8 +65,8 @@ public class QueueDSL extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncDetach(IAction action) {
-        return queue(new AsyncDetach(action));
+    public IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action) {
+        return queue(new AsyncDetach(detachedInterval, timeout, action));
     }
 
     @Override

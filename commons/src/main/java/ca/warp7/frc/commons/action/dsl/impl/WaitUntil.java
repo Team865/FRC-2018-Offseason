@@ -4,7 +4,7 @@ import ca.warp7.frc.commons.core.IAction;
 
 import java.util.function.Predicate;
 
-public class WaitUntil implements IAction {
+public class WaitUntil extends BaseAction {
     private Predicate<IAction> mSupplier;
 
     WaitUntil(Predicate<IAction> supplier) {

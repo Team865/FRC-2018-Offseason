@@ -1,9 +1,8 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
-import ca.warp7.frc.commons.core.IAction;
 import edu.wpi.first.wpilibj.Timer;
 
-public class WaitFor implements IAction {
+public class WaitFor extends BaseAction {
     private double mStartTime;
     private double mDuration;
 

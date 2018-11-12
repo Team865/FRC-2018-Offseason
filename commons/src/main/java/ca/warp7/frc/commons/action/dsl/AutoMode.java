@@ -40,8 +40,8 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncDetach(IAction action) {
-        return queue().asyncDetach(action);
+    public IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action) {
+        return queue().asyncDetach(detachedInterval, timeout, action);
     }
 
     @Override

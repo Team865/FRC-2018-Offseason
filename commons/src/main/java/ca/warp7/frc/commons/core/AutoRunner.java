@@ -143,7 +143,7 @@ class AutoRunner {
 
         // Make sure a valid action is returned by the mode
         if (mAction == null) {
-            System.err.println("WARNING there isn't a action returned by the mode!!!");
+            System.err.println("WARNING there isn't an action!!!");
             return;
         }
 

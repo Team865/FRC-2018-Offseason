@@ -14,7 +14,7 @@ public interface IActionDSL extends IAction {
 
     IActionDSL asyncAny(IAction... actions);
 
-    IActionDSL asyncDetach(IAction action);
+    IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action);
 
     IActionDSL asyncInverse(IAction... actions);
 
