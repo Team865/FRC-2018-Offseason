@@ -52,7 +52,7 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
 
     @Override
     public IActionDSL queue(IAction... actions) {
-        return new QueueDSL(actions);
+        return Queue.head(actions);
     }
 
     @Override

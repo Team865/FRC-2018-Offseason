@@ -3,7 +3,6 @@ package ca.warp7.frc.commons.action.dsl.impl;
 import ca.warp7.frc.commons.core.IAction;
 
 class AsyncAll extends AsyncBase {
-
     AsyncAll(IAction... actions) {
         super(actions);
     }

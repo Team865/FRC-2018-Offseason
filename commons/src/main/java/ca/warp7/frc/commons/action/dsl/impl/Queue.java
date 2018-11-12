@@ -2,16 +2,16 @@ package ca.warp7.frc.commons.action.dsl.impl;
 
 import ca.warp7.frc.commons.action.dsl.IActionDSL;
 import ca.warp7.frc.commons.action.dsl.IActionDelegate;
-import ca.warp7.frc.commons.action.dsl.IActionLoop;
+import ca.warp7.frc.commons.action.dsl.ILoopAction;
 import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.ILoop;
 
 import java.util.function.Predicate;
 
-class QueueDSL extends QueueBase implements IActionDSL {
+class Queue extends QueueBase implements IActionDSL {
 
-    QueueDSL(IAction... actions) {
-        queue(actions);
+    static IActionDSL head(IAction... actions) {
+        return new Queue().queue(actions);
     }
 
     @Override
@@ -37,7 +37,7 @@ class QueueDSL extends QueueBase implements IActionDSL {
 
     @Override
     public IActionDSL asyncLoop(IAction action, ILoop loop) {
-        return asyncMaster(action, (IActionLoop) loop::onLoop);
+        return asyncMaster(action, (ILoopAction) loop::onLoop);
     }
 
     @Override

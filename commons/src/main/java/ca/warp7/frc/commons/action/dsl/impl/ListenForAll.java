@@ -1,11 +1,12 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
+import ca.warp7.frc.commons.action.dsl.IActionParent;
 import ca.warp7.frc.commons.core.IAction;
 
 import java.util.Arrays;
 import java.util.List;
 
-class ListenForAll extends BaseAction {
+class ListenForAll extends BaseAction implements IActionParent {
 
     private List<Object> mTriggers;
     private IAction mReceiver;

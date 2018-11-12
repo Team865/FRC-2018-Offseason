@@ -1,11 +1,12 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
+import ca.warp7.frc.commons.action.dsl.IActionParent;
 import ca.warp7.frc.commons.core.IAction;
 
 import java.util.Arrays;
 import java.util.List;
 
-abstract class AsyncBase extends BaseAction {
+abstract class AsyncBase extends BaseAction implements IActionParent {
 
     final List<IAction> mActions;
 

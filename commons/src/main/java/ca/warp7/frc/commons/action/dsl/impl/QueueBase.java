@@ -1,5 +1,6 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
+import ca.warp7.frc.commons.action.dsl.IActionParent;
 import ca.warp7.frc.commons.core.IAction;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-abstract class QueueBase extends BaseAction {
+abstract class QueueBase extends BaseAction implements IActionParent {
 
     private final List<IAction> mCandidates = new ArrayList<>();
     private List<IAction> mCachedActionQueue;
