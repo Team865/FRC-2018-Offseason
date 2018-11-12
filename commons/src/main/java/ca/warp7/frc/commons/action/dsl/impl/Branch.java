@@ -4,7 +4,7 @@ import ca.warp7.frc.commons.core.IAction;
 
 import java.util.function.Predicate;
 
-public class Branch implements IAction {
+class Branch implements IAction {
     private Predicate<IAction> mPredicate;
     private IAction mIf;
     private IAction mElse;
@@ -37,9 +37,4 @@ public class Branch implements IAction {
         return mSelected.shouldFinish();
     }
 
-    public static class Done implements IAction {
-        @Override
-        public void onStart() {
-        }
-    }
 }

@@ -5,13 +5,9 @@ import ca.warp7.frc.commons.core.IAction;
 import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
-abstract class BaseAction implements IAction {
+abstract class BaseAction extends StopAction {
 
     private BaseAction mParent;
-
-    @Override
-    public void onStart() {
-    }
 
     BaseAction getParent() {
         return mParent;

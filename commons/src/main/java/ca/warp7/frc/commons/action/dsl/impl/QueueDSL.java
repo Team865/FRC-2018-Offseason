@@ -81,7 +81,7 @@ public class QueueDSL extends QueueBase implements IActionDSL {
 
     @Override
     public IActionDSL onlyIf(Predicate<IAction> predicate, IAction action) {
-        return branch(predicate, action, new Branch.Done());
+        return branch(predicate, action, new StopAction());
     }
 
     @Override

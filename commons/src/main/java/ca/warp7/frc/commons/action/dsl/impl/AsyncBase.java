@@ -20,9 +20,7 @@ abstract class AsyncBase extends BaseAction {
 
     @Override
     public void onStart() {
-        for (IAction action : mActions) {
-            action.onStart();
-        }
+        mActions.forEach(IAction::onStart);
     }
 
     @Override
@@ -30,15 +28,11 @@ abstract class AsyncBase extends BaseAction {
 
     @Override
     public void onUpdate() {
-        for (IAction action : mActions) {
-            action.onUpdate();
-        }
+        mActions.forEach(IAction::onUpdate);
     }
 
     @Override
     public void onStop() {
-        for (IAction action : mActions) {
-            action.onStop();
-        }
+        mActions.forEach(IAction::onStop);
     }
 }
