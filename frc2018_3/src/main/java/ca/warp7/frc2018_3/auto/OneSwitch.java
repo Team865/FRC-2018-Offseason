@@ -18,7 +18,7 @@ public class OneSwitch implements IAutoMode {
     }
 
     @Override
-    public IAction getMainAction() {
+    public IAction getAction() {
         String gameMessage = DriverStation.getInstance().getGameSpecificMessage();
         if (gameMessage.charAt(0) == side) {
             return new ScheduleBuilder()
@@ -28,15 +28,5 @@ public class OneSwitch implements IAutoMode {
                     .getActionGraph();
         }
         return new DriveForDistanceAction(new PIDValues(0.018, 0.00001, 0.23), 103, 5);
-    }
-
-    @Override
-    public boolean isConfigurable() {
-        return true;
-    }
-
-    @Override
-    public String getConfiguration() {
-        return String.valueOf(side);
     }
 }

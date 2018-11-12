@@ -5,7 +5,7 @@ import ca.warp7.frc.core.IAutoMode;
 
 public class NothingMode implements IAutoMode {
     @Override
-    public IAction getMainAction() {
+    public IAction getAction() {
         return null;
     }
 }

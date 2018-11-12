@@ -139,7 +139,7 @@ class AutoRunner {
         // Use the mode to create the actual action to run
         // This is used so that the main action can be run multiple times
         // even if the robot code is not restarted
-        mAction = autoMode.get();
+        mAction = autoMode.getAction();
 
         // Make sure a valid action is returned by the mode
         if (mAction == null) {

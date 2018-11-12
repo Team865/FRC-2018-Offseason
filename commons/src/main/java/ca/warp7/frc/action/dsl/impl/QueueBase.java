@@ -1,5 +1,6 @@
 package ca.warp7.frc.action.dsl.impl;
 
+import ca.warp7.frc.action.dsl.def.IActionDelegate;
 import ca.warp7.frc.action.dsl.def.IActionParent;
 import ca.warp7.frc.core.IAction;
 
@@ -55,9 +56,11 @@ abstract class QueueBase extends BaseAction implements IActionParent {
         if (mCachedActionQueue != null) return mCachedActionQueue;
         List<IAction> actionQueue = new ArrayList<>();
         for (IAction action : mCandidates) {
-            List<IAction> elementQueue = action.getActionQueue();
-            if (elementQueue == null) actionQueue.add(action);
-            else actionQueue.addAll(elementQueue);
+            if (action instanceof IActionDelegate) {
+                List<IAction> elementQueue = ((IActionDelegate) action).getActionQueue();
+                if (elementQueue == null) actionQueue.add(action);
+                else actionQueue.addAll(elementQueue);
+            }
         }
         mCachedActionQueue = actionQueue;
         return actionQueue;

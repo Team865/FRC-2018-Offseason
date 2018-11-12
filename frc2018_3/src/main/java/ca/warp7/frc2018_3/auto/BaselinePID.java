@@ -8,7 +8,7 @@ import ca.warp7.frc2018_3.actions.DriveForDistanceAction;
 public class BaselinePID implements IAutoMode {
 
     @Override
-    public IAction getMainAction() {
+    public IAction getAction() {
         return new DriveForDistanceAction(new PIDValues(0.018, 0.00001, 0.23), 150, 5);
     }
 }

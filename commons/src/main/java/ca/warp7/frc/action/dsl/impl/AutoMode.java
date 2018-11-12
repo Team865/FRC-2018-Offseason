@@ -79,11 +79,6 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IAction get() {
-        return IAutoMode.super.get();
-    }
-
-    @Override
     public void onStart() {
     }
 }

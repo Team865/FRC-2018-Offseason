@@ -7,17 +7,12 @@ package ca.warp7.frc.core;
  */
 
 @FunctionalInterface
-public interface IAutoMode extends IActionSupplier {
+public interface IAutoMode {
 
     /**
      * Procedure to fetch the main action of the mode
      *
      * @return the action
      */
-    IActionSupplier getMainAction();
-
-    @Override
-    default IAction get() {
-        return getMainAction().get();
-    }
+    IAction getAction();
 }

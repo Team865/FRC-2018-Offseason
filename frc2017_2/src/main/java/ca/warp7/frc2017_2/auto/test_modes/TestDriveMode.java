@@ -9,7 +9,7 @@ import ca.warp7.frc2017_2.constants.RobotMap;
 
 public class TestDriveMode implements IAutoMode {
     @Override
-    public IAction getMainAction() {
+    public IAction getAction() {
 
         return new ScheduleBuilder()
                 .startSeries()

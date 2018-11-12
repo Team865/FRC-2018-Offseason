@@ -7,7 +7,7 @@ package ca.warp7.frc.core;
  */
 
 @FunctionalInterface
-public interface IAction extends IActionSupplier {
+public interface IAction {
 
     /**
      * Run code once when the action is started, usually for set up
@@ -37,10 +37,5 @@ public interface IAction extends IActionSupplier {
      * Run code once when the action finishes, usually for clean up
      */
     default void onStop() {
-    }
-
-    @Override
-    default IAction get() {
-        return this;
     }
 }
