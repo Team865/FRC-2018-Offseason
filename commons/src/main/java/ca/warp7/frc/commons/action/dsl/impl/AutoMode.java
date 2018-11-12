@@ -1,6 +1,7 @@
-package ca.warp7.frc.commons.action.dsl;
+package ca.warp7.frc.commons.action.dsl.impl;
 
-import ca.warp7.frc.commons.action.dsl.impl.QueueDSL;
+import ca.warp7.frc.commons.action.dsl.IActionDSL;
+import ca.warp7.frc.commons.action.dsl.IActionDelegate;
 import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.IAutoMode;
 import ca.warp7.frc.commons.core.ILoop;
@@ -30,12 +31,12 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncUntil(Predicate<IAction> predicate, IAction... actions) {
+    public IActionDSL asyncUntil(Predicate<IActionDelegate> predicate, IAction... actions) {
         return queue().asyncUntil(predicate, actions);
     }
 
     @Override
-    public IActionDSL branch(Predicate<IAction> predicate, IAction ifAction, IAction elseAction) {
+    public IActionDSL branch(Predicate<IActionDelegate> predicate, IAction ifAction, IAction elseAction) {
         return queue().branch(predicate, ifAction, elseAction);
     }
 
@@ -45,7 +46,7 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL onlyIf(Predicate<IAction> predicate, IAction action) {
+    public IActionDSL onlyIf(Predicate<IActionDelegate> predicate, IAction action) {
         return queue().onlyIf(predicate, action);
     }
 
@@ -65,7 +66,7 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL waitUntil(Predicate<IAction> predicate) {
+    public IActionDSL waitUntil(Predicate<IActionDelegate> predicate) {
         return queue().waitUntil(predicate);
     }
 
@@ -80,7 +81,7 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL broadcastWhen(Predicate<IAction> predicate, Object... triggers) {
+    public IActionDSL broadcastWhen(Predicate<IActionDelegate> predicate, Object... triggers) {
         return queue().broadcastWhen(predicate, triggers);
     }
 

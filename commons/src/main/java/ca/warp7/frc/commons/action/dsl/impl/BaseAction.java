@@ -1,11 +1,12 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
+import ca.warp7.frc.commons.action.dsl.IActionDelegate;
 import ca.warp7.frc.commons.core.IAction;
 
 import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
-abstract class BaseAction extends StopAction {
+abstract class BaseAction extends StopAction implements IActionDelegate {
 
     private BaseAction mParent;
 

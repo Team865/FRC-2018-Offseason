@@ -4,8 +4,8 @@ import ca.warp7.frc.commons.DifferentialVector;
 import ca.warp7.frc.commons.DtMeasurement;
 import ca.warp7.frc.commons.PIDValues;
 import ca.warp7.frc.commons.Unit;
+import ca.warp7.frc.commons.action.dsl.IActionDelegate;
 import ca.warp7.frc.commons.cheesy_drive.CheesyDrive;
-import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -307,7 +307,7 @@ public class Drive implements ISubsystem {
                 Math.abs(range - mState.rightDistance) < Math.abs(tolerance);
     }
 
-    public boolean isPIDReached(IAction action) {
+    public boolean isPIDReached(IActionDelegate delegate) {
         return true;
     }
 

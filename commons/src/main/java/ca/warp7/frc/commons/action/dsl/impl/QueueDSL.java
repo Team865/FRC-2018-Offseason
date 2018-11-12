@@ -1,15 +1,16 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
 import ca.warp7.frc.commons.action.dsl.IActionDSL;
+import ca.warp7.frc.commons.action.dsl.IActionDelegate;
 import ca.warp7.frc.commons.action.dsl.IActionLoop;
 import ca.warp7.frc.commons.core.IAction;
 import ca.warp7.frc.commons.core.ILoop;
 
 import java.util.function.Predicate;
 
-public class QueueDSL extends QueueBase implements IActionDSL {
+class QueueDSL extends QueueBase implements IActionDSL {
 
-    public QueueDSL(IAction... actions) {
+    QueueDSL(IAction... actions) {
         queue(actions);
     }
 
@@ -45,12 +46,12 @@ public class QueueDSL extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncUntil(Predicate<IAction> predicate, IAction... actions) {
+    public IActionDSL asyncUntil(Predicate<IActionDelegate> predicate, IAction... actions) {
         return asyncMaster(new WaitUntil(predicate), actions);
     }
 
     @Override
-    public IActionDSL branch(Predicate<IAction> predicate, IAction ifAction, IAction elseAction) {
+    public IActionDSL branch(Predicate<IActionDelegate> predicate, IAction ifAction, IAction elseAction) {
         return queue(new Branch(predicate, ifAction, elseAction));
     }
 
@@ -60,7 +61,7 @@ public class QueueDSL extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL broadcastWhen(Predicate<IAction> predicate, Object... triggers) {
+    public IActionDSL broadcastWhen(Predicate<IActionDelegate> predicate, Object... triggers) {
         return waitUntil(predicate).broadcast(triggers);
     }
 
@@ -80,7 +81,7 @@ public class QueueDSL extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL onlyIf(Predicate<IAction> predicate, IAction action) {
+    public IActionDSL onlyIf(Predicate<IActionDelegate> predicate, IAction action) {
         return branch(predicate, action, new StopAction());
     }
 
@@ -95,7 +96,7 @@ public class QueueDSL extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL waitUntil(Predicate<IAction> predicate) {
+    public IActionDSL waitUntil(Predicate<IActionDelegate> predicate) {
         return queue(new WaitUntil(predicate));
     }
 }

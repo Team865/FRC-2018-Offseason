@@ -22,13 +22,13 @@ public interface IActionDSL extends IAction {
 
     IActionDSL asyncMaster(IAction master, IAction... slaves);
 
-    IActionDSL asyncUntil(Predicate<IAction> predicate, IAction... actions);
+    IActionDSL asyncUntil(Predicate<IActionDelegate> predicate, IAction... actions);
 
     IActionDSL broadcast(Object... triggers);
 
-    IActionDSL broadcastWhen(Predicate<IAction> predicate, Object... triggers);
+    IActionDSL broadcastWhen(Predicate<IActionDelegate> predicate, Object... triggers);
 
-    IActionDSL branch(Predicate<IAction> predicate, IAction ifAction, IAction elseAction);
+    IActionDSL branch(Predicate<IActionDelegate> predicate, IAction ifAction, IAction elseAction);
 
     IActionDSL debug(IAction action);
 
@@ -36,11 +36,11 @@ public interface IActionDSL extends IAction {
 
     IActionDSL listenForAll(IAction receiver, Object... of);
 
-    IActionDSL onlyIf(Predicate<IAction> predicate, IAction action);
+    IActionDSL onlyIf(Predicate<IActionDelegate> predicate, IAction action);
 
     IActionDSL queue(IAction... actions);
 
     IActionDSL waitFor(double seconds);
 
-    IActionDSL waitUntil(Predicate<IAction> predicate);
+    IActionDSL waitUntil(Predicate<IActionDelegate> predicate);
 }

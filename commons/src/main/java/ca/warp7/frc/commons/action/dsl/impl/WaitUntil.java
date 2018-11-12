@@ -1,13 +1,13 @@
 package ca.warp7.frc.commons.action.dsl.impl;
 
-import ca.warp7.frc.commons.core.IAction;
+import ca.warp7.frc.commons.action.dsl.IActionDelegate;
 
 import java.util.function.Predicate;
 
 public class WaitUntil extends BaseAction {
-    private Predicate<IAction> mSupplier;
+    private Predicate<IActionDelegate> mSupplier;
 
-    WaitUntil(Predicate<IAction> supplier) {
+    WaitUntil(Predicate<IActionDelegate> supplier) {
         mSupplier = supplier;
     }
 
