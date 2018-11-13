@@ -7,10 +7,6 @@ public interface IActionDelegate {
 
     double getTotalElapsed();
 
-    IActionParent asParent();
-
-    boolean hasParent();
-
     IActionParent getParent();
 
     IActionParent getRoot();
@@ -20,4 +16,8 @@ public interface IActionDelegate {
     void interrupt();
 
     IActionResources getResources();
+
+    default boolean hasParent() {
+        return getParent() != null;
+    }
 }

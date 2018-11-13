@@ -1,32 +1,43 @@
 package ca.warp7.frc.action.api.impl;
 
+import ca.warp7.frc.action.api.def.IActionParent;
 import ca.warp7.frc.action.api.def.IActionResources;
 import ca.warp7.frc.core.IAction;
 
-class Detachment extends BaseAction {
+class RunThread extends BaseAction {
 
     private IAction mAction;
     private Thread mRunThread;
-    private long mDetachedInterval;
+    private long mInterval;
     private double mTimeout;
 
-    Detachment(double detachedInterval, double timeout, IAction action) {
+    RunThread(double interval, double timeout, IAction action) {
         mAction = action;
-        mDetachedInterval = (long) (detachedInterval * 1000);
+        mInterval = (long) (interval * 1000);
         mTimeout = timeout;
+    }
+
+    @Override
+    public IActionParent getParent() {
+        return null;
+    }
+
+    @Override
+    public IActionParent getRoot() {
+        return null;
     }
 
     @Override
     public void _onStart() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
-            System.err.println("ERROR Detached Thread is already running!!!");
+            System.err.println("ERROR a Thread is already running!!!");
             return;
         }
 
         // Make sure a valid action is returned by the mode
         if (mAction == null) {
-            System.err.println("WARNING there isn't an action to run!!!");
+            System.err.println("WARNING there isn't an Action to run!!!");
             return;
         }
 
@@ -34,7 +45,7 @@ class Detachment extends BaseAction {
 
         // Create and start the thread;
         mRunThread = new Thread(() -> {
-            System.out.println("Detached Thread starting");
+            System.out.println("Thread starting");
             double startTime = res.getTime();
             double currentTime = startTime;
             mAction.onStart();
@@ -56,7 +67,7 @@ class Detachment extends BaseAction {
                 mAction.onUpdate();
                 try {
                     // Delay for a certain amount of time so the update function is not called so often
-                    Thread.sleep(mDetachedInterval);
+                    Thread.sleep(mInterval);
                 } catch (InterruptedException e) {
                     // Breaks out the loop instead of returning so that onStop can be called
                     break;
@@ -64,9 +75,9 @@ class Detachment extends BaseAction {
             }
 
             mAction.onStop();
-            System.out.printf("Detached Thread ending after %.3fs\n", currentTime);
+            System.out.printf("Thread ending after %.3fs\n", currentTime);
             if (currentTime < mTimeout) {
-                System.out.printf("ERROR Detached Thread ended early by %.3fs\n", mTimeout - currentTime);
+                System.out.printf("ERROR Detached ended early by %.3fs\n", mTimeout - currentTime);
             }
 
             // Assign null to the thread so this runner can be called again
@@ -84,8 +95,6 @@ class Detachment extends BaseAction {
 
     @Override
     public void _onStop() {
-        if (mRunThread != null) {
-            mRunThread.interrupt();
-        }
+        if (mRunThread != null) mRunThread.interrupt();
     }
 }

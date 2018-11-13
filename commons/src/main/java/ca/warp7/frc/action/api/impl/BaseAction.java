@@ -89,19 +89,9 @@ abstract class BaseAction implements IAction, IActionDelegate {
     }
 
     @Override
-    public IActionParent asParent() {
-        return null;
-    }
-
-    @Override
-    public boolean hasParent() {
-        return false;
-    }
-
-    @Override
     public IActionResources getResources() {
         if (mResources != null) return mResources;
-        mResources = mParent != null ? mParent.getDelegate().getResources() : new ActionResources();
+        mResources = getParent() != null ? getParent().getDelegate().getResources() : new ActionResources();
         return mResources;
     }
 }

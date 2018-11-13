@@ -1,17 +1,14 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionConsumer;
 import ca.warp7.frc.action.api.def.IActionAPI;
+import ca.warp7.frc.action.api.def.IActionConsumer;
 import ca.warp7.frc.action.api.def.IActionPredicate;
 import ca.warp7.frc.core.IAction;
 
 class Queue extends QueueBase implements IActionAPI {
 
     static IActionAPI head(IAction... actions) {
-        if (actions.length == 0) {
-            return new Queue();
-        }
-        return new Queue().queue(actions);
+        return actions.length == 0 ? new Queue() : new Queue().queue(actions);
     }
 
     @Override
@@ -31,8 +28,8 @@ class Queue extends QueueBase implements IActionAPI {
     }
 
     @Override
-    public IActionAPI detachThread(double detachedInterval, double timeout, IAction action) {
-        return queue(new Detachment(detachedInterval, timeout, action));
+    public IActionAPI detachThread(double interval, double timeout, IAction action) {
+        return queue(new RunThread(interval, timeout, action));
     }
 
     @Override
