@@ -13,6 +13,6 @@ public class PredicateSugar {
     }
 
     protected static IActionPredicate elapsed(double timeInSeconds) {
-        return d -> !d.hasParent() || d.getParent().getDelegate().getElapsed() > timeInSeconds;
+        return d -> !d.hasParent() || d.getParent().delegate().getElapsed() > timeInSeconds;
     }
 }

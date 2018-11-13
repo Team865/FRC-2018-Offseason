@@ -26,7 +26,7 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public IActionDelegate getDelegate() {
+    public IActionDelegate delegate() {
         return this;
     }
 

@@ -2,32 +2,37 @@ package ca.warp7.frc.action.dsl.def;
 
 @SuppressWarnings("unused")
 public interface IActionResources {
-    void setVar(String name, Object value);
+    void put(String name, Object value);
 
-    Object getVar(String name, Object defaultVal);
+    Object get(String name, Object defaultVal);
 
-    int countTrigger(String name);
+    int countTrigger(String trigger);
 
-    int countTriggerSources(String name);
+    int countTriggerSources(String trigger);
+
+    void addBroadcastSource(String trigger);
+
+    String broadcastName(String trigger);
 
     default void broadcast(String trigger) {
-        setVar(trigger, getInt(trigger, 0) + 1);
+        String name = broadcastName(trigger);
+        put(name, getInt(name, 0) + 1);
     }
 
     default double getDouble(String name, double defaultVal) {
-        Object var = getVar(name, null);
+        Object var = get(name, null);
         if (var instanceof Double) return (double) var;
         return defaultVal;
     }
 
     default int getInt(String name, int defaultVal) {
-        Object var = getVar(name, null);
+        Object var = get(name, null);
         if (var instanceof Integer) return (int) var;
         return defaultVal;
     }
 
     default String getString(String name, String defaultVal) {
-        Object var = getVar(name, null);
+        Object var = get(name, null);
         if (var instanceof String) return (String) var;
         return defaultVal;
     }

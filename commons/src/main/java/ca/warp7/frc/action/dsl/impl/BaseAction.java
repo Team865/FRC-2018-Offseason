@@ -9,6 +9,7 @@ import ca.warp7.frc.action.dsl.def.IActionResources;
 abstract class BaseAction extends StopAction implements IActionDelegate {
 
     private IActionParent mParent;
+    private IActionResources mResources;
 
     void setParent(IActionParent parent) {
         mParent = parent;
@@ -32,7 +33,7 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     @Override
     public IActionParent getRoot() {
         if (mParent == null) return null;
-        return mParent.getDelegate().getRoot();
+        return mParent.delegate().getRoot();
     }
 
     @Override
@@ -62,6 +63,8 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
 
     @Override
     public IActionResources resources() {
-        return null;
+        if (mParent != null) return mParent.delegate().resources();
+        if (mResources == null) mResources = new ActionResources();
+        return mResources;
     }
 }
