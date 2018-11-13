@@ -28,11 +28,6 @@ class Queue extends QueueBase implements IActionAPI {
     }
 
     @Override
-    public IActionAPI detachThread(double interval, double timeout, IAction action) {
-        return queue(new RunThread(interval, timeout, action));
-    }
-
-    @Override
     public IActionAPI asyncInverse(IAction... actions) {
         return queue(new AsyncInverse(actions));
     }

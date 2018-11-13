@@ -2,16 +2,26 @@ package ca.warp7.frc.action.api.impl;
 
 import ca.warp7.frc.action.api.def.IActionParent;
 import ca.warp7.frc.action.api.def.IActionResources;
+import ca.warp7.frc.action.api.def.IActionTimer;
 import ca.warp7.frc.core.IAction;
 
-class RunThread extends BaseAction {
+import java.util.Objects;
 
-    private IAction mAction;
+class ThreadRunner extends BaseAction {
+
+    @SuppressWarnings({"unused", "SameParameterValue"})
+    static IAction create(IActionTimer timer, double interval, double timeout, BaseAction action) {
+        Objects.requireNonNull(action);
+        action.getResources().setActionTimer(timer);
+        return new ThreadRunner(interval, timeout, action);
+    }
+
+    private BaseAction mAction;
     private Thread mRunThread;
     private long mInterval;
     private double mTimeout;
 
-    RunThread(double interval, double timeout, IAction action) {
+    private ThreadRunner(double interval, double timeout, BaseAction action) {
         mAction = action;
         mInterval = (long) (interval * 1000);
         mTimeout = timeout;
@@ -23,11 +33,6 @@ class RunThread extends BaseAction {
     }
 
     @Override
-    public IActionParent getRoot() {
-        return null;
-    }
-
-    @Override
     public void _onStart() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
@@ -35,25 +40,21 @@ class RunThread extends BaseAction {
             return;
         }
 
-        // Make sure a valid action is returned by the mode
-        if (mAction == null) {
-            System.err.println("WARNING there isn't an Action to run!!!");
-            return;
-        }
-
-        IActionResources res = getResources();
+        IActionResources actionRes = mAction.getResources();
+        if (actionRes.getActionTimer() == null) actionRes.setActionTimer(getResources().getActionTimer());
+        incrementDetachDepth(mAction);
 
         // Create and start the thread;
         mRunThread = new Thread(() -> {
             System.out.println("Thread starting");
-            double startTime = res.getTime();
+            double startTime = actionRes.getTime();
             double currentTime = startTime;
             mAction.onStart();
 
             // Loop forever until an exit condition is met
             // Stop priority #1: Check if the onStop method has been called to terminate this thread
             while (!Thread.currentThread().isInterrupted()) {
-                currentTime = res.getTime() - startTime;
+                currentTime = actionRes.getTime() - startTime;
 
                 // Stop priority #2: Check for explicit timeouts used in setAutoMode
                 if (currentTime >= mTimeout) break;
@@ -76,9 +77,8 @@ class RunThread extends BaseAction {
 
             mAction.onStop();
             System.out.printf("Thread ending after %.3fs\n", currentTime);
-            if (currentTime < mTimeout) {
+            if (currentTime < mTimeout)
                 System.out.printf("ERROR Detached ended early by %.3fs\n", mTimeout - currentTime);
-            }
 
             // Assign null to the thread so this runner can be called again
             // without robot code restarting

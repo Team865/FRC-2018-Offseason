@@ -3,13 +3,11 @@ package ca.warp7.frc.action.api.def;
 public interface IActionDelegate {
     double getElapsed();
 
-    boolean isDetached();
-
     double getTotalElapsed();
 
-    IActionParent getParent();
+    int getDetachDepth();
 
-    IActionParent getRoot();
+    IActionParent getParent();
 
     boolean isConsumed(IActionConsumer consumer);
 

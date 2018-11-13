@@ -44,12 +44,17 @@ public class ActionResources implements IActionResources {
     }
 
     @Override
-    public void setTimer(IActionTimer timer) {
+    public void setActionTimer(IActionTimer timer) {
         mTimer = timer;
     }
 
     @Override
     public IActionTimer getActionTimer() {
         return mTimer;
+    }
+
+    @Override
+    public double getTime() {
+        return mTimer != null ? mTimer.getTime() : 0;
     }
 }

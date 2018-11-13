@@ -13,9 +13,14 @@ abstract class BaseAction implements IAction, IActionDelegate {
     private IActionResources mResources;
     private double mStartTime;
     private boolean mIsInterrupted;
+    private int mDetachDepth;
 
     static void link(IActionParent parent, IAction action) {
         if (action instanceof BaseAction) ((BaseAction) action).mParent = parent;
+    }
+
+    static void incrementDetachDepth(BaseAction action) {
+        action.mDetachDepth++;
     }
 
     void _onStart() {
@@ -59,18 +64,12 @@ abstract class BaseAction implements IAction, IActionDelegate {
 
     @Override
     public double getTotalElapsed() {
-        return getRoot() != null ? getRoot().getDelegate().getTotalElapsed() : getElapsed();
+        return 0;
     }
 
     @Override
     public IActionParent getParent() {
         return mParent;
-    }
-
-    @Override
-    public IActionParent getRoot() {
-        if (mParent == null) return null;
-        return mParent.getDelegate().getRoot();
     }
 
     @Override
@@ -84,8 +83,8 @@ abstract class BaseAction implements IAction, IActionDelegate {
     }
 
     @Override
-    public boolean isDetached() {
-        return false;
+    public int getDetachDepth() {
+        return mDetachDepth;
     }
 
     @Override

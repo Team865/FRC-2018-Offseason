@@ -5,7 +5,7 @@ import ca.warp7.frc.core.IAction;
 /**
  * A declarative, chain-able API syntax for scheduling autos
  *
- * @version 2.2 Modified 11/12/2018
+ * @version 2.3 Modified 11/13/2018
  */
 
 @SuppressWarnings("ALL")
@@ -24,8 +24,6 @@ public interface IActionAPI extends IAction {
     IActionAPI await(IActionPredicate predicate);
 
     IActionAPI branch(IActionPredicate predicate, IAction ifAction, IAction elseAction);
-
-    IActionAPI detachThread(double detachedInterval, double timeout, IAction action);
 
     IActionAPI exec(IActionConsumer consumer);
 

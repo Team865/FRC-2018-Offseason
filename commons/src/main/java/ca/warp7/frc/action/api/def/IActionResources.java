@@ -14,13 +14,11 @@ public interface IActionResources {
 
     String broadcastName(String trigger);
 
-    void setTimer(IActionTimer timer);
+    void setActionTimer(IActionTimer timer);
 
     IActionTimer getActionTimer();
 
-    default double getTime() {
-        return getActionTimer() != null ? getActionTimer().getTime() : 0;
-    }
+    double getTime();
 
     default void broadcast(String trigger) {
         String name = broadcastName(trigger);

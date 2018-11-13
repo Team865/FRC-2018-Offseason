@@ -1,13 +1,12 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionConsumer;
 import ca.warp7.frc.action.api.def.IActionAPI;
+import ca.warp7.frc.action.api.def.IActionConsumer;
 import ca.warp7.frc.action.api.def.IActionPredicate;
 import ca.warp7.frc.action.api.def.SyntaxProvider;
 import ca.warp7.frc.core.IAction;
 import ca.warp7.frc.core.IAutoMode;
 
-@SuppressWarnings("SameParameterValue")
 public abstract class AutoMode extends SyntaxProvider implements IAutoMode, IActionAPI {
 
     @Override
@@ -36,11 +35,6 @@ public abstract class AutoMode extends SyntaxProvider implements IAutoMode, IAct
     }
 
     @Override
-    public IActionAPI detachThread(double detachedInterval, double timeout, IAction action) {
-        return queue().detachThread(detachedInterval, timeout, action);
-    }
-
-    @Override
     public IActionAPI asyncWatch(IAction action, IActionConsumer consumer) {
         return queue().asyncWatch(action, consumer);
     }
@@ -62,5 +56,10 @@ public abstract class AutoMode extends SyntaxProvider implements IAutoMode, IAct
 
     @Override
     public void onStart() {
+    }
+
+    @SuppressWarnings("unused")
+    public IActionAPI detachThread(double interval, double timeout, BaseAction action) {
+        return queue(ThreadRunner.create(null, interval, timeout, action));
     }
 }
