@@ -2,9 +2,12 @@ package ca.warp7.frc.action.dsl.def;
 
 import ca.warp7.frc.core.IAction;
 
+import java.util.Arrays;
+
 /**
  * A declarative, chain-able DSL syntax for scheduling autos
- * @version 2.1 Modified 11/12/2018
+ *
+ * @version 2.2 Modified 11/12/2018
  */
 
 @SuppressWarnings("ALL")
@@ -13,8 +16,6 @@ public interface IActionDSL extends IAction {
     IActionDSL async(IAction... actions);
 
     IActionDSL asyncAny(IAction... actions);
-
-    IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action);
 
     IActionDSL asyncInverse(IAction... actions);
 
@@ -26,14 +27,14 @@ public interface IActionDSL extends IAction {
 
     IActionDSL branch(IActionPredicate predicate, IAction ifAction, IAction elseAction);
 
+    IActionDSL detachThread(double detachedInterval, double timeout, IAction action);
+
     IActionDSL exec(IActionConsumer consumer);
 
     IActionDSL queue(IAction... actions);
 
     default IActionDSL broadcast(String... triggers) {
-        return exec(d -> {
-            for (String trigger : triggers) d.setVar(trigger, 1);
-        });
+        return exec(d -> Arrays.stream(triggers).forEach(trigger -> d.setVar(trigger, 1)));
     }
 
     default IActionDSL waitFor(double seconds) {

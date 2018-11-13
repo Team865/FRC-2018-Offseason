@@ -3,14 +3,14 @@ package ca.warp7.frc.action.dsl.impl;
 import ca.warp7.frc.core.IAction;
 import edu.wpi.first.wpilibj.Timer;
 
-class AsyncDetach implements IAction {
+class Detachment implements IAction {
 
     private IAction mAction;
     private Thread mRunThread;
     private long mDetachedInterval;
     private double mTimeout;
 
-    AsyncDetach(double detachedInterval, double timeout, IAction action) {
+    Detachment(double detachedInterval, double timeout, IAction action) {
         mAction = action;
         mDetachedInterval = (long) (detachedInterval * 1000);
         mTimeout = timeout;
@@ -20,7 +20,7 @@ class AsyncDetach implements IAction {
     public void onStart() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
-            System.err.println("ERROR AsyncDetach is already running!!!");
+            System.err.println("ERROR Detached Thread is already running!!!");
             return;
         }
 
@@ -32,7 +32,7 @@ class AsyncDetach implements IAction {
 
         // Create and start the thread;
         mRunThread = new Thread(() -> {
-            System.out.println("AsyncDetach starting");
+            System.out.println("Detached Thread starting");
             double startTime = Timer.getFPGATimestamp();
             double currentTime = startTime;
             mAction.onStart();
@@ -62,9 +62,9 @@ class AsyncDetach implements IAction {
             }
 
             mAction.onStop();
-            System.out.printf("AsyncDetach ending after %.3fs\n", currentTime);
+            System.out.printf("Detached Thread ending after %.3fs\n", currentTime);
             if (currentTime < mTimeout) {
-                System.out.printf("ERROR AsyncDetach ended early by %.3fs\n", mTimeout - currentTime);
+                System.out.printf("ERROR Detached Thread ended early by %.3fs\n", mTimeout - currentTime);
             }
 
             // Assign null to the thread so this runner can be called again

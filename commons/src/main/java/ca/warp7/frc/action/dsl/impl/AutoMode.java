@@ -35,8 +35,8 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL asyncDetach(double detachedInterval, double timeout, IAction action) {
-        return queue().asyncDetach(detachedInterval, timeout, action);
+    public IActionDSL detachThread(double detachedInterval, double timeout, IAction action) {
+        return queue().detachThread(detachedInterval, timeout, action);
     }
 
     @Override
@@ -57,11 +57,6 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     @Override
     public IActionDSL await(IActionPredicate predicate) {
         return queue().await(predicate);
-    }
-
-    @Override
-    public IActionDSL broadcast(Object... triggers) {
-        return queue().broadcast(triggers);
     }
 
     @Override
