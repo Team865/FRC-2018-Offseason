@@ -62,7 +62,7 @@ public abstract class ActionMode extends SyntaxProvider implements IActionMode, 
         return action instanceof BaseAction;
     }
 
-    public static IAction create(IActionTimer timer, double interval, double timeout, IAction action) {
+    public static IAction create(ITimer timer, double interval, double timeout, IAction action) {
         return ThreadRunner.create(timer, interval, timeout, (BaseAction) action);
     }
 

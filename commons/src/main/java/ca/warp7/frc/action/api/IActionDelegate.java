@@ -1,9 +1,8 @@
 package ca.warp7.frc.action.api;
 
+@SuppressWarnings("unused")
 public interface IActionDelegate {
     double getElapsed();
-
-    double getTotalElapsed();
 
     int getDetachDepth();
 

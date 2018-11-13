@@ -59,11 +59,6 @@ abstract class BaseAction implements IAction, IActionDelegate {
     }
 
     @Override
-    public double getTotalElapsed() {
-        return 0;
-    }
-
-    @Override
     public IActionParent getParent() {
         return mParent;
     }

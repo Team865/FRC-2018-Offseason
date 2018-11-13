@@ -3,14 +3,12 @@ package ca.warp7.frc.action.api.impl;
 import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionParent;
 import ca.warp7.frc.action.api.IActionResources;
-import ca.warp7.frc.action.api.IActionTimer;
 
 import java.util.Objects;
 
 class ThreadRunner extends BaseAction {
 
-    @SuppressWarnings({"unused", "SameParameterValue"})
-    static IAction create(IActionTimer timer, double interval, double timeout, BaseAction action) {
+    static IAction create(ITimer timer, double interval, double timeout, BaseAction action) {
         Objects.requireNonNull(action);
         action.getResources().setActionTimer(timer);
         return new ThreadRunner(interval, timeout, action);

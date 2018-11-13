@@ -1,7 +1,7 @@
 package ca.warp7.frc.action.api.impl;
 
+import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionResources;
-import ca.warp7.frc.action.api.IActionTimer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,8 @@ public class ActionResources implements IActionResources {
 
     private Map<String, Object> mResPool = new HashMap<>();
     private Map<String, Integer> mSourceCount = new HashMap<>();
-    private IActionTimer mTimer;
+    private IAction.ITimer mTimer;
+    private double mStartTime = 0;
 
     @Override
     public void put(String name, Object value) {
@@ -44,17 +45,28 @@ public class ActionResources implements IActionResources {
     }
 
     @Override
-    public void setActionTimer(IActionTimer timer) {
+    public void setActionTimer(IAction.ITimer timer) {
         mTimer = timer;
     }
 
     @Override
-    public IActionTimer getActionTimer() {
+    public IAction.ITimer getActionTimer() {
         return mTimer;
     }
 
     @Override
     public double getTime() {
         return mTimer != null ? mTimer.getTime() : 0;
+    }
+
+    @Override
+    public double getTotalElapsed() {
+        if (mStartTime == 0) return 0;
+        return mTimer.getTime() - mStartTime;
+    }
+
+    @Override
+    public void startTimer() {
+        if (mStartTime == 0) mStartTime = mTimer.getTime();
     }
 }
