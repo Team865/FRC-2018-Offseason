@@ -1,7 +1,5 @@
-package ca.warp7.frc.action.api.def;
+package ca.warp7.frc.action.api;
 
-
-import ca.warp7.frc.core.IAction;
 
 import java.util.List;
 

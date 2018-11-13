@@ -1,9 +1,9 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionAPI;
-import ca.warp7.frc.action.api.def.IActionConsumer;
-import ca.warp7.frc.action.api.def.IActionPredicate;
-import ca.warp7.frc.core.IAction;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionAPI;
+import ca.warp7.frc.action.api.IActionConsumer;
+import ca.warp7.frc.action.api.IActionPredicate;
 
 class Queue extends QueueBase implements IActionAPI {
 

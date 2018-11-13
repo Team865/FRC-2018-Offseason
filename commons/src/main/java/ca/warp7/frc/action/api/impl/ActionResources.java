@@ -1,7 +1,7 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionResources;
-import ca.warp7.frc.action.api.def.IActionTimer;
+import ca.warp7.frc.action.api.IActionResources;
+import ca.warp7.frc.action.api.IActionTimer;
 
 import java.util.HashMap;
 import java.util.Map;

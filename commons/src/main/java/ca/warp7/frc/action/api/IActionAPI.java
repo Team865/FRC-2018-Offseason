@@ -1,6 +1,4 @@
-package ca.warp7.frc.action.api.def;
-
-import ca.warp7.frc.core.IAction;
+package ca.warp7.frc.action.api;
 
 /**
  * A declarative, chain-able API syntax for scheduling autos

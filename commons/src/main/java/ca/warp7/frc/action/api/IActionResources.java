@@ -1,4 +1,4 @@
-package ca.warp7.frc.action.api.def;
+package ca.warp7.frc.action.api;
 
 @SuppressWarnings("unused")
 public interface IActionResources {

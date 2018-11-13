@@ -1,7 +1,7 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionConsumer;
-import ca.warp7.frc.core.IAction;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionConsumer;
 
 class AsyncWatch extends BaseAction {
 

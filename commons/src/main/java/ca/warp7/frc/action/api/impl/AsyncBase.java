@@ -1,8 +1,8 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionDelegate;
-import ca.warp7.frc.action.api.def.IActionParent;
-import ca.warp7.frc.core.IAction;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionDelegate;
+import ca.warp7.frc.action.api.IActionParent;
 
 import java.util.Arrays;
 import java.util.List;

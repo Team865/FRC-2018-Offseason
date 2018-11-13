@@ -1,6 +1,6 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.def.IActionPredicate;
+import ca.warp7.frc.action.api.IActionPredicate;
 
 public class Await extends BaseAction {
     private IActionPredicate mPredicate;
