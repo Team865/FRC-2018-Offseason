@@ -2,10 +2,10 @@ package ca.warp7.frc.action.dsl.impl;
 
 import ca.warp7.frc.action.dsl.def.IActionConsumer;
 
-class Consume extends BaseAction {
+class Execution extends BaseAction {
     private IActionConsumer mConsumer;
 
-    Consume(IActionConsumer consumer) {
+    Execution(IActionConsumer consumer) {
         mConsumer = consumer;
     }
 

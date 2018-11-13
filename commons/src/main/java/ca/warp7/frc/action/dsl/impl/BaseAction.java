@@ -9,8 +9,7 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
 
     private IActionParent mParent;
 
-    @Override
-    public void setParent(IActionParent parent) {
+    void setParent(IActionParent parent) {
         mParent = parent;
     }
 
@@ -31,7 +30,8 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
 
     @Override
     public IActionParent getRoot() {
-        return null;
+        if (mParent == null) return null;
+        return mParent.getDelegate().getRoot();
     }
 
     @Override
@@ -67,5 +67,20 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     @Override
     public int countTriggerSources(String name) {
         return 0;
+    }
+
+    @Override
+    public boolean isDetached() {
+        return false;
+    }
+
+    @Override
+    public IActionParent asParent() {
+        return null;
+    }
+
+    @Override
+    public boolean hasParent() {
+        return false;
     }
 }

@@ -4,7 +4,7 @@ import ca.warp7.frc.core.IAction;
 
 /**
  * A declarative, chain-able DSL syntax for scheduling autos
- * @version 2.0 Modified 11/12/2018
+ * @version 2.1 Modified 11/12/2018
  */
 
 @SuppressWarnings("ALL")
@@ -24,13 +24,17 @@ public interface IActionDSL extends IAction {
 
     IActionDSL await(IActionPredicate predicate);
 
-    IActionDSL broadcast(Object... triggers);
-
     IActionDSL branch(IActionPredicate predicate, IAction ifAction, IAction elseAction);
 
     IActionDSL exec(IActionConsumer consumer);
 
     IActionDSL queue(IAction... actions);
+
+    default IActionDSL broadcast(String... triggers) {
+        return exec(d -> {
+            for (String trigger : triggers) d.setVar(trigger, 1);
+        });
+    }
 
     default IActionDSL waitFor(double seconds) {
         return await(d -> d.hasParent() ? d.getParent().getDelegate().getElapsed() > seconds : true);
@@ -44,7 +48,7 @@ public interface IActionDSL extends IAction {
         return asyncMaster(await(predicate), actions);
     }
 
-    default IActionDSL broadcastWhen(IActionPredicate predicate, Object... triggers) {
+    default IActionDSL broadcastWhen(IActionPredicate predicate, String... triggers) {
         return await(predicate).broadcast(triggers);
     }
 

@@ -56,13 +56,8 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL broadcast(Object... triggers) {
-        return queue(new Broadcast(triggers));
-    }
-
-    @Override
     public IActionDSL exec(IActionConsumer consumer) {
-        return queue(new Consume(consumer));
+        return queue(new Execution(consumer));
     }
 
     @Override

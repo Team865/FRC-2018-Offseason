@@ -2,60 +2,31 @@ package ca.warp7.frc.action.dsl.def;
 
 public interface IActionDelegate {
 
-    void setParent(IActionParent parent);
+    double getElapsed();
 
-    default double getElapsed() {
-        return 0;
-    }
+    boolean isDetached();
 
-    default boolean isDetached() {
-        return false;
-    }
+    double getTotalElapsed();
 
-    default double getTotalElapsed() {
-        return 0;
-    }
+    IActionParent asParent();
 
-    default IActionParent asParent() {
-        if (this instanceof IActionParent) return (IActionParent) this;
-        return null;
-    }
+    boolean hasParent();
 
-    default boolean hasParent() {
-        return getParent() != null;
-    }
+    IActionParent getParent();
 
-    default IActionParent getParent() {
-        return null;
-    }
+    IActionParent getRoot();
 
-    default IActionParent getRoot() {
-        return null;
-    }
+    void setVar(String name, Object value);
 
-    default void setVar(String name, Object value) {
-    }
+    Object getVar(String name, Object defaultVal);
 
-    default Object getVar(String name, Object defaultVal) {
-        return defaultVal;
-    }
+    double getDouble(String name, double defaultVal);
 
-    default double getDouble(String name, double defaultVal) {
-        return defaultVal;
-    }
+    boolean isConsumed(IActionConsumer consumer);
 
-    default boolean isConsumed(IActionConsumer consumer) {
-        return true;
-    }
+    void interrupt();
 
-    default void interrupt() {
-    }
+    int countTrigger(String name);
 
-    default int countTrigger(String name) {
-        return 0;
-    }
-
-    default int countTriggerSources(String name) {
-        return 0;
-    }
+    int countTriggerSources(String name);
 }
