@@ -6,6 +6,7 @@ import ca.warp7.frc.action.dsl.def.IActionPredicate;
 import ca.warp7.frc.core.IAction;
 import ca.warp7.frc.core.IAutoMode;
 
+@SuppressWarnings("SameParameterValue")
 public abstract class AutoMode implements IAutoMode, IActionDSL {
 
     @Override
@@ -80,5 +81,13 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
 
     @Override
     public void onStart() {
+    }
+
+    protected static IActionPredicate triggered(String name) {
+        return t -> t.countTrigger(name) > 0;
+    }
+
+    protected static IActionPredicate allTriggered(String name) {
+        return t -> t.countTrigger(name) > 0;
     }
 }

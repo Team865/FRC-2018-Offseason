@@ -1,6 +1,7 @@
 package ca.warp7.frc;
 
 import ca.warp7.frc.core.ICollectiveState;
+import ca.warp7.frc.core.ITransform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,11 +64,11 @@ public class DifferentialVector<T> implements ICollectiveState {
         mRight = f.apply(mRight);
     }
 
-    public <S> DifferentialVector<S> transformed(DifferentialVector<T> other, TransformFunction<T, S> f) {
+    public <S> DifferentialVector<S> transformed(DifferentialVector<T> other, ITransform<T, S> f) {
         return new DifferentialVector<>(f.apply(mLeft, other.getLeft()), f.apply(mRight, other.getRight()));
     }
 
-    public void transform(DifferentialVector<T> other, TransformFunction<T, T> f) {
+    public void transform(DifferentialVector<T> other, ITransform<T, T> f) {
         mLeft = f.apply(mLeft, other.getLeft());
         mRight = f.apply(mRight, other.getRight());
     }

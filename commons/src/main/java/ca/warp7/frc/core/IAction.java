@@ -1,16 +1,24 @@
 package ca.warp7.frc.core;
 
 /**
- * An interface that describes an iterative action that has a start, loop, and end.
- * An Action is the unit of basis for autonomous programs. It may run a list of other
- * Actions as part of its program
+ * <p>
+ * An {@link IAction} defines any self contained action that can be executed by the robot.
+ * An Action is the unit of basis for autonomous programs. Actions may contain anything,
+ * which means we can run sub-actions in various ways, in combination with the start,
+ * loo, end, and shouldFinish methods
+ * </p>
+ * <b>PLEASE NO WHILE LOOPS</b>
  */
 
 @FunctionalInterface
 public interface IAction {
 
     /**
-     * Run code once when the action is started, usually for set up
+     * Run code once when the action is started, usually for set up.
+     * This method must be called first before shouldFinish is called.
+     *
+     * This method is the only non-default one, making it a functional interface
+     * that can be used t create singleton actions
      */
     void onStart();
 
@@ -28,7 +36,7 @@ public interface IAction {
 
     /**
      * Called by runAction in AutoModeBase iteratively until isFinished returns true.
-     * Iterative logic lives in this method
+     * Iterative logic lives in this method. <b>PLEASE NO WHILE LOOPS</b>
      */
     default void onUpdate() {
     }

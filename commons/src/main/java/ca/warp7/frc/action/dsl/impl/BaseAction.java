@@ -10,14 +10,6 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
 
     private BaseAction mParent;
 
-    BaseAction getParent() {
-        return mParent;
-    }
-
-    void setParent(BaseAction parent) {
-        mParent = parent;
-    }
-
     List<IAction> getChildren() {
         return null;
     }

@@ -48,4 +48,8 @@ public interface IActionDSL extends IAction {
     default IActionDSL broadcastWhen(IActionPredicate predicate, Object... triggers) {
         return waitUntil(predicate).broadcast(triggers);
     }
+
+    default IActionDSL when(IActionPredicate predicate, IAction... actions) {
+        return waitUntil(predicate).queue(actions);
+    }
 }
