@@ -55,8 +55,8 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL waitUntil(IActionPredicate predicate) {
-        return queue().waitUntil(predicate);
+    public IActionDSL await(IActionPredicate predicate) {
+        return queue().await(predicate);
     }
 
     @Override
@@ -65,18 +65,8 @@ public abstract class AutoMode implements IAutoMode, IActionDSL {
     }
 
     @Override
-    public IActionDSL consume(IActionConsumer consumer) {
-        return queue().consume(consumer);
-    }
-
-    @Override
-    public IActionDSL listenForAny(IAction receiver, Object... of) {
-        return queue().listenForAny(receiver);
-    }
-
-    @Override
-    public IActionDSL listenForAll(IAction receiver, Object... of) {
-        return queue().listenForAll(receiver, of);
+    public IActionDSL exec(IActionConsumer consumer) {
+        return queue().exec(consumer);
     }
 
     @Override

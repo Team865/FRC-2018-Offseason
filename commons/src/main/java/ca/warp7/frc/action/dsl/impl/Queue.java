@@ -61,18 +61,8 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL consume(IActionConsumer consumer) {
+    public IActionDSL exec(IActionConsumer consumer) {
         return queue(new Consume(consumer));
-    }
-
-    @Override
-    public IActionDSL listenForAny(IAction receiver, Object... of) {
-        return queue(new ListenForAny(receiver, of));
-    }
-
-    @Override
-    public IActionDSL listenForAll(IAction receiver, Object... of) {
-        return queue(new ListenForAll(receiver, of));
     }
 
     @Override
@@ -81,7 +71,7 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL waitUntil(IActionPredicate predicate) {
-        return queue(new WaitUntil(predicate));
+    public IActionDSL await(IActionPredicate predicate) {
+        return queue(new Await(predicate));
     }
 }

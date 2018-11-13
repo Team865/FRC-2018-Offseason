@@ -2,10 +2,10 @@ package ca.warp7.frc.action.dsl.impl;
 
 import ca.warp7.frc.action.dsl.def.IActionPredicate;
 
-public class WaitUntil extends BaseAction {
+public class Await extends BaseAction {
     private IActionPredicate mSupplier;
 
-    WaitUntil(IActionPredicate supplier) {
+    Await(IActionPredicate supplier) {
         mSupplier = supplier;
     }
 

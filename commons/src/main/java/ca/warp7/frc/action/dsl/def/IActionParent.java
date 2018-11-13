@@ -12,17 +12,7 @@ public interface IActionParent {
         return null;
     }
 
-    default boolean hasDelegate() {
-        return false;
-    }
-
-    default boolean isModifiable() {
-        return false;
-    }
-
     default int size() {
         return 0;
     }
-
-
 }
