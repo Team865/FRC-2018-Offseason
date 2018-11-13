@@ -21,12 +21,7 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public void insert(IAction action) {
-        mActions.add(action);
-    }
-
-    @Override
-    public IActionDelegate delegate() {
+    public IActionDelegate getDelegate() {
         return this;
     }
 

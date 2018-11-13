@@ -22,12 +22,7 @@ abstract class QueueBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public void insert(IAction action) {
-
-    }
-
-    @Override
-    public IActionDelegate delegate() {
+    public IActionDelegate getDelegate() {
         return null;
     }
 

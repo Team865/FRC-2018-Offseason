@@ -17,15 +17,18 @@ abstract class BaseAction implements IAction, IActionDelegate {
         mParent = parent;
     }
 
-    abstract void _onStart();
+    void _onStart() {
+    }
 
-    abstract void _onUpdate();
+    void _onUpdate() {
+    }
 
-    abstract void _onStop();
+    void _onStop() {
+    }
 
     @Override
     public void onStart() {
-        mStartTime = resources().getTime();
+        mStartTime = getResources().getTime();
         _onStart();
     }
 
@@ -40,24 +43,24 @@ abstract class BaseAction implements IAction, IActionDelegate {
     }
 
     @Override
-    public double elapsed() {
-        return resources().getTime() - mStartTime;
+    public double getElapsed() {
+        return getResources().getTime() - mStartTime;
     }
 
     @Override
     public double getTotalElapsed() {
-        return getRoot() != null ? getRoot().delegate().getTotalElapsed() : elapsed();
+        return getRoot() != null ? getRoot().getDelegate().getTotalElapsed() : getElapsed();
     }
 
     @Override
-    public IActionParent parent() {
+    public IActionParent getParent() {
         return mParent;
     }
 
     @Override
     public IActionParent getRoot() {
         if (mParent == null) return null;
-        return mParent.delegate().getRoot();
+        return mParent.getDelegate().getRoot();
     }
 
     @Override
@@ -85,9 +88,9 @@ abstract class BaseAction implements IAction, IActionDelegate {
     }
 
     @Override
-    public IActionResources resources() {
+    public IActionResources getResources() {
         if (mResources != null) return mResources;
-        mResources = mParent != null ? mParent.delegate().resources() : new ActionResources();
+        mResources = mParent != null ? mParent.getDelegate().getResources() : new ActionResources();
         return mResources;
     }
 }

@@ -11,10 +11,7 @@ public interface IActionParent {
         return null;
     }
 
-    default void insert(IAction action) {
-    }
-
-    default IActionDelegate delegate() {
+    default IActionDelegate getDelegate() {
         return null;
     }
 

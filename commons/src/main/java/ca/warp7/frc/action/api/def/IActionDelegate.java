@@ -1,7 +1,7 @@
 package ca.warp7.frc.action.api.def;
 
 public interface IActionDelegate {
-    double elapsed();
+    double getElapsed();
 
     boolean isDetached();
 
@@ -11,7 +11,7 @@ public interface IActionDelegate {
 
     boolean hasParent();
 
-    IActionParent parent();
+    IActionParent getParent();
 
     IActionParent getRoot();
 
@@ -19,5 +19,5 @@ public interface IActionDelegate {
 
     void interrupt();
 
-    IActionResources resources();
+    IActionResources getResources();
 }

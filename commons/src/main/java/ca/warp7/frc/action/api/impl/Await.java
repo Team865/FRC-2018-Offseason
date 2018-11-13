@@ -13,16 +13,4 @@ public class Await extends BaseAction {
     public boolean shouldFinish() {
         return mPredicate.test(this);
     }
-
-    @Override
-    void _onStart() {
-    }
-
-    @Override
-    void _onUpdate() {
-    }
-
-    @Override
-    void _onStop() {
-    }
 }

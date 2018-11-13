@@ -30,7 +30,7 @@ class Detachment extends BaseAction {
             return;
         }
 
-        IActionResources res = resources();
+        IActionResources res = getResources();
 
         // Create and start the thread;
         mRunThread = new Thread(() -> {

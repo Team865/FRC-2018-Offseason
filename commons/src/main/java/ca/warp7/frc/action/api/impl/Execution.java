@@ -13,14 +13,4 @@ class Execution extends BaseAction {
     public void _onStart() {
         mConsumer.accept(this);
     }
-
-    @Override
-    void _onUpdate() {
-
-    }
-
-    @Override
-    void _onStop() {
-
-    }
 }
