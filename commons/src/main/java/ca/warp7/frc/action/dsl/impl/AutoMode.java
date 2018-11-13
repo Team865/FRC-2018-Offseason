@@ -3,11 +3,12 @@ package ca.warp7.frc.action.dsl.impl;
 import ca.warp7.frc.action.dsl.def.IActionConsumer;
 import ca.warp7.frc.action.dsl.def.IActionDSL;
 import ca.warp7.frc.action.dsl.def.IActionPredicate;
+import ca.warp7.frc.action.dsl.def.SyntaxProvider;
 import ca.warp7.frc.core.IAction;
 import ca.warp7.frc.core.IAutoMode;
 
 @SuppressWarnings("SameParameterValue")
-public abstract class AutoMode extends PredicateSugar implements IAutoMode, IActionDSL {
+public abstract class AutoMode extends SyntaxProvider implements IAutoMode, IActionDSL {
 
     @Override
     public IActionDSL async(IAction... actions) {

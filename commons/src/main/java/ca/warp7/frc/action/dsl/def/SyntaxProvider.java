@@ -1,9 +1,9 @@
-package ca.warp7.frc.action.dsl.impl;
+package ca.warp7.frc.action.dsl.def;
 
-import ca.warp7.frc.action.dsl.def.IActionPredicate;
+import java.util.Arrays;
 
-@SuppressWarnings({"SameParameterValue", "unused"})
-public class PredicateSugar {
+@SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
+public class SyntaxProvider {
     protected static IActionPredicate triggeredOnce(String name) {
         return t -> t.resources().countTrigger(name) == 1;
     }
@@ -22,5 +22,9 @@ public class PredicateSugar {
 
     protected static IActionPredicate elapsed(double timeInSeconds) {
         return d -> !d.hasParent() || d.parent().delegate().elapsed() > timeInSeconds;
+    }
+
+    protected static IActionConsumer broadcastTriggers(String... triggers) {
+        return d -> Arrays.stream(triggers).forEach(trigger -> d.resources().broadcast(trigger));
     }
 }
