@@ -7,7 +7,7 @@ import ca.warp7.frc.core.IAction;
 import ca.warp7.frc.core.IAutoMode;
 
 @SuppressWarnings("SameParameterValue")
-public abstract class AutoMode extends Sugar implements IAutoMode, IActionDSL {
+public abstract class AutoMode extends PredicateSugar implements IAutoMode, IActionDSL {
 
     @Override
     public IActionDSL async(IAction... actions) {
@@ -47,11 +47,6 @@ public abstract class AutoMode extends Sugar implements IAutoMode, IActionDSL {
     @Override
     public IActionDSL queue(IAction... actions) {
         return Queue.head(actions);
-    }
-
-    @Override
-    public IActionDSL waitFor(double seconds) {
-        return queue().waitFor(seconds);
     }
 
     @Override

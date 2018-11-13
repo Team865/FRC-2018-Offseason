@@ -61,11 +61,6 @@ class Queue extends QueueBase implements IActionDSL {
     }
 
     @Override
-    public IActionDSL waitFor(double seconds) {
-        return queue(new WaitFor(seconds));
-    }
-
-    @Override
     public IActionDSL await(IActionPredicate predicate) {
         return queue(new Await(predicate));
     }

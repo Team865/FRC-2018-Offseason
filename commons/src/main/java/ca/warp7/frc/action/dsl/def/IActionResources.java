@@ -1,5 +1,6 @@
 package ca.warp7.frc.action.dsl.def;
 
+@SuppressWarnings("unused")
 public interface IActionResources {
     void setVar(String name, Object value);
 

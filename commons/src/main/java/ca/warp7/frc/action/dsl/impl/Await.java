@@ -3,18 +3,14 @@ package ca.warp7.frc.action.dsl.impl;
 import ca.warp7.frc.action.dsl.def.IActionPredicate;
 
 public class Await extends BaseAction {
-    private IActionPredicate mSupplier;
+    private IActionPredicate mPredicate;
 
-    Await(IActionPredicate supplier) {
-        mSupplier = supplier;
-    }
-
-    @Override
-    public void onStart() {
+    Await(IActionPredicate predicate) {
+        mPredicate = predicate;
     }
 
     @Override
     public boolean shouldFinish() {
-        return mSupplier.test(this);
+        return mPredicate.test(this);
     }
 }
