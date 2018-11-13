@@ -1,9 +1,9 @@
 package ca.warp7.frc.action.dsl.impl;
 
+import ca.warp7.frc.action.dsl.def.IActionResources;
 import ca.warp7.frc.core.IAction;
-import edu.wpi.first.wpilibj.Timer;
 
-class Detachment implements IAction {
+class Detachment extends BaseAction {
 
     private IAction mAction;
     private Thread mRunThread;
@@ -30,17 +30,19 @@ class Detachment implements IAction {
             return;
         }
 
+        IActionResources res = resources();
+
         // Create and start the thread;
         mRunThread = new Thread(() -> {
             System.out.println("Detached Thread starting");
-            double startTime = Timer.getFPGATimestamp();
+            double startTime = res.getTime();
             double currentTime = startTime;
             mAction.onStart();
 
             // Loop forever until an exit condition is met
             // Stop priority #1: Check if the onStop method has been called to terminate this thread
             while (!Thread.currentThread().isInterrupted()) {
-                currentTime = Timer.getFPGATimestamp() - startTime;
+                currentTime = res.getTime() - startTime;
 
                 // Stop priority #2: Check for explicit timeouts used in setAutoMode
                 if (currentTime >= mTimeout) break;

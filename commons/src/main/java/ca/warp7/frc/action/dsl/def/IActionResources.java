@@ -14,6 +14,8 @@ public interface IActionResources {
 
     String broadcastName(String trigger);
 
+    double getTime();
+
     default void broadcast(String trigger) {
         String name = broadcastName(trigger);
         put(name, getInt(name, 0) + 1);

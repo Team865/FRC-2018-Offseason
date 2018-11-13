@@ -1,7 +1,7 @@
 package ca.warp7.frc.action.dsl.def;
 
 public interface IActionDelegate {
-    double getElapsed();
+    double elapsed();
 
     boolean isDetached();
 
@@ -11,7 +11,7 @@ public interface IActionDelegate {
 
     boolean hasParent();
 
-    IActionParent getParent();
+    IActionParent parent();
 
     IActionParent getRoot();
 

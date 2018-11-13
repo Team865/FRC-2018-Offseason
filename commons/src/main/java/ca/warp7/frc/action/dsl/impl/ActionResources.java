@@ -1,6 +1,7 @@
 package ca.warp7.frc.action.dsl.impl;
 
 import ca.warp7.frc.action.dsl.def.IActionResources;
+import edu.wpi.first.wpilibj.Timer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,5 +40,10 @@ public class ActionResources implements IActionResources {
     @Override
     public String broadcastName(String trigger) {
         return "Broadcast/" + trigger;
+    }
+
+    @Override
+    public double getTime() {
+        return Timer.getFPGATimestamp();
     }
 }

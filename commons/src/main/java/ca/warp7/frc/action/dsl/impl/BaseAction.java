@@ -16,7 +16,7 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     }
 
     @Override
-    public double getElapsed() {
+    public double elapsed() {
         return 0;
     }
 
@@ -26,7 +26,7 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     }
 
     @Override
-    public IActionParent getParent() {
+    public IActionParent parent() {
         return mParent;
     }
 

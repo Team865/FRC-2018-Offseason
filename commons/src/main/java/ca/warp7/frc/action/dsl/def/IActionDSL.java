@@ -38,7 +38,7 @@ public interface IActionDSL extends IAction {
     }
 
     default IActionDSL waitFor(double seconds) {
-        return await(d -> !d.hasParent() || d.getParent().delegate().getElapsed() > seconds);
+        return await(d -> !d.hasParent() || d.parent().delegate().elapsed() > seconds);
     }
 
     default IActionDSL onlyIf(IActionPredicate predicate, IAction action) {
