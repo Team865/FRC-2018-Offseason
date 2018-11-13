@@ -4,25 +4,49 @@ import ca.warp7.frc.action.dsl.def.IActionConsumer;
 import ca.warp7.frc.action.dsl.def.IActionDelegate;
 import ca.warp7.frc.action.dsl.def.IActionParent;
 import ca.warp7.frc.action.dsl.def.IActionResources;
+import ca.warp7.frc.core.IAction;
 
 @SuppressWarnings("WeakerAccess")
-abstract class BaseAction extends StopAction implements IActionDelegate {
+abstract class BaseAction implements IAction, IActionDelegate {
 
     private IActionParent mParent;
     private IActionResources mResources;
+    private double mStartTime;
 
     void setParent(IActionParent parent) {
         mParent = parent;
     }
 
+    abstract void _onStart();
+
+    abstract void _onUpdate();
+
+    abstract void _onStop();
+
+    @Override
+    public void onStart() {
+        mStartTime = resources().getTime();
+        _onStart();
+    }
+
+    @Override
+    public void onUpdate() {
+        _onUpdate();
+    }
+
+    @Override
+    public void onStop() {
+        _onStop();
+    }
+
     @Override
     public double elapsed() {
-        return 0;
+        return resources().getTime() - mStartTime;
     }
 
     @Override
     public double getTotalElapsed() {
-        return 0;
+        return getRoot() != null ? getRoot().delegate().getTotalElapsed() : elapsed();
     }
 
     @Override
@@ -43,7 +67,6 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
 
     @Override
     public void interrupt() {
-
     }
 
     @Override
@@ -63,8 +86,8 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
 
     @Override
     public IActionResources resources() {
-        if (mParent != null) return mParent.delegate().resources();
-        if (mResources == null) mResources = new ActionResources();
+        if (mResources != null) return mResources;
+        mResources = mParent != null ? mParent.delegate().resources() : new ActionResources();
         return mResources;
     }
 }

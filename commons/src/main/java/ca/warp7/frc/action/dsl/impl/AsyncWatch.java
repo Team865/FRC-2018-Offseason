@@ -14,7 +14,7 @@ class AsyncWatch extends BaseAction {
     }
 
     @Override
-    public void onStart() {
+    public void _onStart() {
         mAction.onStart();
         mConsumer.accept(this);
     }
@@ -25,13 +25,13 @@ class AsyncWatch extends BaseAction {
     }
 
     @Override
-    public void onUpdate() {
+    public void _onUpdate() {
         mAction.onUpdate();
         mConsumer.accept(this);
     }
 
     @Override
-    public void onStop() {
+    public void _onStop() {
         mAction.onStop();
         mConsumer.accept(this);
     }

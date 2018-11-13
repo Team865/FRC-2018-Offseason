@@ -7,4 +7,19 @@ class AsyncInverse extends BaseAction implements IActionParent {
 
     AsyncInverse(IAction... actions) {
     }
+
+    @Override
+    void _onStart() {
+
+    }
+
+    @Override
+    void _onUpdate() {
+
+    }
+
+    @Override
+    void _onStop() {
+
+    }
 }

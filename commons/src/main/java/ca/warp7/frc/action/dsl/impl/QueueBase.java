@@ -37,13 +37,13 @@ abstract class QueueBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public void onStart() {
+    public void _onStart() {
         mCurrentAction = null;
         mRuntimeQueue = getActionQueue();
     }
 
     @Override
-    public void onUpdate() {
+    public void _onUpdate() {
         if (mCurrentAction == null) {
             if (mRuntimeQueue.isEmpty()) return;
             mCurrentAction = mRuntimeQueue.remove(0);
@@ -57,7 +57,7 @@ abstract class QueueBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public void onStop() {
+    public void _onStop() {
         if (mCurrentAction != null) mCurrentAction.onStop();
     }
 

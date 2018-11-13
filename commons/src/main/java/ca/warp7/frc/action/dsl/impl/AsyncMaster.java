@@ -17,9 +17,9 @@ class AsyncMaster extends AsyncBase {
     }
 
     @Override
-    public void onStart() {
+    public void _onStart() {
         mMaster.onStart();
-        super.onStart();
+        super._onStart();
     }
 
     @Override
@@ -28,14 +28,14 @@ class AsyncMaster extends AsyncBase {
     }
 
     @Override
-    public void onUpdate() {
+    public void _onUpdate() {
         mMaster.onUpdate();
-        super.onUpdate();
+        super._onUpdate();
     }
 
     @Override
-    public void onStop() {
+    public void _onStop() {
         mMaster.onStop();
-        super.onStop();
+        super._onStop();
     }
 }

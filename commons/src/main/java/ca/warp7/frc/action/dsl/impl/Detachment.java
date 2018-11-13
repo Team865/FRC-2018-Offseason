@@ -17,7 +17,7 @@ class Detachment extends BaseAction {
     }
 
     @Override
-    public void onStart() {
+    public void _onStart() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
             System.err.println("ERROR Detached Thread is already running!!!");
@@ -83,9 +83,13 @@ class Detachment extends BaseAction {
     }
 
     @Override
-    public void onStop() {
+    public void _onStop() {
         if (mRunThread != null) {
             mRunThread.interrupt();
         }
+    }
+
+    @Override
+    void _onUpdate() {
     }
 }

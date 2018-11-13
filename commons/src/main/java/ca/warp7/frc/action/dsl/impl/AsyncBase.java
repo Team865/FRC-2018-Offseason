@@ -36,7 +36,7 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public void onStart() {
+    public void _onStart() {
         mActions.forEach(IAction::onStart);
     }
 
@@ -44,12 +44,12 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
     public abstract boolean shouldFinish();
 
     @Override
-    public void onUpdate() {
+    public void _onUpdate() {
         mActions.forEach(IAction::onUpdate);
     }
 
     @Override
-    public void onStop() {
+    public void _onStop() {
         mActions.forEach(IAction::onStop);
     }
 }
