@@ -57,4 +57,13 @@ public abstract class ActionMode extends SyntaxProvider implements IActionMode, 
     public IActionAPI detachThread(double interval, double timeout, BaseAction action) {
         return queue(ThreadRunner.create(null, interval, timeout, action));
     }
+
+    public static boolean isUsingActionAPI(IAction action) {
+        return action instanceof BaseAction;
+    }
+
+    public static IAction create(IActionTimer timer, double interval, double timeout, IAction action) {
+        return ThreadRunner.create(timer, interval, timeout, (BaseAction) action);
+    }
+
 }

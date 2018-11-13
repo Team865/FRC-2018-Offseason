@@ -2,6 +2,7 @@ package ca.warp7.frc.core;
 
 import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionMode;
+import ca.warp7.frc.action.api.impl.ActionMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -34,6 +35,9 @@ class AutoRunner {
      * When true, doesn't end auto unless the driver station calls teleopInit
      */
     private boolean mOverrideExplicitTimeout;
+
+    private boolean mUsingActionAPI;
+    private IAction mAPIRunner;
 
     /**
      * The periodic Runnable for the auto program
@@ -149,6 +153,14 @@ class AutoRunner {
             return;
         }
 
+        // Check if the Action API is used
+        mUsingActionAPI = ActionMode.isUsingActionAPI(mAction);
+        if (mUsingActionAPI) {
+            mAPIRunner = ActionMode.create(Timer::getFPGATimestamp, mExplicitTimeout, kDefaultLoopDelta, mAction);
+            mAPIRunner.onStart();
+            return;
+        }
+
         // Create and start the thread;
         mRunThread = new Thread(mPeriodicRunner);
         mRunThread.start();
@@ -158,8 +170,7 @@ class AutoRunner {
      * Stops the thread if it is running and nullify the variables
      */
     void stop() {
-        if (mRunThread != null) {
-            mRunThread.interrupt();
-        }
+        if (mUsingActionAPI) mAPIRunner.onStop();
+        else if (mRunThread != null) mRunThread.interrupt();
     }
 }
