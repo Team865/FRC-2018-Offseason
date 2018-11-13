@@ -36,7 +36,7 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public abstract boolean shouldFinish();
+    public abstract boolean _shouldFinish();
 
     @Override
     public void _onUpdate() {

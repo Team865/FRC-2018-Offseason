@@ -12,6 +12,7 @@ abstract class BaseAction implements IAction, IActionDelegate {
     private IActionParent mParent;
     private IActionResources mResources;
     private double mStartTime;
+    private boolean mIsInterrupted;
 
     void setParent(IActionParent parent) {
         mParent = parent;
@@ -26,10 +27,19 @@ abstract class BaseAction implements IAction, IActionDelegate {
     void _onStop() {
     }
 
+    boolean _shouldFinish() {
+        return true;
+    }
+
     @Override
     public void onStart() {
         mStartTime = getResources().getTime();
         _onStart();
+    }
+
+    @Override
+    public boolean shouldFinish() {
+        return mIsInterrupted || _shouldFinish();
     }
 
     @Override
@@ -70,6 +80,7 @@ abstract class BaseAction implements IAction, IActionDelegate {
 
     @Override
     public void interrupt() {
+        mIsInterrupted = true;
     }
 
     @Override

@@ -32,7 +32,7 @@ class Branch extends BaseAction {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         return mSelected == null || mSelected.shouldFinish();
     }
 }

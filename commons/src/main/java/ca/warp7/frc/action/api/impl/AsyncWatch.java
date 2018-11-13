@@ -20,7 +20,7 @@ class AsyncWatch extends BaseAction {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         return mAction.shouldFinish();
     }
 

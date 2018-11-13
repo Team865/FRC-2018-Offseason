@@ -8,7 +8,7 @@ class AsyncAny extends AsyncBase {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         for (IAction action : mActions) if (action.shouldFinish()) return true;
         return false;
     }

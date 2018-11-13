@@ -23,7 +23,7 @@ class AsyncMaster extends AsyncBase {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         return mMaster.shouldFinish();
     }
 

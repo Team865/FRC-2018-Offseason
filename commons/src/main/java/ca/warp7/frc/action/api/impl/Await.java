@@ -10,7 +10,7 @@ public class Await extends BaseAction {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         return mPredicate.test(this);
     }
 }

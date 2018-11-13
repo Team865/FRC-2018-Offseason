@@ -78,7 +78,7 @@ class Detachment extends BaseAction {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         return mRunThread == null;
     }
 
@@ -87,9 +87,5 @@ class Detachment extends BaseAction {
         if (mRunThread != null) {
             mRunThread.interrupt();
         }
-    }
-
-    @Override
-    void _onUpdate() {
     }
 }

@@ -57,7 +57,7 @@ abstract class QueueBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         return mRuntimeQueue.isEmpty() && mCurrentAction == null;
     }
 
