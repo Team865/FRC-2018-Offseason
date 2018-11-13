@@ -1,4 +1,6 @@
-package ca.warp7.frc.core;
+package ca.warp7.frc.action.api;
+
+import ca.warp7.frc.core.ISubsystem;
 
 /**
  * <p>

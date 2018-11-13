@@ -1,8 +1,8 @@
 package ca.warp7.frc2017_2.operator_input;
 
-import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
+import ca.warp7.frc.CheesyDrive;
 
-interface IOperatorController extends ICheesyDriveInput {
+interface IOperatorController extends CheesyDrive.IControlsInput {
 
     boolean compressorShouldSwitch();
 

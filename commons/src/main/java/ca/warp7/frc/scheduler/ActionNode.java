@@ -1,6 +1,6 @@
 package ca.warp7.frc.scheduler;
 
-import ca.warp7.frc.core.IAction;
+import ca.warp7.frc.action.api.IAction;
 
 class ActionNode implements IAction {
 

@@ -1,6 +1,6 @@
 package ca.warp7.frc.scheduler;
 
-import ca.warp7.frc.core.IAction;
+import ca.warp7.frc.action.api.IAction;
 
 import java.util.ArrayList;
 import java.util.List;

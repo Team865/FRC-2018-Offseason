@@ -1,4 +1,4 @@
-package ca.warp7.frc.core;
+package ca.warp7.frc.action.api;
 
 /**
  * Essentially a wrapper to create an action, no other mechanisms
@@ -7,7 +7,7 @@ package ca.warp7.frc.core;
  */
 
 @FunctionalInterface
-public interface IAutoMode {
+public interface IActionMode {
 
     /**
      * Procedure to fetch the main action of the mode

@@ -1,15 +1,15 @@
 package ca.warp7.frc2018_3.auto;
 
 import ca.warp7.frc.PIDValues;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionMode;
 import ca.warp7.frc.scheduler.ScheduleBuilder;
-import ca.warp7.frc.core.IAction;
-import ca.warp7.frc.core.IAutoMode;
 import ca.warp7.frc2018_3.actions.DriveForDistanceAction;
 import ca.warp7.frc2018_3.actions.OuttakeCube;
 import edu.wpi.first.wpilibj.DriverStation;
 
 @SuppressWarnings("deprecation")
-public class OneSwitch implements IAutoMode {
+public class OneSwitch implements IActionMode {
 
     private char side;
 

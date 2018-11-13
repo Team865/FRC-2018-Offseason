@@ -1,6 +1,6 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.core.IAction;
+import ca.warp7.frc.action.api.IAction;
 
 class AsyncAll extends AsyncBase {
     AsyncAll(IAction... actions) {

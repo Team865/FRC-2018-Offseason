@@ -1,5 +1,7 @@
 package ca.warp7.frc.core;
 
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -117,7 +119,7 @@ class AutoRunner {
         }
 
         // Get the auto mode that can create the action on demand
-        IAutoMode autoMode = Robot.loader.getRunningMode();
+        IActionMode autoMode = Robot.loader.getRunningMode();
 
         // Make sure there is a mode to create the main action from
         if (autoMode == null) {

@@ -1,6 +1,4 @@
-package ca.warp7.frc.cheesy_drive;
-
-import ca.warp7.frc.Functions;
+package ca.warp7.frc;
 
 public class CheesyDrive {
 
@@ -39,7 +37,7 @@ public class CheesyDrive {
     }
 
     @Deprecated
-    public void setInputsFromControls(ICheesyDriveInput controls) {
+    public void setInputsFromControls(IControlsInput controls) {
         setInputs(controls.getWheel(), controls.getThrottle(), controls.shouldQuickTurn());
     }
 
@@ -135,5 +133,15 @@ public class CheesyDrive {
     @FunctionalInterface
     public interface ISignalReceiver {
         void setDemandedDriveSpeed(double leftSpeedDemand, double rightSpeedDemand);
+    }
+
+    @SuppressWarnings("SameReturnValue")
+    @Deprecated
+    public interface IControlsInput {
+        double getWheel();
+
+        double getThrottle();
+
+        boolean shouldQuickTurn();
     }
 }

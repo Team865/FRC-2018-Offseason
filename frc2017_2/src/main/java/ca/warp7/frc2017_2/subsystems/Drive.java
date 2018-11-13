@@ -1,9 +1,8 @@
 package ca.warp7.frc2017_2.subsystems;
 
+import ca.warp7.frc.CheesyDrive;
 import ca.warp7.frc.PIDValues;
 import ca.warp7.frc.Pins;
-import ca.warp7.frc.cheesy_drive.CheesyDrive;
-import ca.warp7.frc.cheesy_drive.ICheesyDriveInput;
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
 import ca.warp7.frc.core.StateType;
@@ -172,7 +171,7 @@ public class Drive implements ISubsystem {
     }
 
     @InputModifier
-    public synchronized void cheesyDrive(ICheesyDriveInput driver) {
+    public synchronized void cheesyDrive(CheesyDrive.IControlsInput driver) {
         mInputState.shouldBeginOpenLoop = true;
         mInputState.shouldBeginPIDLoop = false;
         mCheesyDrive.setInputsFromControls(driver);
