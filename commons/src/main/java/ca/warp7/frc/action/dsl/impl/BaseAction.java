@@ -3,6 +3,7 @@ package ca.warp7.frc.action.dsl.impl;
 import ca.warp7.frc.action.dsl.def.IActionConsumer;
 import ca.warp7.frc.action.dsl.def.IActionDelegate;
 import ca.warp7.frc.action.dsl.def.IActionParent;
+import ca.warp7.frc.action.dsl.def.IActionResources;
 
 @SuppressWarnings("WeakerAccess")
 abstract class BaseAction extends StopAction implements IActionDelegate {
@@ -35,21 +36,6 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     }
 
     @Override
-    public void setVar(String name, Object value) {
-
-    }
-
-    @Override
-    public Object getVar(String name, Object defaultVal) {
-        return null;
-    }
-
-    @Override
-    public double getDouble(String name, double defaultVal) {
-        return 0;
-    }
-
-    @Override
     public boolean isConsumed(IActionConsumer consumer) {
         return false;
     }
@@ -57,16 +43,6 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     @Override
     public void interrupt() {
 
-    }
-
-    @Override
-    public int countTrigger(String name) {
-        return 0;
-    }
-
-    @Override
-    public int countTriggerSources(String name) {
-        return 0;
     }
 
     @Override
@@ -82,5 +58,10 @@ abstract class BaseAction extends StopAction implements IActionDelegate {
     @Override
     public boolean hasParent() {
         return false;
+    }
+
+    @Override
+    public IActionResources resources() {
+        return null;
     }
 }

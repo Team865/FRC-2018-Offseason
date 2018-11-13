@@ -34,7 +34,7 @@ public interface IActionDSL extends IAction {
     IActionDSL queue(IAction... actions);
 
     default IActionDSL broadcast(String... triggers) {
-        return exec(d -> Arrays.stream(triggers).forEach(trigger -> d.setVar(trigger, 1)));
+        return exec(d -> Arrays.stream(triggers).forEach(trigger -> d.resources().broadcast(trigger)));
     }
 
     default IActionDSL waitFor(double seconds) {
