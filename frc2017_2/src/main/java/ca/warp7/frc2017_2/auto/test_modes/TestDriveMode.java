@@ -1,6 +1,6 @@
 package ca.warp7.frc2017_2.auto.test_modes;
 
-import ca.warp7.frc.action.scheduler.ScheduleBuilder;
+import ca.warp7.frc.scheduler.ScheduleBuilder;
 import ca.warp7.frc.core.IAction;
 import ca.warp7.frc.core.IAutoMode;
 import ca.warp7.frc2017_2.auto.actions.DriveForDistanceAction;

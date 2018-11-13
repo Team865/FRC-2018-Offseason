@@ -4,7 +4,7 @@ import ca.warp7.frc.DifferentialVector;
 import ca.warp7.frc.DtMeasurement;
 import ca.warp7.frc.PIDValues;
 import ca.warp7.frc.Unit;
-import ca.warp7.frc.action.dsl.def.IActionDelegate;
+import ca.warp7.frc.action.api.def.IActionDelegate;
 import ca.warp7.frc.cheesy_drive.CheesyDrive;
 import ca.warp7.frc.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
