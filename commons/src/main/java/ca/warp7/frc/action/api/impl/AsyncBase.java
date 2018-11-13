@@ -32,6 +32,7 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
 
     @Override
     public void _onStart() {
+        mActions.forEach(action -> link(this, action));
         mActions.forEach(IAction::onStart);
     }
 

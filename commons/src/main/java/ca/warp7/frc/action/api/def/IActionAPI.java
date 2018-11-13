@@ -3,7 +3,7 @@ package ca.warp7.frc.action.api.def;
 import ca.warp7.frc.core.IAction;
 
 /**
- * A declarative, chain-able DSL syntax for scheduling autos
+ * A declarative, chain-able API syntax for scheduling autos
  *
  * @version 2.2 Modified 11/12/2018
  */

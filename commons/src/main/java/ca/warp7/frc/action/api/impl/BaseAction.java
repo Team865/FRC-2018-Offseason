@@ -14,8 +14,8 @@ abstract class BaseAction implements IAction, IActionDelegate {
     private double mStartTime;
     private boolean mIsInterrupted;
 
-    void setParent(IActionParent parent) {
-        mParent = parent;
+    static void link(IActionParent parent, IAction action) {
+        if (action instanceof BaseAction) ((BaseAction) action).mParent = parent;
     }
 
     void _onStart() {

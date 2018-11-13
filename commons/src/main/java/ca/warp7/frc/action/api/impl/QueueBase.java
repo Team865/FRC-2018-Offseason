@@ -35,6 +35,7 @@ abstract class QueueBase extends BaseAction implements IActionParent {
     public void _onStart() {
         mCurrentAction = null;
         mRuntimeQueue = getActionQueue();
+        mRuntimeQueue.forEach(action -> link(this, action));
     }
 
     @Override

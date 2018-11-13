@@ -18,6 +18,7 @@ class AsyncMaster extends AsyncBase {
 
     @Override
     public void _onStart() {
+        link(this, mMaster);
         mMaster.onStart();
         super._onStart();
     }
