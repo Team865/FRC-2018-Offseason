@@ -12,6 +12,11 @@ class AsyncMaster extends AsyncBase {
     }
 
     @Override
+    public int size() {
+        return super.size() + 1;
+    }
+
+    @Override
     public void onStart() {
         mMaster.onStart();
         super.onStart();

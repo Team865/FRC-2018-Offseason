@@ -22,6 +22,21 @@ abstract class QueueBase extends BaseAction implements IActionParent {
     }
 
     @Override
+    public void insert(IAction action) {
+
+    }
+
+    @Override
+    public IActionDelegate getDelegate() {
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
     public void onStart() {
         mCurrentAction = null;
         mRuntimeQueue = getActionQueue();
@@ -56,8 +71,8 @@ abstract class QueueBase extends BaseAction implements IActionParent {
         if (mCachedActionQueue != null) return mCachedActionQueue;
         List<IAction> actionQueue = new ArrayList<>();
         for (IAction action : mCandidates) {
-            if (action instanceof IActionDelegate) {
-                List<IAction> elementQueue = ((IActionDelegate) action).getActionQueue();
+            if (action instanceof IActionParent) {
+                List<IAction> elementQueue = ((IActionParent) action).getActionQueue();
                 if (elementQueue == null) actionQueue.add(action);
                 else actionQueue.addAll(elementQueue);
             }

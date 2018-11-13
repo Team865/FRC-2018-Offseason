@@ -47,7 +47,7 @@ class Queue extends QueueBase implements IActionDSL {
 
     @Override
     public IActionDSL asyncWatch(IAction action, IActionConsumer consumer) {
-        return null;
+        return queue(new AsyncWatch(action, consumer));
     }
 
     @Override

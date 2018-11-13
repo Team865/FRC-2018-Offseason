@@ -1,5 +1,6 @@
 package ca.warp7.frc.action.dsl.impl;
 
+import ca.warp7.frc.action.dsl.def.IActionDelegate;
 import ca.warp7.frc.action.dsl.def.IActionParent;
 import ca.warp7.frc.core.IAction;
 
@@ -15,8 +16,23 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
     }
 
     @Override
-    List<IAction> getChildren() {
-        return mActions;
+    public List<IAction> getActionQueue() {
+        return null;
+    }
+
+    @Override
+    public void insert(IAction action) {
+        mActions.add(action);
+    }
+
+    @Override
+    public IActionDelegate getDelegate() {
+        return this;
+    }
+
+    @Override
+    public int size() {
+        return mActions.size();
     }
 
     @Override

@@ -1,17 +1,15 @@
 package ca.warp7.frc.action.dsl.def;
 
-import ca.warp7.frc.core.IAction;
-
-import java.util.List;
-
 public interface IActionDelegate {
 
-    default List<IAction> getActionQueue() {
-        return null;
-    }
+    void setParent(IActionParent parent);
 
     default double getElapsed() {
         return 0;
+    }
+
+    default boolean isDetached() {
+        return false;
     }
 
     default double getTotalElapsed() {
