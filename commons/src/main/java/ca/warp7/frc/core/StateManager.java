@@ -4,7 +4,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -19,7 +18,7 @@ class StateManager {
     private static final double kStateEpsilon = 0.01;
 
     private final List<StateObserver> mStateObservers = new ArrayList<>();
-    private final List<XboxControllerPair> mControllers = new ArrayList<>();
+    private final List<XboxControlsState.Pair> mControllers = new ArrayList<>();
     private final PrintStream mPrintStream = new PrintStream(System.out, false);
 
     private int mPrintCounter;
@@ -74,11 +73,11 @@ class StateManager {
     }
 
     XboxControlsState createXboxController(int port) {
-        for (XboxControllerPair pair : mControllers) if (pair.port == port) return pair.state;
-        XboxControllerPair newPair = new XboxControllerPair(port);
+        for (XboxControlsState.Pair pair : mControllers) if (pair.getPort() == port) return pair.getState();
+        XboxControlsState.Pair newPair = new XboxControlsState.Pair(port);
         mControllers.add(newPair);
-        XboxControlsState.reset(newPair.state);
-        return newPair.state;
+        XboxControlsState.reset(newPair.getState());
+        return newPair.getState();
     }
 
     private void println0(String prefix, Object value) {
@@ -167,10 +166,10 @@ class StateManager {
     }
 
     synchronized void collectControllerData() {
-        for (XboxControllerPair pair : mControllers) {
-            if (pair.active) {
-                XboxControlsState.collect(pair.state, pair.controller);
-                report0(String.format("XboxController[%d]", pair.port), pair.state);
+        for (XboxControlsState.Pair pair : mControllers) {
+            if (pair.isActive()) {
+                XboxControlsState.collect(pair.getState(), pair.getController());
+                report0(String.format("XboxController[%d]", pair.getPort()), pair.getState());
             }
         }
     }
@@ -186,22 +185,6 @@ class StateManager {
             fields = this.object.getClass().getDeclaredFields();
             map = new HashMap<>();
             this.table = table;
-        }
-    }
-
-    static class XboxControllerPair {
-        private final XboxControlsState state;
-        private XboxController controller;
-        private int port;
-        private boolean active;
-
-        XboxControllerPair(int port) {
-            this.port = port;
-            this.state = new XboxControlsState();
-            if (port >= 0 && port < 6) {
-                active = true;
-                this.controller = new XboxController(port);
-            } else active = false;
         }
     }
 }

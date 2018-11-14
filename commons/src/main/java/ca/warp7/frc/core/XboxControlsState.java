@@ -92,4 +92,36 @@ public class XboxControlsState {
         S.RightXAxis = 0;
         S.RightYAxis = 0;
     }
+
+    static class Pair {
+        private final XboxControlsState state;
+        private XboxController controller;
+        private int port;
+        private boolean active;
+
+        Pair(int port) {
+            this.port = port;
+            this.state = new XboxControlsState();
+            if (port >= 0 && port < 6) {
+                active = true;
+                this.controller = new XboxController(port);
+            } else active = false;
+        }
+
+        public XboxControlsState getState() {
+            return state;
+        }
+
+        public XboxController getController() {
+            return controller;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public boolean isActive() {
+            return active;
+        }
+    }
 }

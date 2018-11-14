@@ -15,11 +15,11 @@ public class SyntaxProvider {
         return d -> d.getResources().countBroadcast(name) > 1;
     }
 
-    protected static IActionPredicate allTriggered(String name) {
+    protected static IActionPredicate triggeredAll(String name) {
         return d -> d.getResources().countBroadcast(name) == d.getResources().countBroadcastSources(name);
     }
 
-    protected static IActionPredicate someTriggered(String name, int times) {
+    protected static IActionPredicate triggeredSome(String name, int times) {
         return d -> d.getResources().countBroadcast(name) == times;
     }
 

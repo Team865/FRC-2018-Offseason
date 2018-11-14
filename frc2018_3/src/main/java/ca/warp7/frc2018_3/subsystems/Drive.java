@@ -307,6 +307,10 @@ public class Drive implements ISubsystem {
         return true;
     }
 
+    public double getProgress() {
+        return 0;
+    }
+
     public boolean shouldBeginOpenLoop() {
         return mInput.wantedAction == Action.OpenLoop;
     }
