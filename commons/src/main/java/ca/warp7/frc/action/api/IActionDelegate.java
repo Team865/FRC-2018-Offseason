@@ -12,11 +12,11 @@ public interface IActionDelegate {
 
     IActionResources getResources();
 
-    default boolean hasRequiredTime() {
+    default boolean hasRemainingTime() {
         return false;
     }
 
-    default double getRequiredTime() {
+    default double getRemainingTime() {
         return 0;
     }
 

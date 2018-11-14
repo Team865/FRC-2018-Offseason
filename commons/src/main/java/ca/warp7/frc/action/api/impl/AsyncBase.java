@@ -5,6 +5,7 @@ import ca.warp7.frc.action.api.IActionDelegate;
 import ca.warp7.frc.action.api.IActionParent;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 abstract class AsyncBase extends BaseAction implements IActionParent {
@@ -17,6 +18,7 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
 
     @Override
     public List<IAction> getActionQueue() {
+        if (mActions.size() == 1) return Collections.singletonList(mActions.get(0));
         return null;
     }
 
@@ -32,8 +34,10 @@ abstract class AsyncBase extends BaseAction implements IActionParent {
 
     @Override
     public void _onStart() {
-        mActions.forEach(action -> link(this, action));
-        mActions.forEach(IAction::onStart);
+        mActions.forEach(action -> {
+            link(this, action);
+            action.onStart();
+        });
     }
 
     @Override
