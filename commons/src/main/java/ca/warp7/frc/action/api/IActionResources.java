@@ -6,17 +6,17 @@ public interface IActionResources {
 
     Object get(String name, Object defaultVal);
 
-    int countTrigger(String trigger);
+    int countBroadcast(String trigger);
 
-    int countTriggerSources(String trigger);
+    int countBroadcastSources(String trigger);
 
-    void addBroadcastSource(String trigger);
+    void addBroadcastSources(String... trigger);
 
     String broadcastName(String trigger);
 
-    void setActionTimer(IAction.ITimer timer);
-
     IAction.ITimer getActionTimer();
+
+    void setActionTimer(IAction.ITimer timer);
 
     double getTime();
 

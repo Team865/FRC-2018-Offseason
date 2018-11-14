@@ -8,21 +8,20 @@ import java.util.Objects;
 
 class ThreadRunner extends BaseAction {
 
-    static IAction create(ITimer timer, double interval, double timeout, BaseAction action) {
-        Objects.requireNonNull(action);
-        action.getResources().setActionTimer(timer);
-        return new ThreadRunner(interval, timeout, action);
-    }
-
     private BaseAction mAction;
     private Thread mRunThread;
     private long mInterval;
     private double mTimeout;
-
     private ThreadRunner(double interval, double timeout, BaseAction action) {
         mAction = action;
         mInterval = (long) (interval * 1000);
         mTimeout = timeout;
+    }
+
+    static IAction create(ITimer timer, double interval, double timeout, BaseAction action) {
+        Objects.requireNonNull(action);
+        action.getResources().setActionTimer(timer);
+        return new ThreadRunner(interval, timeout, action);
     }
 
     @Override

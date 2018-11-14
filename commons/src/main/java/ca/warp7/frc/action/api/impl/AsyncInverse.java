@@ -10,14 +10,6 @@ import java.util.List;
 
 class AsyncInverse extends BaseAction implements IActionParent {
 
-    private static class Inverse {
-        private IAction action;
-        private IActionDelegate delegate;
-        private boolean hasDelegate;
-        private boolean started;
-        private double remainingTime;
-    }
-
     private final List<Inverse> mInverse = new ArrayList<>();
 
     AsyncInverse(IAction... actions) {
@@ -72,5 +64,13 @@ class AsyncInverse extends BaseAction implements IActionParent {
     @Override
     public void _onStop() {
         mInverse.stream().filter(inverse -> inverse.started).forEach(inverse -> inverse.action.onStop());
+    }
+
+    private static class Inverse {
+        private IAction action;
+        private IActionDelegate delegate;
+        private boolean hasDelegate;
+        private boolean started;
+        private double remainingTime;
     }
 }

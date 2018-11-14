@@ -56,4 +56,10 @@ class Queue extends QueueBase implements IActionAPI {
     public IActionAPI await(IActionPredicate predicate) {
         return queue(new Await(predicate));
     }
+
+    @Override
+    public IActionAPI broadcast(String... triggers) {
+        getResources().addBroadcastSources(triggers);
+        return IActionAPI.super.broadcast(triggers);
+    }
 }

@@ -4,6 +4,14 @@ import ca.warp7.frc.action.api.*;
 
 public abstract class ActionMode extends SyntaxProvider implements IActionMode, IActionAPI {
 
+    public static boolean isUsingActionAPI(IAction action) {
+        return action instanceof BaseAction;
+    }
+
+    public static IAction create(ITimer timer, double interval, double timeout, IAction action) {
+        return ThreadRunner.create(timer, interval, timeout, (BaseAction) action);
+    }
+
     @Override
     public IActionAPI async(IAction... actions) {
         return queue().async(actions);
@@ -50,20 +58,17 @@ public abstract class ActionMode extends SyntaxProvider implements IActionMode, 
     }
 
     @Override
+    public IActionAPI broadcast(String... triggers) {
+        return queue().broadcast(triggers);
+    }
+
+    @Override
     public void onStart() {
     }
 
     @SuppressWarnings("unused")
     public IActionAPI detachThread(double interval, double timeout, BaseAction action) {
         return queue(ThreadRunner.create(null, interval, timeout, action));
-    }
-
-    public static boolean isUsingActionAPI(IAction action) {
-        return action instanceof BaseAction;
-    }
-
-    public static IAction create(ITimer timer, double interval, double timeout, IAction action) {
-        return ThreadRunner.create(timer, interval, timeout, (BaseAction) action);
     }
 
 }

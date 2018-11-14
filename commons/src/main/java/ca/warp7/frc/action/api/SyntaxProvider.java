@@ -8,19 +8,19 @@ import java.util.Arrays;
 @SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
 public class SyntaxProvider {
     protected static IActionPredicate triggeredOnce(String name) {
-        return d -> d.getResources().countTrigger(name) == 1;
+        return d -> d.getResources().countBroadcast(name) == 1;
     }
 
     protected static IActionPredicate triggeredRepeat(String name) {
-        return d -> d.getResources().countTrigger(name) > 1;
+        return d -> d.getResources().countBroadcast(name) > 1;
     }
 
     protected static IActionPredicate allTriggered(String name) {
-        return d -> d.getResources().countTrigger(name) == d.getResources().countTriggerSources(name);
+        return d -> d.getResources().countBroadcast(name) == d.getResources().countBroadcastSources(name);
     }
 
     protected static IActionPredicate someTriggered(String name, int times) {
-        return d -> d.getResources().countTrigger(name) == times;
+        return d -> d.getResources().countBroadcast(name) == times;
     }
 
     protected static IActionPredicate elapsed(double timeInSeconds) {
