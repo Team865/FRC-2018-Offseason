@@ -1,6 +1,9 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.*;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionDelegate;
+import ca.warp7.frc.action.api.IActionParent;
+import ca.warp7.frc.action.api.IActionResources;
 
 @SuppressWarnings("WeakerAccess")
 abstract class BaseAction implements IAction, IActionDelegate {
@@ -61,11 +64,6 @@ abstract class BaseAction implements IAction, IActionDelegate {
     @Override
     public IActionParent getParent() {
         return mParent;
-    }
-
-    @Override
-    public boolean isConsumed(IActionConsumer consumer) {
-        return false;
     }
 
     @Override

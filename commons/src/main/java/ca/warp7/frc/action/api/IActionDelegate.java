@@ -8,11 +8,29 @@ public interface IActionDelegate {
 
     IActionParent getParent();
 
-    boolean isConsumed(IActionConsumer consumer);
-
     void interrupt();
 
     IActionResources getResources();
+
+    default boolean hasRequiredTime() {
+        return false;
+    }
+
+    default double getRequiredTime() {
+        return 0;
+    }
+
+    default boolean hasProgressState() {
+        return false;
+    }
+
+    default double getPercentProgress() {
+        return 0;
+    }
+
+    default double getNumericalProgress() {
+        return 0;
+    }
 
     default boolean hasParent() {
         return getParent() != null;

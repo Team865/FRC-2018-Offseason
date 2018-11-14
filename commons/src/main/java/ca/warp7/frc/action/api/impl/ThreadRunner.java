@@ -27,6 +27,7 @@ class ThreadRunner extends BaseAction {
 
     @Override
     public IActionParent getParent() {
+        // Return null so the resources are not shared in the hierarchy of actions
         return null;
     }
 

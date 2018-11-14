@@ -28,7 +28,7 @@ public interface IActionAPI extends IAction {
     IActionAPI queue(IAction... actions);
 
     default IActionAPI broadcast(String... triggers) {
-        return exec(SyntaxProvider.broadcastTriggers(triggers));
+        return exec(SyntaxProvider.broadcastAll(triggers));
     }
 
     default IActionAPI waitFor(double seconds) {
