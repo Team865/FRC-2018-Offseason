@@ -5,7 +5,6 @@ import ca.warp7.frc.action.api.IActionDelegate;
 import ca.warp7.frc.action.api.IActionParent;
 import ca.warp7.frc.action.api.IActionResources;
 
-@SuppressWarnings("WeakerAccess")
 abstract class ActionBase implements IAction, IActionDelegate {
 
     private IActionParent mParent;
@@ -80,6 +79,7 @@ abstract class ActionBase implements IAction, IActionDelegate {
     public IActionResources getResources() {
         if (mResources != null) return mResources;
         mResources = getParent() != null ? getParent().getDelegate().getResources() : new ActionResources();
+        mResources = mResources != null ? mResources : new ActionResources();
         return mResources;
     }
 }

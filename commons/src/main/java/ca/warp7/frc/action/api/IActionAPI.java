@@ -3,7 +3,7 @@ package ca.warp7.frc.action.api;
 /**
  * A declarative, chain-able API syntax for scheduling autos
  *
- * @version 2.3 Modified 11/13/2018
+ * @version 2.5 Modified 11/14/2018
  */
 
 @SuppressWarnings("ALL")
@@ -15,13 +15,11 @@ public interface IActionAPI extends IAction {
 
     IActionAPI asyncInverse(IAction... actions);
 
-    IActionAPI asyncWatch(IAction action, IActionConsumer consumer);
-
     IActionAPI asyncMaster(IAction master, IAction... slaves);
 
     IActionAPI await(IActionPredicate predicate);
 
-    IActionAPI branch(IActionPredicate predicate, IAction ifAction, IAction elseAction);
+    IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction);
 
     IActionAPI exec(IActionConsumer consumer);
 
@@ -36,7 +34,7 @@ public interface IActionAPI extends IAction {
     }
 
     default IActionAPI onlyIf(IActionPredicate predicate, IAction action) {
-        return branch(predicate, action, null);
+        return runIf(predicate, action, null);
     }
 
     default IActionAPI asyncUntil(IActionPredicate predicate, IAction... actions) {

@@ -25,13 +25,8 @@ public abstract class HeadAPI extends SyntaxProvider implements IActionAPI {
     }
 
     @Override
-    public IActionAPI branch(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
-        return queue().branch(predicate, ifAction, elseAction);
-    }
-
-    @Override
-    public IActionAPI asyncWatch(IAction action, IActionConsumer consumer) {
-        return queue().asyncWatch(action, consumer);
+    public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
+        return queue().runIf(predicate, ifAction, elseAction);
     }
 
     @Override

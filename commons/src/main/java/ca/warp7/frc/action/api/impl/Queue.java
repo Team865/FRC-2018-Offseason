@@ -7,10 +7,6 @@ import ca.warp7.frc.action.api.IActionPredicate;
 
 class Queue extends QueueBase implements IActionAPI {
 
-    static IActionAPI head(IAction... actions) {
-        return actions.length == 0 ? new Queue() : new Queue().queue(actions);
-    }
-
     @Override
     public IActionAPI queue(IAction... actions) {
         addToQueue(actions);
@@ -38,13 +34,8 @@ class Queue extends QueueBase implements IActionAPI {
     }
 
     @Override
-    public IActionAPI asyncWatch(IAction action, IActionConsumer consumer) {
-        return queue(new AsyncWatch(action, consumer));
-    }
-
-    @Override
-    public IActionAPI branch(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
-        return queue(new Branch(predicate, ifAction, elseAction));
+    public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
+        return queue(new Condition(predicate, ifAction, elseAction));
     }
 
     @Override
@@ -61,5 +52,9 @@ class Queue extends QueueBase implements IActionAPI {
     public IActionAPI broadcast(String... triggers) {
         getResources().addBroadcastSources(triggers);
         return IActionAPI.super.broadcast(triggers);
+    }
+
+    static IActionAPI _queue(IAction... actions) {
+        return actions.length == 0 ? new Queue() : new Queue().queue(actions);
     }
 }

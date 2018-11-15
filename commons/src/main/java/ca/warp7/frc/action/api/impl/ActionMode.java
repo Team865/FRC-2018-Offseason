@@ -16,7 +16,7 @@ public abstract class ActionMode extends HeadAPI implements IActionMode {
 
     @Override
     public IActionAPI queue(IAction... actions) {
-        return Queue.head(actions);
+        return Queue._queue(actions);
     }
 
     @Override
