@@ -4,7 +4,7 @@ import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionAPI;
 import ca.warp7.frc.action.api.IActionMode;
 
-public abstract class ActionMode extends HeadAPI implements IActionMode {
+public abstract class ActionMode extends IActionAPI.Head implements IActionMode {
 
     public static boolean isUsingActionAPI(IAction action) {
         return action instanceof ActionBase;

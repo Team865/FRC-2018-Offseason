@@ -13,7 +13,7 @@ import java.util.Arrays;
  * {@link IActionPredicate}
  * {@link IActionResources}
  *
- * @version 2.7 Revised 11/14/2018
+ * @version 2.8 Revised 11/14/2018
  */
 
 @SuppressWarnings("ALL")
@@ -97,5 +97,48 @@ public interface IActionAPI extends IAction {
 
     default IActionAPI when(IActionPredicate predicate, IAction... actions) {
         return await(predicate).queue(actions);
+    }
+
+    abstract class Head extends FunctionProvider implements IActionAPI {
+
+        @Override
+        public IActionAPI asyncAll(IAction... actions) {
+            return queue().asyncAll(actions);
+        }
+
+        @Override
+        public IActionAPI asyncAny(IAction... actions) {
+            return queue().asyncAny(actions);
+        }
+
+        @Override
+        public IActionAPI asyncInverse(IAction... actions) {
+            return queue().asyncInverse(actions);
+        }
+
+        @Override
+        public IActionAPI asyncMaster(IAction master, IAction... slaves) {
+            return queue().asyncMaster(master, slaves);
+        }
+
+        @Override
+        public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
+            return queue().runIf(predicate, ifAction, elseAction);
+        }
+
+        @Override
+        public IActionAPI await(IActionPredicate predicate) {
+            return queue().await(predicate);
+        }
+
+        @Override
+        public IActionAPI exec(IActionConsumer consumer) {
+            return queue().exec(consumer);
+        }
+
+        @Override
+        public IActionAPI broadcast(String... triggers) {
+            return queue().broadcast(triggers);
+        }
     }
 }
