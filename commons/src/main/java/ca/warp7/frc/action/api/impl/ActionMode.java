@@ -4,6 +4,7 @@ import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionAPI;
 import ca.warp7.frc.action.api.IActionMode;
 
+@SuppressWarnings("unused")
 public abstract class ActionMode extends IActionAPI.Head implements IActionMode {
 
     public static boolean isUsingActionAPI(IAction action) {
@@ -19,11 +20,6 @@ public abstract class ActionMode extends IActionAPI.Head implements IActionMode 
         return Queue._queue(actions);
     }
 
-    @Override
-    public void onStart() {
-    }
-
-    @SuppressWarnings("unused")
     public IActionAPI detachThread(double interval, double timeout, ActionBase action) {
         return queue(createRunner(null, interval, timeout, action));
     }

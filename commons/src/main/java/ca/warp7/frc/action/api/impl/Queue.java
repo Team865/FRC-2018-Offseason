@@ -8,12 +8,6 @@ import ca.warp7.frc.action.api.IActionPredicate;
 class Queue extends QueueBase implements IActionAPI {
 
     @Override
-    public IActionAPI queue(IAction... actions) {
-        addToQueue(actions);
-        return this;
-    }
-
-    @Override
     public IActionAPI asyncAll(IAction... actions) {
         return queue(new AsyncForward.All(actions));
     }
@@ -34,16 +28,6 @@ class Queue extends QueueBase implements IActionAPI {
     }
 
     @Override
-    public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
-        return queue(new Condition(predicate, ifAction, elseAction));
-    }
-
-    @Override
-    public IActionAPI exec(IActionConsumer consumer) {
-        return queue(new Execution(consumer));
-    }
-
-    @Override
     public IActionAPI await(IActionPredicate predicate) {
         return queue(new Await(predicate));
     }
@@ -52,6 +36,27 @@ class Queue extends QueueBase implements IActionAPI {
     public IActionAPI broadcast(String... triggers) {
         getResources().addBroadcastSources(triggers);
         return IActionAPI.super.broadcast(triggers);
+    }
+
+    @Override
+    public IActionAPI exec(IActionConsumer consumer) {
+        return queue(new Execution(consumer));
+    }
+
+    @Override
+    public IActionAPI iterate(IActionConsumer consumer) {
+        return queue(new Iteration(consumer));
+    }
+
+    @Override
+    public IActionAPI queue(IAction... actions) {
+        addToQueue(actions);
+        return this;
+    }
+
+    @Override
+    public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
+        return queue(new Condition(predicate, ifAction, elseAction));
     }
 
     static IActionAPI _queue(IAction... actions) {

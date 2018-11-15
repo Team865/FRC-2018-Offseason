@@ -13,7 +13,7 @@ import java.util.Arrays;
  * {@link IActionPredicate}
  * {@link IActionResources}
  *
- * @version 2.8 Revised 11/14/2018
+ * @version 2.9 Revised 11/14/2018
  */
 
 @SuppressWarnings("ALL")
@@ -29,9 +29,11 @@ public interface IActionAPI extends IAction {
 
     IActionAPI await(IActionPredicate predicate);
 
-    IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction);
-
     IActionAPI exec(IActionConsumer consumer);
+
+    IActionAPI iterate(IActionConsumer consumer);
+
+    IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction);
 
     IActionAPI queue(IAction... actions);
 
@@ -122,13 +124,13 @@ public interface IActionAPI extends IAction {
         }
 
         @Override
-        public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
-            return queue().runIf(predicate, ifAction, elseAction);
+        public IActionAPI await(IActionPredicate predicate) {
+            return queue().await(predicate);
         }
 
         @Override
-        public IActionAPI await(IActionPredicate predicate) {
-            return queue().await(predicate);
+        public IActionAPI broadcast(String... triggers) {
+            return queue().broadcast(triggers);
         }
 
         @Override
@@ -137,8 +139,17 @@ public interface IActionAPI extends IAction {
         }
 
         @Override
-        public IActionAPI broadcast(String... triggers) {
-            return queue().broadcast(triggers);
+        public IActionAPI iterate(IActionConsumer consumer) {
+            return queue().iterate(consumer);
+        }
+
+        @Override
+        public IActionAPI runIf(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
+            return queue().runIf(predicate, ifAction, elseAction);
+        }
+
+        @Override
+        public void onStart() {
         }
     }
 }
