@@ -13,13 +13,13 @@ import java.util.Arrays;
  * {@link IActionPredicate}
  * {@link IActionResources}
  *
- * @version 2.6 Revised 11/14/2018
+ * @version 2.7 Revised 11/14/2018
  */
 
 @SuppressWarnings("ALL")
 public interface IActionAPI extends IAction {
 
-    IActionAPI async(IAction... actions);
+    IActionAPI asyncAll(IAction... actions);
 
     IActionAPI asyncAny(IAction... actions);
 
@@ -35,7 +35,7 @@ public interface IActionAPI extends IAction {
 
     IActionAPI queue(IAction... actions);
 
-    abstract class SyntaxProvider {
+    abstract class FunctionProvider {
 
         protected static IActionPredicate triggeredOnce(String name) {
             return d -> d.getResources().countBroadcast(name) == 1;
@@ -71,24 +71,28 @@ public interface IActionAPI extends IAction {
         }
     }
 
-    default IActionAPI broadcast(String... triggers) {
-        return exec(SyntaxProvider.broadcastAll(triggers));
-    }
-
-    default IActionAPI waitFor(double seconds) {
-        return await(SyntaxProvider.elapsed(seconds));
-    }
-
-    default IActionAPI onlyIf(IActionPredicate predicate, IAction action) {
-        return runIf(predicate, action, null);
+    default IActionAPI async(IAction... actions) {
+        return asyncAll(actions);
     }
 
     default IActionAPI asyncUntil(IActionPredicate predicate, IAction... actions) {
         return asyncMaster(await(predicate), actions);
     }
 
+    default IActionAPI broadcast(String... triggers) {
+        return exec(FunctionProvider.broadcastAll(triggers));
+    }
+
     default IActionAPI broadcastWhen(IActionPredicate predicate, String... triggers) {
         return await(predicate).broadcast(triggers);
+    }
+
+    default IActionAPI onlyIf(IActionPredicate predicate, IAction action) {
+        return runIf(predicate, action, null);
+    }
+
+    default IActionAPI waitFor(double seconds) {
+        return await(FunctionProvider.elapsed(seconds));
     }
 
     default IActionAPI when(IActionPredicate predicate, IAction... actions) {

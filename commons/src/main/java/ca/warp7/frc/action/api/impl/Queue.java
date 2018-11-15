@@ -14,7 +14,7 @@ class Queue extends QueueBase implements IActionAPI {
     }
 
     @Override
-    public IActionAPI async(IAction... actions) {
+    public IActionAPI asyncAll(IAction... actions) {
         return queue(new AsyncForward.All(actions));
     }
 

@@ -5,11 +5,11 @@ import ca.warp7.frc.action.api.IActionAPI;
 import ca.warp7.frc.action.api.IActionConsumer;
 import ca.warp7.frc.action.api.IActionPredicate;
 
-abstract class HeadAPI extends IActionAPI.SyntaxProvider implements IActionAPI {
+abstract class HeadAPI extends IActionAPI.FunctionProvider implements IActionAPI {
 
     @Override
-    public IActionAPI async(IAction... actions) {
-        return queue().async(actions);
+    public IActionAPI asyncAll(IAction... actions) {
+        return queue().asyncAll(actions);
     }
 
     @Override
