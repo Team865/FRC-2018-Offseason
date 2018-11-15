@@ -2,13 +2,14 @@ package ca.warp7.frc.action.api;
 
 @SuppressWarnings("unused")
 public interface IActionResources {
+
     void put(String name, Object value);
 
     Object get(String name, Object defaultVal);
 
-    int countBroadcast(String trigger);
+    int getBroadcastCount(String trigger);
 
-    int countBroadcastSources(String trigger);
+    int getBroadcastSources(String trigger);
 
     void addBroadcastSources(String... trigger);
 

@@ -24,12 +24,12 @@ public class ActionResources implements IActionResources {
     }
 
     @Override
-    public int countBroadcast(String trigger) {
+    public int getBroadcastCount(String trigger) {
         return getInt(broadcastName(trigger), 0);
     }
 
     @Override
-    public int countBroadcastSources(String trigger) {
+    public int getBroadcastSources(String trigger) {
         return mBroadcastSources.getOrDefault(broadcastName(trigger), 0);
     }
 

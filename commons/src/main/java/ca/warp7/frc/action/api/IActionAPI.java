@@ -13,7 +13,7 @@ import java.util.Arrays;
  * {@link IActionPredicate}
  * {@link IActionResources}
  *
- * @version 2.9 Revised 11/14/2018
+ * @version 2.9 (Revision #10) Revised 11/14/2018
  */
 
 @SuppressWarnings("ALL")
@@ -40,19 +40,19 @@ public interface IActionAPI extends IAction {
     abstract class FunctionProvider {
 
         protected static IActionPredicate triggeredOnce(String name) {
-            return d -> d.getResources().countBroadcast(name) == 1;
+            return d -> d.getResources().getBroadcastCount(name) == 1;
         }
 
         protected static IActionPredicate triggeredRepeat(String name) {
-            return d -> d.getResources().countBroadcast(name) > 1;
+            return d -> d.getResources().getBroadcastCount(name) > 1;
         }
 
         protected static IActionPredicate triggeredAll(String name) {
-            return d -> d.getResources().countBroadcast(name) == d.getResources().countBroadcastSources(name);
+            return d -> d.getResources().getBroadcastCount(name) == d.getResources().getBroadcastSources(name);
         }
 
         protected static IActionPredicate triggeredSome(String name, int times) {
-            return d -> d.getResources().countBroadcast(name) == times;
+            return d -> d.getResources().getBroadcastCount(name) == times;
         }
 
         protected static IActionPredicate elapsed(double timeInSeconds) {

@@ -13,6 +13,10 @@ public interface IActionDelegate {
 
     IActionResources getResources();
 
+    default double totalElapsed() {
+        return getResources().getTotalElapsed();
+    }
+
     default boolean hasRemainingTime() {
         return false;
     }

@@ -36,7 +36,8 @@ abstract class ActionBase implements IAction, IActionDelegate {
 
     @Override
     public void onStart() {
-        mStartTime = getResources().getTime();
+        getResources().startTimer();
+        mStartTime = mResources.getTime();
         _onStart();
     }
 
