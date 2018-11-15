@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-abstract class AsyncBase extends BaseAction implements IActionParent {
+abstract class AsyncBase extends ActionBase implements IActionParent {
 
     final List<IAction> mActions;
 

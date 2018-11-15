@@ -3,7 +3,7 @@ package ca.warp7.frc.action.api.impl;
 import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionConsumer;
 
-class AsyncWatch extends BaseAction {
+class AsyncWatch extends ActionBase {
 
     private IAction mAction;
     private IActionConsumer mConsumer;

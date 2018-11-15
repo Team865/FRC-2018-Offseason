@@ -2,7 +2,7 @@ package ca.warp7.frc.action.api.impl;
 
 import ca.warp7.frc.action.api.IActionConsumer;
 
-class Execution extends BaseAction {
+class Execution extends ActionBase {
     private IActionConsumer mConsumer;
 
     Execution(IActionConsumer consumer) {

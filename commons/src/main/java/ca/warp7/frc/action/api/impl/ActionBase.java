@@ -6,7 +6,7 @@ import ca.warp7.frc.action.api.IActionParent;
 import ca.warp7.frc.action.api.IActionResources;
 
 @SuppressWarnings("WeakerAccess")
-abstract class BaseAction implements IAction, IActionDelegate {
+abstract class ActionBase implements IAction, IActionDelegate {
 
     private IActionParent mParent;
     private IActionResources mResources;
@@ -15,10 +15,10 @@ abstract class BaseAction implements IAction, IActionDelegate {
     private int mDetachDepth;
 
     static void link(IActionParent parent, IAction action) {
-        if (action instanceof BaseAction) ((BaseAction) action).mParent = parent;
+        if (action instanceof ActionBase) ((ActionBase) action).mParent = parent;
     }
 
-    static void incrementDetachDepth(BaseAction action) {
+    static void incrementDetachDepth(ActionBase action) {
         action.mDetachDepth++;
     }
 

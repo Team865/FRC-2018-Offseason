@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-abstract class QueueBase extends BaseAction implements IActionParent {
+abstract class QueueBase extends ActionBase implements IActionParent {
 
     private final List<IAction> mCandidates = new ArrayList<>();
     private List<IAction> mCachedActionQueue;

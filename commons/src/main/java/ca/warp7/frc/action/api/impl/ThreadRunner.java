@@ -6,19 +6,20 @@ import ca.warp7.frc.action.api.IActionResources;
 
 import java.util.Objects;
 
-class ThreadRunner extends BaseAction {
+class ThreadRunner extends ActionBase {
 
-    private BaseAction mAction;
+    private ActionBase mAction;
     private Thread mRunThread;
     private long mInterval;
     private double mTimeout;
-    private ThreadRunner(double interval, double timeout, BaseAction action) {
+
+    private ThreadRunner(double interval, double timeout, ActionBase action) {
         mAction = action;
         mInterval = (long) (interval * 1000);
         mTimeout = timeout;
     }
 
-    static IAction create(ITimer timer, double interval, double timeout, BaseAction action) {
+    static IAction create(ITimer timer, double interval, double timeout, ActionBase action) {
         Objects.requireNonNull(action);
         action.getResources().setActionTimer(timer);
         return new ThreadRunner(interval, timeout, action);

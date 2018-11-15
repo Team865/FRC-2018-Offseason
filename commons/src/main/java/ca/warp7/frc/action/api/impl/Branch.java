@@ -3,7 +3,7 @@ package ca.warp7.frc.action.api.impl;
 import ca.warp7.frc.action.api.IAction;
 import ca.warp7.frc.action.api.IActionPredicate;
 
-class Branch extends BaseAction {
+class Branch extends ActionBase {
     private IActionPredicate mPredicate;
     private IAction mIf;
     private IAction mElse;

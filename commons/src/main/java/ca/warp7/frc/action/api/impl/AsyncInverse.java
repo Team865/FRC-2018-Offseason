@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class AsyncInverse extends BaseAction implements IActionParent {
+class AsyncInverse extends ActionBase implements IActionParent {
 
     private final List<Inverse> mInverse = new ArrayList<>();
 

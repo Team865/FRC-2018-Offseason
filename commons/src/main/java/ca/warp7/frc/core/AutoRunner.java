@@ -156,7 +156,7 @@ class AutoRunner {
         // Check if the Action API is used
         mUsingActionAPI = ActionMode.isUsingActionAPI(mAction);
         if (mUsingActionAPI) {
-            mAPIRunner = ActionMode.create(Timer::getFPGATimestamp, mExplicitTimeout, kDefaultLoopDelta, mAction);
+            mAPIRunner = ActionMode.createRunner(Timer::getFPGATimestamp, mExplicitTimeout, kDefaultLoopDelta, mAction);
             mAPIRunner.onStart();
             return;
         }

@@ -1,45 +1,17 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.*;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionAPI;
+import ca.warp7.frc.action.api.IActionMode;
 
-public abstract class ActionMode extends SyntaxProvider implements IActionMode, IActionAPI {
+public abstract class ActionMode extends HeadAPI implements IActionMode {
 
     public static boolean isUsingActionAPI(IAction action) {
-        return action instanceof BaseAction;
+        return action instanceof ActionBase;
     }
 
-    public static IAction create(ITimer timer, double interval, double timeout, IAction action) {
-        return ThreadRunner.create(timer, interval, timeout, (BaseAction) action);
-    }
-
-    @Override
-    public IActionAPI async(IAction... actions) {
-        return queue().async(actions);
-    }
-
-    @Override
-    public IActionAPI asyncAny(IAction... actions) {
-        return queue().asyncAny(actions);
-    }
-
-    @Override
-    public IActionAPI asyncInverse(IAction... actions) {
-        return queue().asyncInverse(actions);
-    }
-
-    @Override
-    public IActionAPI asyncMaster(IAction master, IAction... slaves) {
-        return queue().asyncMaster(master, slaves);
-    }
-
-    @Override
-    public IActionAPI branch(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
-        return queue().branch(predicate, ifAction, elseAction);
-    }
-
-    @Override
-    public IActionAPI asyncWatch(IAction action, IActionConsumer consumer) {
-        return queue().asyncWatch(action, consumer);
+    public static IAction createRunner(ITimer timer, double interval, double timeout, IAction action) {
+        return ThreadRunner.create(timer, interval, timeout, (ActionBase) action);
     }
 
     @Override
@@ -48,27 +20,11 @@ public abstract class ActionMode extends SyntaxProvider implements IActionMode, 
     }
 
     @Override
-    public IActionAPI await(IActionPredicate predicate) {
-        return queue().await(predicate);
-    }
-
-    @Override
-    public IActionAPI exec(IActionConsumer consumer) {
-        return queue().exec(consumer);
-    }
-
-    @Override
-    public IActionAPI broadcast(String... triggers) {
-        return queue().broadcast(triggers);
-    }
-
-    @Override
     public void onStart() {
     }
 
     @SuppressWarnings("unused")
-    public IActionAPI detachThread(double interval, double timeout, BaseAction action) {
-        return queue(ThreadRunner.create(null, interval, timeout, action));
+    public IActionAPI detachThread(double interval, double timeout, ActionBase action) {
+        return queue(createRunner(null, interval, timeout, action));
     }
-
 }
