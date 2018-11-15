@@ -1,8 +1,8 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.action.api.IAction;
-import ca.warp7.frc.action.api.IActionMode;
-import ca.warp7.frc.action.api.impl.ActionMode;
+import ca.warp7.action.IAction;
+import ca.warp7.action.IActionMode;
+import ca.warp7.action.impl.ActionMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 

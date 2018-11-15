@@ -1,6 +1,6 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.frc.action.api.IActionMode;
+import ca.warp7.action.IActionMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**

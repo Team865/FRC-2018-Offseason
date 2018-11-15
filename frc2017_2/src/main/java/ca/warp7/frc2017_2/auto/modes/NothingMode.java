@@ -1,7 +1,7 @@
 package ca.warp7.frc2017_2.auto.modes;
 
-import ca.warp7.frc.action.api.IAction;
-import ca.warp7.frc.action.api.IActionMode;
+import ca.warp7.action.IAction;
+import ca.warp7.action.IActionMode;
 
 public class NothingMode implements IActionMode {
     @Override

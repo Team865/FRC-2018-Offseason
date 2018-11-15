@@ -1,6 +1,6 @@
 package ca.warp7.frc2018_3;
 
-import ca.warp7.frc.action.api.IActionMode;
+import ca.warp7.action.IActionMode;
 import ca.warp7.frc2018_3.auto.Baseline;
 import ca.warp7.frc2018_3.auto.BaselinePID;
 import ca.warp7.frc2018_3.auto.NothingMode;

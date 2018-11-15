@@ -1,6 +1,6 @@
 package ca.warp7.frc2018_3.actions;
 
-import ca.warp7.frc.action.api.IAction;
+import ca.warp7.action.IAction;
 import edu.wpi.first.wpilibj.Timer;
 
 import static ca.warp7.frc2018_3.Components.intake;

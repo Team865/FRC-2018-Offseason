@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.*;
-import ca.warp7.frc.action.api.IActionDelegate;
+import ca.warp7.action.IActionDelegate;
 import ca.warp7.frc.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
