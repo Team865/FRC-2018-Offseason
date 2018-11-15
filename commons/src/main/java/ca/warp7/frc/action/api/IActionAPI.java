@@ -13,7 +13,7 @@ import java.util.Arrays;
  * {@link IActionPredicate}
  * {@link IActionResources}
  *
- * @version 2.6 Modified 11/14/2018
+ * @version 2.6 Revised 11/14/2018
  */
 
 @SuppressWarnings("ALL")

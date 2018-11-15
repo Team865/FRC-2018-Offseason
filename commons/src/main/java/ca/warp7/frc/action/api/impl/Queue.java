@@ -15,12 +15,12 @@ class Queue extends QueueBase implements IActionAPI {
 
     @Override
     public IActionAPI async(IAction... actions) {
-        return queue(new AsyncAll(actions));
+        return queue(new AsyncForward.All(actions));
     }
 
     @Override
     public IActionAPI asyncAny(IAction... actions) {
-        return queue(new AsyncAny(actions));
+        return queue(new AsyncForward.Any(actions));
     }
 
     @Override
@@ -30,7 +30,7 @@ class Queue extends QueueBase implements IActionAPI {
 
     @Override
     public IActionAPI asyncMaster(IAction master, IAction... slaves) {
-        return queue(new AsyncMaster(master, slaves));
+        return queue(new AsyncForward.Master(master, slaves));
     }
 
     @Override
