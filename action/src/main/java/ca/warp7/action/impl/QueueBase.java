@@ -1,15 +1,13 @@
 package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionDelegate;
-import ca.warp7.action.IActionParent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-abstract class QueueBase extends ActionBase implements IActionParent {
+abstract class QueueBase extends ActionBase implements IAction.Parent {
 
     private final List<IAction> mCandidates = new ArrayList<>();
     private List<IAction> mCachedActionQueue;
@@ -22,7 +20,7 @@ abstract class QueueBase extends ActionBase implements IActionParent {
     }
 
     @Override
-    public IActionDelegate getDelegate() {
+    public Delegate getDelegate() {
         return null;
     }
 
@@ -67,8 +65,8 @@ abstract class QueueBase extends ActionBase implements IActionParent {
         if (mCachedActionQueue != null) return mCachedActionQueue;
         List<IAction> actionQueue = new ArrayList<>();
         for (IAction action : mCandidates) {
-            if (action instanceof IActionParent) {
-                List<IAction> elementQueue = ((IActionParent) action).getActionQueue();
+            if (action instanceof Parent) {
+                List<IAction> elementQueue = ((Parent) action).getActionQueue();
                 if (elementQueue == null) actionQueue.add(action);
                 else actionQueue.addAll(elementQueue);
             }

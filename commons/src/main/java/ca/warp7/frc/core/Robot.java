@@ -1,6 +1,6 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.action.IActionMode;
+import ca.warp7.action.IAction;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -70,7 +70,7 @@ public abstract class Robot extends IterativeRobot {
         mComponents.setControllerLoop(loop);
     }
 
-    protected final void setAutoMode(IActionMode mode) {
+    protected final void setAutoMode(IAction.Mode mode) {
         loader.setAutoMode(mode, 15);
     }
 

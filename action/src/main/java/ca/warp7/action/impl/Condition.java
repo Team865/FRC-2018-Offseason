@@ -1,15 +1,14 @@
 package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionPredicate;
 
 class Condition extends ActionBase {
-    private IActionPredicate mPredicate;
+    private Predicate mPredicate;
     private IAction mIf;
     private IAction mElse;
     private IAction mSelected;
 
-    Condition(IActionPredicate predicate, IAction ifAction, IAction elseAction) {
+    Condition(Predicate predicate, IAction ifAction, IAction elseAction) {
         mPredicate = predicate;
         mIf = ifAction;
         mElse = elseAction;

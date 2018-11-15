@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_3.subsystems;
 
+import ca.warp7.action.IAction;
 import ca.warp7.frc.*;
-import ca.warp7.action.IActionDelegate;
 import ca.warp7.frc.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -303,7 +303,7 @@ public class Drive implements ISubsystem {
                 Math.abs(range - mState.rightDistance) < Math.abs(tolerance);
     }
 
-    public boolean isPIDReached(IActionDelegate delegate) {
+    public boolean isPIDReached(IAction.Delegate delegate) {
         return true;
     }
 

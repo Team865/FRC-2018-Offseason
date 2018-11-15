@@ -1,12 +1,10 @@
 package ca.warp7.action.impl;
 
-import ca.warp7.action.IActionConsumer;
-
 public class Iteration extends ActionBase {
 
-    private IActionConsumer mConsumer;
+    private Consumer mConsumer;
 
-    Iteration(IActionConsumer consumer) {
+    Iteration(Consumer consumer) {
         mConsumer = consumer;
     }
 

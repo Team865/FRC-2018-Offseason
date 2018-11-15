@@ -1,13 +1,13 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.action.IActionMode;
+import ca.warp7.action.IAction;
 
 public class RobotLoader {
 
-    private IActionMode mRunningMode;
+    private IAction.Mode mRunningMode;
     private double mTestTimeOut;
 
-    public final void setAutoMode(IActionMode mode, double testTimeout) {
+    public final void setAutoMode(IAction.Mode mode, double testTimeout) {
         mRunningMode = mode;
         mTestTimeOut = testTimeout;
     }
@@ -16,7 +16,7 @@ public class RobotLoader {
         return mTestTimeOut;
     }
 
-    IActionMode getRunningMode() {
+    IAction.Mode getRunningMode() {
         return mRunningMode;
     }
 

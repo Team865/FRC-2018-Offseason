@@ -1,14 +1,12 @@
 package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionDelegate;
-import ca.warp7.action.IActionParent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class AsyncInverse extends ActionBase implements IActionParent {
+class AsyncInverse extends ActionBase implements IAction.Parent {
 
     private final List<Inverse> mInverse = new ArrayList<>();
 
@@ -16,7 +14,7 @@ class AsyncInverse extends ActionBase implements IActionParent {
         for (IAction action : actions) {
             Inverse inverse = new Inverse();
             inverse.action = action;
-            inverse.delegate = action instanceof IActionDelegate ? (IActionDelegate) action : null;
+            inverse.delegate = action instanceof Delegate ? (Delegate) action : null;
             inverse.hasDelegate = inverse.delegate != null;
             inverse.started = false;
             inverse.remainingTime = 0;
@@ -31,7 +29,7 @@ class AsyncInverse extends ActionBase implements IActionParent {
     }
 
     @Override
-    public IActionDelegate getDelegate() {
+    public Delegate getDelegate() {
         return this;
     }
 
@@ -68,7 +66,7 @@ class AsyncInverse extends ActionBase implements IActionParent {
 
     private static class Inverse {
         private IAction action;
-        private IActionDelegate delegate;
+        private Delegate delegate;
         private boolean hasDelegate;
         private boolean started;
         private double remainingTime;

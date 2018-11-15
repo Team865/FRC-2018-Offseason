@@ -2,14 +2,13 @@ package ca.warp7.frc2018_3.auto;
 
 import ca.warp7.frc.PIDValues;
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionMode;
 import ca.warp7.frc.scheduler.ScheduleBuilder;
 import ca.warp7.frc2018_3.actions.DriveForDistanceAction;
 import ca.warp7.frc2018_3.actions.OuttakeCube;
 import edu.wpi.first.wpilibj.DriverStation;
 
 @SuppressWarnings("deprecation")
-public class OneSwitch implements IActionMode {
+public class OneSwitch implements IAction.Mode {
 
     private char side;
 

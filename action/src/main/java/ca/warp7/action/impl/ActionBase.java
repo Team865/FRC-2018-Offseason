@@ -1,19 +1,16 @@
 package ca.warp7.action.impl;
 
-import ca.warp7.action.IActionResources;
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionDelegate;
-import ca.warp7.action.IActionParent;
 
-abstract class ActionBase implements IAction, IActionDelegate {
+abstract class ActionBase implements IAction, IAction.Delegate {
 
-    private IActionParent mParent;
-    private IActionResources mResources;
+    private Parent mParent;
+    private Resources mResources;
     private double mStartTime;
     private boolean mIsInterrupted;
     private int mDetachDepth;
 
-    static void link(IActionParent parent, IAction action) {
+    static void link(Parent parent, IAction action) {
         if (action instanceof ActionBase) ((ActionBase) action).mParent = parent;
     }
 
@@ -62,7 +59,7 @@ abstract class ActionBase implements IAction, IActionDelegate {
     }
 
     @Override
-    public IActionParent getParent() {
+    public Parent getParent() {
         return mParent;
     }
 
@@ -77,7 +74,7 @@ abstract class ActionBase implements IAction, IActionDelegate {
     }
 
     @Override
-    public IActionResources getResources() {
+    public Resources getResources() {
         if (mResources != null) return mResources;
         mResources = getParent() != null ? getParent().getDelegate().getResources() : new ActionResources();
         mResources = mResources != null ? mResources : new ActionResources();

@@ -1,11 +1,9 @@
 package ca.warp7.action.impl;
 
-import ca.warp7.action.IActionPredicate;
-
 public class Await extends ActionBase {
-    private IActionPredicate mPredicate;
+    private Predicate mPredicate;
 
-    Await(IActionPredicate predicate) {
+    Await(Predicate predicate) {
         mPredicate = predicate;
     }
 

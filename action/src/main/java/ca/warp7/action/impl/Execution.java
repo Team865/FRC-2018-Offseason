@@ -1,11 +1,9 @@
 package ca.warp7.action.impl;
 
-import ca.warp7.action.IActionConsumer;
-
 class Execution extends ActionBase {
-    private IActionConsumer mConsumer;
+    private Consumer mConsumer;
 
-    Execution(IActionConsumer consumer) {
+    Execution(Consumer consumer) {
         mConsumer = consumer;
     }
 

@@ -1,14 +1,12 @@
 package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionDelegate;
-import ca.warp7.action.IActionParent;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-abstract class AsyncForward extends ActionBase implements IActionParent {
+abstract class AsyncForward extends ActionBase implements IAction.Parent {
 
     final List<IAction> mActions;
 
@@ -23,7 +21,7 @@ abstract class AsyncForward extends ActionBase implements IActionParent {
     }
 
     @Override
-    public IActionDelegate getDelegate() {
+    public Delegate getDelegate() {
         return this;
     }
 

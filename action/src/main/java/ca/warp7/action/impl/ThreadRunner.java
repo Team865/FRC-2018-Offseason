@@ -1,8 +1,6 @@
 package ca.warp7.action.impl;
 
-import ca.warp7.action.IActionResources;
 import ca.warp7.action.IAction;
-import ca.warp7.action.IActionParent;
 
 import java.util.Objects;
 
@@ -26,7 +24,7 @@ class ThreadRunner extends ActionBase {
     }
 
     @Override
-    public IActionParent getParent() {
+    public Parent getParent() {
         // Return null so the resources are not shared in the hierarchy of actions
         return null;
     }
@@ -39,7 +37,7 @@ class ThreadRunner extends ActionBase {
             return;
         }
 
-        IActionResources actionRes = mAction.getResources();
+        Resources actionRes = mAction.getResources();
         if (actionRes.getActionTimer() == null) actionRes.setActionTimer(getResources().getActionTimer());
         incrementDetachDepth(mAction);
 
