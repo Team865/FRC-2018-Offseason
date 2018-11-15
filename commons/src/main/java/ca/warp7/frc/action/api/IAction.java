@@ -5,7 +5,8 @@ package ca.warp7.frc.action.api;
  * An {@link IAction} defines any self contained action that can be executed by the robot.
  * An Action is the unit of basis for autonomous programs. Actions may contain anything,
  * which means we can run sub-actions in various ways, in combination with the start,
- * loo, end, and shouldFinish methods
+ * loo, end, and shouldFinish methods. An entire scheduling API is developed with this
+ * interface as the basis
  * </p>
  * <b>PLEASE NO WHILE LOOPS</b>
  */

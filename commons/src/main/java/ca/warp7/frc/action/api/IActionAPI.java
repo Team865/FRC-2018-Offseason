@@ -1,9 +1,19 @@
 package ca.warp7.frc.action.api;
 
+import java.util.Arrays;
+
 /**
- * A declarative, chain-able API syntax for scheduling autos
+ * A declarative, chain-able API syntax for scheduling autos.
  *
- * @version 2.5 Modified 11/14/2018
+ * The API collection contains the following interfaces:
+ * {@link IActionConsumer}
+ * {@link IActionDelegate}
+ * {@link IActionMode}
+ * {@link IActionParent}
+ * {@link IActionPredicate}
+ * {@link IActionResources}
+ *
+ * @version 2.6 Modified 11/14/2018
  */
 
 @SuppressWarnings("ALL")
@@ -24,6 +34,42 @@ public interface IActionAPI extends IAction {
     IActionAPI exec(IActionConsumer consumer);
 
     IActionAPI queue(IAction... actions);
+
+    abstract class SyntaxProvider {
+
+        protected static IActionPredicate triggeredOnce(String name) {
+            return d -> d.getResources().countBroadcast(name) == 1;
+        }
+
+        protected static IActionPredicate triggeredRepeat(String name) {
+            return d -> d.getResources().countBroadcast(name) > 1;
+        }
+
+        protected static IActionPredicate triggeredAll(String name) {
+            return d -> d.getResources().countBroadcast(name) == d.getResources().countBroadcastSources(name);
+        }
+
+        protected static IActionPredicate triggeredSome(String name, int times) {
+            return d -> d.getResources().countBroadcast(name) == times;
+        }
+
+        protected static IActionPredicate elapsed(double timeInSeconds) {
+            return d -> !d.hasParent() || d.getParent().getDelegate().getElapsed() > timeInSeconds;
+        }
+
+        protected static IActionConsumer broadcastAll(String... triggers) {
+            return d -> Arrays.stream(triggers).forEach(trigger -> d.getResources().broadcast(trigger));
+        }
+
+        protected static IActionPredicate atProgress(double progress) {
+            return d -> d.hasProgressState() && d.getNumericalProgress() > progress;
+        }
+
+        protected static IActionPredicate atPercent(int percent) {
+            int progress = Math.min(0, Math.max(100, percent));
+            return d -> d.hasProgressState() && d.getPercentProgress() > progress;
+        }
+    }
 
     default IActionAPI broadcast(String... triggers) {
         return exec(SyntaxProvider.broadcastAll(triggers));

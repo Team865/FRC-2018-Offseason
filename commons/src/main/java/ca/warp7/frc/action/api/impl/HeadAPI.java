@@ -1,8 +1,11 @@
 package ca.warp7.frc.action.api.impl;
 
-import ca.warp7.frc.action.api.*;
+import ca.warp7.frc.action.api.IAction;
+import ca.warp7.frc.action.api.IActionAPI;
+import ca.warp7.frc.action.api.IActionConsumer;
+import ca.warp7.frc.action.api.IActionPredicate;
 
-public abstract class HeadAPI extends SyntaxProvider implements IActionAPI {
+abstract class HeadAPI extends IActionAPI.SyntaxProvider implements IActionAPI {
 
     @Override
     public IActionAPI async(IAction... actions) {
