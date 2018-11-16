@@ -18,7 +18,7 @@ import java.util.List;
  * </p>
  *
  * @author Team 865
- * @version 3.4 (Revision 16 on 11/15/2018)
+ * @version 3.4 (Revision 17 on 11/15/2018)
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -329,6 +329,7 @@ public interface IAction {
         /**
          * Gets the length of time (in seconds) since this action started
          *
+         * @return the elapsed time
          * @since 2.0
          */
         double getElapsed();
@@ -336,6 +337,7 @@ public interface IAction {
         /**
          * Gets the thread level of the action tree
          *
+         * @return the depth of threads
          * @since 2.0
          */
         int getDetachDepth();
@@ -343,6 +345,7 @@ public interface IAction {
         /**
          * Gets the parent of the action
          *
+         * @return the parent object
          * @since 2.0
          */
         Parent getParent();
@@ -358,6 +361,7 @@ public interface IAction {
          * Gets the resources object shared with the action, or create one if
          * none can currently be found
          *
+         * @return the resources object
          * @since 2.0
          */
         Resources getResources();
@@ -372,6 +376,7 @@ public interface IAction {
         /**
          * Gets the name of the action, if any
          *
+         * @return name
          * @since 3.4
          */
         String getName();

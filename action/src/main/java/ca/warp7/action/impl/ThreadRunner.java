@@ -42,13 +42,22 @@ class ThreadRunner extends ActionBase {
         // Assign the timer to the parent actionBase
         getResources().setActionTimer(mTimer);
 
+        // Use a variable to better name the thread
+        String actionName = null;
+
         // Operate on the action if it extends ActionBase
         if (mAction instanceof ActionBase) {
             ActionBase actionBase = (ActionBase) mAction;
             incrementDetachDepth(actionBase);
             Resources actionRes = actionBase.getResources();
             if (actionRes.getActionTimer() == null) actionRes.setActionTimer(mTimer);
+            if (!actionBase.getName().isEmpty()) actionName = actionBase.getName();
         }
+
+        // Give the action its class name if it is not given another name
+        if (actionName == null) actionName = mAction.getClass().getSimpleName();
+
+        String threadName = String.format("Runner[%d:%s]", getDetachDepth() + 1, actionName);
 
         // Create the thread;
         mRunThread = new Thread(() -> {
@@ -83,10 +92,11 @@ class ThreadRunner extends ActionBase {
 
             mAction.onStop();
 
+            // Print out info about the
             if (mVerbose) {
-                System.out.printf("ThreadRunner ending after %.3fs\n", currentTime);
                 if (currentTime < mTimeout)
-                    System.out.printf("ERROR ThreadRunner ended early by %.3fs\n", mTimeout - currentTime);
+                    System.out.printf("%s ended early by %.3fs\n", threadName, mTimeout - currentTime);
+                else System.out.printf("%s ending after %.3fs\n", threadName, currentTime);
             }
 
             // Assign null to the thread so this runner can be called again
@@ -96,7 +106,7 @@ class ThreadRunner extends ActionBase {
 
         // Start the thread
         mRunThread.setDaemon(false);
-        mRunThread.setName("ThreadRunner");
+        mRunThread.setName(threadName);
         mRunThread.start();
     }
 
