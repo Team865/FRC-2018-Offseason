@@ -19,11 +19,12 @@ public class PrintTests {
 
     private void startMode(ActionMode mode) {
         IAction action = mode.getAction();
-        double timeout = 5;
+        double timeout = 0.5;
         IAction runner = ActionMode.createRunner(new DefaultTimer(), 0.02, timeout, action, false);
         runner.onStart();
+        double old = System.nanoTime();
         try {
-            while (!runner.shouldFinish()) {
+            while (!runner.shouldFinish() && System.nanoTime() - old < timeout * 1000000000) {
                 Thread.sleep(10);
             }
         } catch (InterruptedException e) {

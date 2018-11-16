@@ -32,10 +32,8 @@ abstract class AsyncForward extends ActionBase implements IAction.Parent {
 
     @Override
     public void _onStart() {
-        mActions.forEach(action -> {
-            link(this, action);
-            action.onStart();
-        });
+        mActions.forEach(action -> link(this, action));
+        mActions.forEach(IAction::onStart);
     }
 
     @Override

@@ -21,7 +21,7 @@ abstract class QueueBase extends ActionBase implements IAction.Parent {
 
     @Override
     public Delegate getDelegate() {
-        return null;
+        return this;
     }
 
     @Override
