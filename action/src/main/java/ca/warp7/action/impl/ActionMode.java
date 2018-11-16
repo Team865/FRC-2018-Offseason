@@ -9,8 +9,8 @@ public abstract class ActionMode extends IAction.HeadClass implements IAction.Mo
         return action instanceof ActionBase;
     }
 
-    public static IAction createRunner(ITimer timer, double interval, double timeout, IAction action) {
-        return ThreadRunner.create(timer, interval, timeout, action);
+    public static IAction createRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
+        return new ThreadRunner(timer, interval, timeout, action, verbose);
     }
 
     @Override
@@ -19,6 +19,6 @@ public abstract class ActionMode extends IAction.HeadClass implements IAction.Mo
     }
 
     public IAction.API detachThread(double interval, double timeout, ActionBase action) {
-        return queue(ThreadRunner.create(null, interval, timeout, action));
+        return queue(createRunner(null, interval, timeout, action, true));
     }
 }

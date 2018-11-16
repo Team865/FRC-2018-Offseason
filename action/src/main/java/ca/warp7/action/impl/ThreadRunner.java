@@ -11,17 +11,15 @@ class ThreadRunner extends ActionBase {
     private long mInterval;
     private double mTimeout;
     private ITimer mTimer;
+    private boolean mVerbose;
 
-    private ThreadRunner(ITimer timer, double interval, double timeout, IAction action) {
+    ThreadRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
+        Objects.requireNonNull(action);
         mTimer = timer;
         mAction = action;
         mInterval = (long) (interval * 1000);
         mTimeout = timeout;
-    }
-
-    static IAction create(ITimer timer, double interval, double timeout, IAction action) {
-        Objects.requireNonNull(action);
-        return new ThreadRunner(timer, interval, timeout, action);
+        mVerbose = verbose;
     }
 
     @Override
@@ -38,22 +36,23 @@ class ThreadRunner extends ActionBase {
             return;
         }
 
-        getResources().setActionTimer(mTimer);
-
         // Check if a timer has already been assigned
         if (mTimer == null) mTimer = getResources().getActionTimer();
+
+        // Assign the timer to the parent actionBase
+        getResources().setActionTimer(mTimer);
 
         // Operate on the action if it extends ActionBase
         if (mAction instanceof ActionBase) {
             ActionBase actionBase = (ActionBase) mAction;
             incrementDetachDepth(actionBase);
             Resources actionRes = actionBase.getResources();
-            if (actionRes.getActionTimer() == null) actionRes.setActionTimer(getResources().getActionTimer());
+            if (actionRes.getActionTimer() == null) actionRes.setActionTimer(mTimer);
         }
 
         // Create the thread;
         mRunThread = new Thread(() -> {
-            System.out.println("Thread starting");
+            if (mVerbose) System.out.println("Thread starting");
             double startTime = mTimer.getTime();
             double currentTime = startTime;
             mAction.onStart();
@@ -83,9 +82,12 @@ class ThreadRunner extends ActionBase {
             }
 
             mAction.onStop();
-            System.out.printf("ThreadRunner ending after %.3fs\n", currentTime);
-            if (currentTime < mTimeout)
-                System.out.printf("ERROR ThreadRunner ended early by %.3fs\n", mTimeout - currentTime);
+
+            if (mVerbose) {
+                System.out.printf("ThreadRunner ending after %.3fs\n", currentTime);
+                if (currentTime < mTimeout)
+                    System.out.printf("ERROR ThreadRunner ended early by %.3fs\n", mTimeout - currentTime);
+            }
 
             // Assign null to the thread so this runner can be called again
             // without robot code restarting
@@ -94,6 +96,7 @@ class ThreadRunner extends ActionBase {
 
         // Start the thread
         mRunThread.setDaemon(false);
+        mRunThread.setName("ThreadRunner");
         mRunThread.start();
     }
 

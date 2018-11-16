@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 
 public class SimpleTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -17,9 +17,12 @@ public class SimpleTest {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
 
+    @SuppressWarnings("StatementWithEmptyBody")
     private void startMode(ActionMode mode) {
         IAction action = mode.getAction();
-        ActionMode.createRunner(new DefaultTimer(), 0.02, 5, action).onStart();
+        IAction runner = ActionMode.createRunner(new DefaultTimer(), 0.02, 5, action, false);
+        runner.onStart();
+        while (!runner.shouldFinish()) ;
     }
 
     @Before
@@ -36,12 +39,31 @@ public class SimpleTest {
 
     @Test
     public void printOnly() {
+        // Test for single actions
         startMode(new ActionMode() {
             @Override
             public IAction getAction() {
                 return new Print("hello");
             }
         });
-        assertEquals("hello", outContent.toString());
+        assertEquals("hello", outContent.toString().trim());
+    }
+
+    @Test
+    public void printQueue() {
+
+        startMode(new ActionMode() {
+            @Override
+            public IAction getAction() {
+
+                System.out.println("hello");
+                return queue(new Print("hello"));
+            }
+        });
+        assertEquals("hello", outContent.toString().trim());
+    }
+
+    public static void main(String[] args) {
+        new SimpleTest().printQueue();
     }
 }
