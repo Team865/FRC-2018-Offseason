@@ -18,7 +18,7 @@ import java.util.List;
  * </p>
  *
  * @author Team 865
- * @version 3.5 (Revision 19 on 11/16/2018)
+ * @version 3.5 (Revision 20 on 11/16/2018)
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -632,7 +632,8 @@ public interface IAction {
 
 
     /**
-     * Helper methods that allows creation of the API based on the API functions as a queue head
+     * Helper methods that allows creation of the API based on the API functions as a queue head.
+     * This class does not implement the queue method to separate the implementation
      *
      * @since 2.0
      */
@@ -716,5 +717,11 @@ public interface IAction {
         @Override
         public void onStart() {
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public abstract API queue(IAction... actions);
     }
 }

@@ -23,7 +23,7 @@ class ThreadRunner extends ActionBase {
     }
 
     @Override
-    public Parent getParent() {
+    public Delegate getParent() {
         // Return null so the resources are not shared in the hierarchy of actions
         return null;
     }

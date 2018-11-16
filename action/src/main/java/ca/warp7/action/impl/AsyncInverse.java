@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class AsyncInverse extends ActionBase implements IAction.Parent {
+class AsyncInverse extends ActionBase {
 
     private final List<Inverse> mInverse = new ArrayList<>();
 
@@ -26,11 +26,6 @@ class AsyncInverse extends ActionBase implements IAction.Parent {
     public List<IAction> getActionQueue() {
         if (mInverse.size() == 1) return Collections.singletonList(mInverse.get(0).action);
         return null;
-    }
-
-    @Override
-    public Delegate getDelegate() {
-        return this;
     }
 
     @Override

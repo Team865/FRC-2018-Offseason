@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-abstract class AsyncForward extends ActionBase implements IAction.Parent {
+abstract class AsyncForward extends ActionBase {
 
     final List<IAction> mActions;
 
@@ -18,11 +18,6 @@ abstract class AsyncForward extends ActionBase implements IAction.Parent {
     public List<IAction> getActionQueue() {
         if (mActions.size() == 1) return Collections.singletonList(mActions.get(0));
         return null;
-    }
-
-    @Override
-    public Delegate getDelegate() {
-        return this;
     }
 
     @Override

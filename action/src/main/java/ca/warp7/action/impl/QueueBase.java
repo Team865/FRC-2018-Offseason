@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-abstract class QueueBase extends ActionBase implements IAction.Parent {
+abstract class QueueBase extends ActionBase {
 
     private final List<IAction> mCandidates = new ArrayList<>();
     private List<IAction> mCachedActionQueue;
@@ -17,11 +17,6 @@ abstract class QueueBase extends ActionBase implements IAction.Parent {
     void addToQueue(IAction... actions) {
         mCandidates.addAll(Arrays.asList(actions));
         mCachedActionQueue = null;
-    }
-
-    @Override
-    public Delegate getDelegate() {
-        return this;
     }
 
     @Override
@@ -65,8 +60,8 @@ abstract class QueueBase extends ActionBase implements IAction.Parent {
         if (mCachedActionQueue != null) return mCachedActionQueue;
         List<IAction> actionQueue = new ArrayList<>();
         for (IAction action : mCandidates) {
-            if (action instanceof Parent) {
-                List<IAction> elementQueue = ((Parent) action).getActionQueue();
+            if (action instanceof Delegate) {
+                List<IAction> elementQueue = ((Delegate) action).getActionQueue();
                 if (elementQueue == null) actionQueue.add(action);
                 else actionQueue.addAll(elementQueue);
             } else actionQueue.add(action);
