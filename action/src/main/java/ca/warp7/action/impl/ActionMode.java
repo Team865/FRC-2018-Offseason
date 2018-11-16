@@ -3,7 +3,7 @@ package ca.warp7.action.impl;
 import ca.warp7.action.IAction;
 
 @SuppressWarnings("unused")
-public abstract class ActionMode extends IAction.API.Head implements IAction.Mode {
+public abstract class ActionMode extends IAction.HeadClass implements IAction.Mode {
 
     public static boolean isUsingActionAPI(IAction action) {
         return action instanceof ActionBase;

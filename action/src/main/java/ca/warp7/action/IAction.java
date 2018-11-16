@@ -11,23 +11,98 @@ import java.util.List;
  * loo, end, and shouldFinish methods. An entire scheduling API is developed with this
  * interface as the basis
  * </p>
+ *
  * <p>
- * Subinterfaces define a declarative, chain-able API syntax for scheduling autos.
+ * {@link IAction} and its inner interfaces create an API framework for scheduling complex
+ * action tasks in a variety of ways, especially useful for autonomous programming
+ * </p>
  *
  * @author Team 865
- * @version 3.2 (Revision #12) Revised 11/14/2018
+ * @version 3.3 (Revision #14) Revised 11/14/2018
  * @since 1.0
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings({"WeakerAccess", "unused"})
 @FunctionalInterface
 public interface IAction {
+
+    /**
+     * A wrapper to create an action that should be used to define auto modes,
+     * since a mode may be created for multiple times during runtime
+     *
+     * @since 1.0
+     */
+    @FunctionalInterface
+    interface Mode {
+
+        /**
+         * Fetches the main action of the mode to be run
+         *
+         * @return the action
+         */
+        IAction getAction();
+    }
+
+
+    /**
+     * An internal interface that keep track of time.
+     * This makes the Action API independent of WPILib's timer api
+     *
+     * @since 2.0
+     */
+    @FunctionalInterface
+    interface ITimer {
+
+        /**
+         * Gets the time since the Robot is started
+         *
+         * @return time in seconds
+         * @since 2.0
+         */
+        double getTime();
+    }
+
+
+    /**
+     * Represents an operation that accepts a {@link Delegate} and returns no
+     * result. Unlike most other functional interfaces, {@code Consumer} is expected
+     * to operate via side-effects.
+     *
+     * @since 2.0
+     */
+    @FunctionalInterface
+    interface Consumer {
+
+        /**
+         * Accepts an action delegate performs an action with it
+         *
+         * @since 2.0
+         */
+        void accept(Delegate delegate);
+    }
+
+    /**
+     * Represents a predicate (boolean-valued function) of a delegate
+     *
+     * @since 2.0
+     */
+    @FunctionalInterface
+    interface Predicate {
+
+        /**
+         * Returns a decision based on the referred action
+         *
+         * @since 2.0
+         */
+        boolean test(Delegate delegate);
+    }
 
     /**
      * Run code once when the action is started, usually for set up.
      * This method must be called first before shouldFinish is called.
      * <p>
-     * This method is the only non-default one, making it a functional interface
-     * that can be used t create singleton actions
+     * This method is the only non-default one in the {@link IAction}
+     * interface, making it a functional interface that can be used to
+     * create singleton actions
      *
      * @since 1.0
      */
@@ -47,8 +122,7 @@ public interface IAction {
     }
 
     /**
-     * Called by runAction in AutoModeBase iteratively until isFinished returns true.
-     * Iterative logic lives in this method. <b>PLEASE NO WHILE LOOPS</b>
+     * Periodically updates the action
      *
      * @since 1.0
      */
@@ -64,56 +138,113 @@ public interface IAction {
     }
 
     /**
+     * {@link API} defines the general syntax for expressing complex actions,
+     * and defines the following properties:
+     * <ul>
+     * <li><b>Chain-able:</b> All methods of the API object returns the API object itself</li>
+     * <li><b>Hierarchical:</b> All API objects are actions themselves </li>
+     * <li><b>List-based: </b> Most methods of the API accepts a vararg list of a actions as arguments</li>
+     * </ul>
+     *
      * @since 2.0
      */
     interface API extends IAction {
 
         /**
+         * Starts a list of action in parallel, and finish when all of the actions
+         * are finished and stops
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API asyncAll(IAction... actions);
 
         /**
+         * Starts a list of action in parallel, and finish when any of the actions
+         * are finished and stops
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API asyncAny(IAction... actions);
 
         /**
+         * Attempts to schedule actions such that they finish at the same time
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API asyncInverse(IAction... actions);
 
+
         /**
+         * Schedules a list of parallel actions according to the timing of a master.
+         * This means slaves end when the master ends
+         *
+         * @param master the master action to sync to
+         * @param slaves the slaves to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API asyncMaster(IAction master, IAction... slaves);
 
         /**
+         * Waits the queue (do nothing) until a predicate is met
+         *
+         * @param predicate the predicate to test for
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API await(Predicate predicate);
 
         /**
+         * Execute a function in reference to an action
+         *
+         * @param consumer the action delegate to consume
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API exec(Consumer consumer);
 
         /**
+         * Iterate a function periodically in reference to an action
+         *
+         * @param consumer the action delegate to consume
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API iterate(Consumer consumer);
 
         /**
+         * Run one of two actions depending on a condition
+         *
+         * @param predicate  the predicate to test for
+         * @param ifAction   the action to run if the predicate is true
+         * @param elseAction the action to run if the predicate is false
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API runIf(Predicate predicate, IAction ifAction, IAction elseAction);
 
         /**
+         * Runs some actions in sequential order (i.e. the next action starts when the first
+         * one finishes)
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         API queue(IAction... actions);
 
         /**
+         * Starts a list of action in parallel, and finish when all of the actions
+         * are finished and stops
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API async(IAction... actions) {
@@ -121,6 +252,10 @@ public interface IAction {
         }
 
         /**
+         * Starts a list of action in parallel, and finish when a condition has been met
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API asyncUntil(Predicate predicate, IAction... actions) {
@@ -128,6 +263,10 @@ public interface IAction {
         }
 
         /**
+         * Broadcasts string triggers that can be received anywhere in the action tree
+         *
+         * @param triggers the triggers to broadcast
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API broadcast(String... triggers) {
@@ -135,6 +274,12 @@ public interface IAction {
         }
 
         /**
+         * Broadcasts string triggers that can be received anywhere in the action tree,
+         * when a certain condition is met
+         *
+         * @param predicate the predicate to test for
+         * @param triggers  the triggers to broadcast
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API broadcastWhen(Predicate predicate, String... triggers) {
@@ -142,13 +287,21 @@ public interface IAction {
         }
 
         /**
+         * Runs an action only if the condition is true
+         *
+         * @param predicate the predicate to test for
+         * @param ifAction  the action to run if the predicate is true
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        default API onlyIf(Predicate predicate, IAction action) {
-            return runIf(predicate, action, null);
+        default API onlyIf(Predicate predicate, IAction ifAction) {
+            return runIf(predicate, ifAction, null);
         }
 
         /**
+         * Wait (do nothing) for a specified number of seconds
+         *
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API waitFor(double seconds) {
@@ -156,178 +309,16 @@ public interface IAction {
         }
 
         /**
+         * Queues some action the moment a condition becomes true
+         *
+         * @param predicate the predicate to test for
+         * @param actions A list of actions to run when the condition is true
+         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API when(Predicate predicate, IAction... actions) {
             return await(predicate).queue(actions);
         }
-    }
-
-    /**
-     * @since 2.0
-     */
-    abstract class Function {
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate triggeredOnce(String name) {
-            return d -> d.getResources().getBroadcastCount(name) == 1;
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate triggeredRepeat(String name) {
-            return d -> d.getResources().getBroadcastCount(name) > 1;
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate triggeredAll(String name) {
-            return d -> d.getResources().getBroadcastCount(name) == d.getResources().getBroadcastSources(name);
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate triggeredSome(String name, int times) {
-            return d -> d.getResources().getBroadcastCount(name) == times;
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate elapsed(double timeInSeconds) {
-            return d -> !d.hasParent() || d.getParent().getDelegate().getElapsed() > timeInSeconds;
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Consumer broadcastAll(String... triggers) {
-            return d -> Arrays.stream(triggers).forEach(trigger -> d.getResources().broadcast(trigger));
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate atProgress(double progress) {
-            return d -> d.hasProgressState() && d.getNumericalProgress() > progress;
-        }
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate atPercent(int percent) {
-            int progress = Math.min(0, Math.max(100, percent));
-            return d -> d.hasProgressState() && d.getPercentProgress() > progress;
-        }
-    }
-
-    /**
-     * @since 2.0
-     */
-
-    abstract class Head extends Function implements API {
-
-        @Override
-        public API asyncAll(IAction... actions) {
-            return queue().asyncAll(actions);
-        }
-
-        @Override
-        public API asyncAny(IAction... actions) {
-            return queue().asyncAny(actions);
-        }
-
-        @Override
-        public API asyncInverse(IAction... actions) {
-            return queue().asyncInverse(actions);
-        }
-
-        @Override
-        public API asyncMaster(IAction master, IAction... slaves) {
-            return queue().asyncMaster(master, slaves);
-        }
-
-        @Override
-        public API await(Predicate predicate) {
-            return queue().await(predicate);
-        }
-
-        @Override
-        public API broadcast(String... triggers) {
-            return queue().broadcast(triggers);
-        }
-
-        @Override
-        public API exec(Consumer consumer) {
-            return queue().exec(consumer);
-        }
-
-        @Override
-        public API iterate(Consumer consumer) {
-            return queue().iterate(consumer);
-        }
-
-        @Override
-        public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
-            return queue().runIf(predicate, ifAction, elseAction);
-        }
-
-        @Override
-        public void onStart() {
-        }
-    }
-
-    /**
-     * Represents an operation that accepts a {@link Delegate} and returns no
-     * result. Unlike most other functional interfaces, {@code Consumer} is expected
-     * to operate via side-effects.
-     *
-     * @since 2.0
-     */
-    @FunctionalInterface
-    interface Consumer {
-
-        /**
-         * @since 2.0
-         */
-        void accept(Delegate delegate);
-    }
-
-    /**
-     * Represents a predicate (boolean-valued function) of a delegate
-     *
-     * @since 2.0
-     */
-    @FunctionalInterface
-    interface Predicate {
-
-        /**
-         * @since 2.0
-         */
-        boolean test(Delegate delegate);
-    }
-
-    /**
-     * An internal interface that keep track of time.
-     * This makes the Action API independent of WPILib's timer api
-     *
-     * @since 2.0
-     */
-    @FunctionalInterface
-    interface ITimer {
-
-        /**
-         * Gets the time since the Robot is started
-         *
-         * @return time in seconds
-         * @since 2.0
-         */
-        double getTime();
     }
 
     /**
@@ -408,25 +399,6 @@ public interface IAction {
         default boolean hasParent() {
             return getParent() != null;
         }
-    }
-
-    /**
-     * Essentially a wrapper to create an action, no other mechanisms
-     * included. There are other classes that help with scheduling
-     * mechanisms
-     *
-     * @since 1.0
-     */
-
-    @FunctionalInterface
-    interface Mode {
-
-        /**
-         * Procedure to fetch the main action of the mode
-         *
-         * @return the action
-         */
-        IAction getAction();
     }
 
     /**
@@ -549,6 +521,126 @@ public interface IAction {
             Object var = get(name, null);
             if (var instanceof String) return (String) var;
             return defaultVal;
+        }
+    }
+
+    /**
+     * @since 2.0
+     */
+    abstract class Function {
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate triggeredOnce(String name) {
+            return d -> d.getResources().getBroadcastCount(name) == 1;
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate triggeredRepeat(String name) {
+            return d -> d.getResources().getBroadcastCount(name) > 1;
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate triggeredAll(String name) {
+            return d -> d.getResources().getBroadcastCount(name) == d.getResources().getBroadcastSources(name);
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate triggeredSome(String name, int times) {
+            return d -> d.getResources().getBroadcastCount(name) == times;
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate elapsed(double timeInSeconds) {
+            return d -> !d.hasParent() || d.getParent().getDelegate().getElapsed() > timeInSeconds;
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Consumer broadcastAll(String... triggers) {
+            return d -> Arrays.stream(triggers).forEach(trigger -> d.getResources().broadcast(trigger));
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate atProgress(double progress) {
+            return d -> d.hasProgressState() && d.getNumericalProgress() > progress;
+        }
+
+        /**
+         * @since 2.0
+         */
+        protected static Predicate atPercent(int percent) {
+            int progress = Math.min(0, Math.max(100, percent));
+            return d -> d.hasProgressState() && d.getPercentProgress() > progress;
+        }
+    }
+
+    /**
+     * Helper methods that allows creation of the API based on the API functions as a queue head
+     *
+     * @since 2.0
+     */
+    abstract class HeadClass extends Function implements API {
+
+        @Override
+        public API asyncAll(IAction... actions) {
+            return queue().asyncAll(actions);
+        }
+
+        @Override
+        public API asyncAny(IAction... actions) {
+            return queue().asyncAny(actions);
+        }
+
+        @Override
+        public API asyncInverse(IAction... actions) {
+            return queue().asyncInverse(actions);
+        }
+
+        @Override
+        public API asyncMaster(IAction master, IAction... slaves) {
+            return queue().asyncMaster(master, slaves);
+        }
+
+        @Override
+        public API await(Predicate predicate) {
+            return queue().await(predicate);
+        }
+
+        @Override
+        public API broadcast(String... triggers) {
+            return queue().broadcast(triggers);
+        }
+
+        @Override
+        public API exec(Consumer consumer) {
+            return queue().exec(consumer);
+        }
+
+        @Override
+        public API iterate(Consumer consumer) {
+            return queue().iterate(consumer);
+        }
+
+        @Override
+        public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
+            return queue().runIf(predicate, ifAction, elseAction);
+        }
+
+        @Override
+        public void onStart() {
         }
     }
 }

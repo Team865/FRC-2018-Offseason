@@ -9,6 +9,11 @@ public class Iteration extends ActionBase {
     }
 
     @Override
+    boolean _shouldFinish() {
+        return false;
+    }
+
+    @Override
     public void _onUpdate() {
         mConsumer.accept(this);
     }
