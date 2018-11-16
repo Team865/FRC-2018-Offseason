@@ -12,6 +12,7 @@ abstract class AsyncForward extends ActionBase {
 
     AsyncForward(IAction... actions) {
         mActions = Arrays.asList(actions);
+        mActions.forEach(action -> link(this, action));
         //mActions.forEach(action -> System.out.println("Adding Async: " + action + " to " + AsyncForward.this));
     }
 
@@ -23,7 +24,6 @@ abstract class AsyncForward extends ActionBase {
 
     @Override
     public void _onStart() {
-        mActions.forEach(action -> link(this, action));
         mActions.forEach(IAction::onStart);
     }
 
@@ -73,11 +73,11 @@ abstract class AsyncForward extends ActionBase {
         Master(IAction master, IAction... slaves) {
             super(slaves);
             mMaster = master;
+            link(this, mMaster);
         }
 
         @Override
         public void _onStart() {
-            link(this, mMaster);
             mMaster.onStart();
             super._onStart();
         }

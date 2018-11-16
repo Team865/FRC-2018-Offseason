@@ -18,6 +18,7 @@ class AsyncInverse extends ActionBase {
             inverse.hasDelegate = inverse.delegate != null;
             inverse.started = false;
             inverse.remainingTime = 0;
+            link(this, inverse.action);
             mInverse.add(inverse);
         }
     }
@@ -26,11 +27,6 @@ class AsyncInverse extends ActionBase {
     public List<IAction> getQueue() {
         if (mInverse.size() == 1) return Collections.singletonList(mInverse.get(0).action);
         return null;
-    }
-
-    @Override
-    public void _onStart() {
-        mInverse.forEach(inverse -> link(this, inverse.action));
     }
 
     @Override

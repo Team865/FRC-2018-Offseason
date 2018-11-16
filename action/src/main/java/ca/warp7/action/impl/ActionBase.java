@@ -19,19 +19,6 @@ abstract class ActionBase implements IAction, IAction.Delegate {
         action.mDetachDepth++;
     }
 
-    void _onStart() {
-    }
-
-    void _onUpdate() {
-    }
-
-    void _onStop() {
-    }
-
-    boolean _shouldFinish() {
-        return true;
-    }
-
     @Override
     public void onStart() {
         _onStart();
@@ -97,5 +84,19 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     @Override
     public String getName() {
         return mName;
+    }
+
+
+    void _onStart() {
+    }
+
+    void _onUpdate() {
+    }
+
+    void _onStop() {
+    }
+
+    boolean _shouldFinish() {
+        return true;
     }
 }
