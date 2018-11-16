@@ -18,8 +18,8 @@ public class ActionResources implements IAction.Resources {
     }
 
     @Override
-    public Object get(String name, Object defaultVal) {
-        return mPool.getOrDefault(name, defaultVal);
+    public Object get(String name, Object defaultValue) {
+        return mPool.getOrDefault(name, defaultValue);
     }
 
     @Override

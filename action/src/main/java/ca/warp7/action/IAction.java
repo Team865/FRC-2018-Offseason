@@ -18,7 +18,16 @@ import java.util.List;
  * </p>
  *
  * @author Team 865
- * @version 3.5 (Revision 20 on 11/16/2018)
+ * @version 3.6 (Revision 21 on 11/16/2018)
+ * @see Mode
+ * @see ITimer
+ * @see Consumer
+ * @see Predicate
+ * @see API
+ * @see Delegate
+ * @see Resources
+ * @see Function
+ * @see HeadClass
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -330,6 +339,9 @@ public interface IAction {
 
 
     /**
+     * A {@link} Delegate represents an actions running state, which includes tracking its time
+     * and managing its resources
+     *
      * @since 2.0
      */
     interface Delegate {
@@ -353,7 +365,7 @@ public interface IAction {
         /**
          * Gets the parent of the action
          *
-         * @return the parent object
+         * @return the parent delegate object
          * @since 2.0
          */
         Delegate getParent();
@@ -369,7 +381,7 @@ public interface IAction {
          * Gets the resources object shared with the action, or create one if
          * none can currently be found
          *
-         * @return the resources object
+         * @return the resources object associated with the delegate
          * @since 2.0
          */
         Resources getResources();
@@ -384,7 +396,7 @@ public interface IAction {
         /**
          * Gets the name of the action, if any
          *
-         * @return name
+         * @return name of the action
          * @since 3.4
          */
         String getName();
@@ -452,35 +464,42 @@ public interface IAction {
         }
 
         /**
-         * @since 3.5
+         * @since 3.6
          */
-        default List<IAction> getActionQueue() {
+        default List<IAction> getQueue() {
             return null;
-        }
-
-        /**
-         * @since 3.5
-         */
-        default int size() {
-            return 0;
         }
     }
 
 
     /**
+     * Manages the resources of an action or an action tree, which includes
+     * timers, variables, and broadcasts
+     *
      * @since 2.0
      */
     interface Resources {
 
         /**
+         * Associates the specified value with the specified key in this map
+         * (optional operation).  If the map previously contained a mapping for
+         * the key, the old value is replaced by the specified value.
+         *
+         * @param name  name with which the specified value is to be associated
+         * @param value value to be associated with the specified key
          * @since 2.0
          */
         void put(String name, Object value);
 
         /**
+         * Returns the value to which the specified key is mapped, or
+         * {@code defaultValue} if this map contains no mapping for the key.
+         *
+         * @param name       the key whose associated value is to be returned
+         * @param defaultValue the default mapping of the key
          * @since 2.0
          */
-        Object get(String name, Object defaultVal);
+        Object get(String name, Object defaultValue);
 
         /**
          * @since 2.0
@@ -538,28 +557,28 @@ public interface IAction {
         /**
          * @since 2.0
          */
-        default double getDouble(String name, double defaultVal) {
+        default double getDouble(String name, double defaultValue) {
             Object var = get(name, null);
             if (var instanceof Double) return (double) var;
-            return defaultVal;
+            return defaultValue;
         }
 
         /**
          * @since 2.0
          */
-        default int getInt(String name, int defaultVal) {
+        default int getInt(String name, int defaultValue) {
             Object var = get(name, null);
             if (var instanceof Integer) return (int) var;
-            return defaultVal;
+            return defaultValue;
         }
 
         /**
          * @since 2.0
          */
-        default String getString(String name, String defaultVal) {
+        default String getString(String name, String defaultValue) {
             Object var = get(name, null);
             if (var instanceof String) return (String) var;
-            return defaultVal;
+            return defaultValue;
         }
     }
 

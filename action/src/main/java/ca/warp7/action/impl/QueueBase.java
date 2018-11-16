@@ -20,14 +20,9 @@ abstract class QueueBase extends ActionBase {
     }
 
     @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
     public void _onStart() {
         mCurrentAction = null;
-        mRuntimeQueue = getActionQueue();
+        mRuntimeQueue = getQueue();
         mRuntimeQueue.forEach(action -> link(this, action));
     }
 
@@ -56,12 +51,12 @@ abstract class QueueBase extends ActionBase {
     }
 
     @Override
-    public List<IAction> getActionQueue() {
+    public List<IAction> getQueue() {
         if (mCachedActionQueue != null) return mCachedActionQueue;
         List<IAction> actionQueue = new ArrayList<>();
         for (IAction action : mCandidates) {
             if (action instanceof Delegate) {
-                List<IAction> elementQueue = ((Delegate) action).getActionQueue();
+                List<IAction> elementQueue = ((Delegate) action).getQueue();
                 if (elementQueue == null) actionQueue.add(action);
                 else actionQueue.addAll(elementQueue);
             } else actionQueue.add(action);

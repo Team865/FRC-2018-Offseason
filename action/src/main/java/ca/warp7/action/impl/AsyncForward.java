@@ -15,14 +15,9 @@ abstract class AsyncForward extends ActionBase {
     }
 
     @Override
-    public List<IAction> getActionQueue() {
+    public List<IAction> getQueue() {
         if (mActions.size() == 1) return Collections.singletonList(mActions.get(0));
         return null;
-    }
-
-    @Override
-    public int size() {
-        return mActions.size();
     }
 
     @Override
@@ -77,11 +72,6 @@ abstract class AsyncForward extends ActionBase {
         Master(IAction master, IAction... slaves) {
             super(slaves);
             mMaster = master;
-        }
-
-        @Override
-        public int size() {
-            return super.size() + 1;
         }
 
         @Override

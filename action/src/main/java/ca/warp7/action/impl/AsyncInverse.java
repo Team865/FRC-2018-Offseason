@@ -23,14 +23,9 @@ class AsyncInverse extends ActionBase {
     }
 
     @Override
-    public List<IAction> getActionQueue() {
+    public List<IAction> getQueue() {
         if (mInverse.size() == 1) return Collections.singletonList(mInverse.get(0).action);
         return null;
-    }
-
-    @Override
-    public int size() {
-        return mInverse.size();
     }
 
     @Override
