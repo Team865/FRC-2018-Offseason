@@ -23,9 +23,7 @@ public class PrintTests {
         runner.onStart();
         double old = System.nanoTime();
         try {
-            while (!runner.shouldFinish() && System.nanoTime() - old < timeout * 1000000000) {
-                Thread.sleep(10);
-            }
+            while (!runner.shouldFinish() && System.nanoTime() - old < timeout * 1000000000) Thread.sleep(10);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -152,8 +150,8 @@ public class PrintTests {
             @Override
             public IAction getAction() {
                 return async(
-                        waitFor(0.05).queue(new Print("hi ")),
-                        waitFor(0.15).queue(new Print("there"))
+                        waitFor(0.1).queue(new Print("there")),
+                        new Print("hi ")
                 );
             }
         });

@@ -18,12 +18,13 @@ import java.util.List;
  * </p>
  *
  * @author Team 865
- * @version 3.4 (Revision 17 on 11/15/2018)
+ * @version 3.5 (Revision 19 on 11/16/2018)
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FunctionalInterface
 public interface IAction {
+
 
     /**
      * A wrapper to create an action that should be used to define auto modes,
@@ -80,6 +81,7 @@ public interface IAction {
         void accept(Delegate delegate);
     }
 
+
     /**
      * Represents a predicate (boolean-valued function) of a delegate
      *
@@ -96,6 +98,7 @@ public interface IAction {
         boolean test(Delegate delegate);
     }
 
+
     /**
      * Run code once when the action is started, usually for set up.
      * This method must be called first before shouldFinish is called.
@@ -107,6 +110,7 @@ public interface IAction {
      * @since 1.0
      */
     void onStart();
+
 
     /**
      * Returns whether or not the code has finished execution.
@@ -121,6 +125,7 @@ public interface IAction {
         return true;
     }
 
+
     /**
      * Periodically updates the action
      *
@@ -129,6 +134,7 @@ public interface IAction {
     default void onUpdate() {
     }
 
+
     /**
      * Run code once when the action finishes, usually for clean up
      *
@@ -136,6 +142,7 @@ public interface IAction {
      */
     default void onStop() {
     }
+
 
     /**
      * {@link API} defines the general syntax for expressing complex actions,
@@ -312,7 +319,7 @@ public interface IAction {
          * Queues some action the moment a condition becomes true
          *
          * @param predicate the predicate to test for
-         * @param actions A list of actions to run when the condition is true
+         * @param actions   A list of actions to run when the condition is true
          * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
@@ -320,6 +327,7 @@ public interface IAction {
             return await(predicate).queue(actions);
         }
     }
+
 
     /**
      * @since 2.0
@@ -348,7 +356,7 @@ public interface IAction {
          * @return the parent object
          * @since 2.0
          */
-        Parent getParent();
+        Delegate getParent();
 
         /**
          * Sends a stop signal immediately
@@ -442,34 +450,22 @@ public interface IAction {
         default boolean hasParent() {
             return getParent() != null;
         }
-    }
-
-    /**
-     * @since 2.0
-     */
-    interface Parent {
 
         /**
-         * @since 2.0
+         * @since 3.5
          */
         default List<IAction> getActionQueue() {
             return null;
         }
 
         /**
-         * @since 2.0
-         */
-        default Delegate getDelegate() {
-            return null;
-        }
-
-        /**
-         * @since 2.0
+         * @since 3.5
          */
         default int size() {
             return 0;
         }
     }
+
 
     /**
      * @since 2.0
@@ -567,6 +563,7 @@ public interface IAction {
         }
     }
 
+
     /**
      * Provides a set of convenience creators for functional interfaces
      * that simplify the API
@@ -607,7 +604,7 @@ public interface IAction {
          * @since 2.0
          */
         protected static Predicate elapsed(double timeInSeconds) {
-            return d -> !d.hasParent() || d.getParent().getDelegate().getElapsed() > timeInSeconds;
+            return d -> !d.hasParent() || d.getParent().getElapsed() > timeInSeconds;
         }
 
         /**
@@ -632,6 +629,7 @@ public interface IAction {
             return d -> d.hasProgressState() && d.getPercentProgress() > progress;
         }
     }
+
 
     /**
      * Helper methods that allows creation of the API based on the API functions as a queue head

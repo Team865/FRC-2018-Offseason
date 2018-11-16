@@ -61,7 +61,7 @@ class ThreadRunner extends ActionBase {
 
         // Create the thread;
         mRunThread = new Thread(() -> {
-            if (mVerbose) System.out.println("Thread starting");
+            if (mVerbose) System.out.printf("Thread %s starting\n", threadName);
             double startTime = mTimer.getTime();
             double currentTime = startTime;
             mAction.onStart();
@@ -95,8 +95,8 @@ class ThreadRunner extends ActionBase {
             // Print out info about the
             if (mVerbose) {
                 if (currentTime < mTimeout)
-                    System.out.printf("%s ended early by %.3fs\n", threadName, mTimeout - currentTime);
-                else System.out.printf("%s ending after %.3fs\n", threadName, currentTime);
+                    System.out.printf("Thread %s ended early by %.3fs\n", threadName, mTimeout - currentTime);
+                else System.out.printf("Thread %s ending after %.3fs\n", threadName, currentTime);
             }
 
             // Assign null to the thread so this runner can be called again
