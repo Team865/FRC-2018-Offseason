@@ -12,6 +12,11 @@ public class Print implements IAction {
 
     @Override
     public void onStart() {
-        System.out.println(mToPrint);
+        System.out.print(mToPrint);
+    }
+
+    @Override
+    public boolean shouldFinish() {
+        return true;
     }
 }

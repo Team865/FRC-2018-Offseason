@@ -69,7 +69,7 @@ abstract class QueueBase extends ActionBase implements IAction.Parent {
                 List<IAction> elementQueue = ((Parent) action).getActionQueue();
                 if (elementQueue == null) actionQueue.add(action);
                 else actionQueue.addAll(elementQueue);
-            }
+            } else actionQueue.add(action);
         }
         mCachedActionQueue = actionQueue;
         return actionQueue;
