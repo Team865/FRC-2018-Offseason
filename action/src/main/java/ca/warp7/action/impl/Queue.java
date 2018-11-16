@@ -31,7 +31,7 @@ class Queue extends QueueBase implements IAction.API {
 
     @Override
     public API broadcast(String... triggers) {
-        getResources().addBroadcastSources(triggers);
+        //getResources().addBroadcastSources(triggers);
         return API.super.broadcast(triggers);
     }
 

@@ -15,6 +15,7 @@ abstract class QueueBase extends ActionBase {
     private IAction mCurrentAction;
 
     void addToQueue(IAction... actions) {
+//        Arrays.stream(actions).forEach(action -> System.out.println("Adding Queue: " + action + " to " + QueueBase.this));
         mCandidates.addAll(Arrays.asList(actions));
         mCachedActionQueue = null;
     }
@@ -23,7 +24,11 @@ abstract class QueueBase extends ActionBase {
     public void _onStart() {
         mCurrentAction = null;
         mRuntimeQueue = getQueue();
-        mRuntimeQueue.forEach(action -> link(this, action));
+        mRuntimeQueue.forEach(action -> {
+//            System.out.print(Thread.currentThread().getName() + " ");
+//            System.out.println("Link: " + this + " with " + action);
+            link(this, action);
+        });
     }
 
     @Override
@@ -31,10 +36,14 @@ abstract class QueueBase extends ActionBase {
         if (mCurrentAction == null) {
             if (mRuntimeQueue.isEmpty()) return;
             mCurrentAction = mRuntimeQueue.remove(0);
+//            System.out.print(Thread.currentThread().getName() + " ");
+//            System.out.println("Queue Start: " + mCurrentAction);
             mCurrentAction.onStart();
         }
         mCurrentAction.onUpdate();
         if (mCurrentAction.shouldFinish()) {
+//            System.out.print(Thread.currentThread().getName() + " ");
+//            System.out.println("Queue Done: " + mCurrentAction);
             mCurrentAction.onStop();
             mCurrentAction = null;
         }
@@ -58,7 +67,12 @@ abstract class QueueBase extends ActionBase {
             if (action instanceof Delegate) {
                 List<IAction> elementQueue = ((Delegate) action).getQueue();
                 if (elementQueue == null) actionQueue.add(action);
-                else actionQueue.addAll(elementQueue);
+                else {
+//                    System.out.print(Thread.currentThread().getName() + " ");
+//                    System.out.println("Merging From: " + action);
+//                    elementQueue.forEach(e -> System.out.println("Merging: " + e + " into " + QueueBase.this));
+                    actionQueue.addAll(elementQueue);
+                }
             } else actionQueue.add(action);
         }
         mCachedActionQueue = actionQueue;

@@ -35,6 +35,8 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     @Override
     public void onStart() {
         _onStart();
+//        System.out.print(Thread.currentThread().getName() + " ");
+//        System.out.println("Start: " + this);
         getResources().startTimer();
         mStartTime = mResources.getTime();
     }
@@ -77,7 +79,12 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     @Override
     public Resources getResources() {
         if (mResources != null) return mResources;
-        mResources = hasParent() ? getParent().getResources() : new ActionResources();
+        if (hasParent()) mResources = getParent().getResources();
+        else {
+//            System.out.print(Thread.currentThread().getName() + " ");
+//            System.out.println("Creating Resources For: " + this);
+            mResources = new ActionResources();
+        }
         mResources = mResources != null ? mResources : new ActionResources();
         return mResources;
     }

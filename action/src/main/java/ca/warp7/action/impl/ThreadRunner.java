@@ -47,6 +47,7 @@ class ThreadRunner extends ActionBase {
 
         // Operate on the action if it extends ActionBase
         if (mAction instanceof ActionBase) {
+            link(this, mAction);
             ActionBase actionBase = (ActionBase) mAction;
             incrementDetachDepth(actionBase);
             Resources actionRes = actionBase.getResources();
@@ -56,8 +57,7 @@ class ThreadRunner extends ActionBase {
 
         // Give the action its class name if it is not given another name
         if (actionName == null) actionName = mAction.getClass().getSimpleName();
-
-        String threadName = String.format("Runner[%d:%s]", getDetachDepth() + 1, actionName);
+        String threadName = String.format("ActionRunner[%d:%s]", getDetachDepth() + 1, actionName);
 
         // Create the thread;
         mRunThread = new Thread(() -> {

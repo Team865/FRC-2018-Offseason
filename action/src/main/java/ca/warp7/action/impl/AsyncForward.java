@@ -12,6 +12,7 @@ abstract class AsyncForward extends ActionBase {
 
     AsyncForward(IAction... actions) {
         mActions = Arrays.asList(actions);
+        //mActions.forEach(action -> System.out.println("Adding Async: " + action + " to " + AsyncForward.this));
     }
 
     @Override

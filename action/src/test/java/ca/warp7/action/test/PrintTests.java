@@ -157,4 +157,52 @@ public class PrintTests {
         });
         assertEquals("hi there", outContent.toString().trim());
     }
+
+    @Test
+    public void testSimpleBroadcast() {
+        startMode(0.2, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return broadcast("INIT").when(triggeredOnce("INIT"), new Print("hi there"));
+            }
+        });
+        assertEquals("hi there", outContent.toString().trim());
+    }
+
+    @Test
+    public void testExec() {
+        startMode(0.2, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return queue(new Print("hi ")).exec(d -> System.out.print("there"));
+            }
+        });
+        assertEquals("hi there", outContent.toString().trim());
+    }
+
+    @Test
+    public void testBroadcastQueue() {
+        startMode(0.2, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return queue(
+                        broadcast("INIT").when(triggeredOnce("INIT"), new Print("hi there"))
+                );
+            }
+        });
+        assertEquals("hi there", outContent.toString().trim());
+    }
+
+    @Test
+    public void testBroadcastAsync() {
+        startMode(0.2, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return async(
+                        broadcast("INIT"), when(triggeredOnce("INIT"), new Print("hi there"))
+                );
+            }
+        });
+        assertEquals("hi there", outContent.toString().trim());
+    }
 }
