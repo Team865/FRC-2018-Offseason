@@ -17,9 +17,8 @@ public class PrintTests {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
 
-    private void startMode(ActionMode mode) {
+    private void startMode(double timeout, ActionMode mode) {
         IAction action = mode.getAction();
-        double timeout = 0.5;
         IAction runner = ActionMode.createRunner(new DefaultTimer(), 0.02, timeout, action, false);
         runner.onStart();
         double old = System.nanoTime();
@@ -45,8 +44,8 @@ public class PrintTests {
     }
 
     @Test
-    public void printOnly() {
-        startMode(new ActionMode() {
+    public void testPrintOnly() {
+        startMode(0.05, new ActionMode() {
             @Override
             public IAction getAction() {
                 return new Print("hello");
@@ -56,8 +55,8 @@ public class PrintTests {
     }
 
     @Test
-    public void printQueue() {
-        startMode(new ActionMode() {
+    public void testQueue1() {
+        startMode(0.1, new ActionMode() {
             @Override
             public IAction getAction() {
                 return queue(new Print("hello"));
@@ -67,8 +66,8 @@ public class PrintTests {
     }
 
     @Test
-    public void printQueue2() {
-        startMode(new ActionMode() {
+    public void testQueue2() {
+        startMode(0.1, new ActionMode() {
             @Override
             public IAction getAction() {
                 return queue(
@@ -81,8 +80,8 @@ public class PrintTests {
     }
 
     @Test
-    public void printQueue3() {
-        startMode(new ActionMode() {
+    public void testQueue3() {
+        startMode(0.1, new ActionMode() {
             @Override
             public IAction getAction() {
                 return queue(
@@ -98,8 +97,8 @@ public class PrintTests {
     }
 
     @Test
-    public void printAsync() {
-        startMode(new ActionMode() {
+    public void testAsync() {
+        startMode(0.1, new ActionMode() {
             @Override
             public IAction getAction() {
                 return async(
@@ -109,5 +108,55 @@ public class PrintTests {
             }
         });
         assertEquals("hello world", outContent.toString().trim());
+    }
+
+    @Test
+    public void testAsyncQueue() {
+        startMode(0.1, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return async(
+                        new Print("hello "),
+                        new Print("world ")
+                ).queue(new Print("!!!"));
+            }
+        });
+        assertEquals("hello world !!!", outContent.toString().trim());
+    }
+
+    @Test
+    public void testAwait() {
+        startMode(0.1, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return await(d -> true).queue(new Print("hi"));
+            }
+        });
+        assertEquals("hi", outContent.toString().trim());
+    }
+
+    @Test
+    public void testWaitFor() {
+        startMode(0.2, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return waitFor(0.1).queue(new Print("hi"));
+            }
+        });
+        assertEquals("hi", outContent.toString().trim());
+    }
+
+    @Test
+    public void testAsyncWaitFor() {
+        startMode(0.2, new ActionMode() {
+            @Override
+            public IAction getAction() {
+                return async(
+                        waitFor(0.05).queue(new Print("hi ")),
+                        waitFor(0.15).queue(new Print("there"))
+                );
+            }
+        });
+        assertEquals("hi there", outContent.toString().trim());
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
  * </p>
  *
  * @author Team 865
- * @version 3.3 (Revision #14) Revised 11/14/2018
+ * @version 3.4 (Revision 16 on 11/15/2018)
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -327,29 +327,67 @@ public interface IAction {
     interface Delegate {
 
         /**
+         * Gets the length of time (in seconds) since this action started
+         *
          * @since 2.0
          */
         double getElapsed();
 
         /**
+         * Gets the thread level of the action tree
+         *
          * @since 2.0
          */
         int getDetachDepth();
 
         /**
+         * Gets the parent of the action
+         *
          * @since 2.0
          */
         Parent getParent();
 
         /**
+         * Sends a stop signal immediately
+         *
          * @since 2.0
          */
         void interrupt();
 
         /**
+         * Gets the resources object shared with the action, or create one if
+         * none can currently be found
+         *
          * @since 2.0
          */
         Resources getResources();
+
+        /**
+         * Sets the name of the action
+         *
+         * @since 3.4
+         */
+        void setName(String name);
+
+        /**
+         * Gets the name of the action, if any
+         *
+         * @since 3.4
+         */
+        String getName();
+
+        /**
+         * Gets a string that represents the action
+         *
+         * @return The string containing the name, class, and parent
+         * @since 3.4
+         */
+        default String getActionSummary() {
+            return String.format("Name: %s |Class: %s |Parent: %s",
+                    getName(),
+                    getClass().getSimpleName(),
+                    getParent().getClass().getSimpleName());
+        }
 
         /**
          * @since 2.0
@@ -525,6 +563,9 @@ public interface IAction {
     }
 
     /**
+     * Provides a set of convenience creators for functional interfaces
+     * that simplify the API
+     *
      * @since 2.0
      */
     abstract class Function {
@@ -594,51 +635,81 @@ public interface IAction {
      */
     abstract class HeadClass extends Function implements API {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API asyncAll(IAction... actions) {
             return queue().asyncAll(actions);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API asyncAny(IAction... actions) {
             return queue().asyncAny(actions);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API asyncInverse(IAction... actions) {
             return queue().asyncInverse(actions);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API asyncMaster(IAction master, IAction... slaves) {
             return queue().asyncMaster(master, slaves);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API await(Predicate predicate) {
             return queue().await(predicate);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API broadcast(String... triggers) {
             return queue().broadcast(triggers);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API exec(Consumer consumer) {
             return queue().exec(consumer);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API iterate(Consumer consumer) {
             return queue().iterate(consumer);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
             return queue().runIf(predicate, ifAction, elseAction);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void onStart() {
         }

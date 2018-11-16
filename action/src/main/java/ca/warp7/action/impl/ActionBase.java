@@ -9,6 +9,7 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     private double mStartTime;
     private boolean mIsInterrupted;
     private int mDetachDepth;
+    private String mName = "";
 
     static void link(Parent parent, IAction action) {
         if (action instanceof ActionBase) ((ActionBase) action).mParent = parent;
@@ -83,8 +84,18 @@ abstract class ActionBase implements IAction, IAction.Delegate {
 //        }
 
         if (mResources != null) return mResources;
-        mResources = getParent() != null ? getParent().getDelegate().getResources() : new ActionResources();
+        mResources = hasParent() ? getParent().getDelegate().getResources() : new ActionResources();
         mResources = mResources != null ? mResources : new ActionResources();
         return mResources;
+    }
+
+    @Override
+    public void setName(String name) {
+        mName = name;
+    }
+
+    @Override
+    public String getName() {
+        return mName;
     }
 }
