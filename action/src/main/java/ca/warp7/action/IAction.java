@@ -158,8 +158,10 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Manages the resources of an action or an action tree, which includes
      * timers, variables, and broadcasts
+     * </p>
      *
      * @since 2.0
      */
@@ -269,8 +271,10 @@ public interface IAction {
 
 
     /**
+     * <p>
      * A {@link} Delegate represents an actions running state, which includes tracking its time
      * and managing its resources
+     * </p>
      *
      * @since 2.0
      */
@@ -403,8 +407,10 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Provides a set of convenience creators for functional interfaces
      * that simplify the API
+     * </p>
      *
      * @since 2.0
      */
@@ -500,6 +506,7 @@ public interface IAction {
          * </p>
          *
          * @return the API copy object that currently doesn't have anything in it
+         * @since 3.7
          */
         API head();
 
@@ -810,6 +817,20 @@ public interface IAction {
          */
         @Override
         public void onStart() {
+        }
+    }
+
+    /**
+     * <p>
+     * Default Timer implementation
+     * </p>
+     *
+     * @since 3.9
+     */
+    class DefaultTimer implements ITimer {
+        @Override
+        public double getTime() {
+            return System.nanoTime() / 1.0e09;
         }
     }
 }
