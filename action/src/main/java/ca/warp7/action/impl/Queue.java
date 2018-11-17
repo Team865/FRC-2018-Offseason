@@ -25,11 +25,6 @@ class Queue extends QueueBase implements IAction.API {
     }
 
     @Override
-    public API asyncMaster(IAction master, IAction... slaves) {
-        return queue(new AsyncForward.Master(master, slaves));
-    }
-
-    @Override
     public API await(Predicate predicate) {
         return queue(new Await(predicate));
     }

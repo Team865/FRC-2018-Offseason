@@ -12,13 +12,17 @@ import java.util.List;
  * interface as the basis
  * </p>
  *
- * <p>
+ * @author Team 865 (Yu Liu)
+ * @version 3.8 (Revision 23 on 11/16/2018)
+ * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
- * action tasks in a variety of ways, especially useful for autonomous programming
+ * action tasks in a variety of ways, especially useful for autonomous programming. See the
+ * specific interfaces for documentation
  * </p>
- *
- * @author Team 865
- * @version 3.7 (Revision 22 on 11/16/2018)
+ * @implNote <p>
+ * {@link IAction} and its inner interfaces are implemented in the
+ * <code>ca.warp7.action.impl</code> package
+ * </p>
  * @see Mode
  * @see ITimer
  * @see Consumer
@@ -475,8 +479,11 @@ public interface IAction {
 
 
     /**
+     * <p>
      * {@link API} defines the general syntax for expressing complex actions,
      * and defines the following properties:
+     * </p>
+     *
      * <ul>
      * <li><b>Chain-able:</b> All methods of the API object returns the API object itself</li>
      * <li><b>Hierarchical:</b> All API objects are actions themselves </li>
@@ -488,15 +495,19 @@ public interface IAction {
     interface API extends IAction {
 
         /**
-         * Get a "head" of this API
+         * <p>
+         * Get a "head" of this API as distinct from a chain
+         * </p>
          *
          * @return the API copy object that currently doesn't have anything in it
          */
         API head();
 
         /**
+         * <p>
          * Starts a list of action in parallel, and finish when all of the actions
          * are finished and stops
+         * </p>
          *
          * @param actions A list of actions to run
          * @return The API state after the method operation has been queued to the previous state
@@ -505,8 +516,10 @@ public interface IAction {
         API asyncAll(IAction... actions);
 
         /**
+         * <p>
          * Starts a list of action in parallel, and finish when any of the actions
          * are finished and stops
+         * </p>
          *
          * @param actions A list of actions to run
          * @return The API state after the method operation has been queued to the previous state
@@ -515,7 +528,9 @@ public interface IAction {
         API asyncAny(IAction... actions);
 
         /**
+         * <p>
          * Attempts to schedule actions such that they finish at the same time
+         * </p>
          *
          * @param actions A list of actions to run
          * @return The API state after the method operation has been queued to the previous state
@@ -524,7 +539,9 @@ public interface IAction {
         API asyncInverse(IAction... actions);
 
         /**
+         * <p>
          * Waits the queue (do nothing) until a predicate is met
+         * </p>
          *
          * @param predicate the predicate to test for
          * @return The API state after the method operation has been queued to the previous state
@@ -533,7 +550,9 @@ public interface IAction {
         API await(Predicate predicate);
 
         /**
+         * <p>
          * Execute a function in reference to an action
+         * </p>
          *
          * @param consumer the action delegate to consume
          * @return The API state after the method operation has been queued to the previous state
@@ -542,7 +561,9 @@ public interface IAction {
         API exec(Consumer consumer);
 
         /**
+         * <p>
          * Iterate a function periodically in reference to an action
+         * </p>
          *
          * @param consumer the action delegate to consume
          * @return The API state after the method operation has been queued to the previous state
@@ -551,7 +572,9 @@ public interface IAction {
         API iterate(Consumer consumer);
 
         /**
+         * <p>
          * Run one of two actions depending on a condition
+         * </p>
          *
          * @param predicate  the predicate to test for
          * @param ifAction   the action to run if the predicate is true
@@ -562,8 +585,10 @@ public interface IAction {
         API runIf(Predicate predicate, IAction ifAction, IAction elseAction);
 
         /**
+         * <p>
          * Runs some actions in sequential order (i.e. the next action starts when the first
          * one finishes)
+         * </p>
          *
          * @param actions A list of actions to run
          * @return The API state after the method operation has been queued to the previous state
@@ -572,8 +597,10 @@ public interface IAction {
         API queue(IAction... actions);
 
         /**
+         * <p>
          * Starts a list of action in parallel, and finish when all of the actions
          * are finished and stops
+         * </p>
          *
          * @param actions A list of actions to run
          * @return The API state after the method operation has been queued to the previous state
@@ -584,31 +611,40 @@ public interface IAction {
         }
 
         /**
+         * <p>
          * Schedules a list of parallel actions according to the timing of a master.
          * This means slaves end when the master ends
+         * </p>
          *
          * @param master the master action to sync to
          * @param slaves the slaves to run
          * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
+         * @since 3.8
          */
-        default API asyncMaster(IAction master, IAction... slaves) {
-            return null;
+        default API asyncByMaster(IAction master, IAction... slaves) {
+            IAction[] asyncList = new IAction[slaves.length + 1];
+            asyncList[0] = queue(master).interruptParent();
+            System.arraycopy(slaves, 0, asyncList, 1, slaves.length);
+            return async(asyncList);
         }
 
         /**
+         * <p>
          * Starts a list of action in parallel, and finish when a condition has been met
+         * </p>
          *
          * @param actions A list of actions to run
          * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
         default API asyncUntil(Predicate predicate, IAction... actions) {
-            return asyncMaster(await(predicate), actions);
+            return asyncByMaster(await(predicate), actions);
         }
 
         /**
+         * <p>
          * Broadcasts string triggers that can be received anywhere in the action tree
+         * </p>
          *
          * @param triggers the triggers to broadcast
          * @return The API state after the method operation has been queued to the previous state
@@ -619,8 +655,10 @@ public interface IAction {
         }
 
         /**
+         * <p>
          * Broadcasts string triggers that can be received anywhere in the action tree,
          * when a certain condition is met
+         * </p>
          *
          * @param predicate the predicate to test for
          * @param triggers  the triggers to broadcast
@@ -632,7 +670,21 @@ public interface IAction {
         }
 
         /**
+         * <p>
+         * Interrupts the containing parent action
+         * </p>
+         *
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 3.8
+         */
+        default API interruptParent() {
+            return exec(Function.interruptParent());
+        }
+
+        /**
+         * <p>
          * Runs an action only if the condition is true
+         * </p>
          *
          * @param predicate the predicate to test for
          * @param ifAction  the action to run if the predicate is true
@@ -644,7 +696,9 @@ public interface IAction {
         }
 
         /**
+         * <p>
          * Wait (do nothing) for a specified number of seconds
+         * </p>
          *
          * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
@@ -654,7 +708,9 @@ public interface IAction {
         }
 
         /**
+         * <p>
          * Queues some action the moment a condition becomes true
+         * </p>
          *
          * @param predicate the predicate to test for
          * @param actions   A list of actions to run when the condition is true
@@ -668,8 +724,10 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Helper methods that allows creation of the API based on the API functions as a queue head.
      * This class does not implement the queue method to separate the implementation
+     * </p>
      *
      * @since 2.0
      */
@@ -697,14 +755,6 @@ public interface IAction {
         @Override
         public API asyncInverse(IAction... actions) {
             return head().asyncInverse(actions);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public API asyncMaster(IAction master, IAction... slaves) {
-            return head().asyncMaster(master, slaves);
         }
 
         /**
