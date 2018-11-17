@@ -13,7 +13,7 @@ import java.util.List;
  * </p>
  *
  * @author Team 865 (Yu Liu)
- * @version 3.8 (Revision 23 on 11/16/2018)
+ * @version 3.9 (Revision 24 on 11/17/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -328,7 +328,7 @@ public interface IAction {
         void setName(String name);
 
         /**
-         * Gets the name of the action, if any
+         * Gets the name of the action, if any has been set with setName
          *
          * @return name of the action
          * @since 3.4
@@ -349,7 +349,17 @@ public interface IAction {
         }
 
         /**
-         * @since 2.0
+         * @since 3.6
+         */
+        default List<IAction> getQueue() {
+            return null;
+        }
+
+        /**
+         * Gets the total elapsed time since the action tree started
+         *
+         * @return the total elapsed time
+         * @since 3.9
          */
         default double totalElapsed() {
             return getResources().getTotalElapsed();
@@ -395,13 +405,6 @@ public interface IAction {
          */
         default boolean hasParent() {
             return getParent() != null;
-        }
-
-        /**
-         * @since 3.6
-         */
-        default List<IAction> getQueue() {
-            return null;
         }
     }
 
@@ -626,11 +629,13 @@ public interface IAction {
          * @param master the master action to sync to
          * @param slaves the slaves to run
          * @return The API state after the method operation has been queued to the previous state
+         * @implNote Copies the array of slaves into a higher index and inserts interruptWhenDone
+         * at the first index
          * @since 3.8
          */
-        default API asyncByMaster(IAction master, IAction... slaves) {
+        default API asyncMaster(IAction master, IAction... slaves) {
             IAction[] asyncList = new IAction[slaves.length + 1];
-            asyncList[0] = queue(master).interruptParent();
+            asyncList[0] = head().interruptWhenDone(master);
             System.arraycopy(slaves, 0, asyncList, 1, slaves.length);
             return async(asyncList);
         }
@@ -645,7 +650,7 @@ public interface IAction {
          * @since 2.0
          */
         default API asyncUntil(Predicate predicate, IAction... actions) {
-            return asyncByMaster(await(predicate), actions);
+            return asyncMaster(await(predicate), actions);
         }
 
         /**
@@ -686,6 +691,19 @@ public interface IAction {
          */
         default API interruptParent() {
             return exec(Function.interruptParent());
+        }
+
+        /**
+         * <p>
+         * Interrupts the parent action after a certain action
+         * </p>
+         *
+         * @param action The action to follow
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 3.9
+         */
+        default API interruptWhenDone(IAction action) {
+            return queue(action).interruptParent();
         }
 
         /**

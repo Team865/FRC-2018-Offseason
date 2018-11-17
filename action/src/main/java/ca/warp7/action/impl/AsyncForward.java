@@ -18,17 +18,13 @@ abstract class AsyncForward extends ActionBase {
 
     @Override
     public List<IAction> getQueue() {
-        if (mActions.size() == 1) return Collections.singletonList(mActions.get(0));
-        return null;
+        return mActions.size() == 1 ? Collections.singletonList(mActions.get(0)) : null;
     }
 
     @Override
     public void _onStart() {
         mActions.forEach(IAction::onStart);
     }
-
-    @Override
-    public abstract boolean _shouldFinish();
 
     @Override
     public void _onUpdate() {
@@ -48,8 +44,7 @@ abstract class AsyncForward extends ActionBase {
 
         @Override
         public boolean _shouldFinish() {
-            for (IAction action : mActions) if (!action.shouldFinish()) return false;
-            return true;
+            return mActions.stream().allMatch(IAction::shouldFinish);
         }
     }
 
@@ -61,42 +56,8 @@ abstract class AsyncForward extends ActionBase {
 
         @Override
         public boolean _shouldFinish() {
-            for (IAction action : mActions) if (action.shouldFinish()) return true;
-            return false;
+            return mActions.stream().anyMatch(IAction::shouldFinish);
         }
     }
 
-    static class Master extends AsyncForward {
-
-        private IAction mMaster;
-
-        Master(IAction master, IAction... slaves) {
-            super(slaves);
-            mMaster = master;
-            link(this, mMaster);
-        }
-
-        @Override
-        public void _onStart() {
-            mMaster.onStart();
-            super._onStart();
-        }
-
-        @Override
-        public boolean _shouldFinish() {
-            return mMaster.shouldFinish();
-        }
-
-        @Override
-        public void _onUpdate() {
-            mMaster.onUpdate();
-            super._onUpdate();
-        }
-
-        @Override
-        public void _onStop() {
-            mMaster.onStop();
-            super._onStop();
-        }
-    }
 }
