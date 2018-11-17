@@ -18,7 +18,7 @@ import java.util.List;
  * </p>
  *
  * @author Team 865
- * @version 3.6 (Revision 21 on 11/16/2018)
+ * @version 3.7 (Revision 22 on 11/16/2018)
  * @see Mode
  * @see ITimer
  * @see Consumer
@@ -154,186 +154,112 @@ public interface IAction {
 
 
     /**
-     * {@link API} defines the general syntax for expressing complex actions,
-     * and defines the following properties:
-     * <ul>
-     * <li><b>Chain-able:</b> All methods of the API object returns the API object itself</li>
-     * <li><b>Hierarchical:</b> All API objects are actions themselves </li>
-     * <li><b>List-based: </b> Most methods of the API accepts a vararg list of a actions as arguments</li>
-     * </ul>
+     * Manages the resources of an action or an action tree, which includes
+     * timers, variables, and broadcasts
      *
      * @since 2.0
      */
-    interface API extends IAction {
+    interface Resources {
 
         /**
-         * Starts a list of action in parallel, and finish when all of the actions
-         * are finished and stops
+         * Associates the specified value with the specified key in this map
+         * (optional operation).  If the map previously contained a mapping for
+         * the key, the old value is replaced by the specified value.
          *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
+         * @param name  name with which the specified value is to be associated
+         * @param value value to be associated with the specified key
          * @since 2.0
          */
-        API asyncAll(IAction... actions);
+        void put(String name, Object value);
 
         /**
-         * Starts a list of action in parallel, and finish when any of the actions
-         * are finished and stops
+         * Returns the value to which the specified key is mapped, or
+         * {@code defaultValue} if this map contains no mapping for the key.
          *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
+         * @param name         the key whose associated value is to be returned
+         * @param defaultValue the default mapping of the key
          * @since 2.0
          */
-        API asyncAny(IAction... actions);
+        Object get(String name, Object defaultValue);
 
         /**
-         * Attempts to schedule actions such that they finish at the same time
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API asyncInverse(IAction... actions);
-
+        int getBroadcastCount(String trigger);
 
         /**
-         * Schedules a list of parallel actions according to the timing of a master.
-         * This means slaves end when the master ends
-         *
-         * @param master the master action to sync to
-         * @param slaves the slaves to run
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API asyncMaster(IAction master, IAction... slaves);
+        int getBroadcastSources(String trigger);
 
         /**
-         * Waits the queue (do nothing) until a predicate is met
-         *
-         * @param predicate the predicate to test for
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API await(Predicate predicate);
+        void addBroadcastSources(String... trigger);
 
         /**
-         * Execute a function in reference to an action
-         *
-         * @param consumer the action delegate to consume
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API exec(Consumer consumer);
+        String broadcastName(String trigger);
 
         /**
-         * Iterate a function periodically in reference to an action
-         *
-         * @param consumer the action delegate to consume
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API iterate(Consumer consumer);
+        ITimer getActionTimer();
 
         /**
-         * Run one of two actions depending on a condition
-         *
-         * @param predicate  the predicate to test for
-         * @param ifAction   the action to run if the predicate is true
-         * @param elseAction the action to run if the predicate is false
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API runIf(Predicate predicate, IAction ifAction, IAction elseAction);
+        void setActionTimer(ITimer timer);
 
         /**
-         * Runs some actions in sequential order (i.e. the next action starts when the first
-         * one finishes)
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        API queue(IAction... actions);
+        double getTime();
 
         /**
-         * Starts a list of action in parallel, and finish when all of the actions
-         * are finished and stops
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        default API async(IAction... actions) {
-            return asyncAll(actions);
+        double getTotalElapsed();
+
+        /**
+         * @since 2.0
+         */
+        void startTimer();
+
+        /**
+         * @since 2.0
+         */
+        default void broadcast(String trigger) {
+            String name = broadcastName(trigger);
+            put(name, getInt(name, 0) + 1);
         }
 
         /**
-         * Starts a list of action in parallel, and finish when a condition has been met
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        default API asyncUntil(Predicate predicate, IAction... actions) {
-            return asyncMaster(await(predicate), actions);
+        default double getDouble(String name, double defaultValue) {
+            Object var = get(name, null);
+            if (var instanceof Double) return (double) var;
+            return defaultValue;
         }
 
         /**
-         * Broadcasts string triggers that can be received anywhere in the action tree
-         *
-         * @param triggers the triggers to broadcast
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        default API broadcast(String... triggers) {
-            return exec(Function.broadcastAll(triggers));
+        default int getInt(String name, int defaultValue) {
+            Object var = get(name, null);
+            if (var instanceof Integer) return (int) var;
+            return defaultValue;
         }
 
         /**
-         * Broadcasts string triggers that can be received anywhere in the action tree,
-         * when a certain condition is met
-         *
-         * @param predicate the predicate to test for
-         * @param triggers  the triggers to broadcast
-         * @return The API state after the method operation has been queued to the previous state
          * @since 2.0
          */
-        default API broadcastWhen(Predicate predicate, String... triggers) {
-            return await(predicate).broadcast(triggers);
-        }
-
-        /**
-         * Runs an action only if the condition is true
-         *
-         * @param predicate the predicate to test for
-         * @param ifAction  the action to run if the predicate is true
-         * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
-         */
-        default API onlyIf(Predicate predicate, IAction ifAction) {
-            return runIf(predicate, ifAction, null);
-        }
-
-        /**
-         * Wait (do nothing) for a specified number of seconds
-         *
-         * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
-         */
-        default API waitFor(double seconds) {
-            return await(Function.elapsed(seconds));
-        }
-
-        /**
-         * Queues some action the moment a condition becomes true
-         *
-         * @param predicate the predicate to test for
-         * @param actions   A list of actions to run when the condition is true
-         * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
-         */
-        default API when(Predicate predicate, IAction... actions) {
-            return await(predicate).queue(actions);
+        default String getString(String name, String defaultValue) {
+            Object var = get(name, null);
+            if (var instanceof String) return (String) var;
+            return defaultValue;
         }
     }
 
@@ -371,7 +297,7 @@ public interface IAction {
         Delegate getParent();
 
         /**
-         * Sends a stop signal immediately
+         * Sends a stop signal immediately, to be applied when the shouldFinish method is called
          *
          * @since 2.0
          */
@@ -473,117 +399,6 @@ public interface IAction {
 
 
     /**
-     * Manages the resources of an action or an action tree, which includes
-     * timers, variables, and broadcasts
-     *
-     * @since 2.0
-     */
-    interface Resources {
-
-        /**
-         * Associates the specified value with the specified key in this map
-         * (optional operation).  If the map previously contained a mapping for
-         * the key, the old value is replaced by the specified value.
-         *
-         * @param name  name with which the specified value is to be associated
-         * @param value value to be associated with the specified key
-         * @since 2.0
-         */
-        void put(String name, Object value);
-
-        /**
-         * Returns the value to which the specified key is mapped, or
-         * {@code defaultValue} if this map contains no mapping for the key.
-         *
-         * @param name       the key whose associated value is to be returned
-         * @param defaultValue the default mapping of the key
-         * @since 2.0
-         */
-        Object get(String name, Object defaultValue);
-
-        /**
-         * @since 2.0
-         */
-        int getBroadcastCount(String trigger);
-
-        /**
-         * @since 2.0
-         */
-        int getBroadcastSources(String trigger);
-
-        /**
-         * @since 2.0
-         */
-        void addBroadcastSources(String... trigger);
-
-        /**
-         * @since 2.0
-         */
-        String broadcastName(String trigger);
-
-        /**
-         * @since 2.0
-         */
-        ITimer getActionTimer();
-
-        /**
-         * @since 2.0
-         */
-        void setActionTimer(ITimer timer);
-
-        /**
-         * @since 2.0
-         */
-        double getTime();
-
-        /**
-         * @since 2.0
-         */
-        double getTotalElapsed();
-
-        /**
-         * @since 2.0
-         */
-        void startTimer();
-
-        /**
-         * @since 2.0
-         */
-        default void broadcast(String trigger) {
-            String name = broadcastName(trigger);
-            put(name, getInt(name, 0) + 1);
-        }
-
-        /**
-         * @since 2.0
-         */
-        default double getDouble(String name, double defaultValue) {
-            Object var = get(name, null);
-            if (var instanceof Double) return (double) var;
-            return defaultValue;
-        }
-
-        /**
-         * @since 2.0
-         */
-        default int getInt(String name, int defaultValue) {
-            Object var = get(name, null);
-            if (var instanceof Integer) return (int) var;
-            return defaultValue;
-        }
-
-        /**
-         * @since 2.0
-         */
-        default String getString(String name, String defaultValue) {
-            Object var = get(name, null);
-            if (var instanceof String) return (String) var;
-            return defaultValue;
-        }
-    }
-
-
-    /**
      * Provides a set of convenience creators for functional interfaces
      * that simplify the API
      *
@@ -647,6 +462,208 @@ public interface IAction {
             int progress = Math.min(0, Math.max(100, percent));
             return d -> d.hasProgressState() && d.getPercentProgress() > progress;
         }
+
+        /**
+         * Consumes by interrupting the parent action of the executor of this consumer
+         *
+         * @since 3.7
+         */
+        protected static Consumer interruptParent() {
+            return d -> d.getParent().interrupt();
+        }
+    }
+
+
+    /**
+     * {@link API} defines the general syntax for expressing complex actions,
+     * and defines the following properties:
+     * <ul>
+     * <li><b>Chain-able:</b> All methods of the API object returns the API object itself</li>
+     * <li><b>Hierarchical:</b> All API objects are actions themselves </li>
+     * <li><b>List-based: </b> Most methods of the API accepts a vararg list of a actions as arguments</li>
+     * </ul>
+     *
+     * @since 2.0
+     */
+    interface API extends IAction {
+
+        /**
+         * Get a "head" of this API
+         *
+         * @return the API copy object that currently doesn't have anything in it
+         */
+        API head();
+
+        /**
+         * Starts a list of action in parallel, and finish when all of the actions
+         * are finished and stops
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API asyncAll(IAction... actions);
+
+        /**
+         * Starts a list of action in parallel, and finish when any of the actions
+         * are finished and stops
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API asyncAny(IAction... actions);
+
+        /**
+         * Attempts to schedule actions such that they finish at the same time
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API asyncInverse(IAction... actions);
+
+        /**
+         * Waits the queue (do nothing) until a predicate is met
+         *
+         * @param predicate the predicate to test for
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API await(Predicate predicate);
+
+        /**
+         * Execute a function in reference to an action
+         *
+         * @param consumer the action delegate to consume
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API exec(Consumer consumer);
+
+        /**
+         * Iterate a function periodically in reference to an action
+         *
+         * @param consumer the action delegate to consume
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API iterate(Consumer consumer);
+
+        /**
+         * Run one of two actions depending on a condition
+         *
+         * @param predicate  the predicate to test for
+         * @param ifAction   the action to run if the predicate is true
+         * @param elseAction the action to run if the predicate is false
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API runIf(Predicate predicate, IAction ifAction, IAction elseAction);
+
+        /**
+         * Runs some actions in sequential order (i.e. the next action starts when the first
+         * one finishes)
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        API queue(IAction... actions);
+
+        /**
+         * Starts a list of action in parallel, and finish when all of the actions
+         * are finished and stops
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API async(IAction... actions) {
+            return asyncAll(actions);
+        }
+
+        /**
+         * Schedules a list of parallel actions according to the timing of a master.
+         * This means slaves end when the master ends
+         *
+         * @param master the master action to sync to
+         * @param slaves the slaves to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API asyncMaster(IAction master, IAction... slaves) {
+            return null;
+        }
+
+        /**
+         * Starts a list of action in parallel, and finish when a condition has been met
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API asyncUntil(Predicate predicate, IAction... actions) {
+            return asyncMaster(await(predicate), actions);
+        }
+
+        /**
+         * Broadcasts string triggers that can be received anywhere in the action tree
+         *
+         * @param triggers the triggers to broadcast
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API broadcast(String... triggers) {
+            return exec(Function.broadcastAll(triggers));
+        }
+
+        /**
+         * Broadcasts string triggers that can be received anywhere in the action tree,
+         * when a certain condition is met
+         *
+         * @param predicate the predicate to test for
+         * @param triggers  the triggers to broadcast
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API broadcastWhen(Predicate predicate, String... triggers) {
+            return await(predicate).broadcast(triggers);
+        }
+
+        /**
+         * Runs an action only if the condition is true
+         *
+         * @param predicate the predicate to test for
+         * @param ifAction  the action to run if the predicate is true
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API onlyIf(Predicate predicate, IAction ifAction) {
+            return runIf(predicate, ifAction, null);
+        }
+
+        /**
+         * Wait (do nothing) for a specified number of seconds
+         *
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API waitFor(double seconds) {
+            return await(Function.elapsed(seconds));
+        }
+
+        /**
+         * Queues some action the moment a condition becomes true
+         *
+         * @param predicate the predicate to test for
+         * @param actions   A list of actions to run when the condition is true
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API when(Predicate predicate, IAction... actions) {
+            return await(predicate).queue(actions);
+        }
     }
 
 
@@ -663,7 +680,7 @@ public interface IAction {
          */
         @Override
         public API asyncAll(IAction... actions) {
-            return queue().asyncAll(actions);
+            return head().asyncAll(actions);
         }
 
         /**
@@ -671,7 +688,7 @@ public interface IAction {
          */
         @Override
         public API asyncAny(IAction... actions) {
-            return queue().asyncAny(actions);
+            return head().asyncAny(actions);
         }
 
         /**
@@ -679,7 +696,7 @@ public interface IAction {
          */
         @Override
         public API asyncInverse(IAction... actions) {
-            return queue().asyncInverse(actions);
+            return head().asyncInverse(actions);
         }
 
         /**
@@ -687,7 +704,7 @@ public interface IAction {
          */
         @Override
         public API asyncMaster(IAction master, IAction... slaves) {
-            return queue().asyncMaster(master, slaves);
+            return head().asyncMaster(master, slaves);
         }
 
         /**
@@ -695,7 +712,7 @@ public interface IAction {
          */
         @Override
         public API await(Predicate predicate) {
-            return queue().await(predicate);
+            return head().await(predicate);
         }
 
         /**
@@ -703,7 +720,7 @@ public interface IAction {
          */
         @Override
         public API broadcast(String... triggers) {
-            return queue().broadcast(triggers);
+            return head().broadcast(triggers);
         }
 
         /**
@@ -711,7 +728,7 @@ public interface IAction {
          */
         @Override
         public API exec(Consumer consumer) {
-            return queue().exec(consumer);
+            return head().exec(consumer);
         }
 
         /**
@@ -719,7 +736,15 @@ public interface IAction {
          */
         @Override
         public API iterate(Consumer consumer) {
-            return queue().iterate(consumer);
+            return head().iterate(consumer);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public API queue(IAction... actions) {
+            return head().queue(actions);
         }
 
         /**
@@ -727,7 +752,7 @@ public interface IAction {
          */
         @Override
         public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
-            return queue().runIf(predicate, ifAction, elseAction);
+            return head().runIf(predicate, ifAction, elseAction);
         }
 
         /**
@@ -736,11 +761,5 @@ public interface IAction {
         @Override
         public void onStart() {
         }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public abstract API queue(IAction... actions);
     }
 }

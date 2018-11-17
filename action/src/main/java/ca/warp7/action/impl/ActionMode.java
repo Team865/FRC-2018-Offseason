@@ -14,8 +14,8 @@ public abstract class ActionMode extends IAction.HeadClass implements IAction.Mo
     }
 
     @Override
-    public IAction.API queue(IAction... actions) {
-        return Queue._queue(actions);
+    public API head() {
+        return new Queue();
     }
 
     public IAction.API detachThread(double interval, double timeout, ActionBase action) {

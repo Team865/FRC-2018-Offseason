@@ -5,6 +5,11 @@ import ca.warp7.action.IAction;
 class Queue extends QueueBase implements IAction.API {
 
     @Override
+    public API head() {
+        return new Queue();
+    }
+
+    @Override
     public API asyncAll(IAction... actions) {
         return queue(new AsyncForward.All(actions));
     }
@@ -54,9 +59,5 @@ class Queue extends QueueBase implements IAction.API {
     @Override
     public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
         return queue(new Condition(predicate, ifAction, elseAction));
-    }
-
-    static API _queue(IAction... actions) {
-        return actions.length == 0 ? new Queue() : new Queue().queue(actions);
     }
 }
