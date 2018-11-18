@@ -12,8 +12,12 @@ import java.util.List;
  * interface as the basis
  * </p>
  *
+ * <p>
+ * Inspired by the WPILib Command System
+ * </p>
+ *
  * @author Team 865 (Yu Liu)
- * @version 3.9 (Revision 24 on 11/17/2018)
+ * @version 3.9 (Revision 25 on 11/17/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -23,6 +27,7 @@ import java.util.List;
  * {@link IAction} and its inner interfaces are implemented in the
  * <code>ca.warp7.action.impl</code> package
  * </p>
+ * @implSpec See implementation
  * @see Mode
  * @see ITimer
  * @see Consumer
@@ -48,6 +53,7 @@ public interface IAction {
     @FunctionalInterface
     interface Mode {
 
+
         /**
          * Fetches the main action of the mode to be run
          *
@@ -65,6 +71,7 @@ public interface IAction {
      */
     @FunctionalInterface
     interface ITimer {
+
 
         /**
          * Gets the time since the Robot is started
@@ -86,6 +93,7 @@ public interface IAction {
     @FunctionalInterface
     interface Consumer {
 
+
         /**
          * Accepts an action delegate performs an action with it
          *
@@ -102,6 +110,7 @@ public interface IAction {
      */
     @FunctionalInterface
     interface Predicate {
+
 
         /**
          * Returns a decision based on the referred action
@@ -167,6 +176,7 @@ public interface IAction {
      */
     interface Resources {
 
+
         /**
          * Associates the specified value with the specified key in this map
          * (optional operation).  If the map previously contained a mapping for
@@ -178,6 +188,7 @@ public interface IAction {
          */
         void put(String name, Object value);
 
+
         /**
          * Returns the value to which the specified key is mapped, or
          * {@code defaultValue} if this map contains no mapping for the key.
@@ -188,50 +199,60 @@ public interface IAction {
          */
         Object get(String name, Object defaultValue);
 
+
         /**
          * @since 2.0
          */
         int getBroadcastCount(String trigger);
+
 
         /**
          * @since 2.0
          */
         int getBroadcastSources(String trigger);
 
+
         /**
          * @since 2.0
          */
         void addBroadcastSources(String... trigger);
+
 
         /**
          * @since 2.0
          */
         String broadcastName(String trigger);
 
+
         /**
          * @since 2.0
          */
         ITimer getActionTimer();
+
 
         /**
          * @since 2.0
          */
         void setActionTimer(ITimer timer);
 
+
         /**
          * @since 2.0
          */
         double getTime();
+
 
         /**
          * @since 2.0
          */
         double getTotalElapsed();
 
+
         /**
          * @since 2.0
          */
         void startTimer();
+
 
         /**
          * @since 2.0
@@ -240,6 +261,7 @@ public interface IAction {
             String name = broadcastName(trigger);
             put(name, getInt(name, 0) + 1);
         }
+
 
         /**
          * @since 2.0
@@ -250,6 +272,7 @@ public interface IAction {
             return defaultValue;
         }
 
+
         /**
          * @since 2.0
          */
@@ -258,6 +281,7 @@ public interface IAction {
             if (var instanceof Integer) return (int) var;
             return defaultValue;
         }
+
 
         /**
          * @since 2.0
@@ -280,6 +304,7 @@ public interface IAction {
      */
     interface Delegate {
 
+
         /**
          * Gets the length of time (in seconds) since this action started
          *
@@ -287,6 +312,7 @@ public interface IAction {
          * @since 2.0
          */
         double getElapsed();
+
 
         /**
          * Gets the thread level of the action tree
@@ -296,6 +322,7 @@ public interface IAction {
          */
         int getDetachDepth();
 
+
         /**
          * Gets the parent of the action
          *
@@ -304,12 +331,14 @@ public interface IAction {
          */
         Delegate getParent();
 
+
         /**
          * Sends a stop signal immediately, to be applied when the shouldFinish method is called
          *
          * @since 2.0
          */
         void interrupt();
+
 
         /**
          * Gets the resources object shared with the action, or create one if
@@ -320,12 +349,14 @@ public interface IAction {
          */
         Resources getResources();
 
+
         /**
          * Sets the name of the action
          *
          * @since 3.4
          */
         void setName(String name);
+
 
         /**
          * Gets the name of the action, if any has been set with setName
@@ -334,6 +365,7 @@ public interface IAction {
          * @since 3.4
          */
         String getName();
+
 
         /**
          * Gets a string that represents the action
@@ -348,12 +380,14 @@ public interface IAction {
                     getParent().getClass().getSimpleName());
         }
 
+
         /**
          * @since 3.6
          */
         default List<IAction> getQueue() {
             return null;
         }
+
 
         /**
          * Gets the total elapsed time since the action tree started
@@ -365,12 +399,14 @@ public interface IAction {
             return getResources().getTotalElapsed();
         }
 
+
         /**
          * @since 2.0
          */
         default boolean hasRemainingTime() {
             return false;
         }
+
 
         /**
          * @since 2.0
@@ -379,12 +415,14 @@ public interface IAction {
             return 0;
         }
 
+
         /**
          * @since 2.0
          */
         default boolean hasProgressState() {
             return false;
         }
+
 
         /**
          * @since 2.0
@@ -393,12 +431,14 @@ public interface IAction {
             return 0;
         }
 
+
         /**
          * @since 2.0
          */
         default double getNumericalProgress() {
             return 0;
         }
+
 
         /**
          * @since 2.0
@@ -419,12 +459,14 @@ public interface IAction {
      */
     abstract class Function {
 
+
         /**
          * @since 2.0
          */
         protected static Predicate triggeredOnce(String name) {
             return d -> d.getResources().getBroadcastCount(name) == 1;
         }
+
 
         /**
          * @since 2.0
@@ -433,12 +475,14 @@ public interface IAction {
             return d -> d.getResources().getBroadcastCount(name) > 1;
         }
 
+
         /**
          * @since 2.0
          */
         protected static Predicate triggeredAll(String name) {
             return d -> d.getResources().getBroadcastCount(name) == d.getResources().getBroadcastSources(name);
         }
+
 
         /**
          * @since 2.0
@@ -447,12 +491,14 @@ public interface IAction {
             return d -> d.getResources().getBroadcastCount(name) == times;
         }
 
+
         /**
          * @since 2.0
          */
         protected static Predicate elapsed(double timeInSeconds) {
             return d -> !d.hasParent() || d.getParent().getElapsed() > timeInSeconds;
         }
+
 
         /**
          * @since 2.0
@@ -461,12 +507,14 @@ public interface IAction {
             return d -> Arrays.stream(triggers).forEach(trigger -> d.getResources().broadcast(trigger));
         }
 
+
         /**
          * @since 2.0
          */
         protected static Predicate atProgress(double progress) {
             return d -> d.hasProgressState() && d.getNumericalProgress() > progress;
         }
+
 
         /**
          * @since 2.0
@@ -476,12 +524,13 @@ public interface IAction {
             return d -> d.hasProgressState() && d.getPercentProgress() > progress;
         }
 
+
         /**
          * Consumes by interrupting the parent action of the executor of this consumer
          *
          * @since 3.7
          */
-        protected static Consumer interruptParent() {
+        protected static Consumer interrupt() {
             return d -> d.getParent().interrupt();
         }
     }
@@ -503,6 +552,7 @@ public interface IAction {
      */
     interface API extends IAction {
 
+
         /**
          * <p>
          * Get a "head" of this API as distinct from a chain
@@ -512,6 +562,7 @@ public interface IAction {
          * @since 3.7
          */
         API head();
+
 
         /**
          * <p>
@@ -525,6 +576,7 @@ public interface IAction {
          */
         API asyncAll(IAction... actions);
 
+
         /**
          * <p>
          * Starts a list of action in parallel, and finish when any of the actions
@@ -537,6 +589,7 @@ public interface IAction {
          */
         API asyncAny(IAction... actions);
 
+
         /**
          * <p>
          * Attempts to schedule actions such that they finish at the same time
@@ -547,6 +600,7 @@ public interface IAction {
          * @since 2.0
          */
         API asyncInverse(IAction... actions);
+
 
         /**
          * <p>
@@ -559,6 +613,7 @@ public interface IAction {
          */
         API await(Predicate predicate);
 
+
         /**
          * <p>
          * Execute a function in reference to an action
@@ -570,6 +625,7 @@ public interface IAction {
          */
         API exec(Consumer consumer);
 
+
         /**
          * <p>
          * Iterate a function periodically in reference to an action
@@ -580,6 +636,7 @@ public interface IAction {
          * @since 2.0
          */
         API iterate(Consumer consumer);
+
 
         /**
          * <p>
@@ -594,6 +651,7 @@ public interface IAction {
          */
         API runIf(Predicate predicate, IAction ifAction, IAction elseAction);
 
+
         /**
          * <p>
          * Runs some actions in sequential order (i.e. the next action starts when the first
@@ -605,6 +663,7 @@ public interface IAction {
          * @since 2.0
          */
         API queue(IAction... actions);
+
 
         /**
          * <p>
@@ -619,6 +678,7 @@ public interface IAction {
         default API async(IAction... actions) {
             return asyncAll(actions);
         }
+
 
         /**
          * <p>
@@ -640,6 +700,7 @@ public interface IAction {
             return async(asyncList);
         }
 
+
         /**
          * <p>
          * Starts a list of action in parallel, and finish when a condition has been met
@@ -653,6 +714,7 @@ public interface IAction {
             return asyncMaster(await(predicate), actions);
         }
 
+
         /**
          * <p>
          * Broadcasts string triggers that can be received anywhere in the action tree
@@ -665,6 +727,7 @@ public interface IAction {
         default API broadcast(String... triggers) {
             return exec(Function.broadcastAll(triggers));
         }
+
 
         /**
          * <p>
@@ -681,6 +744,7 @@ public interface IAction {
             return await(predicate).broadcast(triggers);
         }
 
+
         /**
          * <p>
          * Interrupts the containing parent action
@@ -690,8 +754,9 @@ public interface IAction {
          * @since 3.8
          */
         default API interruptParent() {
-            return exec(Function.interruptParent());
+            return exec(Function.interrupt());
         }
+
 
         /**
          * <p>
@@ -705,6 +770,7 @@ public interface IAction {
         default API interruptWhenDone(IAction action) {
             return queue(action).interruptParent();
         }
+
 
         /**
          * <p>
@@ -720,6 +786,7 @@ public interface IAction {
             return runIf(predicate, ifAction, null);
         }
 
+
         /**
          * <p>
          * Wait (do nothing) for a specified number of seconds
@@ -731,6 +798,7 @@ public interface IAction {
         default API waitFor(double seconds) {
             return await(Function.elapsed(seconds));
         }
+
 
         /**
          * <p>
@@ -758,6 +826,7 @@ public interface IAction {
      */
     abstract class HeadClass extends Function implements API {
 
+
         /**
          * {@inheritDoc}
          */
@@ -765,6 +834,7 @@ public interface IAction {
         public API asyncAll(IAction... actions) {
             return head().asyncAll(actions);
         }
+
 
         /**
          * {@inheritDoc}
@@ -774,6 +844,7 @@ public interface IAction {
             return head().asyncAny(actions);
         }
 
+
         /**
          * {@inheritDoc}
          */
@@ -781,6 +852,7 @@ public interface IAction {
         public API asyncInverse(IAction... actions) {
             return head().asyncInverse(actions);
         }
+
 
         /**
          * {@inheritDoc}
@@ -790,6 +862,7 @@ public interface IAction {
             return head().await(predicate);
         }
 
+
         /**
          * {@inheritDoc}
          */
@@ -797,6 +870,7 @@ public interface IAction {
         public API broadcast(String... triggers) {
             return head().broadcast(triggers);
         }
+
 
         /**
          * {@inheritDoc}
@@ -806,6 +880,7 @@ public interface IAction {
             return head().exec(consumer);
         }
 
+
         /**
          * {@inheritDoc}
          */
@@ -813,6 +888,7 @@ public interface IAction {
         public API iterate(Consumer consumer) {
             return head().iterate(consumer);
         }
+
 
         /**
          * {@inheritDoc}
@@ -822,6 +898,7 @@ public interface IAction {
             return head().queue(actions);
         }
 
+
         /**
          * {@inheritDoc}
          */
@@ -829,6 +906,7 @@ public interface IAction {
         public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
             return head().runIf(predicate, ifAction, elseAction);
         }
+
 
         /**
          * {@inheritDoc}
@@ -838,6 +916,7 @@ public interface IAction {
         }
     }
 
+
     /**
      * <p>
      * Default Timer implementation
@@ -846,6 +925,11 @@ public interface IAction {
      * @since 3.9
      */
     class DefaultTimer implements ITimer {
+
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public double getTime() {
             return System.nanoTime() / 1.0e09;
