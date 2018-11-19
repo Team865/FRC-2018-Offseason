@@ -12,11 +12,15 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     private String mName = "";
 
     static void link(Delegate parent, IAction action) {
-        if (action instanceof ActionBase) ((ActionBase) action).mParent = parent;
+        if (action instanceof ActionBase) safeLink(parent, (ActionBase) action);
     }
 
     static void incrementDetachDepth(ActionBase action) {
         action.mDetachDepth++;
+    }
+
+    static void safeLink(Delegate parent, ActionBase actionBase) {
+        actionBase.mParent = parent;
     }
 
     @Override
@@ -31,16 +35,6 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     @Override
     public boolean shouldFinish() {
         return mIsInterrupted || _shouldFinish();
-    }
-
-    @Override
-    public void update() {
-        _update();
-    }
-
-    @Override
-    public void stop() {
-        _stop();
     }
 
     @Override
@@ -70,9 +64,9 @@ abstract class ActionBase implements IAction, IAction.Delegate {
         else {
 //            System.out.print(Thread.currentThread().getName() + " ");
 //            System.out.println("Creating Resources For: " + this);
-            mResources = new ActionResources();
+            mResources = new ca.warp7.action.impl.Resources();
         }
-        mResources = mResources != null ? mResources : new ActionResources();
+        mResources = mResources != null ? mResources : new ca.warp7.action.impl.Resources();
         return mResources;
     }
 
@@ -88,12 +82,6 @@ abstract class ActionBase implements IAction, IAction.Delegate {
 
 
     void _start() {
-    }
-
-    void _update() {
-    }
-
-    void _stop() {
     }
 
     boolean _shouldFinish() {

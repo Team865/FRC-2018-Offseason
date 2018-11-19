@@ -21,12 +21,12 @@ class Condition extends ActionBase {
     }
 
     @Override
-    public void _update() {
+    public void update() {
         if (mSelected != null) mSelected.update();
     }
 
     @Override
-    public void _stop() {
+    public void stop() {
         if (mSelected != null) mSelected.stop();
     }
 

@@ -5,7 +5,7 @@ import ca.warp7.action.IAction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActionResources implements IAction.Resources {
+public class Resources implements IAction.Resources {
 
     private Map<String, Object> mPool = new HashMap<>();
     private Map<String, Integer> mBroadcastSources = new HashMap<>();

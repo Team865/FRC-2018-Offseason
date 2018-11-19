@@ -31,7 +31,7 @@ abstract class QueueBase extends ActionBase {
     }
 
     @Override
-    public void _update() {
+    public void update() {
         if (mCurrentAction == null) {
             if (mRuntimeQueue.isEmpty()) return;
             mCurrentAction = mRuntimeQueue.remove(0);
@@ -49,7 +49,7 @@ abstract class QueueBase extends ActionBase {
     }
 
     @Override
-    public void _stop() {
+    public void stop() {
         if (mCurrentAction != null) mCurrentAction.stop();
     }
 

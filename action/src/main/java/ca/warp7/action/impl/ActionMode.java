@@ -10,7 +10,7 @@ public abstract class ActionMode extends IAction.HeadClass implements IAction.Mo
     }
 
     public static IAction createRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
-        return new ThreadRunner(timer, interval, timeout, action, verbose);
+        return new ActionRunner(timer, interval, timeout, action, verbose);
     }
 
     @Override

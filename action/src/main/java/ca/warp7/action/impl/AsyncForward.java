@@ -27,12 +27,12 @@ abstract class AsyncForward extends ActionBase {
     }
 
     @Override
-    public void _update() {
+    public void update() {
         mActions.forEach(IAction::update);
     }
 
     @Override
-    public void _stop() {
+    public void stop() {
         mActions.forEach(IAction::stop);
     }
 

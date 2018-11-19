@@ -14,7 +14,7 @@ public class Iteration extends ActionBase {
     }
 
     @Override
-    public void _update() {
+    public void update() {
         mConsumer.accept(this);
     }
 }

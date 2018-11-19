@@ -4,7 +4,7 @@ import ca.warp7.action.IAction;
 
 import java.util.Objects;
 
-class ThreadRunner extends ActionBase {
+class ActionRunner extends ActionBase {
 
     private IAction mAction;
     private Thread mRunThread;
@@ -13,7 +13,7 @@ class ThreadRunner extends ActionBase {
     private ITimer mTimer;
     private boolean mVerbose;
 
-    ThreadRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
+    ActionRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
         Objects.requireNonNull(action);
         mTimer = timer;
         mAction = action;
@@ -32,7 +32,7 @@ class ThreadRunner extends ActionBase {
     public void _start() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
-            System.err.println("ERROR a ThreadRunner is already running!!!");
+            System.err.println("ERROR an ActionRunner is already running!!!");
             return;
         }
 
@@ -47,9 +47,9 @@ class ThreadRunner extends ActionBase {
 
         // Operate on the action if it extends ActionBase
         if (mAction instanceof ActionBase) {
-            link(this, mAction);
             ActionBase actionBase = (ActionBase) mAction;
             incrementDetachDepth(actionBase);
+            safeLink(this, actionBase);
             Resources actionRes = actionBase.getResources();
             if (actionRes.getActionTimer() == null) actionRes.setActionTimer(mTimer);
             if (!actionBase.getName().isEmpty()) actionName = actionBase.getName();
@@ -92,11 +92,11 @@ class ThreadRunner extends ActionBase {
 
             mAction.stop();
 
-            // Print out info about the
+            // Print out info about the execution if verbose
             if (mVerbose) {
-                if (currentTime < mTimeout)
-                    System.out.printf("Thread %s ended early by %.3fs\n", threadName, mTimeout - currentTime);
-                else System.out.printf("Thread %s ending after %.3fs\n", threadName, currentTime);
+                if (currentTime < mTimeout) System.out.printf("ActionRunner %s ended early by %.3fs\n",
+                        threadName, mTimeout - currentTime);
+                else System.out.printf("ActionRunner %s ending after %.3fs\n", threadName, currentTime);
             }
 
             // Assign null to the thread so this runner can be called again
@@ -116,7 +116,7 @@ class ThreadRunner extends ActionBase {
     }
 
     @Override
-    public void _stop() {
+    public void stop() {
         if (mRunThread != null) mRunThread.interrupt();
     }
 }
