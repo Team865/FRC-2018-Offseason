@@ -20,8 +20,8 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
     @Override
-    public void onStart() {
-        _onStart();
+    public void start() {
+        _start();
 //        System.out.print(Thread.currentThread().getName() + " ");
 //        System.out.println("Start: " + this);
         getResources().startTimer();
@@ -34,13 +34,13 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
     @Override
-    public void onUpdate() {
-        _onUpdate();
+    public void update() {
+        _update();
     }
 
     @Override
-    public void onStop() {
-        _onStop();
+    public void stop() {
+        _stop();
     }
 
     @Override
@@ -87,13 +87,13 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
 
-    void _onStart() {
+    void _start() {
     }
 
-    void _onUpdate() {
+    void _update() {
     }
 
-    void _onStop() {
+    void _stop() {
     }
 
     boolean _shouldFinish() {

@@ -8,7 +8,7 @@ class Execution extends ActionBase {
     }
 
     @Override
-    public void _onStart() {
+    public void _start() {
         mConsumer.accept(this);
     }
 }

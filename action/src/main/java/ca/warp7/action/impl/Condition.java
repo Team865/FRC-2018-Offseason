@@ -15,19 +15,19 @@ class Condition extends ActionBase {
     }
 
     @Override
-    public void _onStart() {
+    public void _start() {
         mSelected = mPredicate.test(this) ? mIf : mElse;
-        if (mSelected != null) mSelected.onStart();
+        if (mSelected != null) mSelected.start();
     }
 
     @Override
-    public void _onUpdate() {
-        if (mSelected != null) mSelected.onUpdate();
+    public void _update() {
+        if (mSelected != null) mSelected.update();
     }
 
     @Override
-    public void _onStop() {
-        if (mSelected != null) mSelected.onStop();
+    public void _stop() {
+        if (mSelected != null) mSelected.stop();
     }
 
     @Override

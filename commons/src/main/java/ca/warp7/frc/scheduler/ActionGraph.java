@@ -39,7 +39,7 @@ class ActionGraph implements IAction, ITriggerSender {
     }
 
     @Override
-    public void onStart() {
+    public void start() {
         mPeriodicTriggers.add(mEntryPoint);
     }
 
@@ -49,12 +49,12 @@ class ActionGraph implements IAction, ITriggerSender {
     }
 
     @Override
-    public void onUpdate() {
+    public void update() {
         for (ActionNode node : mActionNodes) {
             if (node.shouldFinish()) {
-                node.onStop();
+                node.stop();
             } else {
-                node.onUpdate();
+                node.update();
             }
         }
         for (ActionTrigger trigger : mPeriodicTriggers) {
@@ -65,8 +65,8 @@ class ActionGraph implements IAction, ITriggerSender {
     }
 
     @Override
-    public void onStop() {
-        mActionNodes.forEach(ActionNode::onStop);
+    public void stop() {
+        mActionNodes.forEach(ActionNode::stop);
     }
 
     @Override

@@ -7,7 +7,7 @@ public class NothingMode implements IAction.Mode {
     public IAction getAction() {
         return new IAction() {
             @Override
-            public void onStart() {
+            public void start() {
                 System.out.println("NothingMode is doing nothing");
             }
 
@@ -17,11 +17,11 @@ public class NothingMode implements IAction.Mode {
             }
 
             @Override
-            public void onUpdate() {
+            public void update() {
             }
 
             @Override
-            public void onStop() {
+            public void stop() {
                 System.out.println("NothingMode is done");
             }
         };

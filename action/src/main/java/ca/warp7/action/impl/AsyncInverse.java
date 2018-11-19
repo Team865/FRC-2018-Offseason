@@ -30,7 +30,7 @@ class AsyncInverse extends ActionBase {
     }
 
     @Override
-    public void _onUpdate() {
+    public void _update() {
         mInverse.forEach(inverse -> inverse.remainingTime = inverse.hasDelegate &&
                 inverse.delegate.hasRemainingTime() ? inverse.delegate.getRemainingTime() : 0);
         double maxRemaining = 0;
@@ -39,15 +39,15 @@ class AsyncInverse extends ActionBase {
         mInverse.forEach(inverse -> {
             if (inverse.remainingTime == finalMaxRemaining) {
                 inverse.started = true;
-                inverse.action.onStart();
+                inverse.action.start();
             }
         });
-        mInverse.stream().filter(inverse -> inverse.started).forEach(inverse -> inverse.action.onUpdate());
+        mInverse.stream().filter(inverse -> inverse.started).forEach(inverse -> inverse.action.update());
     }
 
     @Override
-    public void _onStop() {
-        mInverse.stream().filter(inverse -> inverse.started).forEach(inverse -> inverse.action.onStop());
+    public void _stop() {
+        mInverse.stream().filter(inverse -> inverse.started).forEach(inverse -> inverse.action.stop());
     }
 
     private static class Inverse {

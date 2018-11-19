@@ -42,7 +42,7 @@ class AutoRunner {
      * The periodic Runnable for the auto program
      *
      * <p>The mechanism in which actions are running means that there cannot be blocking operations in
-     * both {@link IAction#onUpdate()} and {@link IAction#onStop()} or auto may not end on time</p>
+     * both {@link IAction#update()} and {@link IAction#stop()} or auto may not end on time</p>
      *
      * <p>The proper code mechanism should use implement {@link IAction}for a monitoring/locking purpose,
      * and the actual IO loops should be run instead in the IO looper. This would also make the actual
@@ -55,12 +55,12 @@ class AutoRunner {
         double startTime = Timer.getFPGATimestamp();
         double currentTime = startTime;
 
-        mAction.onStart();
+        mAction.start();
 
         // Loop forever until an exit condition is met
         while (true) {
 
-            // Stop priority #1: Check if the onStop method has been called to terminate this thread
+            // Stop priority #1: Check if the stop method has been called to terminate this thread
             if (Thread.currentThread().isInterrupted()) {
                 break;
             }
@@ -82,7 +82,7 @@ class AutoRunner {
             }
 
             // Update the action now after no exit conditions are met
-            mAction.onUpdate();
+            mAction.update();
 
             try {
 
@@ -91,13 +91,13 @@ class AutoRunner {
 
             } catch (InterruptedException e) {
 
-                // Breaks out the loop instead of returning so that onStop can be called
+                // Breaks out the loop instead of returning so that stop can be called
                 break;
 
             }
         }
 
-        mAction.onStop();
+        mAction.stop();
 
         System.out.printf("Auto program ending after %.3fs\n", currentTime);
 
@@ -157,7 +157,7 @@ class AutoRunner {
         if (mUsingActionAPI) {
             mAPIRunner = ActionMode.createRunner(Timer::getFPGATimestamp,
                     mExplicitTimeout, kDefaultLoopDelta, mAction, true);
-            mAPIRunner.onStart();
+            mAPIRunner.start();
             return;
         }
 
@@ -170,7 +170,7 @@ class AutoRunner {
      * Stops the thread if it is running and nullify the variables
      */
     void stop() {
-        if (mUsingActionAPI) mAPIRunner.onStop();
+        if (mUsingActionAPI) mAPIRunner.stop();
         else if (mRunThread != null) mRunThread.interrupt();
     }
 }

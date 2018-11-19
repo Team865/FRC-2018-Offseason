@@ -3,21 +3,27 @@ package ca.warp7.action;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * <p>
  * An {@link IAction} defines any self contained action that can be executed by the robot.
  * An Action is the unit of basis for autonomous programs. Actions may contain anything,
  * which means we can run sub-actions in various ways, in combination with the start,
- * loo, end, and shouldFinish methods. An entire scheduling API is developed with this
- * interface as the basis
+ * update, end, and shouldFinish methods.
  * </p>
  *
+ *
  * <p>
- * Inspired by the WPILib Command System
+ * An entire scheduling API is developed with this interface as the basis
+ * </p>
+ *
+ *
+ * <p>
+ * Inspired by the WPILib Command-Based Programming
  * </p>
  *
  * @author Team 865 (Yu Liu)
- * @version 3.9 (Revision 25 on 11/17/2018)
+ * @version 3.10 (Revision 26 on 11/18/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -122,23 +128,32 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Run code once when the action is started, usually for set up.
      * This method must be called first before shouldFinish is called.
+     * </p>
+     *
      * <p>
      * This method is the only non-default one in the {@link IAction}
      * interface, making it a functional interface that can be used to
      * create singleton actions
+     * </p>
      *
-     * @since 1.0
+     * @since 1.0 (modified 3.10)
      */
-    void onStart();
+    void start();
 
 
     /**
+     * <p>
      * Returns whether or not the code has finished execution.
-     * <b>IMPORTANT:</b> We must make sure the changes in onStart
+     * </p>
+     *
+     * <p>
+     * <b>IMPORTANT:</b> We must make sure the changes in start
      * actually get applied to subsystems because updateState
-     * will not run on the first call of this method after onStart
+     * will not run on the first call of this method after start
+     * </p>
      *
      * @return boolean
      * @since 1.0
@@ -149,20 +164,24 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Periodically updates the action
+     * </p>
      *
-     * @since 1.0
+     * @since 1.0 (modified 3.10)
      */
-    default void onUpdate() {
+    default void update() {
     }
 
 
     /**
+     * <p>
      * Run code once when the action finishes, usually for clean up
+     * </p>
      *
-     * @since 1.0
+     * @since 1.0 (modified 3.10)
      */
-    default void onStop() {
+    default void stop() {
     }
 
 
@@ -912,7 +931,7 @@ public interface IAction {
          * {@inheritDoc}
          */
         @Override
-        public void onStart() {
+        public void start() {
         }
     }
 

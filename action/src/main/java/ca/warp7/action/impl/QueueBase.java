@@ -31,26 +31,26 @@ abstract class QueueBase extends ActionBase {
     }
 
     @Override
-    public void _onUpdate() {
+    public void _update() {
         if (mCurrentAction == null) {
             if (mRuntimeQueue.isEmpty()) return;
             mCurrentAction = mRuntimeQueue.remove(0);
 //            System.out.print(Thread.currentThread().getName() + " ");
 //            System.out.println("Queue Start: " + mCurrentAction);
-            mCurrentAction.onStart();
+            mCurrentAction.start();
         }
-        mCurrentAction.onUpdate();
+        mCurrentAction.update();
         if (mCurrentAction.shouldFinish()) {
 //            System.out.print(Thread.currentThread().getName() + " ");
 //            System.out.println("Queue Done: " + mCurrentAction);
-            mCurrentAction.onStop();
+            mCurrentAction.stop();
             mCurrentAction = null;
         }
     }
 
     @Override
-    public void _onStop() {
-        if (mCurrentAction != null) mCurrentAction.onStop();
+    public void _stop() {
+        if (mCurrentAction != null) mCurrentAction.stop();
     }
 
     @Override

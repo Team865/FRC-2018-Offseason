@@ -17,7 +17,7 @@ public class OuttakeCube implements IAction {
     }
 
     @Override
-    public void onStart() {
+    public void start() {
         intake.setSpeed(mSpeed);
         mStartTime = Timer.getFPGATimestamp();
     }
@@ -28,11 +28,11 @@ public class OuttakeCube implements IAction {
     }
 
     @Override
-    public void onUpdate() {
+    public void update() {
     }
 
     @Override
-    public void onStop() {
+    public void stop() {
         intake.setSpeed(0);
     }
 }

@@ -11,7 +11,7 @@ public class Print implements IAction {
     }
 
     @Override
-    public void onStart() {
+    public void start() {
         System.out.print(mToPrint);
     }
 

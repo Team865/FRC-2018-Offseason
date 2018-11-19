@@ -22,18 +22,18 @@ abstract class AsyncForward extends ActionBase {
     }
 
     @Override
-    public void _onStart() {
-        mActions.forEach(IAction::onStart);
+    public void _start() {
+        mActions.forEach(IAction::start);
     }
 
     @Override
-    public void _onUpdate() {
-        mActions.forEach(IAction::onUpdate);
+    public void _update() {
+        mActions.forEach(IAction::update);
     }
 
     @Override
-    public void _onStop() {
-        mActions.forEach(IAction::onStop);
+    public void _stop() {
+        mActions.forEach(IAction::stop);
     }
 
     static class All extends AsyncForward {

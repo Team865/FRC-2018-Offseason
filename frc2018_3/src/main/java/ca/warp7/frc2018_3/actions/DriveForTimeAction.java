@@ -24,18 +24,18 @@ public class DriveForTimeAction implements IAction {
     }
 
     @Override
-    public void onStart() {
+    public void start() {
         drive.openLoopDrive(mLeft, mRight);
         mStartTime = Timer.getFPGATimestamp();
     }
 
     @Override
-    public void onUpdate() {
+    public void update() {
         // Do nothing as IO is handled by Drive in this case
     }
 
     @Override
-    public void onStop() {
+    public void stop() {
         drive.openLoopDrive(0, 0);
     }
 }

@@ -38,7 +38,7 @@ class ActionNode implements IAction {
         // System.out.println("Testing " + trigger + " against " + mStarterTrigger);
         if (mStarterTrigger != null && mStarterTrigger.equals(trigger)) {
             mIsActive = true;
-            onStart();
+            start();
         }
     }
 
@@ -51,9 +51,9 @@ class ActionNode implements IAction {
     }
 
     @Override
-    public void onStart() {
+    public void start() {
         if (mIsActive) {
-            mContainedAction.onStart();
+            mContainedAction.start();
         }
     }
 
@@ -66,16 +66,16 @@ class ActionNode implements IAction {
     }
 
     @Override
-    public void onUpdate() {
+    public void update() {
         if (mIsActive) {
-            mContainedAction.onUpdate();
+            mContainedAction.update();
         }
     }
 
     @Override
-    public void onStop() {
+    public void stop() {
         if (mIsActive) {
-            mContainedAction.onStop();
+            mContainedAction.stop();
             mTriggerSender.sendTrigger(mOnEndTrigger);
             mIsActive = false;
             mIsDone = true;

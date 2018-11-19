@@ -20,7 +20,7 @@ public class PrintTests {
     private void startMode(double timeout, ActionMode mode) {
         IAction action = mode.getAction();
         IAction runner = ActionMode.createRunner(new IAction.DefaultTimer(), 0.02, timeout, action, false);
-        runner.onStart();
+        runner.start();
         double old = System.nanoTime();
         try {
             while (!runner.shouldFinish() && System.nanoTime() - old < timeout * 1000000000) Thread.sleep(10);

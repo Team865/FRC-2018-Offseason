@@ -29,7 +29,7 @@ class ThreadRunner extends ActionBase {
     }
 
     @Override
-    public void _onStart() {
+    public void _start() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
             System.err.println("ERROR a ThreadRunner is already running!!!");
@@ -64,10 +64,10 @@ class ThreadRunner extends ActionBase {
             if (mVerbose) System.out.printf("Thread %s starting\n", threadName);
             double startTime = mTimer.getTime();
             double currentTime = startTime;
-            mAction.onStart();
+            mAction.start();
 
             // Loop forever until an exit condition is met
-            // Stop priority #1: Check if the onStop method has been called to terminate this thread
+            // Stop priority #1: Check if the stop method has been called to terminate this thread
             while (!Thread.currentThread().isInterrupted()) {
                 currentTime = mTimer.getTime() - startTime;
 
@@ -80,17 +80,17 @@ class ThreadRunner extends ActionBase {
                 if (mAction.shouldFinish()) break;
 
                 // Update the action now after no exit conditions are met
-                mAction.onUpdate();
+                mAction.update();
                 try {
                     // Delay for a certain amount of time so the update function is not called so often
                     Thread.sleep(mInterval);
                 } catch (InterruptedException e) {
-                    // Breaks out the loop instead of returning so that onStop can be called
+                    // Breaks out the loop instead of returning so that stop can be called
                     break;
                 }
             }
 
-            mAction.onStop();
+            mAction.stop();
 
             // Print out info about the
             if (mVerbose) {
@@ -116,7 +116,7 @@ class ThreadRunner extends ActionBase {
     }
 
     @Override
-    public void _onStop() {
+    public void _stop() {
         if (mRunThread != null) mRunThread.interrupt();
     }
 }
