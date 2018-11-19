@@ -25,7 +25,7 @@ abstract class ActionBase implements IAction, IAction.Delegate {
 
     @Override
     public void start() {
-        _start();
+        prepare();
 //        System.out.print(Thread.currentThread().getName() + " ");
 //        System.out.println("Start: " + this);
         getResources().startTimer();
@@ -81,7 +81,7 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
 
-    void _start() {
+    void prepare() {
     }
 
     boolean _shouldFinish() {

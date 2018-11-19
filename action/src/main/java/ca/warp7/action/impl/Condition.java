@@ -15,7 +15,7 @@ class Condition extends ActionBase {
     }
 
     @Override
-    public void _start() {
+    public void prepare() {
         mSelected = mPredicate.test(this) ? mIf : mElse;
         if (mSelected != null) mSelected.start();
     }

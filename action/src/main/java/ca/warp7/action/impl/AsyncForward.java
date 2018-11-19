@@ -22,7 +22,7 @@ abstract class AsyncForward extends ActionBase {
     }
 
     @Override
-    public void _start() {
+    public void prepare() {
         mActions.forEach(IAction::start);
     }
 

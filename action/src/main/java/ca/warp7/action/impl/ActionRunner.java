@@ -29,7 +29,7 @@ class ActionRunner extends ActionBase {
     }
 
     @Override
-    public void _start() {
+    public void prepare() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
             System.err.println("ERROR an ActionRunner is already running!!!");

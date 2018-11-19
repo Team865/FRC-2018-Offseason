@@ -22,8 +22,9 @@ import java.util.List;
  * Inspired by the WPILib Command-Based Programming
  * </p>
  *
- * @author Team 865 (Yu Liu)
- * @version 3.10 (Revision 26 on 11/18/2018)
+ * @author Team 865
+ * @author Yu Liu
+ * @version 3.11 (Revision 27 on 11/18/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -33,7 +34,7 @@ import java.util.List;
  * {@link IAction} and its inner interfaces are implemented in the
  * <code>ca.warp7.action.impl</code> package
  * </p>
- * @implSpec See implementation
+ * @implSpec See implementation for details
  * @see Mode
  * @see ITimer
  * @see Consumer
@@ -409,17 +410,6 @@ public interface IAction {
 
 
         /**
-         * Gets the total elapsed time since the action tree started
-         *
-         * @return the total elapsed time
-         * @since 3.9
-         */
-        default double totalElapsed() {
-            return getResources().getTotalElapsed();
-        }
-
-
-        /**
          * @since 2.0
          */
         default boolean hasRemainingTime() {
@@ -465,6 +455,55 @@ public interface IAction {
         default boolean hasParent() {
             return getParent() != null;
         }
+    }
+
+
+    /**
+     * @since 3.11
+     */
+    enum AsyncMode {
+
+
+        /**
+         * @since 3.11
+         */
+        ForwardEach,
+
+
+        /**
+         * @since 3.11
+         */
+        ForwardAny,
+
+
+        /**
+         * @since 3.11
+         */
+        ForwardAll,
+
+
+        /**
+         * @since 3.11
+         */
+        InverseEach,
+
+
+        /**
+         * @since 3.11
+         */
+        InverseAny,
+
+
+        /**
+         * @since 3.11
+         */
+        InverseAll,
+
+
+        /**
+         * @since 3.11
+         */
+        InverseStatic
     }
 
 
@@ -582,6 +621,15 @@ public interface IAction {
          */
         API head();
 
+
+        /**
+         * TO BE IMPLEMENTED
+         *
+         * @since 3.11
+         */
+        default API async(AsyncMode mode, IAction... actions) {
+            return null;
+        }
 
         /**
          * <p>
@@ -938,7 +986,7 @@ public interface IAction {
 
     /**
      * <p>
-     * Default Timer implementation
+     * Default Timer implementation that uses the system timer
      * </p>
      *
      * @since 3.9
