@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.11 (Revision 27 on 11/18/2018)
+ * @version 3.12 (Revision 28 on 11/23/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -459,51 +459,70 @@ public interface IAction {
 
 
     /**
-     * @since 3.11
+     * Specifies the start mode of an async action
+     *
+     * @since 3.12
      */
-    enum AsyncMode {
+    enum AsyncStartMode {
 
 
         /**
-         * @since 3.11
+         * Starts all actions when the async starts
+         *
+         * @since 3.12
          */
-        ForwardEach,
+        OnStart,
 
 
         /**
-         * @since 3.11
+         * Plans out the async actions so they finish at the same time,
+         * and starts actions according to the plan
+         *
+         * @since 3.12
          */
-        ForwardAny,
+        OnStaticInverse,
 
 
         /**
-         * @since 3.11
+         * Dynamically adjust the starting time of actions so they finish at the
+         * same time
+         *
+         * @since 3.12
          */
-        ForwardAll,
+        OnDynamicInverse
+    }
+
+
+    /**
+     * Specifies the stop mode of an async action
+     *
+     * @since 3.12
+     */
+    enum AsyncStopMode {
 
 
         /**
-         * @since 3.11
+         * @since 3.12
          */
-        InverseEach,
+        OnEachFinished,
 
 
         /**
-         * @since 3.11
+         * @since 3.12
          */
-        InverseAny,
+        OnAnyFinished,
 
 
         /**
-         * @since 3.11
+         * @since 3.12
          */
-        InverseAll,
+        OnAllFinished,
 
 
         /**
-         * @since 3.11
+         * @since 3.12
          */
-        InverseStatic
+        OnStaticEstimate
     }
 
 
@@ -623,11 +642,12 @@ public interface IAction {
 
 
         /**
-         * TO BE IMPLEMENTED
+         * Runs an async action according to a start and stop mode with a list of actions
          *
-         * @since 3.11
+         * @since 3.12
          */
-        default API async(AsyncMode mode, IAction... actions) {
+        default API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
+            //TODO
             return null;
         }
 
