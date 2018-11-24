@@ -5,21 +5,21 @@ import ca.warp7.action.IAction;
 abstract class ActionBase implements IAction, IAction.Delegate {
 
     private Delegate mParent;
-    private Resources mResources;
+    private SingletonResources mResources;
     private double mStartTime;
     private boolean mIsInterrupted;
     private int mDetachDepth;
     private String mName = "";
 
     static void link(Delegate parent, IAction action) {
-        if (action instanceof ActionBase) safeLink(parent, (ActionBase) action);
+        if (action instanceof ActionBase) performSafeLink(parent, (ActionBase) action);
     }
 
     static void incrementDetachDepth(ActionBase action) {
         action.mDetachDepth++;
     }
 
-    static void safeLink(Delegate parent, ActionBase actionBase) {
+    static void performSafeLink(Delegate parent, ActionBase actionBase) {
         actionBase.mParent = parent;
     }
 
@@ -58,7 +58,7 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
     @Override
-    public Resources getResources() {
+    public SingletonResources getResources() {
         if (mResources != null) return mResources;
         if (hasParent()) mResources = getParent().getResources();
         else {

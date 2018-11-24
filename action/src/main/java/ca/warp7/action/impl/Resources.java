@@ -5,12 +5,13 @@ import ca.warp7.action.IAction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Resources implements IAction.Resources {
+public class Resources implements IAction.SingletonResources {
 
     private Map<String, Object> mPool = new HashMap<>();
     private Map<String, Integer> mBroadcastSources = new HashMap<>();
     private IAction.ITimer mTimer;
     private double mStartTime = 0;
+    private double mInterval = 0;
 
     @Override
     public void put(String name, Object value) {
@@ -51,11 +52,6 @@ public class Resources implements IAction.Resources {
     }
 
     @Override
-    public void setActionTimer(IAction.ITimer timer) {
-        mTimer = timer;
-    }
-
-    @Override
     public double getTime() {
         return mTimer != null ? mTimer.getTime() : 0;
     }
@@ -69,5 +65,18 @@ public class Resources implements IAction.Resources {
     @Override
     public void startTimer() {
         if (mStartTime == 0) mStartTime = mTimer.getTime();
+    }
+
+    @Override
+    public double getInterval() {
+        return mInterval;
+    }
+
+    void setActionTimer(IAction.ITimer timer) {
+        mTimer = timer;
+    }
+
+    void setInterval(double interval) {
+        mInterval = interval;
     }
 }

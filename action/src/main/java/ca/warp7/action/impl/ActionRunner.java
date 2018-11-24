@@ -35,50 +35,48 @@ class ActionRunner extends ActionBase {
             System.err.println("ERROR an ActionRunner is already running!!!");
             return;
         }
-
         // Check if a timer has already been assigned
         if (mTimer == null) mTimer = getResources().getActionTimer();
-
-        // Assign the timer to the parent actionBase
-        getResources().setActionTimer(mTimer);
-
+        // Get the cast resources of current action
+        Resources resources = (Resources) getResources();
+        // Pass the timer to the resources
+        resources.setActionTimer(mTimer);
+        // Convert interval into seconds and pass to resources
+        resources.setInterval(mInterval / 1000.0);
         // Use a variable to better name the thread
         String actionName = null;
-
         // Operate on the action if it extends ActionBase
         if (mAction instanceof ActionBase) {
             ActionBase actionBase = (ActionBase) mAction;
+            // Link the runner to the action
+            performSafeLink(this, actionBase);
+            // Increment the detachment state of the child
             incrementDetachDepth(actionBase);
-            safeLink(this, actionBase);
-            Resources actionRes = actionBase.getResources();
-            if (actionRes.getActionTimer() == null) actionRes.setActionTimer(mTimer);
+            // Fetch and store the resources pointer from the parent
+            actionBase.getResources();
+            // Get the action name if it exists
             if (!actionBase.getName().isEmpty()) actionName = actionBase.getName();
         }
-
-        // Give the action its class name if it is not given another name
+        // Give the action its class name if it does not exist
         if (actionName == null) actionName = mAction.getClass().getSimpleName();
+        // Create the thread name based on the action name
         String threadName = String.format("ActionRunner[%d:%s]", getDetachDepth() + 1, actionName);
-
-        // Create the thread;
+        // Create a new run thread
         mRunThread = new Thread(() -> {
             if (mVerbose) System.out.printf("Thread %s starting\n", threadName);
+            // measure the start time and start the action
             double startTime = mTimer.getTime();
             double currentTime = startTime;
             mAction.start();
-
             // Loop forever until an exit condition is met
             // Stop priority #1: Check if the stop method has been called to terminate this thread
             while (!Thread.currentThread().isInterrupted()) {
                 currentTime = mTimer.getTime() - startTime;
-
                 // Stop priority #2: Check for explicit timeouts used in setAutoMode
-                if (currentTime >= mTimeout) break;
-
                 // Stop priority #3: Check if the action should finish
                 // Note the main action may have recursive actions under it and all of those actions
                 // should contribute to this check
-                if (mAction.shouldFinish()) break;
-
+                if (currentTime >= mTimeout || mAction.shouldFinish()) break;
                 // Update the action now after no exit conditions are met
                 mAction.update();
                 try {
@@ -89,21 +87,17 @@ class ActionRunner extends ActionBase {
                     break;
                 }
             }
-
             mAction.stop();
-
             // Print out info about the execution if verbose
             if (mVerbose) {
                 if (currentTime < mTimeout) System.out.printf("ActionRunner %s ended early by %.3fs\n",
                         threadName, mTimeout - currentTime);
                 else System.out.printf("ActionRunner %s ending after %.3fs\n", threadName, currentTime);
             }
-
             // Assign null to the thread so this runner can be called again
             // without robot code restarting
             mRunThread = null;
         });
-
         // Start the thread
         mRunThread.setDaemon(false);
         mRunThread.setName(threadName);

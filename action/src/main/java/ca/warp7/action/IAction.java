@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.12 (Revision 28 on 11/23/2018)
+ * @version 3.13 (Revision 29 on 11/24/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -41,7 +41,7 @@ import java.util.List;
  * @see Predicate
  * @see API
  * @see Delegate
- * @see Resources
+ * @see SingletonResources
  * @see Function
  * @see HeadClass
  * @since 1.0
@@ -194,7 +194,7 @@ public interface IAction {
      *
      * @since 2.0
      */
-    interface Resources {
+    interface SingletonResources {
 
 
         /**
@@ -253,12 +253,6 @@ public interface IAction {
         /**
          * @since 2.0
          */
-        void setActionTimer(ITimer timer);
-
-
-        /**
-         * @since 2.0
-         */
         double getTime();
 
 
@@ -272,6 +266,12 @@ public interface IAction {
          * @since 2.0
          */
         void startTimer();
+
+
+        /**
+         * @since 3.13
+         */
+        double getInterval();
 
 
         /**
@@ -367,7 +367,7 @@ public interface IAction {
          * @return the resources object associated with the delegate
          * @since 2.0
          */
-        Resources getResources();
+        SingletonResources getResources();
 
 
         /**
