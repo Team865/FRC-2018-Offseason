@@ -1,5 +1,6 @@
 package ca.warp7.frc.core;
 
+import ca.warp7.action.IAction;
 import edu.wpi.first.wpilibj.Notifier;
 
 import java.util.ArrayList;
@@ -13,32 +14,28 @@ import java.util.List;
 
 class Looper {
     private final Notifier mNotifier;
-    private final List<ILoop> mLoops;
     private final Object mTaskRunningLock;
+    private final double mInterval;
+    private List<Loop> mLoops;
     private boolean mIsRunning;
-    private final double mPeriod;
 
     Looper(double delta) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    synchronized (mTaskRunningLock) {
-                        if (mIsRunning) mLoops.forEach(ILoop::onLoop);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
         mTaskRunningLock = new Object();
-        mNotifier = new Notifier(runnable);
+        mNotifier = new Notifier(() -> {
+            try {
+                synchronized (mTaskRunningLock) {
+                    if (mIsRunning) mLoops.forEach(Loop::update);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         mIsRunning = false;
         mLoops = new ArrayList<>();
-        mPeriod = delta;
+        mInterval = delta;
     }
 
-    synchronized void registerLoop(ILoop loop) {
+    synchronized void registerLoop(Loop loop) {
         synchronized (mTaskRunningLock) {
             mLoops.add(loop);
         }
@@ -47,10 +44,10 @@ class Looper {
     synchronized void startLoops() {
         if (!mIsRunning) {
             synchronized (mTaskRunningLock) {
-                mLoops.forEach(ILoop::onStart);
+                mLoops.forEach(Loop::start);
                 mIsRunning = true;
             }
-            mNotifier.startPeriodic(mPeriod);
+            mNotifier.startPeriodic(mInterval);
         }
     }
 
@@ -59,8 +56,31 @@ class Looper {
             mNotifier.stop();
             synchronized (mTaskRunningLock) {
                 mIsRunning = false;
-                mLoops.forEach(ILoop::onStop);
+                mLoops.forEach(Loop::stop);
             }
+        }
+    }
+
+    /**
+     * Defines a loop mechanism
+     */
+    @FunctionalInterface
+    public interface Loop extends IAction {
+
+        @Override
+        default void start() {
+        }
+
+        @Override
+        default boolean shouldFinish() {
+            return false;
+        }
+
+        @Override
+        void update();
+
+        @Override
+        default void stop() {
         }
     }
 }
