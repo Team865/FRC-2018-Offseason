@@ -6,12 +6,35 @@ import java.util.Objects;
 
 class ActionRunner extends ActionBase {
 
-    private IAction mAction;
-    private Thread mRunThread;
-    private long mInterval;
-    private double mTimeout;
+    /**
+     * The main action to run
+     */
+    private final IAction mAction;
+
+    /**
+     * Sets the interval of the loop
+     */
+    private final long mInterval;
+
+    /**
+     * Sets an explicit timeout to the auto phase for safety and testing
+     */
+    private final double mTimeout;
+
+    /**
+     * Sets whether to print out info during the run
+     */
+    private final boolean mVerbose;
+
+    /**
+     * The timer used on this runner
+     */
     private ITimer mTimer;
-    private boolean mVerbose;
+
+    /**
+     * The thread that autos are run on. If this is null, then no autos are or should be running
+     */
+    private Thread mRunThread;
 
     ActionRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
         Objects.requireNonNull(action);
@@ -28,6 +51,16 @@ class ActionRunner extends ActionBase {
         return null;
     }
 
+    /**
+     * Starts the periodic Runnable for the auto program
+     *
+     * <p>The mechanism in which actions are running means that there cannot be blocking operations in
+     * both {@link IAction#update()} and {@link IAction#stop()} or auto may not end on time</p>
+     *
+     * <p>The proper code mechanism should use implement {@link IAction}for a monitoring/locking purpose,
+     * and the actual IO loops should be run instead in the IO looper. This would also make the actual
+     * periodic delay not very relevant</p>
+     */
     @Override
     public void prepare() {
         // Make sure autos are not running right now before continuing
@@ -47,15 +80,15 @@ class ActionRunner extends ActionBase {
         String actionName = null;
         // Operate on the action if it extends ActionBase
         if (mAction instanceof ActionBase) {
-            ActionBase actionBase = (ActionBase) mAction;
+            ActionBase base = (ActionBase) mAction;
             // Link the runner to the action
-            performSafeLink(this, actionBase);
+            performSafeLink(this, base);
             // Increment the detachment state of the child
-            incrementDetachDepth(actionBase);
+            incrementDetachDepth(base);
             // Fetch and store the resources pointer from the parent
-            actionBase.getResources();
+            base.getResources();
             // Get the action name if it exists
-            if (!actionBase.getName().isEmpty()) actionName = actionBase.getName();
+            if (!base.getName().isEmpty()) actionName = base.getName();
         }
         // Give the action its class name if it does not exist
         if (actionName == null) actionName = mAction.getClass().getSimpleName();
