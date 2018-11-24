@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public abstract class Robot extends IterativeRobot {
 
     private final Components mComponents = new Components();
-    private final AutoRunner mAutoRunner = new AutoRunner();
     private final LoopsManager mLoopsManager = new LoopsManager();
     private static final StateManager state = new StateManager();
     protected static final RobotLoader loader = new RobotLoader();
@@ -37,7 +36,7 @@ public abstract class Robot extends IterativeRobot {
     @Override
     public final void disabledInit() {
         state.logDisabled();
-        mAutoRunner.stop();
+        loader.stopAutonomous();
         mLoopsManager.disable();
         mComponents.onDisabled();
     }
@@ -47,13 +46,13 @@ public abstract class Robot extends IterativeRobot {
         state.logAutonomous();
         mComponents.onAutonomousInit();
         mLoopsManager.enable();
-        mAutoRunner.start();
+        loader.startAutonomous();
     }
 
     @Override
     public final void teleopInit() {
         state.logTeleop();
-        mAutoRunner.stop();
+        loader.stopAutonomous();
         mComponents.onTeleopInit();
         mLoopsManager.enable();
     }
