@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.13 (Revision 30 on 11/24/2018)
+ * @version 3.13 (Revision 31 on 11/24/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -644,10 +644,7 @@ public interface IAction {
          *
          * @since 3.12
          */
-        default API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
-            //TODO
-            return null;
-        }
+        API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions);
 
         /**
          * <p>
@@ -911,6 +908,14 @@ public interface IAction {
      */
     abstract class HeadClass extends Function implements API {
 
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
+            return head().async(startMode, stopMode, actions);
+        }
 
         /**
          * {@inheritDoc}
