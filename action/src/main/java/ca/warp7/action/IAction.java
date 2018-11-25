@@ -12,29 +12,19 @@ import java.util.List;
  * update, end, and shouldFinish methods.
  * </p>
  *
- *
  * <p>
- * An entire scheduling API is developed with this interface as the basis
- * </p>
- *
- *
- * <p>
- * Inspired by the WPILib Command-Based Programming
+ * An entire scheduling API is developed with this interface as the basis, adding various
+ * scheduling functionalities
  * </p>
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.14 (Revision 33 on 11/24/2018)
- * @apiNote <p>
- * {@link IAction} and its inner interfaces create an API framework for scheduling complex
+ * @version 3.14 (Revision 34 on 11/24/2018)
+ * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
- * </p>
- * @implNote <p>
- * {@link IAction} and its inner interfaces are implemented in the
+ * @implNote {@link IAction} and its inner interfaces are implemented in the
  * <code>ca.warp7.action.impl</code> package
- * </p>
- * @implSpec See implementation for details
  * @see Mode
  * @see ITimer
  * @see Consumer
@@ -457,7 +447,9 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Specifies the start mode of an async action
+     * </p>
      *
      * @since 3.12
      */
@@ -465,7 +457,9 @@ public interface IAction {
 
 
         /**
+         * <p>
          * Starts all actions when the async starts
+         * </p>
          *
          * @since 3.12
          */
@@ -473,8 +467,10 @@ public interface IAction {
 
 
         /**
+         * <p>
          * Plans out the async actions so they finish at the same time,
          * and starts actions according to the plan
+         * </p>
          *
          * @since 3.12
          */
@@ -482,8 +478,10 @@ public interface IAction {
 
 
         /**
+         * <p>
          * Dynamically adjust the starting time of actions so they finish at the
          * same time
+         * </p>
          *
          * @since 3.12
          */
@@ -492,7 +490,9 @@ public interface IAction {
 
 
     /**
+     * <p>
      * Specifies the stop mode of an async action
+     * </p>
      *
      * @since 3.12
      */
@@ -500,24 +500,44 @@ public interface IAction {
 
 
         /**
+         * <p>
+         * Each sub-action stops when they want to finish
+         * The parent action stops when all actions are finished
+         * </p>
+         *
          * @since 3.12
          */
         OnEachFinished,
 
 
         /**
+         * <p>
+         * Each sub-action stops when the parent is finished
+         * The parent action stops when any sub-action wants to finish
+         * </p>
+         *
          * @since 3.12
          */
         OnAnyFinished,
 
 
         /**
+         * <p>
+         * Each sub-action stops when the parent is finished
+         * The parent action stops when all sub-actions are finished
+         * </p>
+         *
          * @since 3.12
          */
         OnAllFinished,
 
 
         /**
+         * <p>
+         * Each sub-action stops when the parent is finished
+         * The parent action stops when a statically estimated time is met
+         * </p>
+         *
          * @since 3.12
          */
         OnStaticEstimate

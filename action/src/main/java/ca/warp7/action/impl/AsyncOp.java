@@ -56,7 +56,7 @@ public class AsyncOp extends ActionBase {
     }
 
     @Override
-    public boolean shouldFinish() {
+    public boolean _shouldFinish() {
         switch (mStopMode) {
             case OnAnyFinished:
                 for (State s : mStates) if (s.shouldFinish()) return true;
