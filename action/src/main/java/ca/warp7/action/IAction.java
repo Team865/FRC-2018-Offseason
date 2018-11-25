@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.14 (Revision 32 on 11/24/2018)
+ * @version 3.14 (Revision 33 on 11/24/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -666,18 +666,6 @@ public interface IAction {
 
 
         /**
-         * <p>
-         * Attempts to schedule actions such that they finish at the same time
-         * </p>
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
-         */
-        API asyncInverse(IAction... actions);
-
-
-        /**
          * Runs an async action according to a start and stop mode with a list of actions
          *
          * @since 3.12
@@ -925,14 +913,6 @@ public interface IAction {
         @Override
         public API asyncAny(IAction... actions) {
             return head().asyncAny(actions);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public API asyncInverse(IAction... actions) {
-            return head().asyncInverse(actions);
         }
 
 

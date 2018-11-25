@@ -3,6 +3,7 @@ package ca.warp7.action.impl;
 import ca.warp7.action.IAction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,6 +127,62 @@ public class AsyncOp extends ActionBase {
 
         public void stop() {
             if (isRunning) realAction.stop();
+        }
+    }
+
+    abstract static class SimpleForward extends ActionBase {
+
+        final List<IAction> mActions;
+
+        SimpleForward(IAction... actions) {
+            mActions = Arrays.asList(actions);
+            mActions.forEach(action -> linkChild(this, action));
+            //mActions.forEach(action -> System.out.println("Adding Async: " + action + " to " + SimpleForward.this));
+        }
+
+        @Override
+        public List<IAction> getQueue() {
+            return mActions.size() == 1 ? Collections.singletonList(mActions.get(0)) : null;
+        }
+
+        @Override
+        public void prepare() {
+            mActions.forEach(IAction::start);
+        }
+
+        @Override
+        public void update() {
+            mActions.forEach(IAction::update);
+        }
+
+        @Override
+        public void stop() {
+            mActions.forEach(IAction::stop);
+        }
+
+    }
+
+    static class Any extends SimpleForward {
+
+        Any(IAction... actions) {
+            super(actions);
+        }
+
+        @Override
+        public boolean _shouldFinish() {
+            return mActions.stream().anyMatch(IAction::shouldFinish);
+        }
+    }
+
+    static class All extends SimpleForward {
+
+        All(IAction... actions) {
+            super(actions);
+        }
+
+        @Override
+        public boolean _shouldFinish() {
+            return mActions.stream().allMatch(IAction::shouldFinish);
         }
     }
 }

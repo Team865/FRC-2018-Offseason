@@ -16,28 +16,17 @@ class Queue extends QueueBase implements IAction.API {
 
     @Override
     public API asyncAll(IAction... actions) {
-        return queue(new AsyncForward.All(actions));
+        return queue(new AsyncOp.All(actions));
     }
 
     @Override
     public API asyncAny(IAction... actions) {
-        return queue(new AsyncForward.Any(actions));
-    }
-
-    @Override
-    public API asyncInverse(IAction... actions) {
-        return queue(new AsyncInverse(actions));
+        return queue(new AsyncOp.Any(actions));
     }
 
     @Override
     public API await(Predicate predicate) {
         return queue(new Await(predicate));
-    }
-
-    @Override
-    public API broadcast(String... triggers) {
-        //getResources().addBroadcastSources(triggers);
-        return API.super.broadcast(triggers);
     }
 
     @Override
