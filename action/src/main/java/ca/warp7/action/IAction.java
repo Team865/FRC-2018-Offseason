@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.14 (Revision 34 on 11/24/2018)
+ * @version 3.14 (Revision 35 on 11/24/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
@@ -453,7 +453,7 @@ public interface IAction {
      *
      * @since 3.12
      */
-    enum AsyncStartMode {
+    enum OpStart {
 
 
         /**
@@ -496,7 +496,7 @@ public interface IAction {
      *
      * @since 3.12
      */
-    enum AsyncStopMode {
+    enum OpStop {
 
 
         /**
@@ -690,7 +690,7 @@ public interface IAction {
          *
          * @since 3.12
          */
-        API asyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions);
+        API asyncOp(OpStart startMode, OpStop stopMode, IAction... actions);
 
 
         /**
@@ -785,10 +785,7 @@ public interface IAction {
          * @since 3.8
          */
         default API asyncMaster(IAction master, IAction... slaves) {
-            IAction[] asyncList = new IAction[slaves.length + 1];
-            asyncList[0] = head().interruptWhenDone(master);
-            System.arraycopy(slaves, 0, asyncList, 1, slaves.length);
-            return async(asyncList);
+            return asyncAny(master, async(slaves));
         }
 
 
@@ -940,7 +937,7 @@ public interface IAction {
          * {@inheritDoc}
          */
         @Override
-        public API asyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
+        public API asyncOp(OpStart startMode, OpStop stopMode, IAction... actions) {
             return head().asyncOp(startMode, stopMode, actions);
         }
 

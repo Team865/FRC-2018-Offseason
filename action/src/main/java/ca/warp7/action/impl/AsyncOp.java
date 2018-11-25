@@ -9,14 +9,14 @@ import java.util.List;
 
 public class AsyncOp extends ActionBase {
     private final List<State> mStates;
-    private final AsyncStartMode mStartMode;
-    private final AsyncStopMode mStopMode;
+    private final OpStart mStart;
+    private final OpStop mStop;
     private double mStaticEstimate;
     private double mInterval;
 
-    AsyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
-        mStartMode = startMode;
-        mStopMode = stopMode;
+    AsyncOp(OpStart startMode, OpStop stopMode, IAction... actions) {
+        mStart = startMode;
+        mStop = stopMode;
         mStates = new ArrayList<>();
         for (IAction action : actions) mStates.add(new State(action));
         mStates.forEach(action -> linkChild(this, action.realAction));
@@ -32,13 +32,13 @@ public class AsyncOp extends ActionBase {
         mStates.forEach(State::updateRemaining);
         mStates.forEach(State::updateStaticRemaining);
         for (State s : mStates) if (s.staticRemaining > mStaticEstimate) mStaticEstimate = s.staticRemaining;
-        if (mStartMode == AsyncStartMode.OnStart) mStates.forEach(State::start);
+        if (mStart == OpStart.OnStart) mStates.forEach(State::start);
         mInterval = getResources().getInterval();
     }
 
     @Override
     public void update() {
-        switch (mStartMode) {
+        switch (mStart) {
             case OnStaticInverse:
                 double elapsed = getElapsed();
                 double staticRemaining = mStaticEstimate - elapsed - mInterval;
@@ -57,7 +57,7 @@ public class AsyncOp extends ActionBase {
 
     @Override
     public boolean _shouldFinish() {
-        switch (mStopMode) {
+        switch (mStop) {
             case OnAnyFinished:
                 for (State s : mStates) if (s.shouldFinish()) return true;
                 return false;
