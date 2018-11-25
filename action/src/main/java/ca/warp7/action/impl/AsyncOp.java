@@ -6,15 +6,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
-public class Async extends ActionBase {
+public class AsyncOp extends ActionBase {
     private final List<State> mStates;
     private final AsyncStartMode mStartMode;
     private final AsyncStopMode mStopMode;
     private double mStaticEstimate;
     private double mInterval;
 
-    Async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
+    AsyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
         mStartMode = startMode;
         mStopMode = stopMode;
         mStates = new ArrayList<>();
@@ -31,33 +30,25 @@ public class Async extends ActionBase {
     void prepare() {
         mStates.forEach(State::updateRemaining);
         mStates.forEach(State::updateStaticRemaining);
-        for (State state : mStates) if (state.remaining > mStaticEstimate) mStaticEstimate = state.remaining;
+        for (State s : mStates) if (s.staticRemaining > mStaticEstimate) mStaticEstimate = s.staticRemaining;
         if (mStartMode == AsyncStartMode.OnStart) mStates.forEach(State::start);
         mInterval = getResources().getInterval();
     }
 
     @Override
     public void update() {
-        double elapsed = getElapsed();
-        mStates.forEach(State::updateRemaining);
         switch (mStartMode) {
-            case OnStart:
-                break;
             case OnStaticInverse:
+                double elapsed = getElapsed();
                 double staticRemaining = mStaticEstimate - elapsed - mInterval;
-                for (State state : mStates) if (state.staticRemaining > staticRemaining) state.start();
+                for (State s : mStates) if (s.staticRemaining > staticRemaining) s.start();
                 break;
             case OnDynamicInverse:
-                break;
-        }
-        switch (mStopMode) {
-            case OnEachFinished:
-                break;
-            case OnAnyFinished:
-                break;
-            case OnAllFinished:
-                break;
-            case OnStaticEstimate:
+                mStates.forEach(State::updateRemaining);
+                double dynamicEstimate = 0;
+                for (State s : mStates) if (s.remaining > dynamicEstimate) dynamicEstimate = s.remaining;
+                double dynamicRemaining = dynamicEstimate - mInterval;
+                for (State s : mStates) if (s.remaining > dynamicRemaining) s.start();
                 break;
         }
         mStates.forEach(State::update);
@@ -67,9 +58,14 @@ public class Async extends ActionBase {
     public boolean shouldFinish() {
         switch (mStopMode) {
             case OnAnyFinished:
-                for (State state : mStates) if (state.shouldFinish()) return true;
+                for (State s : mStates) if (s.shouldFinish()) return true;
                 return false;
             case OnEachFinished:
+                for (State s : mStates) {
+                    if (!s.shouldFinish()) return false;
+                    else s.stop();
+                }
+                return true;
             case OnAllFinished:
                 for (State state : mStates) if (!state.shouldFinish()) return false;
                 return true;
@@ -83,7 +79,7 @@ public class Async extends ActionBase {
     public void stop() {
     }
 
-    static class State implements IAction {
+    static class State {
         private Delegate delegate;
         private boolean isRunning;
         private boolean hasRemaining;
@@ -111,19 +107,16 @@ public class Async extends ActionBase {
             staticRemaining = remaining;
         }
 
-        @Override
         public void start() {
             isRunning = true;
             shouldUpdate = true;
             realAction.start();
         }
 
-        @Override
         public boolean shouldFinish() {
             return !isRunning || realAction.shouldFinish();
         }
 
-        @Override
         public void update() {
             if (isRunning) {
                 realAction.update();
@@ -131,7 +124,6 @@ public class Async extends ActionBase {
             }
         }
 
-        @Override
         public void stop() {
             if (isRunning) realAction.stop();
         }

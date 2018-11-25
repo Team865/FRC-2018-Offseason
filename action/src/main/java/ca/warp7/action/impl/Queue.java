@@ -10,8 +10,8 @@ class Queue extends QueueBase implements IAction.API {
     }
 
     @Override
-    public API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
-        return queue(new Async(startMode, stopMode, actions));
+    public API asyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
+        return queue(new AsyncOp(startMode, stopMode, actions));
     }
 
     @Override

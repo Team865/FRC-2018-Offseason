@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.13 (Revision 31 on 11/24/2018)
+ * @version 3.14 (Revision 32 on 11/24/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -640,13 +640,6 @@ public interface IAction {
 
 
         /**
-         * Runs an async action according to a start and stop mode with a list of actions
-         *
-         * @since 3.12
-         */
-        API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions);
-
-        /**
          * <p>
          * Starts a list of action in parallel, and finish when all of the actions
          * are finished and stops
@@ -682,6 +675,14 @@ public interface IAction {
          * @since 2.0
          */
         API asyncInverse(IAction... actions);
+
+
+        /**
+         * Runs an async action according to a start and stop mode with a list of actions
+         *
+         * @since 3.12
+         */
+        API asyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions);
 
 
         /**
@@ -913,14 +914,6 @@ public interface IAction {
          * {@inheritDoc}
          */
         @Override
-        public API async(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
-            return head().async(startMode, stopMode, actions);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public API asyncAll(IAction... actions) {
             return head().asyncAll(actions);
         }
@@ -934,13 +927,21 @@ public interface IAction {
             return head().asyncAny(actions);
         }
 
-
         /**
          * {@inheritDoc}
          */
         @Override
         public API asyncInverse(IAction... actions) {
             return head().asyncInverse(actions);
+        }
+
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public API asyncOp(AsyncStartMode startMode, AsyncStopMode stopMode, IAction... actions) {
+            return head().asyncOp(startMode, stopMode, actions);
         }
 
 
