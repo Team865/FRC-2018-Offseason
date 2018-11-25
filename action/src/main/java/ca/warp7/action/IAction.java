@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.13 (Revision 29 on 11/24/2018)
+ * @version 3.13 (Revision 30 on 11/24/2018)
  * @apiNote <p>
  * {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
@@ -391,13 +391,11 @@ public interface IAction {
          * Gets a string that represents the action
          *
          * @return The string containing the name, class, and parent
-         * @since 3.4
+         * @since 3.4 (Modified 3.13)
          */
         default String getActionSummary() {
-            return String.format("Name: %s |Class: %s |Parent: %s",
-                    getName(),
-                    getClass().getSimpleName(),
-                    getParent().getClass().getSimpleName());
+            return String.format("Thread: %s |Name: %s |This: %s |Parent: %s",
+                    Thread.currentThread().getName(), getName(), this, getParent());
         }
 
 

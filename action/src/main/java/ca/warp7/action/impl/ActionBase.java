@@ -11,16 +11,16 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     private int mDetachDepth;
     private String mName = "";
 
-    static void link(Delegate parent, IAction action) {
-        if (action instanceof ActionBase) performSafeLink(parent, (ActionBase) action);
+    static void linkChild(Delegate parent, IAction action) {
+        if (action instanceof ActionBase) safeLinkChild(parent, (ActionBase) action);
+    }
+
+    static void safeLinkChild(Delegate parent, ActionBase actionBase) {
+        actionBase.mParent = parent;
     }
 
     static void incrementDetachDepth(ActionBase action) {
         action.mDetachDepth++;
-    }
-
-    static void performSafeLink(Delegate parent, ActionBase actionBase) {
-        actionBase.mParent = parent;
     }
 
     @Override

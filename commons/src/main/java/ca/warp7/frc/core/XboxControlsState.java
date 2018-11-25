@@ -37,60 +37,61 @@ public class XboxControlsState {
     public double RightXAxis;
     public double RightYAxis;
 
-    private static int u0(int oldState, boolean newState) {
-        return newState ? ((oldState == IControls.Pressed || oldState == IControls.HeldDown) ? IControls.HeldDown : IControls.Pressed) :
-                ((oldState == IControls.Released || oldState == IControls.KeptUp) ? IControls.KeptUp : IControls.Released);
+    private static int u(int old, boolean _new) {
+        return _new ?
+                old == IControls.Pressed || old == IControls.HeldDown ? IControls.HeldDown : IControls.Pressed :
+                old == IControls.Released || old == IControls.KeptUp ? IControls.KeptUp : IControls.Released;
     }
 
-    static void collect(XboxControlsState S, XboxController C) {
-        int POV = C.getPOV();
-        S.LeftTriggerAxis = C.getTriggerAxis(kLeft);
-        S.RightTriggerAxis = C.getTriggerAxis(kRight);
-        S.LeftXAxis = C.getX(kLeft);
-        S.LeftYAxis = C.getY(kLeft);
-        S.RightXAxis = C.getX(kRight);
-        S.RightYAxis = C.getY(kRight);
-        S.AButton = u0(S.AButton, C.getAButton());
-        S.BButton = u0(S.BButton, C.getBButton());
-        S.XButton = u0(S.XButton, C.getXButton());
-        S.YButton = u0(S.YButton, C.getYButton());
-        S.LeftBumper = u0(S.LeftBumper, C.getBumper(kLeft));
-        S.RightBumper = u0(S.RightBumper, C.getBumper(kRight));
-        S.LeftTrigger = u0(S.LeftTrigger, S.LeftTriggerAxis > kTriggerDeadBand);
-        S.RightTrigger = u0(S.RightTrigger, S.RightTriggerAxis > kTriggerDeadBand);
-        S.LeftStickButton = u0(S.LeftStickButton, C.getStickButton(kLeft));
-        S.RightStickButton = u0(S.RightStickButton, C.getStickButton(kRight));
-        S.StartButton = u0(S.StartButton, C.getStartButton());
-        S.BackButton = u0(S.BackButton, C.getBackButton());
-        S.UpDPad = u0(S.UpDPad, POV == kUpPOV);
-        S.RightDPad = u0(S.RightDPad, POV == kRightPOV);
-        S.DownDPad = u0(S.DownDPad, POV == kDownPOV);
-        S.LeftDPad = u0(S.LeftDPad, POV == kLeftPOV);
+    static void collect(XboxControlsState s, XboxController c) {
+        int POV = c.getPOV();
+        s.LeftTriggerAxis = c.getTriggerAxis(kLeft);
+        s.RightTriggerAxis = c.getTriggerAxis(kRight);
+        s.LeftXAxis = c.getX(kLeft);
+        s.LeftYAxis = c.getY(kLeft);
+        s.RightXAxis = c.getX(kRight);
+        s.RightYAxis = c.getY(kRight);
+        s.AButton = u(s.AButton, c.getAButton());
+        s.BButton = u(s.BButton, c.getBButton());
+        s.XButton = u(s.XButton, c.getXButton());
+        s.YButton = u(s.YButton, c.getYButton());
+        s.LeftBumper = u(s.LeftBumper, c.getBumper(kLeft));
+        s.RightBumper = u(s.RightBumper, c.getBumper(kRight));
+        s.LeftTrigger = u(s.LeftTrigger, s.LeftTriggerAxis > kTriggerDeadBand);
+        s.RightTrigger = u(s.RightTrigger, s.RightTriggerAxis > kTriggerDeadBand);
+        s.LeftStickButton = u(s.LeftStickButton, c.getStickButton(kLeft));
+        s.RightStickButton = u(s.RightStickButton, c.getStickButton(kRight));
+        s.StartButton = u(s.StartButton, c.getStartButton());
+        s.BackButton = u(s.BackButton, c.getBackButton());
+        s.UpDPad = u(s.UpDPad, POV == kUpPOV);
+        s.RightDPad = u(s.RightDPad, POV == kRightPOV);
+        s.DownDPad = u(s.DownDPad, POV == kDownPOV);
+        s.LeftDPad = u(s.LeftDPad, POV == kLeftPOV);
     }
 
-    static void reset(XboxControlsState S) {
-        S.AButton = IControls.KeptUp;
-        S.BButton = IControls.KeptUp;
-        S.XButton = IControls.KeptUp;
-        S.YButton = IControls.KeptUp;
-        S.LeftBumper = IControls.KeptUp;
-        S.RightBumper = IControls.KeptUp;
-        S.LeftTrigger = IControls.KeptUp;
-        S.RightTrigger = IControls.KeptUp;
-        S.LeftStickButton = IControls.KeptUp;
-        S.RightStickButton = IControls.KeptUp;
-        S.StartButton = IControls.KeptUp;
-        S.BackButton = IControls.KeptUp;
-        S.UpDPad = IControls.KeptUp;
-        S.RightDPad = IControls.KeptUp;
-        S.DownDPad = IControls.KeptUp;
-        S.LeftDPad = IControls.KeptUp;
-        S.LeftTriggerAxis = 0;
-        S.RightTriggerAxis = 0;
-        S.LeftXAxis = 0;
-        S.LeftYAxis = 0;
-        S.RightXAxis = 0;
-        S.RightYAxis = 0;
+    static void reset(XboxControlsState s) {
+        s.AButton = IControls.KeptUp;
+        s.BButton = IControls.KeptUp;
+        s.XButton = IControls.KeptUp;
+        s.YButton = IControls.KeptUp;
+        s.LeftBumper = IControls.KeptUp;
+        s.RightBumper = IControls.KeptUp;
+        s.LeftTrigger = IControls.KeptUp;
+        s.RightTrigger = IControls.KeptUp;
+        s.LeftStickButton = IControls.KeptUp;
+        s.RightStickButton = IControls.KeptUp;
+        s.StartButton = IControls.KeptUp;
+        s.BackButton = IControls.KeptUp;
+        s.UpDPad = IControls.KeptUp;
+        s.RightDPad = IControls.KeptUp;
+        s.DownDPad = IControls.KeptUp;
+        s.LeftDPad = IControls.KeptUp;
+        s.LeftTriggerAxis = 0;
+        s.RightTriggerAxis = 0;
+        s.LeftXAxis = 0;
+        s.LeftYAxis = 0;
+        s.RightXAxis = 0;
+        s.RightYAxis = 0;
     }
 
     static class Pair {

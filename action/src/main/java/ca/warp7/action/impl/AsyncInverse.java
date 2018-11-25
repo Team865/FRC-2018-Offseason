@@ -18,7 +18,7 @@ class AsyncInverse extends ActionBase {
             inverse.hasDelegate = inverse.delegate != null;
             inverse.started = false;
             inverse.remainingTime = 0;
-            link(this, inverse.action);
+            linkChild(this, inverse.action);
             mInverse.add(inverse);
         }
     }

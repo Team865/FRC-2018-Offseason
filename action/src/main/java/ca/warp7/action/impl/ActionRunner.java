@@ -65,7 +65,7 @@ class ActionRunner extends ActionBase {
     public void prepare() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
-            System.err.println("ERROR an ActionRunner is already running!!!");
+            System.err.println("ERROR an Action is already running!!!");
             return;
         }
         // Check if a timer has already been assigned
@@ -82,7 +82,7 @@ class ActionRunner extends ActionBase {
         if (mAction instanceof ActionBase) {
             ActionBase base = (ActionBase) mAction;
             // Link the runner to the action
-            performSafeLink(this, base);
+            safeLinkChild(this, base);
             // Increment the detachment state of the child
             incrementDetachDepth(base);
             // Fetch and store the resources pointer from the parent
@@ -93,25 +93,28 @@ class ActionRunner extends ActionBase {
         // Give the action its class name if it does not exist
         if (actionName == null) actionName = mAction.getClass().getSimpleName();
         // Create the thread name based on the action name
-        String threadName = String.format("ActionRunner[%d:%s]", getDetachDepth() + 1, actionName);
+        String threadName = String.format("Action[%d:%s]", getDetachDepth() + 1, actionName);
         // Create a new run thread
         mRunThread = new Thread(() -> {
-            if (mVerbose) System.out.printf("Thread %s starting\n", threadName);
+            if (mVerbose) System.out.printf("%s starting\n", threadName);
             // measure the start time and start the action
             double startTime = mTimer.getTime();
-            double currentTime = startTime;
+            double time = startTime;
             mAction.start();
+            // Count the loops
+            int loopCount = 0;
             // Loop forever until an exit condition is met
             // Stop priority #1: Check if the stop method has been called to terminate this thread
             while (!Thread.currentThread().isInterrupted()) {
-                currentTime = mTimer.getTime() - startTime;
+                time = mTimer.getTime() - startTime;
                 // Stop priority #2: Check for explicit timeouts used in setAutoMode
                 // Stop priority #3: Check if the action should finish
                 // Note the main action may have recursive actions under it and all of those actions
                 // should contribute to this check
-                if (currentTime >= mTimeout || mAction.shouldFinish()) break;
+                if (time >= mTimeout || mAction.shouldFinish()) break;
                 // Update the action now after no exit conditions are met
                 mAction.update();
+                loopCount++;
                 try {
                     // Delay for a certain amount of time so the update function is not called so often
                     Thread.sleep(mInterval);
@@ -123,16 +126,15 @@ class ActionRunner extends ActionBase {
             mAction.stop();
             // Print out info about the execution if verbose
             if (mVerbose) {
-                if (currentTime < mTimeout) System.out.printf("ActionRunner %s ended early by %.3fs\n",
-                        threadName, mTimeout - currentTime);
-                else System.out.printf("ActionRunner %s ending after %.3fs\n", threadName, currentTime);
+                System.out.printf("%s time relative to expected:  %.3fs\n", threadName, loopCount * mInterval - time);
+                if (time < mTimeout) System.out.printf("%s ended early by %.3fs\n", threadName, mTimeout - time);
+                else System.out.printf("%s ending after %.3fs\n", threadName, time);
             }
             // Assign null to the thread so this runner can be called again
             // without robot code restarting
             mRunThread = null;
         });
         // Start the thread
-        mRunThread.setDaemon(false);
         mRunThread.setName(threadName);
         mRunThread.start();
     }

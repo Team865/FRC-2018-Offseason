@@ -26,7 +26,7 @@ abstract class QueueBase extends ActionBase {
                 }
             } else actionQueue.add(action);
         }
-        actionQueue.forEach(action -> link(this, action));
+        actionQueue.forEach(action -> linkChild(this, action));
         mRuntimeQueue.addAll(actionQueue);
     }
 
