@@ -12,19 +12,19 @@ import java.util.List;
  * @author Team 254, modified by Team 865
  */
 
-class Looper {
+class ActionLooper {
     private final Notifier mNotifier;
     private final Object mTaskRunningLock;
     private final double mInterval;
-    private List<Loop> mLoops;
+    private List<IAction> mLoops;
     private boolean mIsRunning;
 
-    Looper(double delta) {
+    ActionLooper(double delta) {
         mTaskRunningLock = new Object();
         mNotifier = new Notifier(() -> {
             try {
                 synchronized (mTaskRunningLock) {
-                    if (mIsRunning) mLoops.forEach(Loop::update);
+                    if (mIsRunning) mLoops.forEach(IAction::update);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -35,7 +35,7 @@ class Looper {
         mInterval = delta;
     }
 
-    synchronized void registerLoop(Loop loop) {
+    synchronized void registerLoop(IAction loop) {
         synchronized (mTaskRunningLock) {
             mLoops.add(loop);
         }
@@ -44,7 +44,7 @@ class Looper {
     synchronized void startLoops() {
         if (!mIsRunning) {
             synchronized (mTaskRunningLock) {
-                mLoops.forEach(Loop::start);
+                mLoops.forEach(IAction::start);
                 mIsRunning = true;
             }
             mNotifier.startPeriodic(mInterval);
@@ -56,31 +56,8 @@ class Looper {
             mNotifier.stop();
             synchronized (mTaskRunningLock) {
                 mIsRunning = false;
-                mLoops.forEach(Loop::stop);
+                mLoops.forEach(IAction::stop);
             }
-        }
-    }
-
-    /**
-     * Defines a loop mechanism
-     */
-    @FunctionalInterface
-    public interface Loop extends IAction {
-
-        @Override
-        default void start() {
-        }
-
-        @Override
-        default boolean shouldFinish() {
-            return false;
-        }
-
-        @Override
-        void update();
-
-        @Override
-        default void stop() {
         }
     }
 }
