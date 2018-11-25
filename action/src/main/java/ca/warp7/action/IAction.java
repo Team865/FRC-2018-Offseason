@@ -19,21 +19,24 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.14 (Revision 35 on 11/24/2018)
+ * @version 3.14 (Revision 36 on 11/24/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
  * @implNote {@link IAction} and its inner interfaces are implemented in the
  * <code>ca.warp7.action.impl</code> package
- * @see Mode
- * @see ITimer
- * @see Consumer
- * @see Predicate
- * @see API
- * @see Delegate
- * @see SingletonResources
- * @see Function
- * @see HeadClass
+ * @see IAction.Mode
+ * @see IAction.ITimer
+ * @see IAction.Consumer
+ * @see IAction.Predicate
+ * @see IAction.SingletonResources
+ * @see IAction.Delegate
+ * @see IAction.OpStart
+ * @see IAction.OpStop
+ * @see IAction.Function
+ * @see IAction.API
+ * @see IAction.HeadClass
+ * @see IAction.DefaultTimer
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -830,6 +833,33 @@ public interface IAction {
          */
         default API broadcastWhen(Predicate predicate, String... triggers) {
             return await(predicate).broadcast(triggers);
+        }
+
+        /**
+         * <p>
+         * Execute a function in reference to an action
+         * </p>
+         *
+         * @param runnable the action runnable to consume
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 3.15
+         */
+        default API exec(Runnable runnable) {
+            return exec(d -> runnable.run());
+        }
+
+
+        /**
+         * <p>
+         * Iterate a function periodically in reference to an action
+         * </p>
+         *
+         * @param runnable the action runnable to consume
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 3.15
+         */
+        default API iterate(Runnable runnable) {
+            return iterate(d -> runnable.run());
         }
 
 
