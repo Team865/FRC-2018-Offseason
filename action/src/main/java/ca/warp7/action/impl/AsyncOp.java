@@ -18,8 +18,10 @@ public class AsyncOp extends ActionBase {
         mStart = startMode;
         mStop = stopMode;
         mStates = new ArrayList<>();
-        for (IAction action : actions) mStates.add(new State(action));
-        mStates.forEach(action -> linkChild(this, action.realAction));
+        for (IAction action : actions) {
+            mStates.add(new State(action));
+            linkChild(this, action);
+        }
     }
 
     @Override
@@ -29,10 +31,14 @@ public class AsyncOp extends ActionBase {
 
     @Override
     void prepare() {
-        mStates.forEach(State::updateRemaining);
-        mStates.forEach(State::updateStaticRemaining);
-        for (State s : mStates) if (s.staticRemaining > mStaticEstimate) mStaticEstimate = s.staticRemaining;
-        if (mStart == OpStart.OnStart) mStates.forEach(State::start);
+        if (mStart == OpStart.OnStaticInverse || mStop == OpStop.OnStaticEstimate) {
+            for (State s : mStates) {
+                s.updateRemaining();
+                s.updateStaticRemaining();
+                if (s.staticRemaining > mStaticEstimate) mStaticEstimate = s.staticRemaining;
+            }
+        }
+        if (mStart == OpStart.OnStart) for (State s : mStates) s.start();
         mInterval = getResources().getInterval();
     }
 
@@ -78,11 +84,13 @@ public class AsyncOp extends ActionBase {
 
     @Override
     public void stop() {
+        for (State mState : mStates) mState.stop();
     }
 
     static class State {
         private Delegate delegate;
         private boolean isRunning;
+        private boolean hasStarted;
         private boolean hasRemaining;
         private boolean shouldUpdate;
 
@@ -94,6 +102,7 @@ public class AsyncOp extends ActionBase {
             realAction = action;
             delegate = action instanceof Delegate ? (Delegate) action : null;
             isRunning = false;
+            hasStarted = false;
             remaining = 0;
             staticRemaining = 0;
             hasRemaining = delegate != null && delegate.hasRemainingTime();
@@ -109,13 +118,16 @@ public class AsyncOp extends ActionBase {
         }
 
         public void start() {
-            isRunning = true;
-            shouldUpdate = true;
-            realAction.start();
+            if (!hasStarted) {
+                isRunning = true;
+                shouldUpdate = true;
+                realAction.start();
+                hasStarted = true;
+            }
         }
 
         public boolean shouldFinish() {
-            return !isRunning || realAction.shouldFinish();
+            return isRunning && realAction.shouldFinish();
         }
 
         public void update() {
@@ -126,7 +138,10 @@ public class AsyncOp extends ActionBase {
         }
 
         public void stop() {
-            if (isRunning) realAction.stop();
+            if (isRunning) {
+                realAction.stop();
+                isRunning = false;
+            }
         }
     }
 
