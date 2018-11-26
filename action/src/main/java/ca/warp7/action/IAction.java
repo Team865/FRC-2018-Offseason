@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.16 (Revision 38 on 11/25/2018)
+ * @version 3.16 (Revision 39 on 11/25/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
@@ -36,7 +36,6 @@ import java.util.List;
  * @see IAction.Function
  * @see IAction.API
  * @see IAction.HeadClass
- * @see IAction.DefaultTimer
  * @since 1.0
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -81,6 +80,13 @@ public interface IAction {
          */
         double getTime();
     }
+
+
+    /**
+     * Default timer using the system
+     */
+
+    ITimer DefaultTimer = () -> System.nanoTime() / 1.0e09;
 
 
     /**
@@ -1026,26 +1032,6 @@ public interface IAction {
          */
         @Override
         public void start() {
-        }
-    }
-
-
-    /**
-     * <p>
-     * Default Timer implementation that uses the system timer
-     * </p>
-     *
-     * @since 3.9
-     */
-    class DefaultTimer implements ITimer {
-
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double getTime() {
-            return System.nanoTime() / 1.0e09;
         }
     }
 }

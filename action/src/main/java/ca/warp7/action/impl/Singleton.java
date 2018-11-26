@@ -2,7 +2,7 @@ package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
 
-abstract class Singleton implements IAction, IAction.Delegate {
+public abstract class Singleton implements IAction, IAction.Delegate {
 
     private Delegate mParent;
     private SingletonResources mResources;
@@ -74,10 +74,11 @@ abstract class Singleton implements IAction, IAction.Delegate {
 
     @Override
     public final String getName() {
-        return mName;
+        if (!mName.isEmpty()) return mName;
+        return getClass().getSimpleName();
     }
 
-    abstract void start_();
+    public abstract void start_();
 
-    abstract boolean shouldFinish_();
+    public abstract boolean shouldFinish_();
 }

@@ -19,7 +19,7 @@ public class AsyncOpTests {
 
     private void startMode(double timeout, ActionMode mode) {
         IAction action = mode.getAction();
-        IAction runner = ActionMode.createRunner(new IAction.DefaultTimer(), 0.02, timeout, action, false);
+        IAction runner = ActionMode.createRunner(IAction.DefaultTimer, 0.02, timeout, action, false);
         runner.start();
         double old = System.nanoTime();
         try {

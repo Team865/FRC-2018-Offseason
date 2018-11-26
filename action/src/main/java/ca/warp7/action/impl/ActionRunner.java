@@ -79,7 +79,7 @@ class ActionRunner extends Singleton {
         // Set the compatible verbose level
         resources.setVerboseLevel(mVerboseLevel);
         // Use a variable to better name the thread
-        String actionName = null;
+        String actionName;
         // Operate on the action if it extends Singleton
         if (mAction instanceof Singleton) {
             Singleton singleton = (Singleton) mAction;
@@ -89,11 +89,11 @@ class ActionRunner extends Singleton {
             incrementDetachDepth(singleton);
             // Fetch and store the resources pointer from the parent
             singleton.getResources();
-            // Get the action name if it exists
-            if (!singleton.getName().isEmpty()) actionName = singleton.getName();
+            // Get the action name
+            actionName = singleton.getName();
         }
         // Give the action its class name if it does not exist
-        if (actionName == null) actionName = mAction.getClass().getSimpleName();
+        else actionName = mAction.getClass().getSimpleName();
         // Create the thread name based on the action name
         String threadName = String.format("Action[%d:%s]", getDetachDepth() + 1, actionName);
         // Create a new run thread
