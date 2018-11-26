@@ -5,10 +5,6 @@ import ca.warp7.action.IAction;
 @SuppressWarnings("unused")
 public abstract class ActionMode extends IAction.HeadClass implements IAction.Mode {
 
-    public static boolean isUsingActionAPI(IAction action) {
-        return action instanceof ActionBase;
-    }
-
     public static IAction createRunner(ITimer timer, double interval, double timeout, IAction action, boolean verbose) {
         return new ActionRunner(timer, interval, timeout, action, verbose);
     }

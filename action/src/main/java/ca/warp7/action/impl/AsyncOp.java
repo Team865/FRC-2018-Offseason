@@ -146,13 +146,11 @@ public class AsyncOp extends ActionBase {
     }
 
     abstract static class SimpleForward extends ActionBase {
-
         final List<IAction> mActions;
 
         SimpleForward(IAction... actions) {
             mActions = Arrays.asList(actions);
             mActions.forEach(action -> linkChild(this, action));
-            //mActions.forEach(action -> System.out.println("Adding Async: " + action + " to " + SimpleForward.this));
         }
 
         @Override
@@ -178,7 +176,6 @@ public class AsyncOp extends ActionBase {
     }
 
     static class Any extends SimpleForward {
-
         Any(IAction... actions) {
             super(actions);
         }
@@ -190,7 +187,6 @@ public class AsyncOp extends ActionBase {
     }
 
     static class All extends SimpleForward {
-
         All(IAction... actions) {
             super(actions);
         }

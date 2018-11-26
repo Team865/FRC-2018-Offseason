@@ -26,8 +26,10 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     @Override
     public void start() {
         prepare();
-//        System.out.print(Thread.currentThread().getName() + " ");
-//        System.out.println("Start: " + this);
+        if (getResources().getVerboseLevel() > 1) {
+            System.out.print(Thread.currentThread().getName() + " ");
+            System.out.println("Started: " + this);
+        }
         getResources().startTimer();
         mStartTime = mResources.getTime();
     }
@@ -60,12 +62,7 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     @Override
     public SingletonResources getResources() {
         if (mResources != null) return mResources;
-        if (hasParent()) mResources = getParent().getResources();
-        else {
-//            System.out.print(Thread.currentThread().getName() + " ");
-//            System.out.println("Creating Resources For: " + this);
-            mResources = new ca.warp7.action.impl.Resources();
-        }
+        mResources = hasParent() ? getParent().getResources() : new Resources();
         mResources = mResources != null ? mResources : new ca.warp7.action.impl.Resources();
         return mResources;
     }

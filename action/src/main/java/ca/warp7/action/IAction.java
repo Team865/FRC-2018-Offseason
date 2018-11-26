@@ -14,12 +14,12 @@ import java.util.List;
  *
  * <p>
  * An entire scheduling API is developed with this interface as the basis, adding various
- * scheduling functionalities
+ * scheduling functionality to the interface
  * </p>
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.14 (Revision 36 on 11/24/2018)
+ * @version 3.15 (Revision 37 on 11/25/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
@@ -265,6 +265,15 @@ public interface IAction {
          * @since 3.13
          */
         double getInterval();
+
+
+        /**
+         * Get the level of verbose logging
+         *
+         * @return the verbose level
+         * @since 3.15
+         */
+        int getVerboseLevel();
 
 
         /**

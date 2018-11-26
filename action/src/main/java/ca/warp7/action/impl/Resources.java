@@ -12,6 +12,7 @@ public class Resources implements IAction.SingletonResources {
     private IAction.ITimer mTimer;
     private double mStartTime = 0;
     private double mInterval = 0;
+    private int verboseLevel;
 
     @Override
     public void put(String name, Object value) {
@@ -72,11 +73,20 @@ public class Resources implements IAction.SingletonResources {
         return mInterval;
     }
 
+    @Override
+    public int getVerboseLevel() {
+        return verboseLevel;
+    }
+
     void setActionTimer(IAction.ITimer timer) {
         mTimer = timer;
     }
 
     void setInterval(double interval) {
         mInterval = interval;
+    }
+
+    void setVerboseLevel(int verboseLevel) {
+        this.verboseLevel = verboseLevel;
     }
 }

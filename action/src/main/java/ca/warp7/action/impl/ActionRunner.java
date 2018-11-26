@@ -24,7 +24,7 @@ class ActionRunner extends ActionBase {
     /**
      * Sets whether to print out info during the run
      */
-    private final boolean mVerbose;
+    private final int mVerboseLevel;
 
     /**
      * The timer used on this runner
@@ -42,7 +42,7 @@ class ActionRunner extends ActionBase {
         mAction = action;
         mInterval = (long) (interval * 1000);
         mTimeout = timeout;
-        mVerbose = verbose;
+        mVerboseLevel = verbose ? 1 : 0;
     }
 
     @Override
@@ -76,6 +76,8 @@ class ActionRunner extends ActionBase {
         resources.setActionTimer(mTimer);
         // Convert interval into seconds and pass to resources
         resources.setInterval(mInterval / 1000.0);
+        // Set the compatible verbose level
+        resources.setVerboseLevel(mVerboseLevel);
         // Use a variable to better name the thread
         String actionName = null;
         // Operate on the action if it extends ActionBase
@@ -96,7 +98,7 @@ class ActionRunner extends ActionBase {
         String threadName = String.format("Action[%d:%s]", getDetachDepth() + 1, actionName);
         // Create a new run thread
         mRunThread = new Thread(() -> {
-            if (mVerbose) System.out.printf("%s starting\n", threadName);
+            if (mVerboseLevel > 0) System.out.printf("%s starting\n", threadName);
             // measure the start time and start the action
             double startTime = mTimer.getTime();
             double time = startTime;
@@ -125,7 +127,7 @@ class ActionRunner extends ActionBase {
             }
             mAction.stop();
             // Print out info about the execution if verbose
-            if (mVerbose) {
+            if (mVerboseLevel > 0) {
                 System.out.printf("%s time relative to expected:  %.3fs\n", threadName, loopCount * mInterval - time);
                 if (time < mTimeout) System.out.printf("%s ended early by %.3fs\n", threadName, mTimeout - time);
                 else System.out.printf("%s ending after %.3fs\n", threadName, time);
