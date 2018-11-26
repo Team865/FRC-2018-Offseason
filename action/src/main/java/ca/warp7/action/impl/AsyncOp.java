@@ -8,12 +8,12 @@ import java.util.List;
 
 public class AsyncOp extends Singleton {
     private final List<State> mStates;
-    private final OpStart mStart;
-    private final OpStop mStop;
+    private final AsyncStart mStart;
+    private final AsyncStop mStop;
     private double mStaticEstimate;
     private double mInterval;
 
-    AsyncOp(OpStart startMode, OpStop stopMode, IAction... actions) {
+    AsyncOp(AsyncStart startMode, AsyncStop stopMode, IAction... actions) {
         mStart = startMode;
         mStop = stopMode;
         mStates = new ArrayList<>();
@@ -30,14 +30,14 @@ public class AsyncOp extends Singleton {
 
     @Override
     public void start_() {
-        if (mStart == OpStart.OnStaticInverse || mStop == OpStop.OnStaticEstimate) {
+        if (mStart == AsyncStart.OnStaticInverse || mStop == AsyncStop.OnStaticEstimate) {
             for (State s : mStates) {
                 s.updateRemaining();
                 s.updateStaticRemaining();
                 if (s.staticRemaining > mStaticEstimate) mStaticEstimate = s.staticRemaining;
             }
         }
-        if (mStart == OpStart.OnStart) for (State s : mStates) s.start();
+        if (mStart == AsyncStart.OnStart) for (State s : mStates) s.start();
         mInterval = getResources().getInterval();
     }
 

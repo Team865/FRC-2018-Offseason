@@ -8,7 +8,6 @@ import java.util.Map;
 public class Resources implements IAction.SingletonResources {
 
     private Map<String, Object> mPool = new HashMap<>();
-    private Map<String, Integer> mBroadcastSources = new HashMap<>();
     private IAction.ITimer mTimer;
     private double mStartTime = 0;
     private double mInterval = 0;
@@ -27,19 +26,6 @@ public class Resources implements IAction.SingletonResources {
     @Override
     public int getBroadcastCount(String trigger) {
         return getInt(broadcastName(trigger), 0);
-    }
-
-    @Override
-    public int getBroadcastSources(String trigger) {
-        return mBroadcastSources.getOrDefault(broadcastName(trigger), 0);
-    }
-
-    @Override
-    public void addBroadcastSources(String... triggers) {
-        for (String trigger : triggers) {
-            String name = broadcastName(trigger);
-            mBroadcastSources.put(name, mBroadcastSources.getOrDefault(name, 0) + 1);
-        }
     }
 
     @Override

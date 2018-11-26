@@ -47,8 +47,8 @@ public class AsyncOpTests {
             @Override
             public IAction getAction() {
                 return asyncOp(
-                        OpStart.OnStart,
-                        OpStop.OnEachFinished,
+                        AsyncStart.OnStart,
+                        AsyncStop.OnEachFinished,
                         new Print("hello "),
                         new Print("world ")
                 );
@@ -63,8 +63,8 @@ public class AsyncOpTests {
             @Override
             public IAction getAction() {
                 return asyncOp(
-                        OpStart.OnStart,
-                        OpStop.OnEachFinished,
+                        AsyncStart.OnStart,
+                        AsyncStop.OnEachFinished,
                         new Print("hello "),
                         new Print("world ")
                 ).queue(new Print("!!!"));
@@ -79,8 +79,8 @@ public class AsyncOpTests {
             @Override
             public IAction getAction() {
                 return asyncOp(
-                        OpStart.OnStart,
-                        OpStop.OnEachFinished,
+                        AsyncStart.OnStart,
+                        AsyncStop.OnEachFinished,
                         waitFor(0.1).queue(new Print("there")),
                         new Print("hi ")
                 );
@@ -95,8 +95,8 @@ public class AsyncOpTests {
             @Override
             public IAction getAction() {
                 return asyncOp(
-                        OpStart.OnStart,
-                        OpStop.OnAnyFinished,
+                        AsyncStart.OnStart,
+                        AsyncStop.OnAnyFinished,
                         waitFor(0.1).queue(new Print("there")),
                         new Print("hi ")
                 );
@@ -111,8 +111,8 @@ public class AsyncOpTests {
             @Override
             public IAction getAction() {
                 return asyncOp(
-                        OpStart.OnStaticInverse,
-                        OpStop.OnEachFinished,
+                        AsyncStart.OnStaticInverse,
+                        AsyncStop.OnEachFinished,
                         waitFor(0.1).queue(new Print("there")),
                         new Print("hi ")
                 );

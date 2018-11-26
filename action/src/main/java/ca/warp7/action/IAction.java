@@ -31,8 +31,8 @@ import java.util.List;
  * @see IAction.Predicate
  * @see IAction.SingletonResources
  * @see IAction.Delegate
- * @see IAction.OpStart
- * @see IAction.OpStop
+ * @see IAction.AsyncStart
+ * @see AsyncStop
  * @see IAction.Function
  * @see IAction.API
  * @see IAction.HeadClass
@@ -223,18 +223,6 @@ public interface IAction {
          * @since 2.0
          */
         int getBroadcastCount(String trigger);
-
-
-        /**
-         * @since 2.0
-         */
-        int getBroadcastSources(String trigger);
-
-
-        /**
-         * @since 2.0
-         */
-        void addBroadcastSources(String... trigger);
 
 
         /**
@@ -471,7 +459,7 @@ public interface IAction {
      *
      * @since 3.12
      */
-    enum OpStart {
+    enum AsyncStart {
 
 
         /**
@@ -514,7 +502,7 @@ public interface IAction {
      *
      * @since 3.12
      */
-    enum OpStop {
+    enum AsyncStop {
 
 
         /**
@@ -586,14 +574,6 @@ public interface IAction {
          */
         protected static Predicate triggeredRepeat(String name) {
             return d -> d.getResources().getBroadcastCount(name) > 1;
-        }
-
-
-        /**
-         * @since 2.0
-         */
-        protected static Predicate triggeredAll(String name) {
-            return d -> d.getResources().getBroadcastCount(name) == d.getResources().getBroadcastSources(name);
         }
 
 
@@ -682,7 +662,7 @@ public interface IAction {
          *
          * @since 3.12
          */
-        API asyncOp(OpStart startMode, OpStop stopMode, IAction... actions);
+        API asyncOp(AsyncStart startMode, AsyncStop stopMode, IAction... actions);
 
 
         /**
@@ -759,7 +739,7 @@ public interface IAction {
          * @since 2.0
          */
         default API async(IAction... actions) {
-            return asyncOp(OpStart.OnStart, OpStop.OnEachFinished, actions);
+            return asyncOp(AsyncStart.OnStart, AsyncStop.OnEachFinished, actions);
         }
 
 
@@ -774,7 +754,7 @@ public interface IAction {
          * @since 2.0
          */
         default API asyncAll(IAction... actions) {
-            return asyncOp(OpStart.OnStart, OpStop.OnAllFinished, actions);
+            return asyncOp(AsyncStart.OnStart, AsyncStop.OnAllFinished, actions);
         }
 
 
@@ -789,7 +769,7 @@ public interface IAction {
          * @since 2.0
          */
         default API asyncAny(IAction... actions) {
-            return asyncOp(OpStart.OnStart, OpStop.OnAnyFinished, actions);
+            return asyncOp(AsyncStart.OnStart, AsyncStop.OnAnyFinished, actions);
         }
 
 
@@ -964,12 +944,18 @@ public interface IAction {
      */
     abstract class HeadClass extends Function implements API {
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void start() {
+        }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public API asyncOp(OpStart startMode, OpStop stopMode, IAction... actions) {
+        public API asyncOp(AsyncStart startMode, AsyncStop stopMode, IAction... actions) {
             return head().asyncOp(startMode, stopMode, actions);
         }
 
@@ -1016,14 +1002,6 @@ public interface IAction {
         @Override
         public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
             return head().runIf(predicate, ifAction, elseAction);
-        }
-
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void start() {
         }
     }
 }
