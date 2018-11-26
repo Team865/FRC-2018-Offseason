@@ -3,7 +3,6 @@ package ca.warp7.action.impl;
 import ca.warp7.action.IAction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -142,58 +141,6 @@ public class AsyncOp extends Singleton {
                 realAction.stop();
                 isRunning = false;
             }
-        }
-    }
-
-    abstract static class SimpleForward extends Singleton {
-        final List<IAction> mActions;
-
-        SimpleForward(IAction... actions) {
-            mActions = Arrays.asList(actions);
-            mActions.forEach(action -> linkChild(this, action));
-        }
-
-        @Override
-        public List<IAction> getQueue() {
-            return mActions.size() == 1 ? Collections.singletonList(mActions.get(0)) : null;
-        }
-
-        @Override
-        public void start_() {
-            mActions.forEach(IAction::start);
-        }
-
-        @Override
-        public void update() {
-            mActions.forEach(IAction::update);
-        }
-
-        @Override
-        public void stop() {
-            mActions.forEach(IAction::stop);
-        }
-
-    }
-
-    static class Any extends SimpleForward {
-        Any(IAction... actions) {
-            super(actions);
-        }
-
-        @Override
-        public boolean shouldFinish_() {
-            return mActions.stream().anyMatch(IAction::shouldFinish);
-        }
-    }
-
-    static class All extends SimpleForward {
-        All(IAction... actions) {
-            super(actions);
-        }
-
-        @Override
-        public boolean shouldFinish_() {
-            return mActions.stream().allMatch(IAction::shouldFinish);
         }
     }
 }

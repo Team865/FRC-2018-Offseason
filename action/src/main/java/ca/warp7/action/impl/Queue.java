@@ -11,32 +11,26 @@ class Queue extends QueueBase implements IAction.API {
 
     @Override
     public API asyncOp(OpStart startMode, OpStop stopMode, IAction... actions) {
-        return queue(new AsyncOp(startMode, stopMode, actions));
-    }
-
-    @Override
-    public API asyncAll(IAction... actions) {
-        return queue(new AsyncOp.All(actions));
-    }
-
-    @Override
-    public API asyncAny(IAction... actions) {
-        return queue(new AsyncOp.Any(actions));
+        addToQueue(new AsyncOp(startMode, stopMode, actions));
+        return this;
     }
 
     @Override
     public API await(Predicate predicate) {
-        return queue(new Await(predicate));
+        addToQueue(new Await(predicate));
+        return this;
     }
 
     @Override
     public API exec(Consumer consumer) {
-        return queue(new Execution(consumer));
+        addToQueue(new Execution(consumer));
+        return this;
     }
 
     @Override
     public API iterate(Consumer consumer) {
-        return queue(new Iteration(consumer));
+        addToQueue(new Iteration(consumer));
+        return this;
     }
 
     @Override
@@ -47,6 +41,7 @@ class Queue extends QueueBase implements IAction.API {
 
     @Override
     public API runIf(Predicate predicate, IAction ifAction, IAction elseAction) {
-        return queue(new Condition(predicate, ifAction, elseAction));
+        addToQueue(new Condition(predicate, ifAction, elseAction));
+        return this;
     }
 }

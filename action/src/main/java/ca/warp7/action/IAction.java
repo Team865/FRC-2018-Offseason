@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.15 (Revision 37 on 11/25/2018)
+ * @version 3.16 (Revision 38 on 11/25/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
@@ -672,32 +672,6 @@ public interface IAction {
 
 
         /**
-         * <p>
-         * Starts a list of action in parallel, and finish when all of the actions
-         * are finished and stops
-         * </p>
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
-         */
-        API asyncAll(IAction... actions);
-
-
-        /**
-         * <p>
-         * Starts a list of action in parallel, and finish when any of the actions
-         * are finished and stops
-         * </p>
-         *
-         * @param actions A list of actions to run
-         * @return The API state after the method operation has been queued to the previous state
-         * @since 2.0
-         */
-        API asyncAny(IAction... actions);
-
-
-        /**
          * Runs an async action according to a start and stop mode with a list of actions
          *
          * @since 3.12
@@ -770,7 +744,7 @@ public interface IAction {
 
         /**
          * <p>
-         * Starts a list of action in parallel, and finish when all of the actions
+         * Starts a list of action in parallel, and finish when each of the actions
          * are finished and stops
          * </p>
          *
@@ -779,7 +753,37 @@ public interface IAction {
          * @since 2.0
          */
         default API async(IAction... actions) {
-            return asyncAll(actions);
+            return asyncOp(OpStart.OnStart, OpStop.OnEachFinished, actions);
+        }
+
+
+        /**
+         * <p>
+         * Starts a list of action in parallel, and finish when all of the actions
+         * are finished and stops
+         * </p>
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API asyncAll(IAction... actions) {
+            return asyncOp(OpStart.OnStart, OpStop.OnAllFinished, actions);
+        }
+
+
+        /**
+         * <p>
+         * Starts a list of action in parallel, and finish when any of the actions
+         * are finished and stops
+         * </p>
+         *
+         * @param actions A list of actions to run
+         * @return The API state after the method operation has been queued to the previous state
+         * @since 2.0
+         */
+        default API asyncAny(IAction... actions) {
+            return asyncOp(OpStart.OnStart, OpStop.OnAnyFinished, actions);
         }
 
 
@@ -811,7 +815,7 @@ public interface IAction {
          * @since 2.0
          */
         default API asyncUntil(Predicate predicate, IAction... actions) {
-            return asyncMaster(await(predicate), actions);
+            return asyncAny(await(predicate), async(actions));
         }
 
 
@@ -952,24 +956,6 @@ public interface IAction {
      * @since 2.0
      */
     abstract class HeadClass extends Function implements API {
-
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public API asyncAll(IAction... actions) {
-            return head().asyncAll(actions);
-        }
-
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public API asyncAny(IAction... actions) {
-            return head().asyncAny(actions);
-        }
 
 
         /**
