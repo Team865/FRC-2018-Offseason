@@ -14,7 +14,7 @@ public abstract class ActionMode extends IAction.HeadClass implements IAction.Mo
         return new Queue();
     }
 
-    public IAction.API detachThread(double interval, double timeout, ActionBase action) {
-        return queue(createRunner(null, interval, timeout, action, true));
+    public IAction.API detachThread(double interval, double timeout, Singleton singleton) {
+        return queue(createRunner(null, interval, timeout, singleton, true));
     }
 }

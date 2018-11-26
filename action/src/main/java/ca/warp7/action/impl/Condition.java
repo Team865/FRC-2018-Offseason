@@ -2,7 +2,7 @@ package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
 
-class Condition extends ActionBase {
+class Condition extends Singleton {
     private Predicate mPredicate;
     private IAction mIf;
     private IAction mElse;
@@ -15,9 +15,14 @@ class Condition extends ActionBase {
     }
 
     @Override
-    public void prepare() {
+    public void start_() {
         mSelected = mPredicate.test(this) ? mIf : mElse;
         if (mSelected != null) mSelected.start();
+    }
+
+    @Override
+    public boolean shouldFinish_() {
+        return mSelected == null || mSelected.shouldFinish();
     }
 
     @Override
@@ -28,10 +33,5 @@ class Condition extends ActionBase {
     @Override
     public void stop() {
         if (mSelected != null) mSelected.stop();
-    }
-
-    @Override
-    public boolean _shouldFinish() {
-        return mSelected == null || mSelected.shouldFinish();
     }
 }

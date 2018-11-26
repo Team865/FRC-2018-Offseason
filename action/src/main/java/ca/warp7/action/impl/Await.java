@@ -1,6 +1,6 @@
 package ca.warp7.action.impl;
 
-public class Await extends ActionBase {
+public class Await extends Singleton {
     private Predicate mPredicate;
 
     Await(Predicate predicate) {
@@ -8,7 +8,11 @@ public class Await extends ActionBase {
     }
 
     @Override
-    public boolean _shouldFinish() {
+    void start_() {
+    }
+
+    @Override
+    public boolean shouldFinish_() {
         return mPredicate.test(this);
     }
 }

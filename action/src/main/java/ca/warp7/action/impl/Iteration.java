@@ -1,6 +1,6 @@
 package ca.warp7.action.impl;
 
-public class Iteration extends ActionBase {
+public class Iteration extends Singleton {
 
     private Consumer mConsumer;
 
@@ -9,7 +9,11 @@ public class Iteration extends ActionBase {
     }
 
     @Override
-    boolean _shouldFinish() {
+    void start_() {
+    }
+
+    @Override
+    boolean shouldFinish_() {
         return false;
     }
 

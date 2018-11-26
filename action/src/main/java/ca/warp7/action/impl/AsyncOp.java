@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AsyncOp extends ActionBase {
+public class AsyncOp extends Singleton {
     private final List<State> mStates;
     private final OpStart mStart;
     private final OpStop mStop;
@@ -30,7 +30,7 @@ public class AsyncOp extends ActionBase {
     }
 
     @Override
-    void prepare() {
+    void start_() {
         if (mStart == OpStart.OnStaticInverse || mStop == OpStop.OnStaticEstimate) {
             for (State s : mStates) {
                 s.updateRemaining();
@@ -62,7 +62,7 @@ public class AsyncOp extends ActionBase {
     }
 
     @Override
-    public boolean _shouldFinish() {
+    public boolean shouldFinish_() {
         switch (mStop) {
             case OnAnyFinished:
                 for (State s : mStates) if (s.shouldFinish()) return true;
@@ -145,7 +145,7 @@ public class AsyncOp extends ActionBase {
         }
     }
 
-    abstract static class SimpleForward extends ActionBase {
+    abstract static class SimpleForward extends Singleton {
         final List<IAction> mActions;
 
         SimpleForward(IAction... actions) {
@@ -159,7 +159,7 @@ public class AsyncOp extends ActionBase {
         }
 
         @Override
-        public void prepare() {
+        public void start_() {
             mActions.forEach(IAction::start);
         }
 
@@ -181,7 +181,7 @@ public class AsyncOp extends ActionBase {
         }
 
         @Override
-        public boolean _shouldFinish() {
+        public boolean shouldFinish_() {
             return mActions.stream().anyMatch(IAction::shouldFinish);
         }
     }
@@ -192,7 +192,7 @@ public class AsyncOp extends ActionBase {
         }
 
         @Override
-        public boolean _shouldFinish() {
+        public boolean shouldFinish_() {
             return mActions.stream().allMatch(IAction::shouldFinish);
         }
     }

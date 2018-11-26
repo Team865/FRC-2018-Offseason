@@ -4,7 +4,7 @@ import ca.warp7.action.IAction;
 
 import java.util.Objects;
 
-class ActionRunner extends ActionBase {
+class ActionRunner extends Singleton {
 
     /**
      * The main action to run
@@ -62,7 +62,7 @@ class ActionRunner extends ActionBase {
      * periodic delay not very relevant</p>
      */
     @Override
-    public void prepare() {
+    public void start_() {
         // Make sure autos are not running right now before continuing
         if (mRunThread != null) {
             System.err.println("ERROR an Action is already running!!!");
@@ -80,17 +80,17 @@ class ActionRunner extends ActionBase {
         resources.setVerboseLevel(mVerboseLevel);
         // Use a variable to better name the thread
         String actionName = null;
-        // Operate on the action if it extends ActionBase
-        if (mAction instanceof ActionBase) {
-            ActionBase base = (ActionBase) mAction;
+        // Operate on the action if it extends Singleton
+        if (mAction instanceof Singleton) {
+            Singleton singleton = (Singleton) mAction;
             // Link the runner to the action
-            safeLinkChild(this, base);
+            safeLinkChild(this, singleton);
             // Increment the detachment state of the child
-            incrementDetachDepth(base);
+            incrementDetachDepth(singleton);
             // Fetch and store the resources pointer from the parent
-            base.getResources();
+            singleton.getResources();
             // Get the action name if it exists
-            if (!base.getName().isEmpty()) actionName = base.getName();
+            if (!singleton.getName().isEmpty()) actionName = singleton.getName();
         }
         // Give the action its class name if it does not exist
         if (actionName == null) actionName = mAction.getClass().getSimpleName();
@@ -142,7 +142,7 @@ class ActionRunner extends ActionBase {
     }
 
     @Override
-    public boolean _shouldFinish() {
+    public boolean shouldFinish_() {
         return mRunThread == null;
     }
 

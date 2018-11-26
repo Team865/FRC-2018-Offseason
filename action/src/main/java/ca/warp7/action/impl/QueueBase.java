@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-abstract class QueueBase extends ActionBase {
+abstract class QueueBase extends Singleton {
 
     private List<IAction> mRuntimeQueue = new ArrayList<>();
     private IAction mCurrentAction = null;
@@ -28,6 +28,10 @@ abstract class QueueBase extends ActionBase {
         }
         actionQueue.forEach(action -> linkChild(this, action));
         mRuntimeQueue.addAll(actionQueue);
+    }
+
+    @Override
+    void start_() {
     }
 
     @Override
@@ -54,7 +58,7 @@ abstract class QueueBase extends ActionBase {
     }
 
     @Override
-    public boolean _shouldFinish() {
+    public boolean shouldFinish_() {
         return mRuntimeQueue.isEmpty() && mCurrentAction == null;
     }
 

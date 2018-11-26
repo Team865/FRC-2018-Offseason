@@ -1,6 +1,6 @@
 package ca.warp7.action.impl;
 
-class Execution extends ActionBase {
+class Execution extends Singleton {
     private Consumer mConsumer;
 
     Execution(Consumer consumer) {
@@ -8,7 +8,12 @@ class Execution extends ActionBase {
     }
 
     @Override
-    public void prepare() {
+    public void start_() {
         mConsumer.accept(this);
+    }
+
+    @Override
+    boolean shouldFinish_() {
+        return true;
     }
 }

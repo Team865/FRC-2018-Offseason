@@ -2,7 +2,7 @@ package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
 
-abstract class ActionBase implements IAction, IAction.Delegate {
+abstract class Singleton implements IAction, IAction.Delegate {
 
     private Delegate mParent;
     private SingletonResources mResources;
@@ -12,20 +12,20 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     private String mName = "";
 
     static void linkChild(Delegate parent, IAction action) {
-        if (action instanceof ActionBase) safeLinkChild(parent, (ActionBase) action);
+        if (action instanceof Singleton) safeLinkChild(parent, (Singleton) action);
     }
 
-    static void safeLinkChild(Delegate parent, ActionBase actionBase) {
-        actionBase.mParent = parent;
+    static void safeLinkChild(Delegate parent, Singleton singleton) {
+        singleton.mParent = parent;
     }
 
-    static void incrementDetachDepth(ActionBase action) {
+    static void incrementDetachDepth(Singleton action) {
         action.mDetachDepth++;
     }
 
     @Override
-    public void start() {
-        prepare();
+    public final void start() {
+        start_();
         if (getResources().getVerboseLevel() > 1) {
             System.out.print(Thread.currentThread().getName() + " ");
             System.out.println("Started: " + this);
@@ -35,12 +35,12 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
     @Override
-    public boolean shouldFinish() {
-        return mIsInterrupted || _shouldFinish();
+    public final boolean shouldFinish() {
+        return mIsInterrupted || shouldFinish_();
     }
 
     @Override
-    public double getElapsed() {
+    public final double getElapsed() {
         return getResources().getTime() - mStartTime;
     }
 
@@ -50,17 +50,17 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
     @Override
-    public void interrupt() {
+    public final void interrupt() {
         mIsInterrupted = true;
     }
 
     @Override
-    public int getDetachDepth() {
+    public final int getDetachDepth() {
         return mDetachDepth;
     }
 
     @Override
-    public SingletonResources getResources() {
+    public final SingletonResources getResources() {
         if (mResources != null) return mResources;
         mResources = hasParent() ? getParent().getResources() : new Resources();
         mResources = mResources != null ? mResources : new ca.warp7.action.impl.Resources();
@@ -68,20 +68,16 @@ abstract class ActionBase implements IAction, IAction.Delegate {
     }
 
     @Override
-    public void setName(String name) {
+    public final void setName(String name) {
         mName = name;
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
         return mName;
     }
 
+    abstract void start_();
 
-    void prepare() {
-    }
-
-    boolean _shouldFinish() {
-        return true;
-    }
+    abstract boolean shouldFinish_();
 }
