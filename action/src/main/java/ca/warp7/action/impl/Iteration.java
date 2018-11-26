@@ -9,11 +9,11 @@ public class Iteration extends Singleton {
     }
 
     @Override
-    void start_() {
+    public void start_() {
     }
 
     @Override
-    boolean shouldFinish_() {
+    public boolean shouldFinish_() {
         return false;
     }
 

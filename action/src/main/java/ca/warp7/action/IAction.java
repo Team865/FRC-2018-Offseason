@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.16 (Revision 39 on 11/25/2018)
+ * @version 3.16 (Revision 40 on 11/25/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
@@ -854,6 +854,7 @@ public interface IAction {
             return await(predicate).broadcast(triggers);
         }
 
+
         /**
          * <p>
          * Execute a function in reference to an action
@@ -979,15 +980,6 @@ public interface IAction {
         @Override
         public API await(Predicate predicate) {
             return head().await(predicate);
-        }
-
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public API broadcast(String... triggers) {
-            return head().broadcast(triggers);
         }
 
 

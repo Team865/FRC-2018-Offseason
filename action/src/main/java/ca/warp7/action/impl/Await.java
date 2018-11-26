@@ -8,7 +8,7 @@ public class Await extends Singleton {
     }
 
     @Override
-    void start_() {
+    public void start_() {
     }
 
     @Override

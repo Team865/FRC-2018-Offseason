@@ -71,7 +71,7 @@ class ActionRunner extends Singleton {
         // Check if a timer has already been assigned
         if (mTimer == null) mTimer = getResources().getActionTimer();
         // Get the cast resources of current action
-        Resources resources = (Resources) getResources();
+        final Resources resources = (Resources) getResources();
         // Pass the timer to the resources
         resources.setActionTimer(mTimer);
         // Convert interval into seconds and pass to resources
@@ -79,10 +79,10 @@ class ActionRunner extends Singleton {
         // Set the compatible verbose level
         resources.setVerboseLevel(mVerboseLevel);
         // Use a variable to better name the thread
-        String actionName;
+        final String actionName;
         // Operate on the action if it extends Singleton
         if (mAction instanceof Singleton) {
-            Singleton singleton = (Singleton) mAction;
+            final Singleton singleton = (Singleton) mAction;
             // Link the runner to the action
             safeLinkChild(this, singleton);
             // Increment the detachment state of the child
@@ -95,12 +95,12 @@ class ActionRunner extends Singleton {
         // Give the action its class name if it does not exist
         else actionName = mAction.getClass().getSimpleName();
         // Create the thread name based on the action name
-        String threadName = String.format("Action[%d:%s]", getDetachDepth() + 1, actionName);
+        final String threadName = String.format("Action[%d:%s]", getDetachDepth() + 1, actionName);
         // Create a new run thread
         mRunThread = new Thread(() -> {
             if (mVerboseLevel > 0) System.out.printf("%s starting\n", threadName);
             // measure the start time and start the action
-            double startTime = mTimer.getTime();
+            final double startTime = mTimer.getTime();
             double time = startTime;
             mAction.start();
             // Count the loops

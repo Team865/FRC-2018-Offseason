@@ -31,7 +31,7 @@ abstract class QueueBase extends Singleton {
     }
 
     @Override
-    void start_() {
+    public void start_() {
     }
 
     @Override

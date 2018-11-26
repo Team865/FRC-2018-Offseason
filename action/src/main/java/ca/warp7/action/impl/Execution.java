@@ -13,7 +13,7 @@ class Execution extends Singleton {
     }
 
     @Override
-    boolean shouldFinish_() {
+    public boolean shouldFinish_() {
         return true;
     }
 }

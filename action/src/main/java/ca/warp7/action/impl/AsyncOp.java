@@ -29,7 +29,7 @@ public class AsyncOp extends Singleton {
     }
 
     @Override
-    void start_() {
+    public void start_() {
         if (mStart == OpStart.OnStaticInverse || mStop == OpStop.OnStaticEstimate) {
             for (State s : mStates) {
                 s.updateRemaining();
