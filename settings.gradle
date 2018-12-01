@@ -1,7 +1,5 @@
 rootProject.name = "FRC-2018-Offseason"
 include "action"
 include "commons"
-include "frc2017_2"
 include "frc2018_2"
 include "frc2018_3"
-include "frc2018_brian"
