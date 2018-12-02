@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_3.subsystems;
+package ca.warp7.frc2018_4.subsystems;
 
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
@@ -6,8 +6,8 @@ import ca.warp7.frc.core.StateType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 
-import static ca.warp7.frc2018_3.Constants.kGrapplingHookSolenoidPin;
-import static ca.warp7.frc2018_3.Constants.kPneumaticsCompressorPin;
+import static ca.warp7.frc2018_4.Constants.kGrapplingHookSolenoidPin;
+import static ca.warp7.frc2018_4.Constants.kPneumaticsCompressorPin;
 
 public class Pneumatics implements ISubsystem {
 

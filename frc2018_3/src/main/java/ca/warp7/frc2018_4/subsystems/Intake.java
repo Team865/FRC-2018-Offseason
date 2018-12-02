@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_3.subsystems;
+package ca.warp7.frc2018_4.subsystems;
 
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import static ca.warp7.frc.Functions.limit;
-import static ca.warp7.frc2018_3.Constants.*;
+import static ca.warp7.frc2018_4.Constants.*;
 
 public class Intake implements ISubsystem {
 

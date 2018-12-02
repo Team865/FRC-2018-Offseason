@@ -1,25 +1,24 @@
-package ca.warp7.frc2018_3.subsystems;
+package ca.warp7.frc2018_4.subsystems;
 
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
 import ca.warp7.frc.core.StateType;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.SpeedController;
 
 import static ca.warp7.frc.Functions.limit;
-import static ca.warp7.frc2018_3.Constants.kArmLiftPinA;
-import static ca.warp7.frc2018_3.Constants.kArmLiftPinB;
+import static ca.warp7.frc2018_4.Constants.kClimberPins;
 
-public class ArmLift implements ISubsystem {
+public class Climber implements ISubsystem {
 
-    private static final double kAbsoluteMaxOutputPower = 0.8;
+    private static final double kAbsoluteMaxOutputPower = 1.0;
 
     @InputField
     private final InputState mInputState = new InputState();
     @StateField
     private final CurrentState mCurrentState = new CurrentState();
 
-    private SpeedControllerGroup mArmLiftMotors;
+    private SpeedController mClimberMotors;
 
     public void setSpeed(double speed) {
         mInputState.demandedSpeed = speed;
@@ -27,8 +26,7 @@ public class ArmLift implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mArmLiftMotors = new SpeedControllerGroup(
-                new WPI_VictorSPX(kArmLiftPinA), new WPI_VictorSPX(kArmLiftPinB));
+        mClimberMotors = new WPI_VictorSPX(kClimberPins);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class ArmLift implements ISubsystem {
 
     @Override
     public void onOutput() {
-        mArmLiftMotors.set(limit(mCurrentState.speed, kAbsoluteMaxOutputPower));
+        mClimberMotors.set(limit(mCurrentState.speed, kAbsoluteMaxOutputPower));
     }
 
     @Override
