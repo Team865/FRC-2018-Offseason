@@ -31,6 +31,7 @@ public class Drive implements ISubsystem {
     private static final double kLeftDriftOffset = 1.0;
     private static final double kRightDriftOffset = 1.0;
     private static final double kWheelRadius = 3.0;
+    // TODO update kWheelBaseRadius for 2 front Colson drive train
     private static final double kWheelBaseRadius = 12.50;
     private static final double kEncoderTicksPerRevolution = 256.0;
     private static final double kPreDriftSpeedLimit = 1.0;
