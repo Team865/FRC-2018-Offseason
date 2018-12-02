@@ -1,13 +1,11 @@
-package ca.warp7.frc2018_4.subsystems;
+package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
 import ca.warp7.frc.core.StateType;
+import ca.warp7.frc2018_3.Constants;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
-
-import static ca.warp7.frc2018_4.Constants.kGrapplingHookSolenoidPin;
-import static ca.warp7.frc2018_4.Constants.kPneumaticsCompressorPin;
 
 public class Pneumatics implements ISubsystem {
 
@@ -21,8 +19,8 @@ public class Pneumatics implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mCompressor = new Compressor(kPneumaticsCompressorPin);
-        mGrapplingHookSolenoid = new Solenoid(kGrapplingHookSolenoidPin);
+        mCompressor = new Compressor(Constants.kPneumaticsCompressorPin);
+        mGrapplingHookSolenoid = new Solenoid(Constants.kGrapplingHookSolenoidPin);
         mGrapplingHookSolenoid.set(false);
         mCompressor.setClosedLoopControl(true);
     }

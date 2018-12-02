@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 }
 
-def ROBOT_CLASS = "ca.warp7.frc2018_4._FiftyCents"
+def ROBOT_CLASS = "ca.warp7.frc2018_4.Scottie"
 
 wpi {
     wpilibVersion = "2018.4.1"

@@ -1,14 +1,14 @@
-package ca.warp7.frc2018_4.subsystems;
+package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.frc.core.ISubsystem;
 import ca.warp7.frc.core.Robot;
 import ca.warp7.frc.core.StateType;
+import ca.warp7.frc2018_3.Constants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import static ca.warp7.frc.Functions.limit;
-import static ca.warp7.frc2018_4.Constants.*;
 
 public class Intake implements ISubsystem {
 
@@ -29,10 +29,10 @@ public class Intake implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mIntakeMotorLeft = new WPI_VictorSPX(kIntakeLeftPin);
-        mIntakeMotorRight = new WPI_VictorSPX(kIntakeRightPin);
+        mIntakeMotorLeft = new WPI_VictorSPX(Constants.kIntakeLeftPin);
+        mIntakeMotorRight = new WPI_VictorSPX(Constants.kIntakeRightPin);
         mIntakeMotorRight.setInverted(true);
-        mIntakePistons = new Solenoid(kIntakePistonSolenoidPin);
+        mIntakePistons = new Solenoid(Constants.kIntakePistonSolenoidPin);
     }
 
     @Override

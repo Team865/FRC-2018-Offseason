@@ -1,10 +1,10 @@
-package ca.warp7.frc2018_4;
+package ca.warp7.frc2018_3;
 
 import ca.warp7.action.IAction;
-import ca.warp7.frc2018_4.auto.Baseline;
-import ca.warp7.frc2018_4.auto.BaselinePID;
-import ca.warp7.frc2018_4.auto.NothingMode;
-import ca.warp7.frc2018_4.auto.OneSwitch;
+import ca.warp7.frc2018_3.auto.Baseline;
+import ca.warp7.frc2018_3.auto.BaselinePID;
+import ca.warp7.frc2018_3.auto.NothingMode;
+import ca.warp7.frc2018_3.auto.OneSwitch;
 
 @SuppressWarnings("unused")
 class Autonomous {

@@ -1,8 +1,8 @@
-package ca.warp7.frc2018_4.actions;
+package ca.warp7.frc2018_3.actions;
 
 import ca.warp7.action.impl.Singleton;
 
-import static ca.warp7.frc2018_4.Components.intake;
+import static ca.warp7.frc2018_3.Components.intake;
 
 public class OuttakeCube2 extends Singleton {
 

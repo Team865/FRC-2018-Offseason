@@ -1,8 +1,9 @@
-package ca.warp7.frc2018_4.subsystems;
+package ca.warp7.frc2018_3.subsystems;
 
 import ca.warp7.action.IAction;
 import ca.warp7.frc.*;
 import ca.warp7.frc.core.ISubsystem;
+import ca.warp7.frc2018_3.Constants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -16,8 +17,7 @@ import java.util.LinkedList;
 import static ca.warp7.frc.Functions.constrainMinimum;
 import static ca.warp7.frc.Functions.limit;
 import static ca.warp7.frc.core.Robot.reportInputAndState;
-import static ca.warp7.frc2018_4.Components.navx;
-import static ca.warp7.frc2018_4.Constants.*;
+import static ca.warp7.frc2018_3.Components.navx;
 
 public class Drive implements ISubsystem {
 
@@ -105,12 +105,12 @@ public class Drive implements ISubsystem {
 
     @Override
     public void onConstruct() {
-        mLeftA = createVictor(kDriveLeftA);
-        mLeftB = createVictor(kDriveLeftB);
-        mRightA = createVictor(kDriveRightA);
-        mRightB = createVictor(kDriveRightB);
-        Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false);
-        Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, true);
+        mLeftA = createVictor(Constants.kDriveLeftA);
+        mLeftB = createVictor(Constants.kDriveLeftB);
+        mRightA = createVictor(Constants.kDriveRightA);
+        mRightB = createVictor(Constants.kDriveRightB);
+        Encoder leftEncoder = configEncoder(Constants.kDriveLeftEncoderA, Constants.kDriveLeftEncoderB, false);
+        Encoder rightEncoder = configEncoder(Constants.kDriveRightEncoderA, Constants.kDriveRightEncoderB, true);
 
         mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
         mAHRS = navx.getAhrs();
@@ -119,7 +119,7 @@ public class Drive implements ISubsystem {
         if (mIsUsingNativeVictorAPI) configAll();
         else mLeftGroup.setInverted(true);
 
-        mShifterSolenoid = new Solenoid(kDriveShifterSolenoidPin);
+        mShifterSolenoid = new Solenoid(Constants.kDriveShifterSolenoidPin);
         mShifterSolenoid.set(true);
         mShifterSolenoid.set(false);
 
