@@ -1,9 +1,9 @@
 package ca.warp7.frc2018_2;
 
 
-//TODO Update Constants!
+//TODO Update constants!
 public class ConstantsPrac {
-    //TODO Update Constants!
+    //TODO Update constants!
     // PWM Pins
     public static final int[] RIGHT_DRIVE_MOTOR_IDS = {5, 1};
     public static final int[] LEFT_DRIVE_MOTOR_IDS = {3, 4};
@@ -13,7 +13,7 @@ public class ConstantsPrac {
     public static final int[] LIFT_MOTOR_RIGHT_IDS = {8};
     public static final int[] CLIMBER_MOTORS_IDS = {9, 0};
 
-    //TODO Update Constants!
+    //TODO Update constants!
     // DIG Pins
     public static final int LEFT_DRIVE_ENCODER_A = 2;
     public static final int LEFT_DRIVE_ENCODER_B = 3;
@@ -22,21 +22,21 @@ public class ConstantsPrac {
 
     public static final int HALL_DIO = 9;
 
-    //TODO Update Constants!
+    //TODO Update constants!
     // Solenoids (manifold ports)
     public static final int DRIVE_SHIFTER_PORT = 1;
     public static final int INTAKE_PISTONS = 0;
 
-    //TODO Update Constants!
+    //TODO Update constants!
     // Compressor
     public static final int COMPRESSOR_PIN = 0;
 
-    //TODO Update Constants!
+    //TODO Update constants!
     // Remote IDs
     public static final int DRIVER_ID = 0;
     public static final int OPERATOR_ID = 1;
 
-    //TODO Update Constants!qq
+    //TODO Update constants!qq
     // Robot dimensions and stuff
     public static double WHEEL_DIAMETER = 6; // inches
     public static double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;

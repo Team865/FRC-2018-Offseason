@@ -5,7 +5,6 @@ import ca.warp7.frc.DifferentialVector;
 import ca.warp7.frc.DtMeasurement;
 import ca.warp7.frc.Unit;
 import ca.warp7.frc.core.ISubsystem;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -17,8 +16,8 @@ import static ca.warp7.frc.Functions.limit;
 import static ca.warp7.frc2018_4.Components.navx;
 import java.util.LinkedList;
 
-import static ca.warp7.frc2018_4.Constants.DriveConstants.*;
-import static ca.warp7.frc2018_4.Constants.Pins.*;
+import static ca.warp7.frc2018_4.constants.DriveConstants.*;
+import static ca.warp7.frc2018_4.constants.Pins.*;
 
 public class Drive implements ISubsystem {
     private CheesyDrive mCheesyDrive;

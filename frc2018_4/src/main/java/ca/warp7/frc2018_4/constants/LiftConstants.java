@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_4.Constants;
+package ca.warp7.frc2018_4.constants;
 
 public class LiftConstants {
     public static final double kLiftHeight = 13000;

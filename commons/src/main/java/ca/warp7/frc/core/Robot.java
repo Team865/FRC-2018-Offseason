@@ -69,7 +69,7 @@ public abstract class Robot extends IterativeRobot {
         mComponents.setControllerLoop(loop);
     }
 
-    protected final void setAutoMode(IAction.Mode mode) {
+    protected final void setAutoMode(IAction.Mode mode, int i) {
         loader.setAutoMode(mode, 15);
     }
 

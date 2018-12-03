@@ -9,10 +9,11 @@ import ca.warp7.frc2018_4.Components.*;
 import static ca.warp7.frc2018_4.Components.drive;
 
 public class Controller implements IControls {
+    XboxControlsState Driver = RobotLoader.createXboxController(0, true);
+    XboxControlsState Operator = RobotLoader.createXboxController(1, true);
+
     @Override
     public void mainPeriodic() {
-        XboxControlsState Driver = new RobotLoader().createXboxController(0, true);
-        XboxControlsState Operator = new RobotLoader().createXboxController(1, true);
 
         // Driving
         drive.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
