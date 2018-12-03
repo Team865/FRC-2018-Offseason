@@ -210,6 +210,7 @@ public class Drive implements ISubsystem {
                 } else {
                     double leftDiff = demandedLeft - mState.leftPercentOutput;
                     double rightDiff = demandedRight - mState.rightPercentOutput;
+                    // TODO clarify that the next line has rightDiff and that's correct
                     mState.leftPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(leftDiff);
                     mState.rightPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(rightDiff);
                 }

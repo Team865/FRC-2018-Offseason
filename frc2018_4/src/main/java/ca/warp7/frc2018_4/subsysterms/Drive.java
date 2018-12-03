@@ -3,20 +3,24 @@ package ca.warp7.frc2018_4.subsysterms;
 import ca.warp7.frc.CheesyDrive;
 import ca.warp7.frc.DifferentialVector;
 import ca.warp7.frc.DtMeasurement;
+import ca.warp7.frc.Unit;
+import ca.warp7.frc.core.ISubsystem;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.stormbots.MiniPID;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.*;
 
+import static ca.warp7.frc.Functions.constrainMinimum;
+import static ca.warp7.frc.Functions.limit;
+import static ca.warp7.frc2018_4.Components.navx;
 import java.util.LinkedList;
 
 import static ca.warp7.frc2018_4.Constants.DriveConstants.*;
+import static ca.warp7.frc2018_4.Constants.Pins.*;
 
-public class Drive {
+public class Drive implements ISubsystem {
     private CheesyDrive mCheesyDrive;
     private AHRS mAHRS;
     private VictorSPX mLeftDriveMotorA;
@@ -30,6 +34,143 @@ public class Drive {
 
     private final Input mInput = new Input();
     private final State mState = new State();
+
+    @Override
+    public synchronized void onDisabled() {
+        mInput.rightPercentOutputDemand = 0.0;
+        mInput.leftPercentOutputDemand = 0.0;
+        mInput.shouldReverse = false;
+        mInput.leftTargetDistance = 0;
+        mInput.rightTargetDistance = 0;
+        mInput.shouldSolenoidBeOnForShifter = false;
+        mShifterSolenoid.set(false);
+        mInput.wantedAction = Action.Brake;
+        onUpdateState();
+    }
+
+    @Override
+    public void onMeasure() {
+        double oldLeft = mState.leftDistance;
+        double oldRight = mState.rightDistance;
+        mState.leftDistance = mEncoders.getLeft().getDistance();
+        mState.rightDistance = mEncoders.getRight().getDistance();
+        double newTimestamp = Timer.getFPGATimestamp();
+        double dt = constrainMinimum(newTimestamp - mState._timestamp, kTimeDeltaEpsilon);
+        mState._timestamp = newTimestamp;
+        double dLeft = mState.leftDistance - oldLeft;
+        double dRight = mState.rightDistance - oldRight;
+        DifferentialVector<Double> dDistance = new DifferentialVector<>(dLeft, dRight);
+        DifferentialVector<Double> oldRate = new DifferentialVector<>(mState.encoderRate);
+        mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
+        double velocitySum = mState.encoderRate.getLeft() + mState.encoderRate.getRight();
+        double velocityDiff = mState.encoderRate.getLeft() - mState.encoderRate.getRight();
+        mState.chassisLinearVelocity = kWheelRadius * velocitySum / 2.0;
+        mState.chassisAngularVelocity = (kWheelRadius * velocityDiff) / (2.0 * kWheelBaseRadius);
+        double oldYaw = mState._yaw;
+        mState._yaw = mAHRS.getYaw() + 90;
+        double yawInRadians = Unit.Degrees.toRadians(mState._yaw);
+        double dAverageDistance = (dLeft + dRight) / 2.0;
+        mState.predictedX += Math.cos(yawInRadians) * dAverageDistance;
+        mState.predictedY += Math.sin(yawInRadians) * dAverageDistance;
+        mState.velocityAverages.addLast(dDistance.transformed(distance -> new DtMeasurement(dt, distance)));
+        if (mState.velocityAverages.size() > kVelocityQueueSize) mState.velocityAverages.removeFirst();
+        DifferentialVector<DtMeasurement> sum = new DifferentialVector<>(new DtMeasurement(), new DtMeasurement());
+        mState.velocityAverages.forEach(wheels -> sum.transform(wheels, DtMeasurement::getAddedInPlace));
+        mState.measuredVelocity.set(sum.transformed(DtMeasurement::getRatio));
+        mState.encoderAcceleration.set(mState.encoderRate.transformed(oldRate, (now, prev) -> (now - prev) / dt));
+        mState.yawChangeVelocity = (mState._yaw - oldYaw) / dt;
+    }
+
+    @Override
+    public void onZeroSensors() {
+        mState.leftDistance = 0.0;
+        mState.rightDistance = 0.0;
+        mState.predictedX = 0;
+        mState.predictedY = 0;
+        mEncoders.apply(Encoder::reset);
+        mAHRS.zeroYaw();
+    }
+
+    @Override
+    public void onOutput() {
+        double limitedLeft = limit(mState.leftPercentOutput, kPreDriftSpeedLimit);
+        double limitedRight = limit(mState.rightPercentOutput, kPreDriftSpeedLimit);
+        mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
+        mRightGroup.set(limit(limitedRight * kRightDriftOffset, kAbsoluteMaxOutput));
+        if (mState.isSolenoidOnForShifter) {
+            if (!mShifterSolenoid.get()) {
+                mShifterSolenoid.set(true);
+            }
+        } else if (mShifterSolenoid.get()) {
+            mShifterSolenoid.set(false);
+        }
+    }
+
+    @Override
+    public void onUpdateState() {
+
+        mState.action = mInput.wantedAction;
+        mState.isReversed = mInput.shouldReverse;
+        mState.isSolenoidOnForShifter = mInput.shouldSolenoidBeOnForShifter;
+        switch (mState.action) {
+            case Brake:
+                mState.leftPercentOutput = 0;
+                mState.rightPercentOutput = 0;
+                break;
+            case OpenLoop:
+                double demandedLeft = mInput.leftPercentOutputDemand * (mState.isReversed ? -1 : 1);
+                double demandedRight = mInput.rightPercentOutputDemand * (mState.isReversed ? -1 : 1);
+                double leftDiff = demandedLeft - mState.leftPercentOutput;
+                double rightDiff = demandedRight - mState.rightPercentOutput;
+                // TODO clarify that the next line has rightDiff and that's correct
+                mState.leftPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(leftDiff);
+                mState.rightPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(rightDiff);
+                mState.leftPercentOutput = constrainMinimum(mState.leftPercentOutput, kOutputPowerEpsilon);
+                mState.rightPercentOutput = constrainMinimum(mState.rightPercentOutput, kOutputPowerEpsilon);
+                break;
+            case LinearPID:
+                mState.leftLinearPID.setSetpoint(mInput.leftTargetDistance);
+                mState.rightLinearPID.setSetpoint(mInput.rightTargetDistance);
+                mState.leftPercentOutput = mState.leftLinearPID.getOutput(mState.leftDistance);
+                mState.rightPercentOutput = mState.rightLinearPID.getOutput(mState.rightDistance);
+                break;
+        }
+    }
+
+    @Override
+    public void onReportState() {
+
+    }
+
+    @Override
+    public void onConstruct() {
+        mLeftDriveMotorA = createVictor(kDriveLeftA);
+        mLeftDriveMotorB = createVictor(kDriveLeftB);
+        mRightDriveMotorA = createVictor(kDriveRightA);
+        mRightDriveMotorB = createVictor(kDriveRightB);
+        Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, kLefttSideEncodeReversed);
+        Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, kRightSideEncodeReversed);
+
+        mEncoders = new DifferentialVector<>(leftEncoder, rightEncoder);
+        mAHRS = navx.getAhrs();
+        mLeftGroup = new SpeedControllerGroup(cast(mLeftDriveMotorA), cast(mLeftDriveMotorB));
+        mRightGroup = new SpeedControllerGroup(cast(mRightDriveMotorA), cast(mRightDriveMotorB));
+        mLeftGroup.setInverted(kLeftSideInverted);
+        mRightGroup.setInverted(kRightSideInverted);
+
+        mShifterSolenoid = new Solenoid(kDriveShifterSolenoidPin);
+        mShifterSolenoid.set(true);
+        mShifterSolenoid.set(false);
+
+        mCheesyDrive = new CheesyDrive(this::openLoopDrive);
+        mCheesyDrive.disableInternalDeadband();
+    }
+
+    public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
+        mInput.wantedAction = Action.OpenLoop;
+        mInput.leftPercentOutputDemand = leftSpeedDemand;
+        mInput.rightPercentOutputDemand = rightSpeedDemand;
+    }
 
     private static Encoder configEncoder(int channelA, int channelB, boolean reversed) {
         Encoder encoder = new Encoder(channelA, channelB, reversed, CounterBase.EncodingType.k4X);
@@ -46,9 +187,25 @@ public class Drive {
         return (WPI_VictorSPX) victorSPX;
     }
 
+    @InputModifier
+    public synchronized void cheesyDrive(double wheel, double throttle, boolean isQuickTurn) {
+        mCheesyDrive.cheesyDrive(linearScaleDeadband(wheel), linearScaleDeadband(throttle), isQuickTurn);
+    }
+
+    @InputModifier
+    public synchronized void setShouldSolenoidBeOnForShifter(boolean shouldSolenoidBeOnForShifter) {
+        mInput.shouldSolenoidBeOnForShifter = shouldSolenoidBeOnForShifter;
+    }
+
+    @InputModifier
+    public synchronized void setReversed(boolean reversed) {
+        mInput.shouldReverse = reversed;
+    }
+
     private static double linearScaleDeadband(double n) {
         return Math.abs(n) < kAxisDeadband ? 0 : (n - Math.copySign(kAxisDeadband, n)) / (1 - kAxisDeadband);
     }
+
 
     private enum Action {
         Brake,
