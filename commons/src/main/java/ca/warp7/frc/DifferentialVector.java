@@ -13,7 +13,7 @@ import java.util.function.Function;
  * Can be scalars (position, velocity, acceleration or
  * objects (motor controllers)
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused"})
 public class DifferentialVector<T> implements ICollectiveState {
     private T mLeft;
     private T mRight;

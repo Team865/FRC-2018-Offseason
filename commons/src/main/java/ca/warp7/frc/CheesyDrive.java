@@ -2,9 +2,6 @@ package ca.warp7.frc;
 
 public class CheesyDrive {
 
-    private final InputState mInputState = new InputState();
-    private final CurrentState mCurrentState = new CurrentState();
-
     private ISignalReceiver mReceiver;
     private boolean mApplyInternalDeadband = true;
 
@@ -36,26 +33,21 @@ public class CheesyDrive {
         mApplyInternalDeadband = false;
     }
 
-    @Deprecated
-    public void setInputsFromControls(IControlsInput controls) {
-        setInputs(controls.getWheel(), controls.getThrottle(), controls.shouldQuickTurn());
-    }
-
     public void cheesyDrive(double wheel, double throttle, boolean isQuickTurn) {
         setInputs(wheel, throttle, isQuickTurn);
         calculateFeed();
     }
 
     private void setInputs(double wheel, double throttle, boolean isQuickTurn) {
-        mInputState.wheel = wheel;
-        mInputState.throttle = throttle;
-        mInputState.quickTurn = isQuickTurn;
-        if (mInputState.quickTurn) {
-            mInputState.wheel = -mInputState.wheel;
+        mWheel = wheel;
+        mThrottle = throttle;
+        mQuickTurn = isQuickTurn;
+        if (mQuickTurn) {
+            mWheel = mWheel * -1;
         }
     }
 
-    public void calculateFeed() {
+    private void calculateFeed() {
         double rightPwm;
         double leftPwm;
         double negInertiaScalar;
@@ -65,25 +57,25 @@ public class CheesyDrive {
 
         double wheel, throttle;
         if (mApplyInternalDeadband) {
-            wheel = deadBand(mInputState.wheel);
-            throttle = deadBand(mInputState.throttle);
+            wheel = deadBand(mWheel);
+            throttle = deadBand(mThrottle);
         } else {
-            wheel = mInputState.wheel;
-            throttle = mInputState.throttle;
+            wheel = mWheel;
+            throttle = mThrottle;
         }
 
-        negInertia = wheel - mCurrentState.oldWheel;
-        mCurrentState.oldWheel = wheel;
+        negInertia = wheel - mOldWheel;
+        mOldWheel = wheel;
 
         wheel = sinScale(wheel, 0.9f, 1, 0.9f);
         negInertiaScalar = wheel * negInertia > 0 ? 2.5f : Math.abs(wheel) > .65 ? 6 : 4;
         negInertiaAccumulator = negInertia * negInertiaScalar;
         wheel += negInertiaAccumulator;
 
-        if (mInputState.quickTurn) {
+        if (mQuickTurn) {
             if (Math.abs(throttle) < 0.2) {
                 double alpha = .1f;
-                mCurrentState.quickStopAccumulator = ((1 - alpha) * mCurrentState.quickStopAccumulator) +
+                mQuickStopAccumulator = ((1 - alpha) * mQuickStopAccumulator) +
                         (alpha * Functions.limit(wheel, 1.0) * 5);
             }
             overPower = 1;
@@ -92,8 +84,8 @@ public class CheesyDrive {
         } else {
             overPower = 0;
             double sensitivity = .9;
-            angularPower = throttle * wheel * sensitivity - mCurrentState.quickStopAccumulator;
-            mCurrentState.quickStopAccumulator = wrapAccumulator(mCurrentState.quickStopAccumulator);
+            angularPower = throttle * wheel * sensitivity - mQuickStopAccumulator;
+            mQuickStopAccumulator = wrapAccumulator(mQuickStopAccumulator);
         }
 
         rightPwm = leftPwm = throttle;
@@ -119,29 +111,14 @@ public class CheesyDrive {
         }
     }
 
-    static class CurrentState {
-        double quickStopAccumulator = 0;
-        double oldWheel = 0;
-    }
-
-    static class InputState {
-        double wheel;
-        double throttle;
-        boolean quickTurn;
-    }
+    private double mQuickStopAccumulator = 0;
+    private double mOldWheel = 0;
+    private double mWheel;
+    private double mThrottle;
+    private boolean mQuickTurn;
 
     @FunctionalInterface
     public interface ISignalReceiver {
         void setDemandedDriveSpeed(double leftSpeedDemand, double rightSpeedDemand);
-    }
-
-    @SuppressWarnings("SameReturnValue")
-    @Deprecated
-    public interface IControlsInput {
-        double getWheel();
-
-        double getThrottle();
-
-        boolean shouldQuickTurn();
     }
 }

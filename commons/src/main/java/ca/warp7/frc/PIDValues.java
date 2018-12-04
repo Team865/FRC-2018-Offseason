@@ -2,6 +2,7 @@ package ca.warp7.frc;
 
 import com.stormbots.MiniPID;
 
+@SuppressWarnings("WeakerAccess")
 public class PIDValues {
 
     private double P;
