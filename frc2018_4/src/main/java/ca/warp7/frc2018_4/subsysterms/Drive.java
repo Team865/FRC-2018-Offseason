@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.*;
 
 import static ca.warp7.frc.Functions.constrainMinimum;
 import static ca.warp7.frc.Functions.limit;
+import static ca.warp7.frc.core.Robot.reportInputAndState;
 import static ca.warp7.frc2018_4.Components.navx;
 import java.util.LinkedList;
 
@@ -137,7 +138,9 @@ public class Drive implements ISubsystem {
 
     @Override
     public synchronized void onReportState() {
-
+        mState.leftVoltage = mLeftDriveMotorA.getMotorOutputVoltage();
+        mState.rightVoltage = mRightDriveMotorA.getMotorOutputVoltage();
+        reportInputAndState(this, mState, mInput);
     }
 
     @Override
@@ -164,7 +167,7 @@ public class Drive implements ISubsystem {
         mCheesyDrive.disableInternalDeadband();
     }
 
-    public synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
+    private synchronized void openLoopDrive(double leftSpeedDemand, double rightSpeedDemand) {
         mInput.wantedAction = Action.OpenLoop;
         mInput.leftPercentOutputDemand = leftSpeedDemand;
         mInput.rightPercentOutputDemand = rightSpeedDemand;
