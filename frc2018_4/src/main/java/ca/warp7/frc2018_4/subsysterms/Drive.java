@@ -48,7 +48,7 @@ public class Drive implements ISubsystem {
     }
 
     @Override
-    public void onMeasure() {
+    public synchronized void onMeasure() {
         double oldLeft = mState.leftDistance;
         double oldRight = mState.rightDistance;
         mState.leftDistance = mEncoders.getLeft().getDistance();
@@ -81,7 +81,7 @@ public class Drive implements ISubsystem {
     }
 
     @Override
-    public void onZeroSensors() {
+    public synchronized void onZeroSensors() {
         mState.leftDistance = 0.0;
         mState.rightDistance = 0.0;
         mState.predictedX = 0;
@@ -91,7 +91,7 @@ public class Drive implements ISubsystem {
     }
 
     @Override
-    public void onOutput() {
+    public synchronized void onOutput() {
         double limitedLeft = limit(mState.leftPercentOutput, kPreDriftSpeedLimit);
         double limitedRight = limit(mState.rightPercentOutput, kPreDriftSpeedLimit);
         mLeftGroup.set(limit(limitedLeft * kLeftDriftOffset, kAbsoluteMaxOutput));
@@ -106,7 +106,7 @@ public class Drive implements ISubsystem {
     }
 
     @Override
-    public void onUpdateState() {
+    public synchronized void onUpdateState() {
 
         mState.action = mInput.wantedAction;
         mState.isReversed = mInput.shouldReverse;
@@ -121,8 +121,7 @@ public class Drive implements ISubsystem {
                 double demandedRight = mInput.rightPercentOutputDemand * (mState.isReversed ? -1 : 1);
                 double leftDiff = demandedLeft - mState.leftPercentOutput;
                 double rightDiff = demandedRight - mState.rightPercentOutput;
-                // TODO clarify that the next line has rightDiff and that's correct
-                mState.leftPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(leftDiff);
+                mState.leftPercentOutput += Math.min(kMaxLinearRamp, Math.abs(leftDiff)) * Math.signum(leftDiff);
                 mState.rightPercentOutput += Math.min(kMaxLinearRamp, Math.abs(rightDiff)) * Math.signum(rightDiff);
                 mState.leftPercentOutput = constrainMinimum(mState.leftPercentOutput, kOutputPowerEpsilon);
                 mState.rightPercentOutput = constrainMinimum(mState.rightPercentOutput, kOutputPowerEpsilon);
@@ -137,12 +136,12 @@ public class Drive implements ISubsystem {
     }
 
     @Override
-    public void onReportState() {
+    public synchronized void onReportState() {
 
     }
 
     @Override
-    public void onConstruct() {
+    public synchronized void onConstruct() {
         mLeftDriveMotorA = createVictor(kDriveLeftA);
         mLeftDriveMotorB = createVictor(kDriveLeftB);
         mRightDriveMotorA = createVictor(kDriveRightA);
@@ -171,7 +170,7 @@ public class Drive implements ISubsystem {
         mInput.rightPercentOutputDemand = rightSpeedDemand;
     }
 
-    private static Encoder configEncoder(int channelA, int channelB, boolean reversed) {
+    private synchronized Encoder configEncoder(int channelA, int channelB, boolean reversed) {
         Encoder encoder = new Encoder(channelA, channelB, reversed, CounterBase.EncodingType.k4X);
         encoder.setDistancePerPulse((kWheelRadius * Math.PI) / kEncoderTicksPerRevolution);
         encoder.reset();
@@ -201,7 +200,7 @@ public class Drive implements ISubsystem {
         mInput.shouldReverse = reversed;
     }
 
-    private static double linearScaleDeadband(double n) {
+    private synchronized double linearScaleDeadband(double n) {
         return Math.abs(n) < kAxisDeadband ? 0 : (n - Math.copySign(kAxisDeadband, n)) / (1 - kAxisDeadband);
     }
 

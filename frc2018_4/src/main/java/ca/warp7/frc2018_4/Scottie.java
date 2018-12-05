@@ -4,7 +4,8 @@ import ca.warp7.frc.core.Robot;
 public class Scottie extends Robot {
     public Scottie(){
         System.out.println("Hello me is Robit");
-        setAutoMode(AutoActions.nothing,  20);
+        loader.setAutoMode(AutoActions.nothing,15);
+        setTeleop(new Controller());
     }
 
 }
