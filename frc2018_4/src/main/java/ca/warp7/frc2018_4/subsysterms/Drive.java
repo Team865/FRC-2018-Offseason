@@ -55,19 +55,21 @@ public class Drive implements ISubsystem {
         mState.leftDistance = mEncoders.getLeft().getDistance();
         mState.rightDistance = mEncoders.getRight().getDistance();
         double newTimestamp = Timer.getFPGATimestamp();
-        double dt = constrainMinimum(newTimestamp - mState._timestamp, kTimeDeltaEpsilon);
         mState._timestamp = newTimestamp;
+        double dt = constrainMinimum(newTimestamp - mState._timestamp, kTimeDeltaEpsilon);
         double dLeft = mState.leftDistance - oldLeft;
         double dRight = mState.rightDistance - oldRight;
+        double oldYaw = mState._yaw;
+        mState._yaw = mAHRS.getYaw() + 90;
+        //
         DifferentialVector<Double> dDistance = new DifferentialVector<>(dLeft, dRight);
         DifferentialVector<Double> oldRate = new DifferentialVector<>(mState.encoderRate);
         mState.encoderRate.set(mEncoders.transformed(Encoder::getRate));
+        //
         double velocitySum = mState.encoderRate.getLeft() + mState.encoderRate.getRight();
         double velocityDiff = mState.encoderRate.getLeft() - mState.encoderRate.getRight();
         mState.chassisLinearVelocity = kWheelRadius * velocitySum / 2.0;
         mState.chassisAngularVelocity = (kWheelRadius * velocityDiff) / (2.0 * kWheelBaseRadius);
-        double oldYaw = mState._yaw;
-        mState._yaw = mAHRS.getYaw() + 90;
         double yawInRadians = Unit.Degrees.toRadians(mState._yaw);
         double dAverageDistance = (dLeft + dRight) / 2.0;
         mState.predictedX += Math.cos(yawInRadians) * dAverageDistance;

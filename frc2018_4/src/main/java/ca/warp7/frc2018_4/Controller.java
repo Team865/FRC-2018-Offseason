@@ -6,6 +6,7 @@ import ca.warp7.frc.core.XboxControlsState;
 
 import ca.warp7.frc2018_4.Components.*;
 
+import static ca.warp7.frc2018_4.Components.climber;
 import static ca.warp7.frc2018_4.Components.drive;
 
 public class Controller implements IControls {
@@ -14,6 +15,10 @@ public class Controller implements IControls {
 
     @Override
     public void mainPeriodic() {
+        // Climbing
+        if (Operator.BButton == HeldDown){
+            climber.mInputState.mDemandedMotorSpeed = Operator.LeftYAxis;
+        }
 
         // Driving
         drive.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
