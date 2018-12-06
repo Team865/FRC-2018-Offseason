@@ -23,6 +23,9 @@ public class Controller implements IControls {
 
         // Superstructure
 
+        // Lift
+        //TODO add constants including exponential treatment of RightY input
+
         // Wrist
         if (Operator.XButton == HeldDown){
             wrist.mInputState.mShouldSlowFall = true;
@@ -30,7 +33,7 @@ public class Controller implements IControls {
         }
         else if (Operator.LeftBumper == HeldDown) {
             wrist.mInputState.mShouldSlowFall = false;
-            wrist.mInputState.mShouldUseTargetAngle = false;
+            wrist.mInputState.mShouldUseTargetAngle = false; //TODO once this is finished change to true
             wrist.mInputState.mDemandedWristAngle = Operator.RightYAxis;
         }
         else {

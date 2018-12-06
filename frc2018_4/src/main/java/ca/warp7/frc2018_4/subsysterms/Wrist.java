@@ -2,7 +2,9 @@ package ca.warp7.frc2018_4.subsysterms;
 
 import ca.warp7.frc.core.ISubsystem;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.stormbots.MiniPID;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 
 import static ca.warp7.frc.Functions.limit;
 import static ca.warp7.frc.core.Robot.reportInputAndState;
@@ -13,6 +15,8 @@ public class Wrist implements ISubsystem {
     private SpeedControllerGroup mWristMotorGroup;
     public InputState mInputState = new InputState();
     private State mState = new State();
+    final MiniPID wristLinearPID = new MiniPID(0, 0, 0, 0);
+
     @Override
     public void onConstruct() {
         mWristMotorGroup = new SpeedControllerGroup(new WPI_VictorSPX(kWristPin));
@@ -21,6 +25,10 @@ public class Wrist implements ISubsystem {
     @Override
     public void onDisabled() {
         mInputState.mDemandedWristAngularVelocity = 0;
+        mInputState.mShouldUseTargetAngle = false;
+        mInputState.mDemandedWristAngle = 0;
+        mInputState.mShouldSlowFall = false;
+        mWristMotorGroup.disable();
     }
 
     @Override
@@ -35,7 +43,13 @@ public class Wrist implements ISubsystem {
 
     @Override
     public void onMeasure() {
-
+        /*
+        // Uncomment once value is available for kWristDegreesPerMotorRotation
+        double old_time = mState._timestamp;
+        mState._timestamp = Timer.getFPGATimestamp();
+        double dt = mState._timestamp - old_time;
+        mState.mCurrentPredictedAngle+= mState.mSpeed * dt * kWristDegreesPerMotorRotation;
+        */
     }
 
     @Override
@@ -50,12 +64,14 @@ public class Wrist implements ISubsystem {
 
     @Override
     public void onUpdateState() {
+        // TODO use actions and a switch statement
         if (mInputState.mShouldSlowFall){
             // TODO add general ramping method to commons
             mState.mSpeed = (mState.mSpeed - kSlowFallSpeed)/kRandomDiffDivision;
+            onZeroSensors();
         }
         else if (mInputState.mShouldUseTargetAngle) {
-            // TODO add this
+
         }
         else{
             mState.mSpeed = (mState.mSpeed - mInputState.mDemandedWristAngularVelocity) / kRandomDiffDivision;
@@ -78,5 +94,6 @@ public class Wrist implements ISubsystem {
     public class State{
         double mSpeed;
         double mCurrentPredictedAngle;
+        double _timestamp;
     }
 }

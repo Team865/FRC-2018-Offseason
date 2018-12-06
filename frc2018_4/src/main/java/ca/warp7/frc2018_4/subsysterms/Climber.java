@@ -23,6 +23,7 @@ public class Climber implements ISubsystem {
     @Override
     public void onDisabled() {
         mInputState.mDemandedMotorSpeed = 0;
+        mClimbMotorGroup.disable();
     }
     @Override
     public void onOutput() {
