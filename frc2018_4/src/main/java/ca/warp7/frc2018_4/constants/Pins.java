@@ -25,4 +25,5 @@ public class Pins {
     public static final int kLiftPin = 0;
     public static final int kLimitSwitchPin = 9;
     public static final int kClimberPin = 9;
+    public static final int kWristPin = 7;
 }

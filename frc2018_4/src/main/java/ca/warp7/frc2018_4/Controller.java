@@ -8,6 +8,7 @@ import ca.warp7.frc2018_4.Components.*;
 
 import static ca.warp7.frc2018_4.Components.climber;
 import static ca.warp7.frc2018_4.Components.drive;
+import static ca.warp7.frc2018_4.Components.wrist;
 
 public class Controller implements IControls {
     XboxControlsState Driver = RobotLoader.createXboxController(0, true);
@@ -19,6 +20,9 @@ public class Controller implements IControls {
         if (Operator.BButton == HeldDown){
             climber.mInputState.mDemandedMotorSpeed = Operator.LeftYAxis;
         }
+
+        // Wrist
+        wrist.mInputState.mDemandedWristAngularVelocity = Operator.RightYAxis;
 
         // Driving
         drive.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
