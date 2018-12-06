@@ -21,8 +21,23 @@ public class Controller implements IControls {
             climber.mInputState.mDemandedMotorSpeed = Operator.LeftYAxis;
         }
 
+        // Superstructure
+
         // Wrist
-        wrist.mInputState.mDemandedWristAngularVelocity = Operator.RightYAxis;
+        if (Operator.XButton == HeldDown){
+            wrist.mInputState.mShouldSlowFall = true;
+            wrist.mInputState.mShouldUseTargetAngle = false;
+        }
+        else if (Operator.LeftBumper == HeldDown) {
+            wrist.mInputState.mShouldSlowFall = false;
+            wrist.mInputState.mShouldUseTargetAngle = false;
+            wrist.mInputState.mDemandedWristAngle = Operator.RightYAxis;
+        }
+        else {
+            wrist.mInputState.mShouldSlowFall = false;
+            wrist.mInputState.mShouldUseTargetAngle = false;
+            wrist.mInputState.mDemandedWristAngularVelocity = Operator.RightYAxis;
+        }
 
         // Driving
         drive.setShouldSolenoidBeOnForShifter(Driver.RightBumper != HeldDown);
