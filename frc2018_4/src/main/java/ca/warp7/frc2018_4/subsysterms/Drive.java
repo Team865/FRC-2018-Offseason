@@ -24,9 +24,7 @@ public class Drive implements ISubsystem {
     private CheesyDrive mCheesyDrive;
     private AHRS mAHRS;
     private VictorSPX mLeftDriveMotorA;
-    private VictorSPX mLeftDriveMotorB;
     private VictorSPX mRightDriveMotorA;
-    private VictorSPX mRightDriveMotorB;
     private SpeedControllerGroup mLeftGroup;
     private SpeedControllerGroup mRightGroup;
     private DifferentialVector<Encoder> mEncoders;
@@ -148,9 +146,9 @@ public class Drive implements ISubsystem {
     @Override
     public synchronized void onConstruct() {
         mLeftDriveMotorA = createVictor(kDriveLeftA);
-        mLeftDriveMotorB = createVictor(kDriveLeftB);
+        VictorSPX mLeftDriveMotorB = createVictor(kDriveLeftB);
         mRightDriveMotorA = createVictor(kDriveRightA);
-        mRightDriveMotorB = createVictor(kDriveRightB);
+        VictorSPX mRightDriveMotorB = createVictor(kDriveRightB);
         Encoder leftEncoder = configEncoder(kDriveLeftEncoderA, kDriveLeftEncoderB, kLefttSideEncodeReversed);
         Encoder rightEncoder = configEncoder(kDriveRightEncoderA, kDriveRightEncoderB, kRightSideEncodeReversed);
 
