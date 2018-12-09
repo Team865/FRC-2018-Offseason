@@ -32,7 +32,7 @@ public class Lift implements ISubsystem {
 
     @Override
     public void onDisabled() {
-
+        mLiftMotorGroup.disable();
     }
 
     @Override

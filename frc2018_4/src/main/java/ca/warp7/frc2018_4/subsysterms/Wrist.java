@@ -43,13 +43,12 @@ public class Wrist implements ISubsystem {
 
     @Override
     public void onMeasure() {
-        /*
-        // Uncomment once value is available for kWristDegreesPerMotorRotation
+
         double old_time = mState._timestamp;
         mState._timestamp = Timer.getFPGATimestamp();
         double dt = mState._timestamp - old_time;
         mState.mCurrentPredictedAngle+= mState.mSpeed * dt * kWristDegreesPerMotorRotation;
-        */
+
     }
 
     @Override

@@ -8,5 +8,5 @@ public class WristConstants {
     public static final double kWristSlowFallTargetSpeed = 0.1;
 
     //TODO get value and make final
-    public static double kWristDegreesPerMotorRotation;
+    public static double kWristDegreesPerMotorRotation = 1/36000 ;
 }
