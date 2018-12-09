@@ -22,8 +22,13 @@ public class Pins {
     // Mechanism motor and encoder pins
     public static final int kIntakeLeftPin = 4;
     public static final int kIntakeRightPin = 6;
-    public static final int kLiftPin = 0;
+
+    public static final int kLiftMotorPin = 0;
+    public static final int kLiftEncoderAPin = 4;
+    public static final int kLiftEncoderBPin = 5;
     public static final int kLimitSwitchPin = 9;
+
     public static final int kClimberPin = 9;
+
     public static final int kWristPin = 7;
 }

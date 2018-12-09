@@ -6,9 +6,10 @@ import ca.warp7.frc.core.XboxControlsState;
 
 import ca.warp7.frc2018_4.Components.*;
 
-import static ca.warp7.frc2018_4.Components.climber;
-import static ca.warp7.frc2018_4.Components.drive;
-import static ca.warp7.frc2018_4.Components.wrist;
+import static ca.warp7.frc2018_4.Components.*;
+import static ca.warp7.frc2018_4.constants.LiftConstants.kLiftInputExponentialScaleValue;
+import static ca.warp7.frc2018_4.constants.LiftConstants.kSetPoint1;
+import static ca.warp7.frc2018_4.constants.LiftConstants.kSetPoint2;
 
 public class Controller implements IControls {
     XboxControlsState Driver = RobotLoader.createXboxController(0, true);
@@ -24,7 +25,15 @@ public class Controller implements IControls {
         // Superstructure
 
         // Lift
-        //TODO add constants including exponential treatment of RightY input
+        if (Operator.RightTrigger == HeldDown && (Operator.XButton != HeldDown)){
+            lift.mInputState.mDemandedHeight = kSetPoint1;
+        }
+        else if (Operator.XButton == HeldDown && (Operator.RightTrigger != HeldDown)){
+            lift.mInputState.mDemandedHeight = kSetPoint2;
+        }
+        else {
+            if (Operator.AButton == HeldDown) lift.mInputState.mDemandedHeight = Math.pow(Operator.LeftYAxis, kLiftInputExponentialScaleValue);
+        }
 
         // Wrist
         if (Operator.XButton == HeldDown){
