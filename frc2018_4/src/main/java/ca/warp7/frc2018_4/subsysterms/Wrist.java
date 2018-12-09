@@ -67,7 +67,7 @@ public class Wrist implements ISubsystem {
         // TODO use actions and a switch statement
         if (mInputState.mShouldSlowFall){
             // TODO add general ramping method to commons
-            mState.mSpeed = (mState.mSpeed - kSlowFallSpeed)/kRandomDiffDivision;
+            mState.mSpeed = slowFallOuput(mState.mSpeed);
             onZeroSensors();
         }
         else if (mInputState.mShouldUseTargetAngle) {
@@ -95,5 +95,9 @@ public class Wrist implements ISubsystem {
         double mSpeed;
         double mCurrentPredictedAngle;
         double _timestamp;
+    }
+
+    private static double slowFallOuput(double currentSpeed){
+        return currentSpeed + (kWristSlowFallTargetSpeed - currentSpeed) / kRandomDiffDivision;
     }
 }

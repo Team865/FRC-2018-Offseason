@@ -5,7 +5,7 @@ public class WristConstants {
     public static final double kRandomDiffDivision = 6;
     public static final boolean kWristOverridesSuperstructure = true;
     public static final double kMaxOutputPower = 0.5;
-    public static final double kSlowFallSpeed = 0.1;
+    public static final double kWristSlowFallTargetSpeed = 0.1;
 
     //TODO get value and make final
     public static double kWristDegreesPerMotorRotation;
