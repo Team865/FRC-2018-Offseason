@@ -71,7 +71,7 @@ public class Wrist implements ISubsystem {
             onZeroSensors();
         }
         else if (mInputState.mShouldUseTargetAngle) {
-
+            // TODO add dead reckoning to target angle based on time and speeds
         }
         else{
             mState.mSpeed = (mState.mSpeed - mInputState.mDemandedWristAngularVelocity) / kRandomDiffDivision;

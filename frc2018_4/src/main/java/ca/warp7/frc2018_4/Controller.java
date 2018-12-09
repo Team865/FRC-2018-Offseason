@@ -4,16 +4,14 @@ import ca.warp7.frc.core.IControls;
 import ca.warp7.frc.core.RobotLoader;
 import ca.warp7.frc.core.XboxControlsState;
 
-import ca.warp7.frc2018_4.Components.*;
-
 import static ca.warp7.frc2018_4.Components.*;
 import static ca.warp7.frc2018_4.constants.LiftConstants.kLiftInputExponentialScaleValue;
 import static ca.warp7.frc2018_4.constants.LiftConstants.kSetPoint1;
 import static ca.warp7.frc2018_4.constants.LiftConstants.kSetPoint2;
 
 public class Controller implements IControls {
-    XboxControlsState Driver = RobotLoader.createXboxController(0, true);
-    XboxControlsState Operator = RobotLoader.createXboxController(1, true);
+    private XboxControlsState Driver = RobotLoader.createXboxController(0, true);
+    private XboxControlsState Operator = RobotLoader.createXboxController(1, true);
 
     @Override
     public void mainPeriodic() {

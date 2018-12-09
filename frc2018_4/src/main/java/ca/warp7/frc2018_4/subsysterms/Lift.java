@@ -16,7 +16,7 @@ public class Lift implements ISubsystem {
     private DigitalInput mLimitSwitch;
     private MiniPID liftPID;
     public InputState mInputState;
-    public State mState;
+    private State mState;
 
     @Override
     public void onConstruct() {
