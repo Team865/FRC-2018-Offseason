@@ -6,7 +6,8 @@ public class WristConstants {
     public static final boolean kWristOverridesSuperstructure = true;
     public static final double kMaxOutputPower = 0.5;
     public static final double kWristSlowFallTargetSpeed = 0.1;
-
-    //TODO get value and make final
-    public static double kWristDegreesPerMotorRotation = 1/36000 ;
+    public static final double kBagMotorGenericTheoreticalApproximateMaxSpeed = 13180; //TODO Put this in commons?
+    public static final double kReduction = 100 / 1;
+    public static final double kTheoreticalMaxRPM = kBagMotorGenericTheoreticalApproximateMaxSpeed / kReduction;
+    public static final boolean kIsWristMotorReversed = false; //TODO verify this
 }

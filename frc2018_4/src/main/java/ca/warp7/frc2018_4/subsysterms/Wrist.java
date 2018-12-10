@@ -47,8 +47,13 @@ public class Wrist implements ISubsystem {
         double old_time = mState._timestamp;
         mState._timestamp = Timer.getFPGATimestamp();
         double dt = mState._timestamp - old_time;
-        mState.mCurrentPredictedAngle+= mState.mSpeed * dt * kWristDegreesPerMotorRotation;
+        if (kIsWristMotorReversed){
+            mState.mCurrentPredictedAngle -= mState.mSpeed * dt * kTheoreticalMaxRPM;
+        }
+        else {
+            mState.mCurrentPredictedAngle += mState.mSpeed * dt * kTheoreticalMaxRPM;
 
+        }
     }
 
     @Override
