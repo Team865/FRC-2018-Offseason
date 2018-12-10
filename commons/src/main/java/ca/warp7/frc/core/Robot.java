@@ -1,6 +1,5 @@
 package ca.warp7.frc.core;
 
-import ca.warp7.action.IAction;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -21,7 +20,6 @@ public abstract class Robot extends IterativeRobot {
         state.attach();
         mLoopsManager.setComponentsSource(mComponents);
         mComponents.reflectFromPackage(getClass().getPackage().getName());
-        this.onCreate();
         if (mComponents.isReadyToStart()) super.startCompetition();
         else System.out.println("ERROR Robot code does not have components or teleop code");
     }
@@ -62,15 +60,8 @@ public abstract class Robot extends IterativeRobot {
         state.logTest();
     }
 
-    protected void onCreate() {
-    }
-
     protected final void setTeleop(IControls loop) {
         mComponents.setControllerLoop(loop);
-    }
-
-    protected final void setAutoMode(IAction.Mode mode, int i) {
-        loader.setAutoMode(mode, 15);
     }
 
     public static void println(Object o) {
