@@ -8,9 +8,14 @@ import edu.wpi.first.wpilibj.IterativeRobot
 class Scottie : IterativeRobot() {
 
     override fun robotInit() {
-        Robot.initSystems(
-                DriveOutput,
-                NavX
+        println("Hello me is robit!")
+        RobotKt.init(
+                inputSystems = arrayOf(
+                        NavX
+                ),
+                outputSystems = arrayOf(
+                        DriveOutput
+                )
         )
     }
 
@@ -19,15 +24,18 @@ class Scottie : IterativeRobot() {
     }
 
     override fun autonomousInit() {
-        Robot.initAutonomousMode(null, 15.0)
+        RobotKt.initAuto(
+                mode = null,
+                timeout = 15.0
+        )
     }
 
     override fun teleopInit() {
-        Robot.initTeleop(Controls)
+        RobotKt.initTeleop(controlLoop = Controls)
     }
 
     override fun testInit() {
-        Robot.initTest(Controls)
+        RobotKt.initTest(controlLoop = Controls)
     }
 
     override fun robotPeriodic() = Unit

@@ -77,7 +77,7 @@ public interface Robot {
      * Defines a periodic procedure getting input from the controllers
      */
 
-    interface Controls {
+    interface ControlLoop {
 
         int Pressed = 9;
         int HeldDown = 19;
@@ -108,10 +108,10 @@ public interface Robot {
     static void initAutonomousMode(IAction.Mode mode, double timeout) {
     }
 
-    static void initTeleop(Controls teleopControls) {
+    static void initTeleop(ControlLoop teleopControls) {
     }
 
-    static void initTest(Controls testControls) {
+    static void initTest(ControlLoop testControls) {
     }
 
     static double limit(double val, double lim) {

@@ -3,12 +3,12 @@ package ca.warp7.frc2018_5
 import ca.warp7.frc.CheesyDrive
 import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.Robot
-import ca.warp7.frc.next.Robot.Controls.HeldDown
+import ca.warp7.frc.next.Robot.ControlLoop.HeldDown
 import ca.warp7.frc2018_5.actions.OpenLoopDrive
 import ca.warp7.frc2018_5.output.DriveOutput
 
 
-object Controls : Robot.Controls {
+object Controls : Robot.ControlLoop {
 
     private val driver: XboxControlsState = Robot.getController(4, true)
 
