@@ -95,6 +95,9 @@ public interface Robot {
     static void runAction(IAction action) {
     }
 
+    static void runAction(System system, IAction action) {
+    }
+
     static XboxControlsState getController(int port, boolean isActive) {
         return null;
     }
