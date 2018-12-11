@@ -2,15 +2,16 @@ package ca.warp7.frc2018_5
 
 import ca.warp7.frc.CheesyDrive
 import ca.warp7.frc.core.XboxControlsState
-import ca.warp7.frc.next.Robot
-import ca.warp7.frc.next.Robot.ControlLoop.HeldDown
+import ca.warp7.frc.kt.RobotKt
+import ca.warp7.frc.next.ControlLoop
+import ca.warp7.frc.next.ControlLoop.HeldDown
 import ca.warp7.frc2018_5.actions.OpenLoopDrive
 import ca.warp7.frc2018_5.output.DriveOutput
 
 
-object Controls : Robot.ControlLoop {
+object Controls : ControlLoop {
 
-    private val driver: XboxControlsState = Robot.getController(4, true)
+    private val driver: XboxControlsState = RobotKt.getController(4, true)
 
     private val cheesyDrive = CheesyDrive { leftSpeedDemand, rightSpeedDemand ->
         OpenLoopDrive.leftPercent = leftSpeedDemand

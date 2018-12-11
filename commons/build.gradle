@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 wpi {
@@ -18,4 +19,17 @@ dependencies {
     compile fileTree(dir: '../libs', include: ['*.jar'])
     compile project(":action")
     compile wpilib()
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

@@ -1,10 +1,10 @@
 package ca.warp7.frc2018_5.input
 
-import ca.warp7.frc.next.Robot
+import ca.warp7.frc.next.InputSystem
 import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.SPI
 
-object NavX : Robot.InputSystem {
+object NavX : InputSystem {
 
     private val mAHRS = AHRS(SPI.Port.kMXP)
 

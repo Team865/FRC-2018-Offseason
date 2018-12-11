@@ -1,12 +1,12 @@
 package ca.warp7.frc2018_5.output
 
-import ca.warp7.frc.next.Robot
+import ca.warp7.frc.next.OutputSystem
 import ca.warp7.frc2018_5.constants.RobotPins.*
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.Solenoid
 
-object DriveOutput : Robot.OutputSystem {
+object DriveOutput : OutputSystem {
 
     private val mLeftMaster: VictorSPX = VictorSPX(kDriveLeftA)
     private val mRightMaster: VictorSPX = VictorSPX(kDriveRightA)

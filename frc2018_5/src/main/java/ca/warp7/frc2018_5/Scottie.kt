@@ -1,6 +1,6 @@
 package ca.warp7.frc2018_5
 
-import ca.warp7.frc.next.Robot
+import ca.warp7.frc.kt.RobotKt
 import ca.warp7.frc2018_5.input.NavX
 import ca.warp7.frc2018_5.output.DriveOutput
 import edu.wpi.first.wpilibj.IterativeRobot
@@ -20,7 +20,7 @@ class Scottie : IterativeRobot() {
     }
 
     override fun disabledInit() {
-        Robot.disable()
+        RobotKt.disable()
     }
 
     override fun autonomousInit() {
