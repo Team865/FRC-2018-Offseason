@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_5.io
+package ca.warp7.frc2018_5.output
 
 import ca.warp7.frc.next.Robot
 import ca.warp7.frc2018_5.constants.RobotPins.*

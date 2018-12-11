@@ -6,7 +6,7 @@ import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.Robot
 import ca.warp7.frc.next.Robot.Controls.HeldDown
 import ca.warp7.frc2018_5.actions.OpenLoopDrive
-import ca.warp7.frc2018_5.io.DriveOutput
+import ca.warp7.frc2018_5.output.DriveOutput
 
 object Controls : IControls {
 

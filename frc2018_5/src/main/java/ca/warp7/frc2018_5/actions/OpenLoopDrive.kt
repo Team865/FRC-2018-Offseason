@@ -1,7 +1,7 @@
 package ca.warp7.frc2018_5.actions
 
 import ca.warp7.action.IAction
-import ca.warp7.frc2018_5.io.DriveOutput
+import ca.warp7.frc2018_5.output.DriveOutput
 
 object OpenLoopDrive : IAction {
 
