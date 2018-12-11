@@ -1,7 +1,6 @@
 package ca.warp7.frc.next;
 
 import ca.warp7.action.IAction;
-import ca.warp7.frc.core.IControls;
 import ca.warp7.frc.core.XboxControlsState;
 
 @SuppressWarnings("unused")
@@ -78,7 +77,6 @@ public interface Robot {
      * Defines a periodic procedure getting input from the controllers
      */
 
-    @FunctionalInterface
     interface Controls {
 
         int Pressed = 9;
@@ -86,10 +84,9 @@ public interface Robot {
         int Released = 10;
         int KeptUp = 0;
 
-        void mainPeriodic();
+        void init();
 
-        default void testPeriodic() {
-        }
+        void periodic();
     }
 
     static void runAction(IAction action) {
@@ -111,10 +108,10 @@ public interface Robot {
     static void initAutonomousMode(IAction.Mode mode, double timeout) {
     }
 
-    static void initTeleop(IControls teleopControls) {
+    static void initTeleop(Controls teleopControls) {
     }
 
-    static void initTest(IControls testControls) {
+    static void initTest(Controls testControls) {
     }
 
     static double limit(double val, double lim) {

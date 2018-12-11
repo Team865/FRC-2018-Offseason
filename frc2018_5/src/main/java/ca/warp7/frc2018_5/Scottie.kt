@@ -1,8 +1,7 @@
 package ca.warp7.frc2018_5
 
-import ca.warp7.action.IAction
-import ca.warp7.action.impl.ActionMode
 import ca.warp7.frc.next.Robot
+import ca.warp7.frc2018_5.input.NavX
 import ca.warp7.frc2018_5.output.DriveOutput
 import edu.wpi.first.wpilibj.IterativeRobot
 
@@ -10,7 +9,8 @@ class Scottie : IterativeRobot() {
 
     override fun robotInit() {
         Robot.initSystems(
-                DriveOutput
+                DriveOutput,
+                NavX
         )
     }
 
@@ -19,19 +19,15 @@ class Scottie : IterativeRobot() {
     }
 
     override fun autonomousInit() {
-        Robot.initAutonomousMode(object : ActionMode() {
-            override fun getAction(): IAction {
-                return async()
-            }
-        }, 15.0)
+        Robot.initAutonomousMode(null, 15.0)
     }
 
     override fun teleopInit() {
-        Robot.initTeleop(TeleopRemote())
+        Robot.initTeleop(Controls)
     }
 
     override fun testInit() {
-        Robot.initTest(null)
+        Robot.initTest(Controls)
     }
 
     override fun robotPeriodic() = Unit

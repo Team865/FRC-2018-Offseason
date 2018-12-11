@@ -18,12 +18,10 @@ object DriveOutput : Robot.OutputSystem {
 
     init {
         mRightMaster.inverted = true
-
         val leftFollower = VictorSPX(kDriveLeftB)
         val rightFollower = VictorSPX(kDriveRightB)
         leftFollower.set(ControlMode.Follower, mLeftMaster.deviceID.toDouble())
         rightFollower.set(ControlMode.Follower, mRightMaster.deviceID.toDouble())
-
         mShifterSolenoid.set(true)
         mShifterSolenoid.set(false)
     }
@@ -36,6 +34,8 @@ object DriveOutput : Robot.OutputSystem {
 
     @Synchronized
     override fun onOutput() {
+        mLeftMaster.set(ControlMode.PercentOutput, leftPercentOutput)
+        mRightMaster.set(ControlMode.PercentOutput, rightPercentOutput)
         if (solenoidOnForShifter) {
             if (!mShifterSolenoid.get()) {
                 mShifterSolenoid.set(true)
@@ -43,8 +43,5 @@ object DriveOutput : Robot.OutputSystem {
         } else if (mShifterSolenoid.get()) {
             mShifterSolenoid.set(false)
         }
-
-        mLeftMaster.set(ControlMode.PercentOutput, leftPercentOutput)
-        mRightMaster.set(ControlMode.PercentOutput, rightPercentOutput)
     }
 }

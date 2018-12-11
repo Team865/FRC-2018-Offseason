@@ -5,14 +5,10 @@ import ca.warp7.frc2018_5.output.DriveOutput
 
 object OpenLoopDrive : IAction {
 
-    private var leftPercent = 0.0
-    private var rightPercent = 0.0
+    var leftPercent = 0.0
+    var rightPercent = 0.0
 
-    fun of(left: Double, right: Double): OpenLoopDrive {
-        leftPercent = left
-        rightPercent = right
-        return this
-    }
+    var brakeWhenDone = true
 
     override fun start() {
     }
@@ -27,7 +23,9 @@ object OpenLoopDrive : IAction {
     }
 
     override fun stop() {
-        DriveOutput.leftPercentOutput = 0.0
-        DriveOutput.rightPercentOutput = 0.0
+        if (brakeWhenDone) {
+            DriveOutput.leftPercentOutput = 0.0
+            DriveOutput.rightPercentOutput = 0.0
+        }
     }
 }
