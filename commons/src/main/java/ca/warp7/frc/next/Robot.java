@@ -11,7 +11,7 @@ public interface Robot {
     static void runAction(OutputSystem system, IAction action) {
     }
 
-    static XboxControlsState getController(int port, boolean isActive) {
+    static XboxControlsState getXboxController(int port, boolean isActive) {
         return null;
     }
 
@@ -21,15 +21,15 @@ public interface Robot {
     static void setOutputSystems(OutputSystem... outputSystems) {
     }
 
-    static void disable() {
+    static void disableOutputs() {
     }
 
     static void initAutonomousMode(IAction.Mode mode, double timeout) {
     }
 
-    static void initTeleop(ControlLoop teleopControls) {
+    static void initTeleopControls(ControlLoop teleopControls) {
     }
 
-    static void initTest(ControlLoop testControls) {
+    static void initTestControls(ControlLoop testControls) {
     }
 }

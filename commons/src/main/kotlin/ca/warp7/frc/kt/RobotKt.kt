@@ -5,37 +5,37 @@ import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.InputSystem
 import ca.warp7.frc.next.OutputSystem
-import ca.warp7.frc.next.Robot
+import ca.warp7.frc.next.Robot.*
 
 @Suppress("unused")
 object RobotKt {
-    fun assign(actionToSystem: Pair<IAction, OutputSystem>, forceAssign: Boolean = true) {
-        Robot.runAction(actionToSystem.second, actionToSystem.first)
+    fun assign(actionToOutput: Pair<IAction, OutputSystem>, forceAssign: Boolean = true) {
+        runAction(actionToOutput.second, actionToOutput.first)
     }
 
     fun run(action: IAction) {
-        Robot.runAction(action)
+        runAction(action)
     }
 
     fun initAuto(mode: IAction.Mode?, timeout: Double = 15.0) {
-        Robot.initAutonomousMode(mode, timeout)
+        initAutonomousMode(mode, timeout)
     }
 
     fun initTeleop(controlLoop: ControlLoop) {
-        Robot.initTeleop(controlLoop)
+        initTeleopControls(controlLoop)
     }
 
     fun initTest(controlLoop: ControlLoop) {
-        Robot.initTest(controlLoop)
+        initTestControls(controlLoop)
     }
 
     fun init(inputSystems: Array<InputSystem>, outputSystems: Array<OutputSystem>) {
-        Robot.setInputSystems(*inputSystems)
-        Robot.setOutputSystems(*outputSystems)
+        setInputSystems(*inputSystems)
+        setOutputSystems(*outputSystems)
     }
 
     fun disable() {
-        Robot.disable()
+        disableOutputs()
     }
 
     fun limit(value: Double, lim: Double): Double {
@@ -44,6 +44,6 @@ object RobotKt {
     }
 
     fun getController(port: Int, isActive: Boolean): XboxControlsState {
-        return Robot.getController(port, isActive)
+        return getXboxController(port, isActive)
     }
 }
