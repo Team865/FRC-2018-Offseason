@@ -4,7 +4,6 @@ import ca.warp7.action.impl.Singleton
 import ca.warp7.frc.kt.Robot
 import ca.warp7.frc2018_5.output.DriveOutput
 import ca.warp7.frc2018_5.state.drive.OpenLoopDrive
-import ca.warp7.frc2018_5.state.drive.StopDrive
 
 class DriveForTime(private val left: Double,
                    private val right: Double,
@@ -21,6 +20,6 @@ class DriveForTime(private val left: Double,
 
     override fun stop() {
         Robot.unlockStates()
-        Robot.setState { StopDrive to DriveOutput }
+        Robot.setIdle { DriveOutput }
     }
 }

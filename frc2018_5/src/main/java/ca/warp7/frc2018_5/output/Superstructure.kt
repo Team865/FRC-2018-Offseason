@@ -12,6 +12,10 @@ object Superstructure : OutputSystem {
         compressor.closedLoopControl = false
     }
 
+    override fun onIdle() {
+        onDisabled()
+    }
+
     override fun onOutput() {
         compressor.closedLoopControl = compressorOn
     }

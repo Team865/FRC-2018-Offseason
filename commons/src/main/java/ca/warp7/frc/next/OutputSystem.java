@@ -11,22 +11,9 @@ public interface OutputSystem {
     default void onDisabled() {
     }
 
-    /**
-     * <p>Called at the start of auto for initial setup</p>
-     *
-     * <p>Auto loops don't start until this method returns, therefore the implementation
-     * must execute quickly</p>
-     */
-    default void onAutonomousInit() {
-    }
 
-    /**
-     * <p>Called at the start of Teleop for initial setup</p>
-     *
-     * <p>Teleop loops don't start until this method returns, therefore the implementation
-     * must execute quickly</p>
-     */
-    default void onTeleopInit() {
+    default void onIdle() {
+        onDisabled();
     }
 
     /**

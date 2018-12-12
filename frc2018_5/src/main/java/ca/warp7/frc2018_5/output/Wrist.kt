@@ -15,6 +15,10 @@ object Wrist : OutputSystem {
         wristMaster.set(ControlMode.Disabled, 0.0)
     }
 
+    override fun onIdle() {
+        onDisabled()
+    }
+
     @Synchronized
     override fun onOutput() {
         wristMaster.set(ControlMode.PercentOutput, percentOutput)

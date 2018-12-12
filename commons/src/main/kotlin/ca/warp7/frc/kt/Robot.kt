@@ -29,6 +29,9 @@ object Robot {
         val callerClass = Class.forName(caller)
     }
 
+    fun setIdle(toOutput: () -> OutputSystem) {
+    }
+
     fun run(action: IAction) {
         runAction(action)
     }

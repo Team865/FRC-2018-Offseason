@@ -15,6 +15,10 @@ object Climber : OutputSystem {
         climberMaster.set(ControlMode.Disabled, 0.0)
     }
 
+    override fun onIdle() {
+        onDisabled()
+    }
+
     @Synchronized
     override fun onOutput() {
         climberMaster.set(ControlMode.PercentOutput, percentOutput)

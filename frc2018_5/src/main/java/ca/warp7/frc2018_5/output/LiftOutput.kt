@@ -15,6 +15,10 @@ object LiftOutput : OutputSystem {
         liftMaster.set(ControlMode.Disabled, 0.0)
     }
 
+    override fun onIdle() {
+        super.onDisabled()
+    }
+
     @Synchronized
     override fun onOutput() {
         liftMaster.set(ControlMode.PercentOutput, percentOutput)

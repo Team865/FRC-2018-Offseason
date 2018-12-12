@@ -32,6 +32,10 @@ object DriveOutput : OutputSystem {
         rightMaster.set(ControlMode.Disabled, 0.0)
     }
 
+    override fun onIdle() {
+        onDisabled()
+    }
+
     @Synchronized
     override fun onOutput() {
         leftMaster.set(ControlMode.PercentOutput, leftPercentOutput)
