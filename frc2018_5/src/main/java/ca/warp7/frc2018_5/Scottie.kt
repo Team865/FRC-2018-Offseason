@@ -1,6 +1,7 @@
 package ca.warp7.frc2018_5
 
-import ca.warp7.frc.kt.RobotKt
+import ca.warp7.frc.kt.Robot
+import ca.warp7.frc2018_5.auto.Baseline
 import ca.warp7.frc2018_5.input.DriveInput
 import ca.warp7.frc2018_5.input.LiftInput
 import ca.warp7.frc2018_5.input.NavX
@@ -12,7 +13,7 @@ class Scottie : IterativeRobot() {
 
     override fun robotInit() {
         println("Hello me is robit!")
-        RobotKt.init(
+        Robot.init(
                 inputSystems = arrayOf(
                         DriveInput,
                         LiftInput,
@@ -31,22 +32,22 @@ class Scottie : IterativeRobot() {
     }
 
     override fun disabledInit() {
-        RobotKt.disable()
+        Robot.disable()
     }
 
     override fun autonomousInit() {
-        RobotKt.initAuto(
-                mode = null,
+        Robot.initAuto(
+                mode = Baseline,
                 timeout = 15.0
         )
     }
 
     override fun teleopInit() {
-        RobotKt.initTeleop(controlLoop = Controls)
+        Robot.initTeleop(controlLoop = Controls)
     }
 
     override fun testInit() {
-        RobotKt.initTest(controlLoop = Controls)
+        Robot.initTest(controlLoop = Controls)
     }
 
     override fun robotPeriodic() = Unit

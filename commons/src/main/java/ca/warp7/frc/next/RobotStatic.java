@@ -3,7 +3,7 @@ package ca.warp7.frc.next;
 import ca.warp7.action.IAction;
 import ca.warp7.frc.core.XboxControlsState;
 
-public interface Robot {
+public interface RobotStatic {
 
     static void runAction(IAction action) {
     }

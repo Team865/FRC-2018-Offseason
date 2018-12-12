@@ -19,7 +19,7 @@ class RobotImpl {
         try {
             return Class.forName(caller.getClassName());
         } catch (ClassNotFoundException e) {
-            return Robot.class;
+            return RobotImpl.class;
         }
     }
 }

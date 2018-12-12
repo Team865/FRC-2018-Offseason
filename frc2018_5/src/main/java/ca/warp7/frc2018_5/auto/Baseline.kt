@@ -1,12 +1,11 @@
 package ca.warp7.frc2018_5.auto
 
 import ca.warp7.action.IAction
-import ca.warp7.frc.kt.ModeKt
-import ca.warp7.frc2018_5.output.DriveOutput
-import ca.warp7.frc2018_5.states.OpenLoopDrive
+import ca.warp7.action.impl.ActionMode
+import ca.warp7.frc2018_5.actions.DriveForTime
 
-object Baseline : ModeKt() {
+object Baseline : ActionMode() {
     override fun getAction(): IAction {
-        return setState(OpenLoopDrive.of(0.5, 0.5) to DriveOutput).waitFor(3.0)
+        return DriveForTime(0.5, 0.5, 2.0)
     }
 }

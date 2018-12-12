@@ -5,12 +5,16 @@ import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.InputSystem
 import ca.warp7.frc.next.OutputSystem
-import ca.warp7.frc.next.Robot.*
+import ca.warp7.frc.next.RobotStatic.*
 
 @Suppress("unused")
-object RobotKt {
-    fun setState(toOutput: Pair<IAction, OutputSystem>, forceAssign: Boolean = true) {
+object Robot {
+    fun setState(toOutput: Pair<IAction, OutputSystem>, lockOutput: Boolean = false) {
         runAction(toOutput.second, toOutput.first)
+    }
+
+    fun clearState(outputSystem: OutputSystem) {
+        runAction(outputSystem, null)
     }
 
     fun run(action: IAction) {
@@ -40,7 +44,7 @@ object RobotKt {
 
     fun limit(value: Double, lim: Double): Double {
         val absLim = Math.abs(lim)
-        return Math.max(-absLim, Math.min(value, absLim))
+        return Math.max(-1 * absLim, Math.min(value, absLim))
     }
 
     fun getController(port: Int, isActive: Boolean): XboxControlsState {
