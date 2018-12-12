@@ -15,6 +15,7 @@ object DriveInput : InputSystem {
     var rightDistance = 0.0
     var leftRate = 0.0
     var rightRate = 0.0
+    var averageDistance = 0.0
 
     init {
         leftEncoder.distancePerPulse = (kWheelRadius * Math.PI) / kEncoderTicksPerRevolution * 0.0254
@@ -25,6 +26,7 @@ object DriveInput : InputSystem {
     override fun onMeasure(dt: Double) {
         leftDistance = leftEncoder.distance
         rightDistance = rightEncoder.distance
+        averageDistance = (leftDistance + rightDistance) / 2.0
         leftRate = leftEncoder.rate
         rightRate = rightEncoder.rate
     }
