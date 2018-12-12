@@ -1,6 +1,8 @@
 package ca.warp7.frc2018_5
 
 import ca.warp7.frc.kt.RobotKt
+import ca.warp7.frc2018_5.input.DriveEncoders
+import ca.warp7.frc2018_5.input.LiftInputs
 import ca.warp7.frc2018_5.input.NavX
 import ca.warp7.frc2018_5.output.DriveOutput
 import edu.wpi.first.wpilibj.IterativeRobot
@@ -11,7 +13,9 @@ class Scottie : IterativeRobot() {
         println("Hello me is robit!")
         RobotKt.init(
                 inputSystems = arrayOf(
-                        NavX
+                        DriveEncoders,
+                        NavX,
+                        LiftInputs
                 ),
                 outputSystems = arrayOf(
                         DriveOutput
