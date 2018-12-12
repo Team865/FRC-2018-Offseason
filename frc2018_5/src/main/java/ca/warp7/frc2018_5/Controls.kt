@@ -6,16 +6,16 @@ import ca.warp7.frc.kt.Robot
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.ControlLoop.HeldDown
 import ca.warp7.frc2018_5.output.DriveOutput
-import ca.warp7.frc2018_5.states.DriveOpenLoopState
+import ca.warp7.frc2018_5.state.drive.OpenLoopDrive
 
 
 object Controls : ControlLoop {
 
     private val driver: XboxControlsState = Robot.getController(4, true)
-    private val cheesyDrive = CheesyDrive(DriveOpenLoopState::setPercent)
+    private val cheesyDrive = CheesyDrive(OpenLoopDrive::setPercent)
 
     override fun init() {
-        Robot.setState(DriveOpenLoopState to DriveOutput)
+        Robot.setState { OpenLoopDrive to DriveOutput }
     }
 
     override fun periodic() {

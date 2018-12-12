@@ -3,7 +3,7 @@ package ca.warp7.frc2018_5.output
 import ca.warp7.frc.next.OutputSystem
 import edu.wpi.first.wpilibj.Compressor
 
-object Pneumatics : OutputSystem {
+object Superstructure : OutputSystem {
     private val compressor get() = Compressor(0)
 
     var compressorOn = false

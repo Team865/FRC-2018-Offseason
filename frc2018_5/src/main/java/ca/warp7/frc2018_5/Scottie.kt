@@ -22,11 +22,11 @@ class Scottie : IterativeRobot() {
                 ),
                 outputSystems = arrayOf(
                         DriveOutput,
+                        Superstructure,
                         LiftOutput,
                         Climber,
                         Intake,
-                        Wrist,
-                        Pneumatics
+                        Wrist
                 )
         )
     }

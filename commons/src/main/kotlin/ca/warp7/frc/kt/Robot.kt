@@ -9,12 +9,17 @@ import ca.warp7.frc.next.RobotStatic.*
 
 @Suppress("unused")
 object Robot {
-    fun setState(toOutput: Pair<IAction, OutputSystem>, lockOutput: Boolean = false) {
-        runAction(toOutput.second, toOutput.first)
+    fun lockState(toOutput: () -> Pair<IAction, OutputSystem>) {
+        val pair = toOutput.invoke()
+        runAction(pair.second, pair.first)
     }
 
-    fun clearState(outputSystem: OutputSystem) {
-        runAction(outputSystem, null)
+    fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
+        val pair = toOutput.invoke()
+        runAction(pair.second, pair.first)
+    }
+
+    fun unlockStates() {
     }
 
     fun run(action: IAction) {

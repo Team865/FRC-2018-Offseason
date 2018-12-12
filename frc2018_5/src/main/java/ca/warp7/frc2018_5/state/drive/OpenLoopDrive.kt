@@ -1,9 +1,9 @@
-package ca.warp7.frc2018_5.states
+package ca.warp7.frc2018_5.state.drive
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018_5.output.DriveOutput
 
-object DriveOpenLoopState : IAction {
+object OpenLoopDrive : IAction {
 
     private var leftPercent = 0.0
     private var rightPercent = 0.0

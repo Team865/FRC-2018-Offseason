@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_5.states
+package ca.warp7.frc2018_5.state.drive
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018_5.input.DriveInput
@@ -8,7 +8,7 @@ import com.stormbots.MiniPID
 import kotlin.math.PI
 import kotlin.math.abs
 
-object DrivePIDState : IAction {
+object PIDDrive : IAction {
 
     private val linearPID = MiniPID(0.0, 0.0, 0.0)
     private val angularPID = MiniPID(0.0, 0.0, 0.0)
@@ -58,7 +58,14 @@ object DrivePIDState : IAction {
         DriveOutput.rightPercentOutput = linear + angular
     }
 
+    private var ticks = 0
+
     override fun shouldFinish(): Boolean {
-        return false
+        if (abs(startDistance + targetYawChange - DriveInput.averageDistance) > 1.0) {
+            ticks++
+        } else {
+            ticks = 0
+        }
+        return ticks > 17
     }
 }
