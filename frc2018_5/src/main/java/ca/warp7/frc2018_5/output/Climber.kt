@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Climber : OutputSystem {
-    private val climberMaster: VictorSPX = VictorSPX(kClimberPin)
+    private val climberMaster = VictorSPX(kClimberPin)
 
     var speed = 0.0
 

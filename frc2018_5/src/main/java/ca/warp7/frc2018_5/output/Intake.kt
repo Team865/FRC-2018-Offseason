@@ -7,8 +7,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Intake : OutputSystem {
-    private val leftMaster: VictorSPX = VictorSPX(kIntakeLeftPin)
-    private val rightMaster: VictorSPX = VictorSPX(kIntakeRightPin)
+    private val leftMaster = VictorSPX(kIntakeLeftPin)
+    private val rightMaster = VictorSPX(kIntakeRightPin)
 
     var speed = 0.0
 

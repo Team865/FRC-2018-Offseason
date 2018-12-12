@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.Encoder
 
 object LiftInputs : InputSystem {
-    private val encoder: Encoder = Encoder(kLiftEncoderAPin, kLiftEncoderBPin)
-    private val limitSwitch: DigitalInput = DigitalInput(kLimitSwitchPin)
+    private val encoder = Encoder(kLiftEncoderAPin, kLiftEncoderBPin)
+    private val limitSwitch = DigitalInput(kLimitSwitchPin)
 
     var limitSwitchPressed = false
     var encoderTicks = 0.0

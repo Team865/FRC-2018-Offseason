@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Solenoid
 
 object DriveOutput : OutputSystem {
 
-    private val leftMaster: VictorSPX = VictorSPX(kDriveLeftA)
-    private val rightMaster: VictorSPX = VictorSPX(kDriveRightA)
+    private val leftMaster = VictorSPX(kDriveLeftA)
+    private val rightMaster = VictorSPX(kDriveRightA)
     private val shifterSolenoid = Solenoid(kDriveShifterSolenoidPin)
 
     var leftPercentOutput = 0.0

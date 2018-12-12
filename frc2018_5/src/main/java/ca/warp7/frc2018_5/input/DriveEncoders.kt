@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Encoder
 
 object DriveEncoders : InputSystem {
 
-    private val leftEncoder: Encoder = Encoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false)
-    private val rightEncoder: Encoder = Encoder(kDriveRightEncoderA, kDriveLeftEncoderB, true)
+    private val leftEncoder = Encoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false)
+    private val rightEncoder = Encoder(kDriveRightEncoderA, kDriveLeftEncoderB, true)
 
     var leftDistance = 0.0
     var rightDistance = 0.0
