@@ -12,14 +12,10 @@ import ca.warp7.frc2018_5.states.OpenLoopDrive
 object Controls : ControlLoop {
 
     private val driver: XboxControlsState = RobotKt.getController(4, true)
-
-    private val cheesyDrive = CheesyDrive { leftSpeedDemand, rightSpeedDemand ->
-        OpenLoopDrive.leftPercent = leftSpeedDemand
-        OpenLoopDrive.rightPercent = rightSpeedDemand
-    }
+    private val cheesyDrive = CheesyDrive(OpenLoopDrive::setPercent)
 
     override fun init() {
-        RobotKt.assignState(OpenLoopDrive to DriveOutput)
+        RobotKt.setState(OpenLoopDrive to DriveOutput)
     }
 
     override fun periodic() {

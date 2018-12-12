@@ -24,6 +24,7 @@ class Scottie : IterativeRobot() {
                         LiftOutput,
                         Climber,
                         Intake,
+                        Wrist,
                         Pneumatics
                 )
         )
