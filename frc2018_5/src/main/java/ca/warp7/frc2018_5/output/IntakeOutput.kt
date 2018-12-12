@@ -6,7 +6,7 @@ import ca.warp7.frc2018_5.constants.RobotPins.kIntakeRightPin
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
-object Intake : OutputSystem {
+object IntakeOutput : OutputSystem {
     private val leftMaster = VictorSPX(kIntakeLeftPin)
     private val rightMaster = VictorSPX(kIntakeRightPin)
 

@@ -7,9 +7,14 @@ import ca.warp7.frc.next.InputSystem
 import ca.warp7.frc.next.OutputSystem
 import ca.warp7.frc.next.RobotStatic.*
 
+/**
+ * Kotlin Robot interface
+ */
 @Suppress("unused")
 object Robot {
     fun lockState(toOutput: () -> Pair<IAction, OutputSystem>) {
+        val caller = Thread.currentThread().stackTrace[2].className
+        val callerClass = Class.forName(caller)
         val pair = toOutput.invoke()
         runAction(pair.second, pair.first)
     }
@@ -20,6 +25,8 @@ object Robot {
     }
 
     fun unlockStates() {
+        val caller = Thread.currentThread().stackTrace[2].className
+        val callerClass = Class.forName(caller)
     }
 
     fun run(action: IAction) {
@@ -30,11 +37,11 @@ object Robot {
         initAutonomousMode(mode, timeout)
     }
 
-    fun initTeleop(controlLoop: ControlLoop) {
+    fun startTeleop(controlLoop: ControlLoop) {
         initTeleopControls(controlLoop)
     }
 
-    fun initTest(controlLoop: ControlLoop) {
+    fun startTest(controlLoop: ControlLoop) {
         initTestControls(controlLoop)
     }
 

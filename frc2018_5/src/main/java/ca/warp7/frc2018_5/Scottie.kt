@@ -25,7 +25,7 @@ class Scottie : IterativeRobot() {
                         Superstructure,
                         LiftOutput,
                         Climber,
-                        Intake,
+                        IntakeOutput,
                         Wrist
                 )
         )
@@ -43,11 +43,13 @@ class Scottie : IterativeRobot() {
     }
 
     override fun teleopInit() {
-        Robot.initTeleop(controlLoop = Controls)
+        Controller.init()
+        Robot.startTeleop(controlLoop = Controller)
     }
 
     override fun testInit() {
-        Robot.initTest(controlLoop = Controls)
+        Controller.init()
+        Robot.startTest(controlLoop = Controller)
     }
 
     override fun robotPeriodic() = Unit
