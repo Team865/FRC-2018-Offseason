@@ -22,7 +22,7 @@ object DriveInput : InputSystem {
     }
 
     @Synchronized
-    override fun onMeasure() {
+    override fun onMeasure(dt: Double) {
         leftDistance = leftEncoder.distance
         rightDistance = rightEncoder.distance
         leftRate = leftEncoder.rate

@@ -1,4 +1,4 @@
-package ca.warp7.frc2018_5.actions
+package ca.warp7.frc2018_5.states
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018_5.output.DriveOutput

@@ -9,7 +9,7 @@ import ca.warp7.frc.next.Robot.*
 
 @Suppress("unused")
 object RobotKt {
-    fun assign(actionToOutput: Pair<IAction, OutputSystem>, forceAssign: Boolean = true) {
+    fun assignState(actionToOutput: Pair<IAction, OutputSystem>, forceAssign: Boolean = true) {
         runAction(actionToOutput.second, actionToOutput.first)
     }
 

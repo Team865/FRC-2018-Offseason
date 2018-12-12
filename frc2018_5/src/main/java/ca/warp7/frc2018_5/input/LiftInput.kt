@@ -14,7 +14,7 @@ object LiftInput : InputSystem {
     var encoderRate = 0.0
 
     @Synchronized
-    override fun onMeasure() {
+    override fun onMeasure(dt: Double) {
         limitSwitchPressed = limitSwitch.get()
         encoderTicks = encoder.distance
         encoderRate = encoder.rate

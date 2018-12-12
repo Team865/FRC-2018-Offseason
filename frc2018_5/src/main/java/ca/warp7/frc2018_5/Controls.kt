@@ -5,8 +5,8 @@ import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.kt.RobotKt
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.ControlLoop.HeldDown
-import ca.warp7.frc2018_5.actions.OpenLoopDrive
 import ca.warp7.frc2018_5.output.DriveOutput
+import ca.warp7.frc2018_5.states.OpenLoopDrive
 
 
 object Controls : ControlLoop {
@@ -19,7 +19,7 @@ object Controls : ControlLoop {
     }
 
     override fun init() {
-        RobotKt.assign(OpenLoopDrive to DriveOutput)
+        RobotKt.assignState(OpenLoopDrive to DriveOutput)
     }
 
     override fun periodic() {

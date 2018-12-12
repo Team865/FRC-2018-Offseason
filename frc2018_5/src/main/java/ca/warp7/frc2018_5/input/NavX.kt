@@ -11,7 +11,7 @@ object NavX : InputSystem {
     var calibrated = false
 
     @Synchronized
-    override fun onMeasure() {
+    override fun onMeasure(dt: Double) {
         if (!calibrated && !ahrs.isCalibrating) {
             calibrated = true
         }

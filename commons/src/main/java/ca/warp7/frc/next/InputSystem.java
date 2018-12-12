@@ -12,7 +12,7 @@ public interface InputSystem {
      * <p>Note that this method may still be called while the robot is disabled, so
      * extra care should be made that it performs no outputting</p>
      */
-    default void onMeasure() {
+    default void onMeasure(double dt) {
     }
 
     /**
