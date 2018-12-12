@@ -21,6 +21,7 @@ object DriveEncoders : InputSystem {
         rightEncoder.distancePerPulse = (kWheelRadius * Math.PI) / kEncoderTicksPerRevolution * 0.0254
     }
 
+    @Synchronized
     override fun onMeasure() {
         leftDistance = leftEncoder.distance
         rightDistance = rightEncoder.distance

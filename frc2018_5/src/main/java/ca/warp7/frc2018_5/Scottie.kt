@@ -4,6 +4,7 @@ import ca.warp7.frc.kt.RobotKt
 import ca.warp7.frc2018_5.input.DriveEncoders
 import ca.warp7.frc2018_5.input.LiftInputs
 import ca.warp7.frc2018_5.input.NavX
+import ca.warp7.frc2018_5.output.Climber
 import ca.warp7.frc2018_5.output.DriveOutput
 import edu.wpi.first.wpilibj.IterativeRobot
 
@@ -18,7 +19,8 @@ class Scottie : IterativeRobot() {
                         LiftInputs
                 ),
                 outputSystems = arrayOf(
-                        DriveOutput
+                        DriveOutput,
+                        Climber
                 )
         )
     }

@@ -5,15 +5,16 @@ import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.SPI
 
 object NavX : InputSystem {
-    private val mAHRS = AHRS(SPI.Port.kMXP)
+    private val ahrs = AHRS(SPI.Port.kMXP)
 
     var yaw = 0.0
     var calibrated = false
 
+    @Synchronized
     override fun onMeasure() {
-        if (!calibrated && !mAHRS.isCalibrating) {
+        if (!calibrated && !ahrs.isCalibrating) {
             calibrated = true
         }
-        yaw = Math.toRadians(mAHRS.fusedHeading.toDouble())
+        yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
     }
 }
