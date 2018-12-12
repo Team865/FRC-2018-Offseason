@@ -6,7 +6,7 @@ import ca.warp7.frc2018_5.constants.DriveConstants.kWheelRadius
 import ca.warp7.frc2018_5.constants.RobotPins.*
 import edu.wpi.first.wpilibj.Encoder
 
-object DriveEncoders : InputSystem {
+object DriveInput : InputSystem {
 
     private val leftEncoder = Encoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false)
     private val rightEncoder = Encoder(kDriveRightEncoderA, kDriveLeftEncoderB, true)

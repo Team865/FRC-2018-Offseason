@@ -10,7 +10,7 @@ object Intake : OutputSystem {
     private val leftMaster = VictorSPX(kIntakeLeftPin)
     private val rightMaster = VictorSPX(kIntakeRightPin)
 
-    var speed = 0.0
+    var percentOutput = 0.0
 
     @Synchronized
     override fun onDisabled() {
@@ -20,7 +20,7 @@ object Intake : OutputSystem {
 
     @Synchronized
     override fun onOutput() {
-        leftMaster.set(ControlMode.PercentOutput, speed)
-        rightMaster.set(ControlMode.PercentOutput, speed)
+        leftMaster.set(ControlMode.PercentOutput, percentOutput)
+        rightMaster.set(ControlMode.PercentOutput, percentOutput)
     }
 }

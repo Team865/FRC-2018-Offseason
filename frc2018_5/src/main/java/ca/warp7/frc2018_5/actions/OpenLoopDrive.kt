@@ -7,7 +7,6 @@ object OpenLoopDrive : IAction {
 
     var leftPercent = 0.0
     var rightPercent = 0.0
-
     var brakeWhenDone = true
 
     override fun start() {
