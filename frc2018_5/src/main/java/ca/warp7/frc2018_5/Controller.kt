@@ -2,24 +2,26 @@ package ca.warp7.frc2018_5
 
 
 import ca.warp7.frc.core.XboxControlsState
-import ca.warp7.frc.kt.Robot
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.ControlLoop.HeldDown
 import ca.warp7.frc2018_5.output.*
 import ca.warp7.frc2018_5.state.drive.CheesyDrive
+import ca.warp7.frckt.getRobotController
+import ca.warp7.frckt.setIdleState
+import ca.warp7.frckt.setRobotState
 
 
 object Controller : ControlLoop {
 
-    private val driver: XboxControlsState = Robot.getController(4, true)
+    private val driver: XboxControlsState = getRobotController(4, true)
 
     fun setup() {
-        Robot.setState { CheesyDrive to DriveOutput }
-        Robot.setIdle { IntakeOutput }
-        Robot.setIdle { LiftOutput }
-        Robot.setIdle { ClimberOutput }
-        Robot.setIdle { WristOutput }
-        Robot.setIdle { Superstructure }
+        setRobotState { CheesyDrive to DriveOutput }
+        setIdleState { IntakeOutput }
+        setIdleState { LiftOutput }
+        setIdleState { ClimberOutput }
+        setIdleState { WristOutput }
+        setIdleState { Superstructure }
     }
 
     override fun periodic() {
