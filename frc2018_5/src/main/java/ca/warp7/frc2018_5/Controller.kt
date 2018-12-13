@@ -1,24 +1,26 @@
 package ca.warp7.frc2018_5
 
 
-import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.ControlLoop.HeldDown
+import ca.warp7.frc.next.ControlLoop.Pressed
 import ca.warp7.frc2018_5.output.*
+import ca.warp7.frc2018_5.state.ManualClimb
 import ca.warp7.frc2018_5.state.drive.CheesyDrive
 import ca.warp7.frc2018_5.state.intake.KeepCube
 import ca.warp7.frc2018_5.state.intake.OpenPiston
 import ca.warp7.frc2018_5.state.intake.OuttakeCube
-import ca.warp7.frckt.getRobotController
+import ca.warp7.frckt.robotController
 import ca.warp7.frckt.setIdleState
 import ca.warp7.frckt.setState
 
 
 object Controller : ControlLoop {
 
-    private val driver: XboxControlsState = getRobotController(4, true)
+    private val driver = robotController(0, true)
+    private val operator = robotController(1, true)
 
-    fun setup() {
+    override fun setup() {
         setState { CheesyDrive to DriveOutput }
         setIdleState { IntakeOutput }
         setIdleState { LiftOutput }
@@ -28,8 +30,13 @@ object Controller : ControlLoop {
     }
 
     override fun periodic() {
+        // Compressor
+        if (driver.backButton == Pressed) {
+            Superstructure.compressorOn = !(Superstructure.compressorOn)
+        }
+
         // Drive
-        DriveOutput.solenoidOnForShifter = driver.rightBumper != HeldDown
+        CheesyDrive.solenoidOnForShifter = driver.rightBumper != HeldDown
         CheesyDrive.wheel = driver.rightXAxis
         CheesyDrive.throttle = driver.leftXAxis
         CheesyDrive.quickTurn = driver.leftBumper == HeldDown
@@ -40,6 +47,14 @@ object Controller : ControlLoop {
             driver.leftTrigger -> setState { OuttakeCube to IntakeOutput }
             driver.rightTrigger -> setState { KeepCube to IntakeOutput }
             else -> setIdleState { IntakeOutput }
+        }
+
+        // Climber
+        if (operator.startButton == HeldDown) {
+            setState { ManualClimb to ClimberOutput }
+            ManualClimb.speed = operator.leftYAxis
+        } else {
+            setIdleState { ClimberOutput }
         }
     }
 }

@@ -11,7 +11,7 @@ import ca.warp7.frc.next.RobotStatic
  * Kotlin Robot interface
  */
 
-fun initRobotSystems(loopsPerSecond: Int, inputSystems: Array<InputSystem>, outputSystems: Array<OutputSystem>) {
+fun initRobotSystems(loopsPerSecond: Int = 50, inputSystems: Array<InputSystem>, outputSystems: Array<OutputSystem>) {
     RobotStatic.setInputSystems(*inputSystems)
     RobotStatic.setOutputSystems(*outputSystems)
 }
@@ -28,7 +28,7 @@ fun startRobotTest(controlLoop: ControlLoop) = RobotStatic.initTestControls(cont
 
 fun disableRobot() = RobotStatic.disableOutputs()
 
-fun getRobotController(port: Int, isActive: Boolean): XboxControlsState {
+fun robotController(port: Int, isActive: Boolean): XboxControlsState {
     return RobotStatic.getXboxController(port, isActive)
 }
 

@@ -14,7 +14,7 @@ object DriveOutput : OutputSystem {
 
     var leftPercentOutput = 0.0
     var rightPercentOutput = 0.0
-    var solenoidOnForShifter: Boolean = false
+    var solenoidOnForShifter = false
 
     init {
         rightMaster.inverted = true
