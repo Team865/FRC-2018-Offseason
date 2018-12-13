@@ -8,7 +8,7 @@ import ca.warp7.frc2018_5.output.*
 import ca.warp7.frc2018_5.state.drive.CheesyDrive
 import ca.warp7.frckt.getRobotController
 import ca.warp7.frckt.setIdleState
-import ca.warp7.frckt.setRobotState
+import ca.warp7.frckt.setState
 
 
 object Controller : ControlLoop {
@@ -16,7 +16,7 @@ object Controller : ControlLoop {
     private val driver: XboxControlsState = getRobotController(4, true)
 
     fun setup() {
-        setRobotState { CheesyDrive to DriveOutput }
+        setState { CheesyDrive to DriveOutput }
         setIdleState { IntakeOutput }
         setIdleState { LiftOutput }
         setIdleState { ClimberOutput }
@@ -26,9 +26,9 @@ object Controller : ControlLoop {
 
     override fun periodic() {
         // Drive
-        DriveOutput.solenoidOnForShifter = driver.RightBumper != HeldDown
-        CheesyDrive.wheel = driver.RightXAxis
-        CheesyDrive.throttle = driver.LeftYAxis
-        CheesyDrive.quickTurn = driver.LeftBumper == HeldDown
+        DriveOutput.solenoidOnForShifter = driver.rightBumper != HeldDown
+        CheesyDrive.wheel = driver.rightXAxis
+        CheesyDrive.throttle = driver.leftXAxis
+        CheesyDrive.quickTurn = driver.leftBumper == HeldDown
     }
 }

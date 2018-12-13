@@ -32,7 +32,7 @@ fun getRobotController(port: Int, isActive: Boolean): XboxControlsState {
     return RobotStatic.getXboxController(port, isActive)
 }
 
-fun setRobotState(toOutput: () -> Pair<IAction, OutputSystem>) {
+fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
     val pair = toOutput.invoke()
     RobotStatic.runAction(pair.second, pair.first)
 }
