@@ -8,7 +8,7 @@ import ca.warp7.frc2018_5.state.drive.PIDDrive
 class DriveForDistance(private val distance: Double) : Singleton() {
 
     override fun start_() {
-        Robot.lockState { PIDDrive to DriveOutput }
+        Robot.setState { PIDDrive to DriveOutput }
         PIDDrive.setTargets(distance, 0.0)
     }
 
@@ -17,6 +17,6 @@ class DriveForDistance(private val distance: Double) : Singleton() {
     }
 
     override fun stop() {
-        Robot.unlockStates()
+        Robot.setIdle { DriveOutput }
     }
 }

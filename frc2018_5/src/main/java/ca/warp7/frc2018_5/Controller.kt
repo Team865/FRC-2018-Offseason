@@ -5,20 +5,20 @@ import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.kt.Robot
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.ControlLoop.HeldDown
-import ca.warp7.frc2018_5.output.DriveOutput
-import ca.warp7.frc2018_5.output.IntakeOutput
-import ca.warp7.frc2018_5.output.Superstructure
+import ca.warp7.frc2018_5.output.*
 import ca.warp7.frc2018_5.state.drive.CheesyDrive
-import ca.warp7.frc2018_5.state.intake.StopIntaking
 
 
 object Controller : ControlLoop {
 
     private val driver: XboxControlsState = Robot.getController(4, true)
 
-    fun init() {
+    fun setup() {
         Robot.setState { CheesyDrive to DriveOutput }
-        Robot.setState { StopIntaking to IntakeOutput }
+        Robot.setIdle { IntakeOutput }
+        Robot.setIdle { LiftOutput }
+        Robot.setIdle { ClimberOutput }
+        Robot.setIdle { WristOutput }
         Robot.setIdle { Superstructure }
     }
 

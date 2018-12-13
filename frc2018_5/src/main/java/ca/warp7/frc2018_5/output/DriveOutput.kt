@@ -33,7 +33,8 @@ object DriveOutput : OutputSystem {
     }
 
     override fun onIdle() {
-        onDisabled()
+        leftMaster.set(ControlMode.PercentOutput, 0.0)
+        rightMaster.set(ControlMode.PercentOutput, 0.0)
     }
 
     @Synchronized

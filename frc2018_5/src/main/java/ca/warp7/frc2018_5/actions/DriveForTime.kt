@@ -10,7 +10,7 @@ class DriveForTime(private val left: Double,
                    private val duration: Double) : Singleton() {
 
     override fun start_() {
-        Robot.lockState { OpenLoopDrive to DriveOutput }
+        Robot.setState { OpenLoopDrive to DriveOutput }
         OpenLoopDrive.setPercent(left, right)
     }
 
@@ -19,7 +19,6 @@ class DriveForTime(private val left: Double,
     }
 
     override fun stop() {
-        Robot.unlockStates()
         Robot.setIdle { DriveOutput }
     }
 }

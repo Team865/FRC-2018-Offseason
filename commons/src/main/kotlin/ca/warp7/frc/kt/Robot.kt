@@ -12,21 +12,10 @@ import ca.warp7.frc.next.RobotStatic.*
  */
 @Suppress("unused")
 object Robot {
-    fun lockState(toOutput: () -> Pair<IAction, OutputSystem>) {
-        val caller = Thread.currentThread().stackTrace[2].className
-        val callerClass = Class.forName(caller)
-        val pair = toOutput.invoke()
-        runAction(pair.second, pair.first)
-    }
 
     fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
         val pair = toOutput.invoke()
         runAction(pair.second, pair.first)
-    }
-
-    fun unlockStates() {
-        val caller = Thread.currentThread().stackTrace[2].className
-        val callerClass = Class.forName(caller)
     }
 
     fun setIdle(toOutput: () -> OutputSystem) {

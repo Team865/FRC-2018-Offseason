@@ -24,9 +24,9 @@ class Scottie : IterativeRobot() {
                         DriveOutput,
                         Superstructure,
                         LiftOutput,
-                        Climber,
+                        ClimberOutput,
                         IntakeOutput,
-                        Wrist
+                        WristOutput
                 )
         )
     }
@@ -43,12 +43,12 @@ class Scottie : IterativeRobot() {
     }
 
     override fun teleopInit() {
-        Controller.init()
+        Controller.setup()
         Robot.startTeleop(controlLoop = Controller)
     }
 
     override fun testInit() {
-        Controller.init()
+        Controller.setup()
         Robot.startTest(controlLoop = Controller)
     }
 
