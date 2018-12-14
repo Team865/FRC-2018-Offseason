@@ -1,7 +1,6 @@
 package ca.warp7.frc;
 
 import ca.warp7.frc.core.ICollectiveState;
-import ca.warp7.frc.core.ITransform;
 
 import java.util.HashMap;
 import java.util.Map;

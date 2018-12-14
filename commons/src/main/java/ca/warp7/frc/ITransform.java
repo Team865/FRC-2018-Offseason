@@ -1,4 +1,4 @@
-package ca.warp7.frc.core;
+package ca.warp7.frc;
 
 @FunctionalInterface
 public

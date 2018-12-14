@@ -2,6 +2,8 @@ package ca.warp7.frc.next;
 
 import ca.warp7.action.IAction;
 import ca.warp7.action.impl.ActionMode;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -32,6 +34,7 @@ public class RobotRuntime {
     private final PrintStream originalErr = System.err;
     private IAction mActionRunner;
     private final List<RobotController.Pair> mControllers = new ArrayList<>();
+    private NetworkTable mSubsystemsTable;
 
     private Runnable mLoop = () -> {
         double time = Timer.getFPGATimestamp();
@@ -39,10 +42,21 @@ public class RobotRuntime {
         mPreviousTime = time;
         synchronized (mRuntimeLock) {
             for (RobotController.Pair pair : mControllers)
-                if (pair.isActive()) RobotController.collect(pair.getState(), pair.getController());
+                if (pair.isActive()) {
+                    RobotController.collect(pair.getState(), pair.getController());
+                }
             mInputSystems.forEach(inputSystem -> inputSystem.onMeasure(diff));
             if (mEnabled) {
                 mOutputSystems.forEach((outputSystem, action) -> {
+//                    for (Method m : outputSystem.getClass().getMethods())
+//                        if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
+//                            try {
+//                                final Object r = m.invoke(outputSystem);
+//                            } catch (IllegalAccessException | InvocationTargetException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+                    mSubsystemsTable.getEntry("hi").setBoolean(true);  //FIXME
                     if (action == null) outputSystem.onIdle();
                     else action.update();
                     outputSystem.onOutput();
@@ -69,6 +83,7 @@ public class RobotRuntime {
         Thread.currentThread().setName("Robot");
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
+        mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
         mEnabled = true;
         mLoopNotifier = new Notifier(mLoop);
         mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
