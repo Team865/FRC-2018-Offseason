@@ -5,36 +5,27 @@ import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.InputSystem
 import ca.warp7.frc.next.OutputSystem
-import ca.warp7.frc.next.RobotStatic
+import ca.warp7.frc.next.RobotRuntime.RUNTIME
 
-/**
- * Kotlin Robot interface
- */
-
-fun initRobotSystems(loopsPerSecond: Int = 50, inputSystems: Array<InputSystem>, outputSystems: Array<OutputSystem>) {
-    RobotStatic.setInputSystems(*inputSystems)
-    RobotStatic.setOutputSystems(*outputSystems)
+fun initRobotSystems(loopsPerSecond: Int = 50,
+                     inputSystems: Array<InputSystem>,
+                     outputSystems: Array<OutputSystem>) {
+    RUNTIME.setInputSystems(*inputSystems)
+    RUNTIME.setOutputSystems(*outputSystems)
+    RUNTIME.start(loopsPerSecond)
 }
 
-fun setIdleState(toOutput: () -> OutputSystem) {
-    RobotStatic.runAction(toOutput.invoke(), null)
+fun runRobotAuto(mode: IAction.Mode, timeout: Double = 15.0) = RUNTIME.initAutonomousMode(mode, timeout)
+fun startRobotControls(controlLoop: ControlLoop) = RUNTIME.initControls(controlLoop)
+fun disableRobot() = RUNTIME.disableOutputs()
+fun setIdleState(toOutput: () -> OutputSystem) = RUNTIME.setState(toOutput.invoke(), null)
+fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
+    val (first, second) = toOutput.invoke()
+    RUNTIME.setState(second, first)
 }
-
-fun runRobotAuto(mode: IAction.Mode?, timeout: Double = 15.0) = RobotStatic.initAutonomousMode(mode, timeout)
-
-fun startRobotTeleop(controlLoop: ControlLoop) = RobotStatic.initTeleopControls(controlLoop)
-
-fun startRobotTest(controlLoop: ControlLoop) = RobotStatic.initTestControls(controlLoop)
-
-fun disableRobot() = RobotStatic.disableOutputs()
 
 fun robotController(port: Int, isActive: Boolean): XboxControlsState {
-    return RobotStatic.getXboxController(port, isActive)
-}
-
-fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
-    val pair = toOutput.invoke()
-    RobotStatic.runAction(pair.second, pair.first)
+    return RUNTIME.getXboxController(port, isActive)
 }
 
 fun limit(value: Double, lim: Double): Double {

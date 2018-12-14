@@ -6,7 +6,10 @@ import ca.warp7.frc2018_5.input.LiftInput
 import ca.warp7.frc2018_5.input.NavX
 import ca.warp7.frc2018_5.input.PoseEstimator
 import ca.warp7.frc2018_5.output.*
-import ca.warp7.frckt.*
+import ca.warp7.frckt.disableRobot
+import ca.warp7.frckt.initRobotSystems
+import ca.warp7.frckt.runRobotAuto
+import ca.warp7.frckt.startRobotControls
 import edu.wpi.first.wpilibj.IterativeRobot
 
 class Scottie : IterativeRobot() {
@@ -33,8 +36,8 @@ class Scottie : IterativeRobot() {
     }
 
     override fun autonomousInit() = runRobotAuto(mode = Baseline, timeout = 15.0)
-    override fun teleopInit() = startRobotTeleop(controlLoop = Controller)
-    override fun testInit() = startRobotTest(controlLoop = Controller)
+    override fun teleopInit() = startRobotControls(controlLoop = Controller)
+    override fun testInit() = startRobotControls(controlLoop = Controller)
     override fun disabledInit() = disableRobot()
     override fun robotPeriodic() = Unit
     override fun autonomousPeriodic() = Unit
