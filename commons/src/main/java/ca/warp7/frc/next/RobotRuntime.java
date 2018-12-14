@@ -3,12 +3,15 @@ package ca.warp7.frc.next;
 import ca.warp7.action.IAction;
 import ca.warp7.action.impl.ActionMode;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class RobotRuntime {
@@ -34,7 +37,7 @@ public class RobotRuntime {
     private final PrintStream originalErr = System.err;
     private IAction mActionRunner;
     private final List<RobotController.Pair> mControllers = new ArrayList<>();
-    private NetworkTable mSubsystemsTable;
+    private NetworkTable mSystemsNetworkTable;
 
     private Runnable mLoop = () -> {
         double time = Timer.getFPGATimestamp();
@@ -45,18 +48,13 @@ public class RobotRuntime {
                 if (pair.isActive()) {
                     RobotController.collect(pair.getState(), pair.getController());
                 }
-            mInputSystems.forEach(inputSystem -> inputSystem.onMeasure(diff));
+            mInputSystems.forEach(inputSystem -> {
+                inputSystem.onMeasure(diff);
+                sendObjectDescription(inputSystem);
+            });
             if (mEnabled) {
                 mOutputSystems.forEach((outputSystem, action) -> {
-//                    for (Method m : outputSystem.getClass().getMethods())
-//                        if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
-//                            try {
-//                                final Object r = m.invoke(outputSystem);
-//                            } catch (IllegalAccessException | InvocationTargetException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-                    mSubsystemsTable.getEntry("hi").setBoolean(true);  //FIXME
+                    sendObjectDescription(outputSystem);
                     if (action == null) outputSystem.onIdle();
                     else action.update();
                     outputSystem.onOutput();
@@ -64,8 +62,37 @@ public class RobotRuntime {
             }
         }
         originalOut.println(outContent.toString());
-        originalErr.println(errContent.toString());
+        outContent.reset();
+        String[] errors = errContent.toString().split(System.lineSeparator());
+        for (String error : errors) originalErr.println("ERROR " + error);
+        errContent.reset();
     };
+
+    private void sendObjectDescription(Object system) {
+        String subTable = system.getClass().getSimpleName();
+        for (Method method : system.getClass().getMethods()) {
+            String name = method.getName();
+            if (name.startsWith("get")) {
+                String entry = subTable + "/" + name.substring(3);
+                try {
+                    sendNetworkTableValue(mSystemsNetworkTable.getEntry(entry), method.invoke(system));
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
+        if (value instanceof Number) {
+            double n = ((Number) value).doubleValue();
+            if (Math.abs(n) < 0.001) n = 0;
+            entry.setNumber(n);
+        } else if (value instanceof Boolean) entry.setBoolean((Boolean) value);
+        else if (value instanceof String) entry.setString((String) value);
+        else if (value.getClass().isEnum()) entry.setString(value.toString());
+        else entry.setString(value.getClass().getSimpleName() + " Object");
+    }
 
     public void setInputSystems(InputSystem... inputSystems) {
         if (mLoopNotifier == null) mInputSystems = Arrays.asList(inputSystems);
@@ -83,7 +110,7 @@ public class RobotRuntime {
         Thread.currentThread().setName("Robot");
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
-        mSubsystemsTable = NetworkTableInstance.getDefault().getTable("Subsystems");
+        mSystemsNetworkTable = NetworkTableInstance.getDefault().getTable("Systems");
         mEnabled = true;
         mLoopNotifier = new Notifier(mLoop);
         mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
@@ -117,14 +144,14 @@ public class RobotRuntime {
         }
     }
 
-    public void initAutonomousMode(IAction.Mode mode, double timeout) {
+    public void initAutonomousMode(IAction.Mode mode, int intervalMs, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
+        IAction action = mode.getAction();
+        mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp, intervalMs, timeout, action, true);
         synchronized (mRuntimeLock) {
             mEnabled = true;
             mInputSystems.forEach(InputSystem::onZeroSensors);
         }
-        IAction action = mode.getAction();
-        mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp, 20, timeout, action, true);
         mActionRunner.start();
     }
 

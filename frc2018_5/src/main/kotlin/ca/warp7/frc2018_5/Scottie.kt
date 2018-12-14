@@ -35,7 +35,7 @@ class Scottie : IterativeRobot() {
         )
     }
 
-    override fun autonomousInit() = runRobotAuto(mode = Baseline, timeout = 15.0)
+    override fun autonomousInit() = runRobotAuto(mode = Baseline, updatesPerSecond = 50, timeout = 15.0)
     override fun teleopInit() = startRobotControls(controlLoop = Controller)
     override fun testInit() = startRobotControls(controlLoop = Controller)
     override fun disabledInit() = disableRobot()

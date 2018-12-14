@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package ca.warp7.frckt
 
 import ca.warp7.action.IAction
@@ -15,10 +17,11 @@ fun initRobotSystems(loopsPerSecond: Int = 50,
     RUNTIME.start(loopsPerSecond)
 }
 
-fun runRobotAuto(mode: IAction.Mode, timeout: Double = 15.0) = RUNTIME.initAutonomousMode(mode, timeout)
+fun runRobotAuto(mode: IAction.Mode, updatesPerSecond: Int = 20, timeout: Double = 15.0) = RUNTIME.initAutonomousMode(mode, updatesPerSecond, timeout)
 fun startRobotControls(controlLoop: ControlLoop) = RUNTIME.initControls(controlLoop)
 fun disableRobot() = RUNTIME.disableOutputs()
 fun setIdleState(toOutput: () -> OutputSystem) = RUNTIME.setState(toOutput.invoke(), null)
+fun warning(message: String) = println("Warning $message")
 fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
     val (first, second) = toOutput.invoke()
     RUNTIME.setState(second, first)
