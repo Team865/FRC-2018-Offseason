@@ -14,7 +14,8 @@ public class DualRemote extends ControlsBase {
     private boolean intakeTracking = false;
 
     @Override
-    public void periodic() {
+    public void periodic(){
+        // TODO Discuss intake and outtake settings with Drive
         if (driver.getTrigger(kRight) == DOWN) {//intake
             intake.rampSpeed(0.75);
         } else if (driver.getTrigger(kLeft) == DOWN) {//outtake
@@ -33,30 +34,59 @@ public class DualRemote extends ControlsBase {
             intake.rampSpeed(0);
         }
 
+        // Toggle intake tracking
         if (driver.getDpad(180) == PRESSED)
             intakeTracking = !intakeTracking;
 
+        // Toggle Drive Train Reversing
         if (driver.getStickButton(kRight) == PRESSED)
             drive.setDrivetrainReversed(!drive.driveReversed());
 
         if (driver.getAButton() == PRESSED)
             intake.pistonToggle();
 
+        // Toggle Limelight between camera and vision modes
         if (driver.getXButton() == PRESSED) {
             Robot.limelight.switchCamera();
             System.out.println("switching camera");
         }
 
+        // Exchange setpoint
         if (operator.getXButton() == DOWN) {
             lift.setLoc(0.11);
         }
 
+        // Switch setpoint
         if (operator.getTrigger(kRight) == DOWN) {
             lift.setLoc(0.4);
         }
 
-        if (operator.getAButton() == DOWN)
-            lift.setLoc(operator.getY(kLeft));
+        // PID lift control
+        if (operator.getAButton() == DOWN) {
+            double x = operator.getY((kLeft));
+            double target;
+            if (operator.getTrigger(kRight) == DOWN) {
+                double absY = Math.abs(x);
+                target = Math.pow(absY, 0.2);
+            }
+            else if (operator.getBumper(kLeft) == DOWN){
+                double initialSlope = 2;
+                double slopeChangePoint = 0.25;
+                double targetAtSlopeChange = slopeChangePoint * initialSlope;
+                double finalSlope = (1 - targetAtSlopeChange)/(1 - slopeChangePoint);
+                double yIntAtFinalSlope = 1 - finalSlope * 1; // b = y - mx
+                if (x < slopeChangePoint){
+                    target = x * initialSlope;
+                }
+                else{
+                    target = initialSlope * x + finalSlope;
+                }
+            }
+            else {
+                target = x;
+            }
+            lift.setLoc(target);
+        }
 
         if (operator.getYButton() == DOWN && !lift.isBottom()) {
             lift.setShouldSlowFall(true);
@@ -82,7 +112,6 @@ public class DualRemote extends ControlsBase {
         if (driver.getBButton() == DOWN) {
             climber.setSpeed(driver.getY(kLeft) * -1);
         } else {
-            //drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
             if (intakeTracking && lift.isBottom() && intake.getSpeed() > 0.4)
                 drive.trackCube(driver.getY(kLeft), 4);
             else

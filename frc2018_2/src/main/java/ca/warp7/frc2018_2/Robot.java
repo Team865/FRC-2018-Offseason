@@ -117,6 +117,7 @@ public class Robot extends IterativeRobot {
         limelight.mutiPipeline();
         intake.periodic();
         lift.periodic();
+        wrist.periodic();
         double b = lift.getEncoderVal();
         if (a < b)
             a = b;
