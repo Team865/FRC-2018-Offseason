@@ -1,10 +1,10 @@
 package ca.warp7.frckt
 
 import ca.warp7.action.IAction
-import ca.warp7.frc.core.XboxControlsState
 import ca.warp7.frc.next.ControlLoop
 import ca.warp7.frc.next.InputSystem
 import ca.warp7.frc.next.OutputSystem
+import ca.warp7.frc.next.RobotController
 import ca.warp7.frc.next.RobotRuntime.RUNTIME
 
 fun initRobotSystems(loopsPerSecond: Int = 50,
@@ -24,8 +24,8 @@ fun setState(toOutput: () -> Pair<IAction, OutputSystem>) {
     RUNTIME.setState(second, first)
 }
 
-fun robotController(port: Int, isActive: Boolean): XboxControlsState {
-    return RUNTIME.getXboxController(port, isActive)
+fun robotController(port: Int, isActive: Boolean): RobotController {
+    return RUNTIME.getController(port, isActive)
 }
 
 fun limit(value: Double, lim: Double): Double {
