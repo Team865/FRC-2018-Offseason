@@ -16,15 +16,6 @@ import java.util.*;
 
 public class RobotRuntime {
 
-    public static final RobotRuntime RUNTIME;
-
-    static {
-        RUNTIME = new RobotRuntime();
-    }
-
-    private RobotRuntime() {
-    }
-
     private Notifier mLoopNotifier;
     private boolean mEnabled;
     private List<InputSystem> mInputSystems;
@@ -36,17 +27,17 @@ public class RobotRuntime {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
     private IAction mActionRunner;
-    private final List<RobotController.Pair> mControllers = new ArrayList<>();
-    private NetworkTable mSystemsNetworkTable;
+    private final List<RobotController.Instance> mControllers = new ArrayList<>();
+    private NetworkTable mSystemsTable;
 
     private Runnable mLoop = () -> {
         double time = Timer.getFPGATimestamp();
         double diff = time - mPreviousTime;
         mPreviousTime = time;
         synchronized (mRuntimeLock) {
-            for (RobotController.Pair pair : mControllers)
-                if (pair.isActive()) {
-                    RobotController.collect(pair.getState(), pair.getController());
+            for (RobotController.Instance instance : mControllers)
+                if (instance.isActive()) {
+                    RobotController.collect(instance.getState(), instance.getController());
                 }
             mInputSystems.forEach(inputSystem -> {
                 inputSystem.onMeasure(diff);
@@ -75,7 +66,7 @@ public class RobotRuntime {
             if (name.startsWith("get")) {
                 String entry = subTable + "/" + name.substring(3);
                 try {
-                    sendNetworkTableValue(mSystemsNetworkTable.getEntry(entry), method.invoke(system));
+                    sendNetworkTableValue(mSystemsTable.getEntry(entry), method.invoke(system));
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -110,8 +101,8 @@ public class RobotRuntime {
         Thread.currentThread().setName("Robot");
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
-        mSystemsNetworkTable = NetworkTableInstance.getDefault().getTable("Systems");
-        mEnabled = true;
+        mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
+        mEnabled = false;
         mLoopNotifier = new Notifier(mLoop);
         mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
     }
@@ -128,11 +119,14 @@ public class RobotRuntime {
 
     public RobotController getController(int port, boolean isActive) {
         int port0 = isActive ? port : -1;
-        for (RobotController.Pair pair : mControllers) if (pair.getPort() == port0) return pair.getState();
-        RobotController.Pair newPair = new RobotController.Pair(port0);
-        mControllers.add(newPair);
-        RobotController.reset(newPair.getState());
-        return newPair.getState();
+        synchronized (mRuntimeLock) {
+            for (RobotController.Instance instance : mControllers)
+                if (instance.getPort() == port0) return instance.getState();
+            RobotController.Instance newInstance = new RobotController.Instance(port0);
+            mControllers.add(newInstance);
+            RobotController.reset(newInstance.getState());
+            return newInstance.getState();
+        }
     }
 
     public void disableOutputs() {
@@ -144,7 +138,7 @@ public class RobotRuntime {
         }
     }
 
-    public void initAutonomousMode(IAction.Mode mode, int intervalMs, double timeout) {
+    public void initAutonomousMode(IAction.Mode mode, double intervalMs, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
         IAction action = mode.getAction();
         mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp, intervalMs, timeout, action, true);
@@ -163,5 +157,14 @@ public class RobotRuntime {
         }
         mActionRunner.stop();
         controlLoop.setup();
+    }
+
+    public static final RobotRuntime ROBOT_RUNTIME;
+
+    static {
+        ROBOT_RUNTIME = new RobotRuntime();
+    }
+
+    private RobotRuntime() {
     }
 }

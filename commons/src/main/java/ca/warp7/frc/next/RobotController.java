@@ -183,13 +183,13 @@ public class RobotController {
         s.rightYAxis = 0;
     }
 
-    static class Pair {
+    static class Instance {
         private final RobotController state;
         private XboxController controller;
         private int port;
         private boolean active;
 
-        Pair(int port) {
+        Instance(int port) {
             this.port = port;
             this.state = new RobotController();
             if (port >= 0 && port < 6) {
