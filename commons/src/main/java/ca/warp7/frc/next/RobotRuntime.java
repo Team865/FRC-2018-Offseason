@@ -29,6 +29,7 @@ public class RobotRuntime {
     private IAction mActionRunner;
     private final List<RobotController.Instance> mControllers = new ArrayList<>();
     private NetworkTable mSystemsTable;
+    private NetworkTable mControllersTable;
 
     private Runnable mLoop = () -> {
         double time = Timer.getFPGATimestamp();
@@ -38,6 +39,7 @@ public class RobotRuntime {
             for (RobotController.Instance instance : mControllers)
                 if (instance.isActive()) {
                     RobotController.collect(instance.getState(), instance.getController());
+                    RobotController.outputTelemetry(instance.getState(), mControllersTable, instance.getPort());
                 }
             mInputSystems.forEach(inputSystem -> {
                 inputSystem.onMeasure(diff);
@@ -102,6 +104,7 @@ public class RobotRuntime {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
         mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
+        mControllersTable = NetworkTableInstance.getDefault().getTable("Controllers");
         mEnabled = false;
         mLoopNotifier = new Notifier(mLoop);
         mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
@@ -134,7 +137,10 @@ public class RobotRuntime {
         mActionRunner.stop();
         synchronized (mRuntimeLock) {
             mEnabled = false;
-            mOutputSystems.keySet().forEach(OutputSystem::onDisabled);
+            mOutputSystems.keySet().forEach(outputSystem -> {
+                outputSystem.onDisabled();
+                sendObjectDescription(outputSystem);
+            });
         }
     }
 

@@ -1,6 +1,6 @@
 package ca.warp7.frc.next;
 
-import ca.warp7.frc.core.IControls;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.XboxController;
 
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -128,8 +128,8 @@ public class RobotController {
 
     private static int u(int old, boolean _new) {
         return _new ?
-                old == IControls.Pressed || old == IControls.HeldDown ? IControls.HeldDown : IControls.Pressed :
-                old == IControls.Released || old == IControls.KeptUp ? IControls.KeptUp : IControls.Released;
+                old == ControlLoop.Pressed || old == ControlLoop.HeldDown ? ControlLoop.HeldDown : ControlLoop.Pressed :
+                old == ControlLoop.Released || old == ControlLoop.KeptUp ? ControlLoop.KeptUp : ControlLoop.Released;
     }
 
     static void collect(RobotController s, XboxController c) {
@@ -158,23 +158,59 @@ public class RobotController {
         s.leftDPad = u(s.leftDPad, POV == kLeftPOV);
     }
 
+    private static String stateString(int s) {
+        switch (s) {
+            case ControlLoop.KeptUp:
+                return "KeptUp";
+            case ControlLoop.HeldDown:
+                return "HeldDown";
+            case ControlLoop.Pressed:
+                return "Pressed";
+            case ControlLoop.Released:
+                return "Released";
+        }
+        return "None";
+    }
+
+    static void outputTelemetry(RobotController s, NetworkTable table, int port) {
+        NetworkTable t = table.getSubTable(String.format("RobotController [%d]", port));
+        t.getEntry("AButton").setString(stateString(s.AButton));
+        t.getEntry("BButton").setString(stateString(s.BButton));
+        t.getEntry("XButton").setString(stateString(s.XButton));
+        t.getEntry("YButton").setString(stateString(s.YButton));
+        t.getEntry("leftBumper").setString(stateString(s.leftBumper));
+        t.getEntry("rightBumper").setString(stateString(s.rightBumper));
+        t.getEntry("leftTrigger").setString(stateString(s.leftTrigger));
+        t.getEntry("rightTrigger").setString(stateString(s.rightTrigger));
+        t.getEntry("leftStickButton").setString(stateString(s.leftStickButton));
+        t.getEntry("rightStickButton").setString(stateString(s.rightStickButton));
+        t.getEntry("startButton").setString(stateString(s.startButton));
+        t.getEntry("backButton").setString(stateString(s.backButton));
+        t.getEntry("leftTriggerAxis").setNumber(s.leftTriggerAxis);
+        t.getEntry("rightTriggerAxis").setNumber(s.leftTriggerAxis);
+        t.getEntry("leftXAxis").setNumber(s.leftTriggerAxis);
+        t.getEntry("leftYAxis").setNumber(s.leftTriggerAxis);
+        t.getEntry("rightXAxis").setNumber(s.leftTriggerAxis);
+        t.getEntry("rightYAxis").setNumber(s.leftTriggerAxis);
+    }
+
     static void reset(RobotController s) {
-        s.AButton = IControls.KeptUp;
-        s.BButton = IControls.KeptUp;
-        s.XButton = IControls.KeptUp;
-        s.YButton = IControls.KeptUp;
-        s.leftBumper = IControls.KeptUp;
-        s.rightBumper = IControls.KeptUp;
-        s.leftTrigger = IControls.KeptUp;
-        s.rightTrigger = IControls.KeptUp;
-        s.leftStickButton = IControls.KeptUp;
-        s.rightStickButton = IControls.KeptUp;
-        s.startButton = IControls.KeptUp;
-        s.backButton = IControls.KeptUp;
-        s.upDPad = IControls.KeptUp;
-        s.rightDPad = IControls.KeptUp;
-        s.downDPad = IControls.KeptUp;
-        s.leftDPad = IControls.KeptUp;
+        s.AButton = ControlLoop.KeptUp;
+        s.BButton = ControlLoop.KeptUp;
+        s.XButton = ControlLoop.KeptUp;
+        s.YButton = ControlLoop.KeptUp;
+        s.leftBumper = ControlLoop.KeptUp;
+        s.rightBumper = ControlLoop.KeptUp;
+        s.leftTrigger = ControlLoop.KeptUp;
+        s.rightTrigger = ControlLoop.KeptUp;
+        s.leftStickButton = ControlLoop.KeptUp;
+        s.rightStickButton = ControlLoop.KeptUp;
+        s.startButton = ControlLoop.KeptUp;
+        s.backButton = ControlLoop.KeptUp;
+        s.upDPad = ControlLoop.KeptUp;
+        s.rightDPad = ControlLoop.KeptUp;
+        s.downDPad = ControlLoop.KeptUp;
+        s.leftDPad = ControlLoop.KeptUp;
         s.leftTriggerAxis = 0;
         s.rightTriggerAxis = 0;
         s.leftXAxis = 0;

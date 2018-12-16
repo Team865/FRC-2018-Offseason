@@ -5,9 +5,9 @@ package ca.warp7.frc.next;
  */
 public interface ControlLoop {
 
-    int Pressed = 9;
-    int HeldDown = 19;
-    int Released = 10;
+    int HeldDown = 3;
+    int Pressed = 2;
+    int Released = 1;
     int KeptUp = 0;
 
     void setup();
