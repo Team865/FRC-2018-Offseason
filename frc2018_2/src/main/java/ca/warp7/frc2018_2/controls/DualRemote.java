@@ -109,9 +109,13 @@ public class DualRemote extends ControlsBase {
         else
             wrist.actuationRamp(Constants.ACTUATION_MOTOR_SPEED_LIMIT);
 
+        if (driver.getYButton() == PRESSED){
+            lift.disableSpeedLimit = !lift.disableSpeedLimit;
+        }
         if (driver.getBButton() == DOWN) {
-            climber.setSpeed(driver.getY(kLeft) * -1);
-        } else {
+            climber.setSpeed(driver.getY(kLeft) * -1); // TODO ask Owen about this control structure. Did Owen actually ever raise the climber?
+        }
+        else {
             if (intakeTracking && lift.isBottom() && intake.getSpeed() > 0.4)
                 drive.trackCube(driver.getY(kLeft), 4);
             else
