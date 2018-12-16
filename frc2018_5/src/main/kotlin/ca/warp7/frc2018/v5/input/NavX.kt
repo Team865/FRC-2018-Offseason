@@ -12,9 +12,7 @@ object NavX : Input {
 
     @Synchronized
     override fun onMeasure(dt: Double) {
-        if (!calibrated && !ahrs.isCalibrating) {
-            calibrated = true
-        }
-        yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
+        if (!calibrated && !ahrs.isCalibrating) calibrated = true
+        if (calibrated) yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
     }
 }

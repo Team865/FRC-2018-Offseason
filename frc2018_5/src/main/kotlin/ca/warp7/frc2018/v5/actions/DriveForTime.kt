@@ -1,9 +1,9 @@
 package ca.warp7.frc2018.v5.actions
 
 import ca.warp7.action.impl.Singleton
-import ca.warp7.frc2018.v5.subsystems.Drive
 import ca.warp7.frc2018.v5.state.drive.OpenLoopDrive
-import ca.warp7.frckt.setIdleState
+import ca.warp7.frc2018.v5.subsystems.Drive
+import ca.warp7.frckt.setIdle
 import ca.warp7.frckt.setState
 
 class DriveForTime(private val left: Double,
@@ -20,6 +20,6 @@ class DriveForTime(private val left: Double,
     }
 
     override fun stop() {
-        setIdleState { Drive }
+        setIdle { Drive }
     }
 }

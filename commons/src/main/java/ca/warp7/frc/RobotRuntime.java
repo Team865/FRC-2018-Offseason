@@ -12,7 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RobotRuntime {
 
@@ -27,7 +30,7 @@ public class RobotRuntime {
     private IAction mActionRunner;
     private final List<RobotController.Instance> mControllers = new ArrayList<>();
     private Map<Subsystem, IAction> mSubsystems = new HashMap<>();
-    private List<Input> mInputs;
+    private List<Input> mInputs = new ArrayList<>();
     private NetworkTable mSystemsTable;
     private NetworkTable mControllersTable;
 
@@ -87,9 +90,9 @@ public class RobotRuntime {
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
-    public void setInputs(Input... inputs) {
+    public void registerInput(Input input) {
         synchronized (mRuntimeLock){
-            mInputs = Arrays.asList(inputs);
+            mInputs.add(input);
         }
     }
 

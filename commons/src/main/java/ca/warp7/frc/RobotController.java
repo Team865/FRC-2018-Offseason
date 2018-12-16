@@ -194,7 +194,7 @@ public class RobotController {
         t.getEntry("rightYAxis").setNumber(s.leftTriggerAxis);
     }
 
-    static void reset(RobotController s) {
+    private static void reset(RobotController s) {
         s.AButton = ControlLoop.KeptUp;
         s.BButton = ControlLoop.KeptUp;
         s.XButton = ControlLoop.KeptUp;

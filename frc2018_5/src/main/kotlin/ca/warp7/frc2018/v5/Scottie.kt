@@ -1,5 +1,6 @@
 package ca.warp7.frc2018.v5
 
+import ca.warp7.action.IAction
 import ca.warp7.frc2018.v5.auto.Baseline
 import ca.warp7.frc2018.v5.input.DriveInput
 import ca.warp7.frc2018.v5.input.LiftInput
@@ -12,17 +13,24 @@ import edu.wpi.first.wpilibj.IterativeRobot
 class Scottie : IterativeRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
-        setInputs(DriveInput, LiftInput, NavX, PoseEstimator)
-        setIdleState { Drive }
-        setIdleState { Superstructure }
-        setIdleState { Lift }
-        setIdleState { Climber }
-        setIdleState { Intake }
-        setIdleState { Wrist }
+        registerInput(DriveInput)
+        registerInput(LiftInput)
+        registerInput(NavX)
+        registerInput(PoseEstimator)
+        setIdle { Drive }
+        setIdle { Superstructure }
+        setIdle { Lift }
+        setIdle { Climber }
+        setIdle { Intake }
+        setIdle { Wrist }
         startRobot(loopsPerSecond = 50)
     }
 
-    override fun autonomousInit() = runRobotAuto(mode = Baseline, updatesPerSecond = 50, timeout = 15.0)
+    private fun selectAuto(): IAction.Mode {
+        return Baseline
+    }
+
+    override fun autonomousInit() = runRobotAuto(mode = selectAuto(), updatesPerSecond = 50, timeout = 15.0)
     override fun teleopInit() = startRobotControls(controlLoop = Controller)
     override fun testInit() = startRobotControls(controlLoop = Controller)
     override fun disabledInit() = disableRobot()
