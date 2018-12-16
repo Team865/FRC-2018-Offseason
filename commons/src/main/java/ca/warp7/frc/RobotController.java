@@ -231,6 +231,7 @@ public class RobotController {
             if (port >= 0 && port < 6) {
                 active = true;
                 this.controller = new XboxController(port);
+                reset(state);
             } else active = false;
         }
 

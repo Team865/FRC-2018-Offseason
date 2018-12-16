@@ -3,7 +3,7 @@ package ca.warp7.frc2018.v5.state.drive
 import ca.warp7.action.IAction
 import ca.warp7.frc2018.v5.input.DriveInput
 import ca.warp7.frc2018.v5.input.NavX
-import ca.warp7.frc2018.v5.output.DriveOutput
+import ca.warp7.frc2018.v5.subsystems.Drive
 import com.stormbots.MiniPID
 import kotlin.math.PI
 import kotlin.math.abs
@@ -54,8 +54,8 @@ object PIDDrive : IAction {
             angularValue = currentAngle + 2 * PI
         }
         val angular = angularPID.getOutput(angularValue)
-        DriveOutput.leftPercentOutput = linear - angular
-        DriveOutput.rightPercentOutput = linear + angular
+        Drive.leftPercentOutput = linear - angular
+        Drive.rightPercentOutput = linear + angular
     }
 
     private var ticks = 0

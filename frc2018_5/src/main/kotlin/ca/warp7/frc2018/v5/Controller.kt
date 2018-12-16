@@ -5,10 +5,6 @@ import ca.warp7.frc.ControlLoop
 import ca.warp7.frc.ControlLoop.HeldDown
 import ca.warp7.frc.ControlLoop.Pressed
 import ca.warp7.frc2018.v5.constants.LiftConstants
-import ca.warp7.frc2018.v5.output.ClimberOutput
-import ca.warp7.frc2018.v5.output.DriveOutput
-import ca.warp7.frc2018.v5.output.IntakeOutput
-import ca.warp7.frc2018.v5.output.Superstructure
 import ca.warp7.frc2018.v5.state.ManualClimb
 import ca.warp7.frc2018.v5.state.drive.CheesyDrive
 import ca.warp7.frc2018.v5.state.intake.KeepCube
@@ -17,6 +13,10 @@ import ca.warp7.frc2018.v5.state.intake.OuttakeCube
 import ca.warp7.frc2018.v5.state.superstructure.GoToPosition
 import ca.warp7.frc2018.v5.state.superstructure.HoldPosition
 import ca.warp7.frc2018.v5.state.superstructure.ReleasePosition
+import ca.warp7.frc2018.v5.subsystems.Climber
+import ca.warp7.frc2018.v5.subsystems.Drive
+import ca.warp7.frc2018.v5.subsystems.Intake
+import ca.warp7.frc2018.v5.subsystems.Superstructure
 import ca.warp7.frckt.robotController
 import ca.warp7.frckt.setIdleState
 import ca.warp7.frckt.setState
@@ -28,10 +28,10 @@ object Controller : ControlLoop {
     private val operator = robotController(1, true)
 
     override fun setup() {
-        setState { CheesyDrive to DriveOutput }
-        setIdleState { IntakeOutput }
-        setIdleState { ClimberOutput }
-        setIdleState { Superstructure }
+        setState { CheesyDrive to Drive }
+        setState { OpenPiston to Intake }
+        setState { ReleasePosition to Superstructure }
+        setIdleState { Climber }
     }
 
     override fun periodic() {
@@ -48,13 +48,13 @@ object Controller : ControlLoop {
 
         // Intake
         when (HeldDown) {
-            driver.aButton -> setState { OpenPiston to IntakeOutput }
-            driver.rightTrigger -> setState { KeepCube to IntakeOutput }
+            driver.aButton -> setState { OpenPiston to Intake }
+            driver.rightTrigger -> setState { KeepCube to Intake }
             driver.leftTrigger -> {
                 setState { HoldPosition to Superstructure }
-                setState { OuttakeCube to IntakeOutput }
+                setState { OuttakeCube to Intake }
             }
-            else -> setIdleState { IntakeOutput }
+            else -> setIdleState { Intake }
         }
 
         // Lift/Wrist
@@ -81,10 +81,10 @@ object Controller : ControlLoop {
         // Climber
         if (operator.startButton == HeldDown) {
             setIdleState { Superstructure }
-            setState { ManualClimb to ClimberOutput }
+            setState { ManualClimb to Climber }
             ManualClimb.speed = operator.leftYAxis
         } else {
-            setIdleState { ClimberOutput }
+            setIdleState { Climber }
         }
     }
 }

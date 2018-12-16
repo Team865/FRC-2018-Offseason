@@ -1,15 +1,15 @@
-package ca.warp7.frc2018.v5.output
+package ca.warp7.frc2018.v5.subsystems
 
-import ca.warp7.frc.OutputSystem
+import ca.warp7.frc.Subsystem
 import edu.wpi.first.wpilibj.Compressor
 
-object Superstructure : OutputSystem {
+object Superstructure : Subsystem {
     private val compressor get() = Compressor(0)
 
     var compressorOn = false
 
     override fun onDisabled() {
-        compressor.closedLoopControl = false
+        compressor.stop()
     }
 
     override fun onIdle() {
@@ -17,6 +17,7 @@ object Superstructure : OutputSystem {
     }
 
     override fun onOutput() {
-        compressor.closedLoopControl = compressorOn
+        if (compressorOn) compressor.start()
+        else compressor.stop()
     }
 }

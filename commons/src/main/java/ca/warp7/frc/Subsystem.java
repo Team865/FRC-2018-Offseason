@@ -1,6 +1,6 @@
 package ca.warp7.frc;
 
-public interface OutputSystem {
+public interface Subsystem {
 
     /**
      * <p>Called when the robot is disabled</p>

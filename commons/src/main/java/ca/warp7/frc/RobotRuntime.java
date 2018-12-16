@@ -18,8 +18,6 @@ public class RobotRuntime {
 
     private Notifier mLoopNotifier;
     private boolean mEnabled;
-    private List<InputSystem> mInputSystems;
-    private Map<OutputSystem, IAction> mOutputSystems;
     private double mPreviousTime;
     private final Object mRuntimeLock = new Object();
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -28,6 +26,8 @@ public class RobotRuntime {
     private final PrintStream originalErr = System.err;
     private IAction mActionRunner;
     private final List<RobotController.Instance> mControllers = new ArrayList<>();
+    private Map<Subsystem, IAction> mSubsystems = new HashMap<>();
+    private List<Input> mInputs;
     private NetworkTable mSystemsTable;
     private NetworkTable mControllersTable;
 
@@ -41,16 +41,16 @@ public class RobotRuntime {
                     RobotController.collect(instance.getState(), instance.getController());
                     RobotController.outputTelemetry(instance.getState(), mControllersTable, instance.getPort());
                 }
-            mInputSystems.forEach(inputSystem -> {
-                inputSystem.onMeasure(diff);
-                sendObjectDescription(inputSystem);
+            mInputs.forEach(input -> {
+                input.onMeasure(diff);
+                sendObjectDescription(input);
             });
             if (mEnabled) {
-                mOutputSystems.forEach((outputSystem, action) -> {
-                    sendObjectDescription(outputSystem);
-                    if (action == null) outputSystem.onIdle();
+                mSubsystems.forEach((subsystem, action) -> {
+                    sendObjectDescription(subsystem);
+                    if (action == null) subsystem.onIdle();
                     else action.update();
-                    outputSystem.onOutput();
+                    subsystem.onOutput();
                 });
             }
         }
@@ -87,36 +87,32 @@ public class RobotRuntime {
         else entry.setString(value.getClass().getSimpleName() + " Object");
     }
 
-    public void setInputSystems(InputSystem... inputSystems) {
-        if (mLoopNotifier == null) mInputSystems = Arrays.asList(inputSystems);
-    }
-
-    public void setOutputSystems(OutputSystem... outputSystems) {
-        if (mLoopNotifier == null) {
-            mOutputSystems = new HashMap<>();
-            for (OutputSystem system : outputSystems) mOutputSystems.put(system, null);
+    public void setInputs(Input... inputs) {
+        synchronized (mRuntimeLock){
+            mInputs = Arrays.asList(inputs);
         }
     }
 
     public void start(int loopsPerSecond) {
-        assert mLoopNotifier == null;
-        Thread.currentThread().setName("Robot");
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-        mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
-        mControllersTable = NetworkTableInstance.getDefault().getTable("Controllers");
-        mEnabled = false;
-        mLoopNotifier = new Notifier(mLoop);
-        mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
+        if (mLoopNotifier == null){
+            Thread.currentThread().setName("Robot");
+            System.setOut(new PrintStream(outContent));
+            System.setErr(new PrintStream(errContent));
+            mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
+            mControllersTable = NetworkTableInstance.getDefault().getTable("Controllers");
+            mEnabled = false;
+            mLoopNotifier = new Notifier(mLoop);
+            mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
+        }
     }
 
-    public void setState(OutputSystem system, IAction next) {
+    public void setState(IAction next, Subsystem system) {
         synchronized (mRuntimeLock) {
-            IAction current = mOutputSystems.get(system);
+            IAction current = mSubsystems.get(system);
             if (current == next) return;
             if (current != null) current.stop();
             if (next != null) next.start();
-            mOutputSystems.put(system, next);
+            mSubsystems.put(system, next);
         }
     }
 
@@ -127,7 +123,6 @@ public class RobotRuntime {
                 if (instance.getPort() == port0) return instance.getState();
             RobotController.Instance newInstance = new RobotController.Instance(port0);
             mControllers.add(newInstance);
-            RobotController.reset(newInstance.getState());
             return newInstance.getState();
         }
     }
@@ -137,20 +132,21 @@ public class RobotRuntime {
         mActionRunner.stop();
         synchronized (mRuntimeLock) {
             mEnabled = false;
-            mOutputSystems.keySet().forEach(outputSystem -> {
-                outputSystem.onDisabled();
-                sendObjectDescription(outputSystem);
+            mSubsystems.keySet().forEach(subsystem -> {
+                subsystem.onDisabled();
+                sendObjectDescription(subsystem);
             });
         }
     }
 
-    public void initAutonomousMode(IAction.Mode mode, double intervalMs, double timeout) {
+    public void initAutonomousMode(IAction.Mode mode, double intervalSeconds, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
         IAction action = mode.getAction();
-        mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp, intervalMs, timeout, action, true);
+        mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp,
+                intervalSeconds, timeout, action, true);
         synchronized (mRuntimeLock) {
             mEnabled = true;
-            mInputSystems.forEach(InputSystem::onZeroSensors);
+            mInputs.forEach(Input::onZeroSensors);
         }
         mActionRunner.start();
     }
@@ -159,7 +155,7 @@ public class RobotRuntime {
         System.out.println(String.format("Robot State: Teleop [%s]", controlLoop.getClass().getSimpleName()));
         synchronized (mRuntimeLock) {
             mEnabled = true;
-            mInputSystems.forEach(InputSystem::onZeroSensors);
+            mInputs.forEach(Input::onZeroSensors);
         }
         mActionRunner.stop();
         controlLoop.setup();

@@ -2,7 +2,7 @@ package ca.warp7.frc2018.v5.state.drive
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018.v5.constants.DriveConstants.kAxisDeadband
-import ca.warp7.frc2018.v5.output.DriveOutput
+import ca.warp7.frc2018.v5.subsystems.Drive
 
 object CheesyDrive : IAction {
 
@@ -42,8 +42,8 @@ object CheesyDrive : IAction {
     @Synchronized
     override fun update() {
         calculator.cheesyDrive(linearScaleDeadband(wheel), linearScaleDeadband(throttle), quickTurn)
-        DriveOutput.leftPercentOutput = leftPercent
-        DriveOutput.rightPercentOutput = rightPercent
-        DriveOutput.solenoidOnForShifter = solenoidOnForShifter
+        Drive.leftPercentOutput = leftPercent
+        Drive.rightPercentOutput = rightPercent
+        Drive.solenoidOnForShifter = solenoidOnForShifter
     }
 }

@@ -1,6 +1,6 @@
 package ca.warp7.frc;
 
-public interface InputSystem {
+public interface Input {
     /**
      * <p>Called periodically for the subsystem to get measurements from its input devices.
      * This method is called from the Input Looper. All sensor reading should be done

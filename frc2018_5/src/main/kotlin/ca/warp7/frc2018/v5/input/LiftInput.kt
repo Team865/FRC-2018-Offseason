@@ -1,11 +1,11 @@
 package ca.warp7.frc2018.v5.input
 
-import ca.warp7.frc.InputSystem
+import ca.warp7.frc.Input
 import ca.warp7.frc2018.v5.constants.RobotPins.*
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.Encoder
 
-object LiftInput : InputSystem {
+object LiftInput : Input {
     private val encoder = Encoder(kLiftEncoderAPin, kLiftEncoderBPin)
     private val limitSwitch = DigitalInput(kLimitSwitchPin)
 

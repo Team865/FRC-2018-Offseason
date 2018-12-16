@@ -5,34 +5,21 @@ import ca.warp7.frc2018.v5.input.DriveInput
 import ca.warp7.frc2018.v5.input.LiftInput
 import ca.warp7.frc2018.v5.input.NavX
 import ca.warp7.frc2018.v5.input.PoseEstimator
-import ca.warp7.frc2018.v5.output.*
-import ca.warp7.frckt.disableRobot
-import ca.warp7.frckt.initRobotSystems
-import ca.warp7.frckt.runRobotAuto
-import ca.warp7.frckt.startRobotControls
+import ca.warp7.frc2018.v5.subsystems.*
+import ca.warp7.frckt.*
 import edu.wpi.first.wpilibj.IterativeRobot
 
 class Scottie : IterativeRobot() {
-
     override fun robotInit() {
         println("Hello me is robit!")
-        initRobotSystems(
-                loopsPerSecond = 50,
-                inputSystems = arrayOf(
-                        DriveInput,
-                        LiftInput,
-                        NavX,
-                        PoseEstimator
-                ),
-                outputSystems = arrayOf(
-                        DriveOutput,
-                        Superstructure,
-                        LiftOutput,
-                        ClimberOutput,
-                        IntakeOutput,
-                        WristOutput
-                )
-        )
+        setInputs(DriveInput, LiftInput, NavX, PoseEstimator)
+        setIdleState { Drive }
+        setIdleState { Superstructure }
+        setIdleState { Lift }
+        setIdleState { Climber }
+        setIdleState { Intake }
+        setIdleState { Wrist }
+        startRobot(loopsPerSecond = 50)
     }
 
     override fun autonomousInit() = runRobotAuto(mode = Baseline, updatesPerSecond = 50, timeout = 15.0)

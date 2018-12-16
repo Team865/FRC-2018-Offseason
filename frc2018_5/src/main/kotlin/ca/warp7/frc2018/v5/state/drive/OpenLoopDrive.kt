@@ -1,7 +1,7 @@
 package ca.warp7.frc2018.v5.state.drive
 
 import ca.warp7.action.IAction
-import ca.warp7.frc2018.v5.output.DriveOutput
+import ca.warp7.frc2018.v5.subsystems.Drive
 
 object OpenLoopDrive : IAction {
 
@@ -26,7 +26,7 @@ object OpenLoopDrive : IAction {
 
     @Synchronized
     override fun update() {
-        DriveOutput.leftPercentOutput = leftPercent
-        DriveOutput.rightPercentOutput = rightPercent
+        Drive.leftPercentOutput = leftPercent
+        Drive.rightPercentOutput = rightPercent
     }
 }

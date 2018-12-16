@@ -1,10 +1,10 @@
 package ca.warp7.frc2018.v5.input
 
-import ca.warp7.frc.InputSystem
+import ca.warp7.frc.Input
 import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.SPI
 
-object NavX : InputSystem {
+object NavX : Input {
     private val ahrs = AHRS(SPI.Port.kMXP)
 
     var yaw = 0.0

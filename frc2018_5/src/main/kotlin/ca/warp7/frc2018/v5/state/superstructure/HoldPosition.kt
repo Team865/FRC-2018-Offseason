@@ -1,7 +1,7 @@
 package ca.warp7.frc2018.v5.state.superstructure
 
 import ca.warp7.action.IAction
-import ca.warp7.frc2018.v5.output.ClimberOutput
+import ca.warp7.frc2018.v5.subsystems.Climber
 
 object HoldPosition : IAction {
     var speed = 0.0
@@ -11,7 +11,7 @@ object HoldPosition : IAction {
 
     @Synchronized
     override fun update() {
-        ClimberOutput.percentOutput = speed
+        Climber.percentOutput = speed
     }
 
     @Synchronized

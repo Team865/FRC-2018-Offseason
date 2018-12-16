@@ -1,12 +1,12 @@
 package ca.warp7.frc2018.v5.input
 
-import ca.warp7.frc.InputSystem
+import ca.warp7.frc.Input
 import ca.warp7.frc2018.v5.constants.DriveConstants.kEncoderTicksPerRevolution
 import ca.warp7.frc2018.v5.constants.DriveConstants.kWheelRadius
 import ca.warp7.frc2018.v5.constants.RobotPins.*
 import edu.wpi.first.wpilibj.Encoder
 
-object DriveInput : InputSystem {
+object DriveInput : Input {
 
     private val leftEncoder = Encoder(kDriveLeftEncoderA, kDriveLeftEncoderB, false)
     private val rightEncoder = Encoder(kDriveRightEncoderA, kDriveLeftEncoderB, true)

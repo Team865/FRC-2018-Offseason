@@ -1,8 +1,8 @@
 package ca.warp7.frc2018.v5.input
 
-import ca.warp7.frc.InputSystem
+import ca.warp7.frc.Input
 
-object PoseEstimator : InputSystem {
+object PoseEstimator : Input {
 
     var predictedX = 0.0
     var predictedY = 0.0
