@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.Solenoid
 
-object Drive : Subsystem {
+object Drive : Subsystem() {
 
     private val leftMaster = VictorSPX(kDriveLeftA)
     private val rightMaster = VictorSPX(kDriveRightA)

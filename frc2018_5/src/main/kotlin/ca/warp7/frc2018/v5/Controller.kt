@@ -18,9 +18,8 @@ import ca.warp7.frc2018.v5.subsystems.Climber
 import ca.warp7.frc2018.v5.subsystems.Drive
 import ca.warp7.frc2018.v5.subsystems.Intake
 import ca.warp7.frc2018.v5.subsystems.Superstructure
+import ca.warp7.frckt.action
 import ca.warp7.frckt.robotController
-import ca.warp7.frckt.setIdle
-import ca.warp7.frckt.setState
 
 
 object Controller : ControlLoop {
@@ -29,10 +28,10 @@ object Controller : ControlLoop {
     private val controller1 = robotController(port = 1, active = true)
 
     override fun setup() {
-        setState { CheesyDrive to Drive }
-        setState { OpenPiston to Intake }
-        setState { ReleasePosition to Superstructure }
-        setIdle { Climber }
+        Drive.state = CheesyDrive
+        Intake.state = OpenPiston
+        Superstructure.state = ReleasePosition
+        Climber.idle()
     }
 
     override fun periodic() {
@@ -47,38 +46,39 @@ object Controller : ControlLoop {
         CheesyDrive.throttle = leftXAxis
         CheesyDrive.quickTurn = leftBumper == HeldDown
         when (HeldDown) {
-            aButton -> setState { OpenPiston to Intake }
-            rightTrigger -> setState { KeepCube to Intake }
+            aButton -> Intake.state = OpenPiston
+            rightTrigger -> Intake.state = KeepCube
             leftTrigger -> {
-                setState { HoldPosition to Superstructure }
-                setState { OuttakeCube to Intake }
+                Superstructure.state = HoldPosition
+                Intake.resetNextStates(OpenPiston, OuttakeCube)
+                Intake.state = action { queue(OpenPiston, OuttakeCube) }
             }
-            else -> setIdle { Intake }
+            else -> Intake.idle()
         }
     }
 
     private fun RobotController.updateOperator() {
         when (HeldDown) {
-            yButton -> setState { ReleasePosition to Superstructure }
+            yButton -> Superstructure.state = ReleasePosition
             xButton -> {
-                setState { GoToPosition to Superstructure }
+                Superstructure.state = GoToPosition
                 GoToPosition.liftHeight = LiftConstants.kSetPoint1
             }
             rightTrigger -> {
-                setState { GoToPosition to Superstructure }
+                Superstructure.state = GoToPosition
                 GoToPosition.liftHeight = LiftConstants.kSetPoint2
             }
             aButton -> {
-                setState { GoToPosition to Superstructure }
+                Superstructure.state = GoToPosition
                 GoToPosition.liftHeight = leftYAxis
             }
         }
         GoToPosition.wristSpeed = rightYAxis
         if (startButton == HeldDown) {
-            setState { ManualClimb to Climber }
+            Climber.state = ManualClimb
             ManualClimb.speed = leftYAxis
         } else {
-            setIdle { Climber }
+            Climber.idle()
         }
     }
 }

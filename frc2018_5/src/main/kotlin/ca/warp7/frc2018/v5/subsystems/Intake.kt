@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.Solenoid
 
-object Intake : Subsystem {
+object Intake : Subsystem() {
     private val leftMaster = VictorSPX(kIntakeLeftPin)
     private val rightMaster = VictorSPX(kIntakeRightPin)
     private val piston = Solenoid(kIntakePistonSolenoidPin)

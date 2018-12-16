@@ -5,7 +5,7 @@ import ca.warp7.frc2018.v5.constants.RobotPins.kLiftMotorPin
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
-object Lift : Subsystem {
+object Lift : Subsystem() {
     private val liftMaster = VictorSPX(kLiftMotorPin)
 
     var percentOutput = 0.0

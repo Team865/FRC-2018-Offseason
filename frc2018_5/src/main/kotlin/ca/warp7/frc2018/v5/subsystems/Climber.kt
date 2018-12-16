@@ -5,7 +5,7 @@ import ca.warp7.frc2018.v5.constants.RobotPins.kClimberPin
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
-object Climber : Subsystem {
+object Climber : Subsystem() {
     private val climberMaster = VictorSPX(kClimberPin)
 
     var percentOutput = 0.0

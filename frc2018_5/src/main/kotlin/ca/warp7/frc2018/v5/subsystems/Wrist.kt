@@ -5,7 +5,7 @@ import ca.warp7.frc2018.v5.constants.RobotPins.kWristPin
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
-object Wrist : Subsystem {
+object Wrist : Subsystem() {
     private val wristMaster = VictorSPX(kWristPin)
 
     var percentOutput = 0.0
