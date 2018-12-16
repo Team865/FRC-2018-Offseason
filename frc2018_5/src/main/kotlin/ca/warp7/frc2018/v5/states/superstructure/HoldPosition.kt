@@ -1,9 +1,9 @@
-package ca.warp7.frc2018.v5.state
+package ca.warp7.frc2018.v5.states.superstructure
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018.v5.subsystems.Climber
 
-object ManualClimb : IAction {
+object HoldPosition : IAction {
     var speed = 0.0
 
     override fun start() {

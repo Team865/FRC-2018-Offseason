@@ -1,4 +1,4 @@
-package ca.warp7.frc2018.v5.state.superstructure
+package ca.warp7.frc2018.v5.states.superstructure
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018.v5.subsystems.Climber

@@ -1,7 +1,7 @@
 package ca.warp7.frc2018.v5.actions
 
 import ca.warp7.action.impl.Singleton
-import ca.warp7.frc2018.v5.state.drive.PIDDrive
+import ca.warp7.frc2018.v5.states.drive.PIDDrive
 import ca.warp7.frc2018.v5.subsystems.Drive
 
 class DriveForDistance(private val distance: Double) : Singleton() {

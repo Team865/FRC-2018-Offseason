@@ -1,4 +1,4 @@
-package ca.warp7.frc2018.v5.state.drive
+package ca.warp7.frc2018.v5.states.drive
 
 import ca.warp7.action.IAction
 import ca.warp7.frc2018.v5.constants.DriveConstants.kAxisDeadband

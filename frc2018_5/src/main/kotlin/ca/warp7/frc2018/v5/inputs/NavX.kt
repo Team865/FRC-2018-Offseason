@@ -1,4 +1,4 @@
-package ca.warp7.frc2018.v5.input
+package ca.warp7.frc2018.v5.inputs
 
 import ca.warp7.frc.Input
 import com.kauailabs.navx.frc.AHRS

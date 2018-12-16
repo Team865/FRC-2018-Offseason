@@ -1,7 +1,7 @@
 package ca.warp7.frc2018.v5.actions
 
 import ca.warp7.action.impl.Singleton
-import ca.warp7.frc2018.v5.state.drive.OpenLoopDrive
+import ca.warp7.frc2018.v5.states.drive.OpenLoopDrive
 import ca.warp7.frc2018.v5.subsystems.Drive
 
 class DriveForTime(private val left: Double,

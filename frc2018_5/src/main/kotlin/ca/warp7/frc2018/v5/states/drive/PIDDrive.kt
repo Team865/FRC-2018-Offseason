@@ -1,8 +1,8 @@
-package ca.warp7.frc2018.v5.state.drive
+package ca.warp7.frc2018.v5.states.drive
 
 import ca.warp7.action.IAction
-import ca.warp7.frc2018.v5.input.DriveInput
-import ca.warp7.frc2018.v5.input.NavX
+import ca.warp7.frc2018.v5.inputs.DriveInput
+import ca.warp7.frc2018.v5.inputs.NavX
 import ca.warp7.frc2018.v5.subsystems.Drive
 import com.stormbots.MiniPID
 import kotlin.math.PI
