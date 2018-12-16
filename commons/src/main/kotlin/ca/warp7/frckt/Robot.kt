@@ -3,11 +3,11 @@
 package ca.warp7.frckt
 
 import ca.warp7.action.IAction
-import ca.warp7.frc.next.ControlLoop
-import ca.warp7.frc.next.InputSystem
-import ca.warp7.frc.next.OutputSystem
-import ca.warp7.frc.next.RobotController
-import ca.warp7.frc.next.RobotRuntime.ROBOT_RUNTIME
+import ca.warp7.frc.ControlLoop
+import ca.warp7.frc.InputSystem
+import ca.warp7.frc.OutputSystem
+import ca.warp7.frc.RobotController
+import ca.warp7.frc.RobotRuntime.ROBOT_RUNTIME
 
 fun initRobotSystems(loopsPerSecond: Int = 50,
                      inputSystems: Array<InputSystem>,
