@@ -38,6 +38,21 @@ public class Constants {
     public static final int DRIVER_ID = 0;
     public static final int OPERATOR_ID = 1;
 
+    // TODO tune these with drive
+    // Tele-op control settings
+    public static double lowLineMinX = 0.1;
+    public static double lowLineMinY = 0.23;
+    public static double lowLineMaxX = 0.3;
+    public static double lowLineMaxY = 0.35;
+
+    public static double highLineMinX = lowLineMinX;
+    public static double highLineMinY = 0.6;
+
+    public static double lowLineSlope = (lowLineMaxY - lowLineMinY)/(lowLineMaxX - lowLineMinX);
+    public static double lowLineYInt = lowLineMinY - lowLineSlope * lowLineMinX;
+    public static double highLineSlope = (1 - highLineMinY)/(1 - highLineMinX);
+    public static double highLineYInt = highLineMinY - highLineSlope * highLineMinX;
+
     //TODO Update constants!
     // Robot dimensions and stuff
     public static double WHEEL_DIAMETER = 6; // inches

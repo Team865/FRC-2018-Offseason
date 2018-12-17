@@ -4,6 +4,7 @@ import ca.warp7.frc2018_2.Constants;
 import ca.warp7.frc2018_2.Robot;
 import ca.warp7.frc2018_2.misc.Util;
 
+import static ca.warp7.frc2018_2.Constants.*;
 import static ca.warp7.frc2018_2.controls.Control.DOWN;
 import static ca.warp7.frc2018_2.controls.Control.PRESSED;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
@@ -65,11 +66,25 @@ public class DualRemote extends ControlsBase {
         if (operator.getAButton() == DOWN) {
             double x = operator.getY((kLeft));
             double target;
-            if (operator.getTrigger(kLeft) == DOWN) {
+            if (operator.getTrigger(kLeft) == DOWN && operator.getBumper(kLeft) == DOWN){
+
+
+                if (x >= lowLineMinX && x < lowLineMaxX){
+                    target = lowLineSlope * x + lowLineYInt;
+                }
+                else if (x >= highLineMinX && x <= 1){
+                    target = highLineSlope * x + highLineYInt;
+                }
+                else {
+                    System.out.println("whoops, missed the math");
+                }
+
+            }
+            else if (operator.getTrigger(kLeft) == DOWN) {
                 double absY = Math.abs(x);
                 target = Math.pow(absY, 0.2);
             }
-            else if (operator.getBumper(kLeft) == DOWN){
+            else if (operator.getBumper(kLeft) == DOWN){ // Double line, meeting at (.25, .5)
                 double initialSlope = 2;
                 double slopeChangePoint = 0.25;
                 double targetAtSlopeChange = slopeChangePoint * initialSlope;
