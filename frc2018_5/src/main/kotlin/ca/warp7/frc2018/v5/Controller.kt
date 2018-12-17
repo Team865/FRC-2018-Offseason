@@ -50,7 +50,6 @@ object Controller : ControlLoop {
             rightTrigger -> Intake.state = KeepCube
             leftTrigger -> {
                 Superstructure.state = HoldPosition
-                Intake.resetNextStates(OpenPiston, OuttakeCube)
                 Intake.state = action { queue(OpenPiston, OuttakeCube) }
             }
             else -> Intake.idle()

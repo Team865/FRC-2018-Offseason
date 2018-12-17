@@ -13,9 +13,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RobotRuntime {
 
@@ -29,7 +27,7 @@ public class RobotRuntime {
     private final PrintStream originalErr = System.err;
     private IAction mActionRunner;
     private final List<RobotController.Instance> mControllers = new ArrayList<>();
-    private Map<Subsystem, IAction> mSubsystems = new HashMap<>();
+    private List<Subsystem> mSubsystems = new ArrayList<>();
     private List<Input> mInputs = new ArrayList<>();
     private NetworkTable mSystemsTable;
     private NetworkTable mControllersTable;
@@ -49,10 +47,9 @@ public class RobotRuntime {
                 sendObjectDescription(input);
             });
             if (mEnabled) {
-                mSubsystems.forEach((subsystem, action) -> {
+                mSubsystems.forEach(subsystem -> {
                     sendObjectDescription(subsystem);
-                    if (action == null) subsystem.onIdle();
-                    else action.update();
+                    subsystem.update();
                     subsystem.onOutput();
                 });
             }
@@ -91,31 +88,23 @@ public class RobotRuntime {
     }
 
     public void registerInput(Input input) {
-        synchronized (mRuntimeLock){
+        synchronized (mRuntimeLock) {
             mInputs.add(input);
         }
     }
 
     public void start(int loopsPerSecond) {
-        if (mLoopNotifier == null){
-            Thread.currentThread().setName("Robot");
-            System.setOut(new PrintStream(outContent));
-            System.setErr(new PrintStream(errContent));
-            mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
-            mControllersTable = NetworkTableInstance.getDefault().getTable("Controllers");
-            mEnabled = false;
-            mLoopNotifier = new Notifier(mLoop);
-            mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
-        }
-    }
-
-    public void setState(IAction next, Subsystem system) {
-        synchronized (mRuntimeLock) {
-            IAction current = mSubsystems.get(system);
-            if (current == next) return;
-            if (current != null) current.stop();
-            if (next != null) next.start();
-            mSubsystems.put(system, next);
+        if (mLoopNotifier == null) {
+            synchronized (mRuntimeLock) {
+                Thread.currentThread().setName("Robot");
+                System.setOut(new PrintStream(outContent));
+                System.setErr(new PrintStream(errContent));
+                mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
+                mControllersTable = NetworkTableInstance.getDefault().getTable("Controllers");
+                mEnabled = false;
+                mLoopNotifier = new Notifier(mLoop);
+                mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
+            }
         }
     }
 
@@ -135,14 +124,14 @@ public class RobotRuntime {
         mActionRunner.stop();
         synchronized (mRuntimeLock) {
             mEnabled = false;
-            mSubsystems.keySet().forEach(subsystem -> {
+            mSubsystems.forEach(subsystem -> {
                 subsystem.onDisabled();
                 sendObjectDescription(subsystem);
             });
         }
     }
 
-    public void initAutonomousMode(IAction.Mode mode, double intervalSeconds, double timeout) {
+    public void initAuto(IAction.Mode mode, double intervalSeconds, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
         IAction action = mode.getAction();
         mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp,
@@ -162,6 +151,12 @@ public class RobotRuntime {
         }
         mActionRunner.stop();
         controlLoop.setup();
+    }
+
+    void registerSubsystem(Subsystem subsystem) {
+        synchronized (mRuntimeLock) {
+            mSubsystems.add(subsystem);
+        }
     }
 
     public static final RobotRuntime ROBOT_RUNTIME;

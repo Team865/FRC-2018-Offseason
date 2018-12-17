@@ -2,13 +2,10 @@ package ca.warp7.frc;
 
 import ca.warp7.action.IAction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public abstract class Subsystem {
 
     protected Subsystem() {
+        RobotRuntime.ROBOT_RUNTIME.registerSubsystem(this);
     }
 
     /**
@@ -35,45 +32,15 @@ public abstract class Subsystem {
     public void onOutput() {
     }
 
-    public class State {
-        @Override
-        public boolean equals(Object obj) {
-            return false;
-        }
-
-        public void set(IAction action) {
-            RobotRuntime.ROBOT_RUNTIME.setState(action, Subsystem.this);
-        }
-
-        public void setQueue(IAction... action) {
-            RobotRuntime.ROBOT_RUNTIME.setState(action[0], Subsystem.this);
-        }
-
-        public void idle() {
-            set(null);
-        }
+    void update() {
+        if (state == null) onIdle();
+        else state.update();
     }
 
     private IAction state;
 
     public void setState(IAction state) {
         this.state = state;
-    }
-
-    private final List<IAction> nextStates = new ArrayList<>();
-
-    public List<IAction> getNextStates() {
-        return nextStates;
-    }
-
-    public void resetNextStates(IAction... states) {
-        idle();
-        nextStates.clear();
-        nextStates.addAll(Arrays.asList(states));
-    }
-
-    public void setQueue(IAction... action) {
-        RobotRuntime.ROBOT_RUNTIME.setState(action[0], Subsystem.this);
     }
 
     public IAction getState() {

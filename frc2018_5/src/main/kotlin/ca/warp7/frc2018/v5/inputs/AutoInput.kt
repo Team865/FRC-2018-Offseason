@@ -4,6 +4,7 @@ package ca.warp7.frc2018.v5.inputs
 import ca.warp7.frc.Input
 import ca.warp7.frc2018.v5.inputs.AutoInput.Selected.*
 import edu.wpi.first.wpilibj.AnalogInput
+import edu.wpi.first.wpilibj.DriverStation
 
 
 object AutoInput : Input {
@@ -28,11 +29,14 @@ object AutoInput : Input {
         Left, Right
     }
 
-    var selectedMode = None;
+    var selectedMode = None
     var scalePlates = Side.Left
     var switchPlates = Side.Left
 
     override fun onMeasure(dt: Double) {
+        val message = DriverStation.getInstance().gameSpecificMessage
+        scalePlates = if (message[0] == 'L') Side.Left else Side.Right
+        switchPlates = if (message[1] == 'L') Side.Left else Side.Right
         var voltage = 0.0
         selectedMode = None
         if (a0.averageVoltage > voltage) {
@@ -57,7 +61,6 @@ object AutoInput : Input {
         }
         if (a5.averageVoltage > voltage) {
             selectedMode = RightSwitch
-            voltage = a5.averageVoltage
         }
     }
 }
