@@ -14,8 +14,7 @@ public abstract class Subsystem {
      * <p>This method should reset everything having to do with output so as to put
      * the subsystem in a disabled state</p>
      */
-    public void onDisabled() {
-    }
+    public abstract void onDisabled();
 
 
     public void onIdle() {
@@ -29,25 +28,24 @@ public abstract class Subsystem {
      * <p>This method is guaranteed to not be called when the robot is disabled.
      * Any output limits should be applied here for safety reasons.</p>
      */
-    public void onOutput() {
-    }
+    public abstract void onOutput();
 
-    void update() {
+    synchronized void update() {
         if (state == null) onIdle();
         else state.update();
     }
 
     private IAction state;
 
-    public void setState(IAction state) {
+    synchronized public void setState(IAction state) {
         this.state = state;
     }
 
-    public IAction getState() {
+    synchronized public IAction getState() {
         return state;
     }
 
-    public void idle() {
+    synchronized public void idle() {
         state = null;
     }
 }

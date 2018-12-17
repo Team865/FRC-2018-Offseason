@@ -31,6 +31,7 @@ public class RobotRuntime {
     private List<Input> mInputs = new ArrayList<>();
     private NetworkTable mSystemsTable;
     private NetworkTable mControllersTable;
+    private int mLoopsPerSecond;
 
     private Runnable mLoop = () -> {
         double time = Timer.getFPGATimestamp();
@@ -102,8 +103,9 @@ public class RobotRuntime {
                 mSystemsTable = NetworkTableInstance.getDefault().getTable("Systems");
                 mControllersTable = NetworkTableInstance.getDefault().getTable("Controllers");
                 mEnabled = false;
+                mLoopsPerSecond = loopsPerSecond;
                 mLoopNotifier = new Notifier(mLoop);
-                mLoopNotifier.startPeriodic(1.0 / loopsPerSecond);
+                mLoopNotifier.startPeriodic(1.0 / mLoopsPerSecond);
             }
         }
     }
@@ -131,11 +133,11 @@ public class RobotRuntime {
         }
     }
 
-    public void initAuto(IAction.Mode mode, double intervalSeconds, double timeout) {
+    public void initAuto(IAction.Mode mode, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
         IAction action = mode.getAction();
         mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp,
-                intervalSeconds, timeout, action, true);
+                1.0 / mLoopsPerSecond, timeout, action, true);
         synchronized (mRuntimeLock) {
             mEnabled = true;
             mInputs.forEach(Input::onZeroSensors);
