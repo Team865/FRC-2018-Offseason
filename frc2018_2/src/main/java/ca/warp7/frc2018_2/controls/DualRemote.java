@@ -65,7 +65,7 @@ public class DualRemote extends ControlsBase {
         if (operator.getAButton() == DOWN) {
             double x = operator.getY((kLeft));
             double target;
-            if (operator.getTrigger(kRight) == DOWN) {
+            if (operator.getTrigger(kLeft) == DOWN) {
                 double absY = Math.abs(x);
                 target = Math.pow(absY, 0.2);
             }
