@@ -32,6 +32,7 @@ public class RobotRuntime {
     private NetworkTable mSystemsTable;
     private NetworkTable mControllersTable;
     private int mLoopsPerSecond;
+    private ControlLoop mControlLoop;
 
     private Runnable mLoop = () -> {
         double time = Timer.getFPGATimestamp();
@@ -48,9 +49,10 @@ public class RobotRuntime {
                 sendObjectDescription(input);
             });
             if (mEnabled) {
+                if (mControlLoop != null) mControlLoop.periodic();
                 mSubsystems.forEach(subsystem -> {
                     sendObjectDescription(subsystem);
-                    subsystem.update();
+                    subsystem.updateState();
                     subsystem.onOutput();
                 });
             }
@@ -123,9 +125,10 @@ public class RobotRuntime {
 
     public void disableOutputs() {
         System.out.println("Robot State: Disabled");
-        mActionRunner.stop();
+        if (mActionRunner != null) mActionRunner.stop();
         synchronized (mRuntimeLock) {
             mEnabled = false;
+            mControlLoop = null;
             mSubsystems.forEach(subsystem -> {
                 subsystem.onDisabled();
                 sendObjectDescription(subsystem);
@@ -136,10 +139,12 @@ public class RobotRuntime {
     public void initAuto(IAction.Mode mode, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
         IAction action = mode.getAction();
+        if (mActionRunner != null) mActionRunner.stop();
         mActionRunner = ActionMode.createRunner(Timer::getFPGATimestamp,
                 1.0 / mLoopsPerSecond, timeout, action, true);
         synchronized (mRuntimeLock) {
             mEnabled = true;
+            mControlLoop = null;
             mInputs.forEach(Input::onZeroSensors);
         }
         mActionRunner.start();
@@ -147,12 +152,13 @@ public class RobotRuntime {
 
     public void initControls(ControlLoop controlLoop) {
         System.out.println(String.format("Robot State: Teleop [%s]", controlLoop.getClass().getSimpleName()));
+        if (mActionRunner != null) mActionRunner.stop();
         synchronized (mRuntimeLock) {
             mEnabled = true;
             mInputs.forEach(Input::onZeroSensors);
+            mControlLoop = controlLoop;
+            mControlLoop.setup();
         }
-        mActionRunner.stop();
-        controlLoop.setup();
     }
 
     void registerSubsystem(Subsystem subsystem) {

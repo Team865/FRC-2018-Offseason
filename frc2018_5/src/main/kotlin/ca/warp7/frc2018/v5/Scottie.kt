@@ -15,13 +15,13 @@ class Scottie : IterativeRobot() {
         registerInput(PoseEstimator)
         registerInput(AutoInput)
 
-        Drive.idle()
-        Superstructure.idle()
-        Superstructure.idle()
-        Lift.idle()
-        Climber.idle()
-        Intake.idle()
-        Wrist.idle()
+        Drive.setIdle()
+        Superstructure.setIdle()
+        Superstructure.setIdle()
+        Lift.setIdle()
+        Climber.setIdle()
+        Intake.setIdle()
+        Wrist.setIdle()
 
         startRobot(loopsPerSecond = 50)
     }

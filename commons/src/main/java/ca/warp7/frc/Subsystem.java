@@ -30,22 +30,30 @@ public abstract class Subsystem {
      */
     public abstract void onOutput();
 
-    synchronized void update() {
-        if (state == null) onIdle();
-        else state.update();
+    private IAction mState;
+
+    synchronized void updateState() {
+        if (mState == null) onIdle();
+        else if (mState.shouldFinish()) {
+            mState.stop();
+            mState = null;
+        } else mState.update();
     }
 
-    private IAction state;
-
     synchronized public void setState(IAction state) {
-        this.state = state;
+        if (mState == state) return;
+        if (mState != null) mState.stop();
+        if (state != null) {
+            mState = state;
+            mState.start();
+        }
     }
 
     synchronized public IAction getState() {
-        return state;
+        return mState;
     }
 
-    synchronized public void idle() {
-        state = null;
+    synchronized public void setIdle() {
+        mState = null;
     }
 }

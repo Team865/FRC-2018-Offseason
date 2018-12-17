@@ -31,7 +31,7 @@ object Controller : ControlLoop {
         Drive.state = CheesyDrive
         Intake.state = OpenPiston
         Superstructure.state = ReleasePosition
-        Climber.idle()
+        Climber.setIdle()
     }
 
     override fun periodic() {
@@ -52,7 +52,7 @@ object Controller : ControlLoop {
                 Superstructure.state = HoldPosition
                 Intake.state = action { queue(OpenPiston, OuttakeCube) }
             }
-            else -> Intake.idle()
+            else -> Intake.setIdle()
         }
     }
 
@@ -77,7 +77,7 @@ object Controller : ControlLoop {
             Climber.state = ManualClimb
             ManualClimb.speed = leftYAxis
         } else {
-            Climber.idle()
+            Climber.setIdle()
         }
     }
 }

@@ -16,6 +16,6 @@ class DriveForDistance(private val distance: Double, private val stop: Boolean) 
     }
 
     override fun stop() {
-        if (stop) Drive.idle()
+        if (stop) Drive.setIdle()
     }
 }

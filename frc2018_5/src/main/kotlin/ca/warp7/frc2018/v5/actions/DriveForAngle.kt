@@ -16,6 +16,6 @@ class DriveForAngle(private val angle: Double, private val stop: Boolean) : Sing
     }
 
     override fun stop() {
-        if (stop) Drive.idle()
+        if (stop) Drive.setIdle()
     }
 }

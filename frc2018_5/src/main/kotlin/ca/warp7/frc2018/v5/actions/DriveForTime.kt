@@ -18,6 +18,6 @@ class DriveForTime(private val left: Double,
     }
 
     override fun stop() {
-        Drive.idle()
+        Drive.setIdle()
     }
 }
