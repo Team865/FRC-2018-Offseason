@@ -47,9 +47,17 @@ public class DualRemote extends ControlsBase {
             intake.pistonToggle();
 
         // Toggle Limelight between camera and vision modes
+
+        /*
         if (driver.getXButton() == PRESSED) {
             Robot.limelight.switchCamera();
             System.out.println("switching camera");
+        }
+        */
+
+
+        if (driver.getXButton() == PRESSED) {
+            intake.toPneumatics();
         }
 
         // Exchange setpoint
@@ -65,7 +73,7 @@ public class DualRemote extends ControlsBase {
         // PID lift control
         if (operator.getAButton() == DOWN) {
             double x = operator.getY((kLeft));
-            double target;
+            double target = 0;
             if (operator.getTrigger(kLeft) == DOWN && operator.getBumper(kLeft) == DOWN){
 
 

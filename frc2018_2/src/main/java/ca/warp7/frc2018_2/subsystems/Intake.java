@@ -5,6 +5,7 @@ import ca.warp7.frc2018_2.misc.LimelightPhotosensor;
 import ca.warp7.frc2018_2.misc.MotorGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 
 import static ca.warp7.frc2018_2.Constants.*;
 
@@ -22,6 +23,11 @@ public class Intake {
         intakePistons = new Solenoid(INTAKE_PISTONS);
         photosensor = new LimelightPhotosensor(Robot.limelight, 1);
         //pistonToggle();
+    }
+
+    public void toPneumatics(){ // TODO tune numbers and make constants for them
+        setSpeed(-0.4);
+        Timer.delay(0.3);
     }
 
     private double ramp = 0;

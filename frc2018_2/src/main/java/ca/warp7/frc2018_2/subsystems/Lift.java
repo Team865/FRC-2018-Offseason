@@ -74,7 +74,7 @@ public class Lift {
         if (isBottom()) //zero switch is active zero encoder
             zeroEncoder();
         else if (intake.getSpeed() >= 0 && !(overrideIntake)) //added intake override for auto
-            intake.rampSpeed(0.3);
+            //intake.rampSpeed(0.3); //TODO uncomment this
 
         if (shouldSlowFall) {
             rampSpeed(-0.1);
