@@ -8,7 +8,9 @@ object NavX : Input {
     private val ahrs = AHRS(SPI.Port.kMXP)
 
     var yaw = 0.0
+        private set
     var calibrated = false
+        private set
 
     @Synchronized
     override fun onMeasure(dt: Double) {

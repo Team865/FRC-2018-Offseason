@@ -10,8 +10,11 @@ object LiftInput : Input {
     private val limitSwitch = DigitalInput(kLimitSwitchPin)
 
     var limitSwitchPressed = false
+        private set
     var encoderTicks = 0.0
+        private set
     var encoderRate = 0.0
+        private set
 
     @Synchronized
     override fun onMeasure(dt: Double) {

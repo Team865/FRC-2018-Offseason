@@ -5,8 +5,11 @@ import ca.warp7.frc.Input
 object PoseEstimator : Input {
 
     var predictedX = 0.0
+        private set
     var predictedY = 0.0
+        private set
     var heading = 0.0
+        private set
 
     private var prevLeft = 0.0
     private var prevRight = 0.0

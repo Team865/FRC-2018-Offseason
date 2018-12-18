@@ -114,10 +114,10 @@ public class RobotRuntime {
         }
     }
 
-    public static final RobotRuntime ROBOT_RUNTIME;
+    public static final RobotRuntime RT;
 
     static {
-        ROBOT_RUNTIME = new RobotRuntime();
+        RT = new RobotRuntime();
     }
 
     private RobotRuntime() {

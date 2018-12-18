@@ -12,10 +12,16 @@ object DriveInput : Input {
     private val rightEncoder = Encoder(kDriveRightEncoderA, kDriveLeftEncoderB, true)
 
     var leftDistance = 0.0
+        private set
     var rightDistance = 0.0
+        private set
     var leftRate = 0.0
+        private set
     var rightRate = 0.0
-    var averageDistance = 0.0
+        private set
+
+    val averageDistance
+        get() = (leftDistance + rightDistance) / 2.0
 
     init {
         leftEncoder.distancePerPulse = (kWheelRadius * Math.PI) / kEncoderTicksPerRevolution * 0.0254
@@ -26,7 +32,6 @@ object DriveInput : Input {
     override fun onMeasure(dt: Double) {
         leftDistance = leftEncoder.distance
         rightDistance = rightEncoder.distance
-        averageDistance = (leftDistance + rightDistance) / 2.0
         leftRate = leftEncoder.rate
         rightRate = rightEncoder.rate
     }

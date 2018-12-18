@@ -5,7 +5,7 @@ import ca.warp7.action.IAction;
 public abstract class Subsystem {
 
     protected Subsystem() {
-        RobotRuntime.ROBOT_RUNTIME.registerSubsystem(this);
+        RobotRuntime.RT.registerSubsystem(this);
     }
 
     /**

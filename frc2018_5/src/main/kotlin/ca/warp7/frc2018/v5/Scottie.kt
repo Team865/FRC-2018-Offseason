@@ -1,6 +1,9 @@
 package ca.warp7.frc2018.v5
 
-import ca.warp7.frc2018.v5.inputs.*
+import ca.warp7.frc2018.v5.inputs.DriveInput
+import ca.warp7.frc2018.v5.inputs.LiftInput
+import ca.warp7.frc2018.v5.inputs.NavX
+import ca.warp7.frc2018.v5.inputs.PoseEstimator
 import ca.warp7.frc2018.v5.subsystems.*
 import ca.warp7.frckt.*
 import edu.wpi.first.wpilibj.IterativeRobot
@@ -13,7 +16,6 @@ class Scottie : IterativeRobot() {
         registerInput(LiftInput)
         registerInput(NavX)
         registerInput(PoseEstimator)
-        registerInput(AutoInput)
 
         Drive.setIdle()
         Superstructure.setIdle()
