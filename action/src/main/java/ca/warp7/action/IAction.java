@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Team 865
  * @author Yu Liu
- * @version 3.16 (Revision 40 on 11/25/2018)
+ * @version 3.16 (Revision 41 on 12/16/2018)
  * @apiNote {@link IAction} and its inner interfaces create an API framework for scheduling complex
  * action tasks in a variety of ways, especially useful for autonomous programming. See the
  * specific interfaces for documentation
@@ -844,7 +844,7 @@ public interface IAction {
          * @return The API state after the method operation has been queued to the previous state
          * @since 3.15
          */
-        default API exec(Runnable runnable) {
+        default API execRunnable(Runnable runnable) {
             return exec(d -> runnable.run());
         }
 
@@ -858,7 +858,7 @@ public interface IAction {
          * @return The API state after the method operation has been queued to the previous state
          * @since 3.15
          */
-        default API iterate(Runnable runnable) {
+        default API iterateRunnable(Runnable runnable) {
             return iterate(d -> runnable.run());
         }
 

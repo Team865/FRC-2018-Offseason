@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class XboxControlsState {
 
     private static final double kTriggerDeadBand = 0.5;
@@ -36,6 +36,94 @@ public class XboxControlsState {
     public double LeftYAxis;
     public double RightXAxis;
     public double RightYAxis;
+
+    public int getAButton() {
+        return AButton;
+    }
+
+    public int getBButton() {
+        return BButton;
+    }
+
+    public int getXButton() {
+        return XButton;
+    }
+
+    public int getYButton() {
+        return YButton;
+    }
+
+    public int getLeftBumper() {
+        return LeftBumper;
+    }
+
+    public int getRightBumper() {
+        return RightBumper;
+    }
+
+    public int getLeftTrigger() {
+        return LeftTrigger;
+    }
+
+    public int getRightTrigger() {
+        return RightTrigger;
+    }
+
+    public int getLeftStickButton() {
+        return LeftStickButton;
+    }
+
+    public int getRightStickButton() {
+        return RightStickButton;
+    }
+
+    public int getStartButton() {
+        return StartButton;
+    }
+
+    public int getBackButton() {
+        return BackButton;
+    }
+
+    public int getUpDPad() {
+        return UpDPad;
+    }
+
+    public int getRightDPad() {
+        return RightDPad;
+    }
+
+    public int getDownDPad() {
+        return DownDPad;
+    }
+
+    public int getLeftDPad() {
+        return LeftDPad;
+    }
+
+    public double getLeftTriggerAxis() {
+        return LeftTriggerAxis;
+    }
+
+    public double getRightTriggerAxis() {
+        return RightTriggerAxis;
+    }
+
+    public double getLeftXAxis() {
+        return LeftXAxis;
+    }
+
+    public double getLeftYAxis() {
+        return LeftYAxis;
+    }
+
+    public double getRightXAxis() {
+        return RightXAxis;
+    }
+
+    public double getRightYAxis() {
+        return RightYAxis;
+    }
 
     private static int u(int old, boolean _new) {
         return _new ?
