@@ -4,6 +4,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.XboxController;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -18,6 +20,24 @@ class RobotUtils {
     private static final int kRightPOV = 90;
     private static final int kDownPOV = 180;
     private static final int kLeftPOV = 270;
+
+    private static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private static final PrintStream originalOut = System.out;
+    private static final PrintStream originalErr = System.err;
+
+    static void initSystemStream() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+    }
+
+    static void updateSystemStream() {
+        originalOut.println(outContent.toString());
+        outContent.reset();
+        String[] errors = errContent.toString().split(System.lineSeparator());
+        for (String error : errors) originalErr.println("ERROR " + error);
+        errContent.reset();
+    }
 
     static void sendObjectDescription(NetworkTable table, Object system) {
         sendObjectDescription(table, system, system.getClass().getSimpleName());

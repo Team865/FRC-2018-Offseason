@@ -57,6 +57,7 @@ object Controller : ControlLoop {
     }
 
     private fun RobotController.updateOperator() {
+        GoToPosition.wristSpeed = rightYAxis
         when (HeldDown) {
             yButton -> Superstructure.state = ReleasePosition
             xButton -> {
@@ -74,7 +75,6 @@ object Controller : ControlLoop {
             else -> {
             }
         }
-        GoToPosition.wristSpeed = rightYAxis
         if (startButton == HeldDown) {
             Climber.state = ManualClimb
             ManualClimb.speed = leftYAxis
