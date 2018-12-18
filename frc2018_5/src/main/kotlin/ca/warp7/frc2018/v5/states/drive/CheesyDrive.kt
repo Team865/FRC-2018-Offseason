@@ -20,10 +20,8 @@ object CheesyDrive : IAction {
     var quickTurn = false
     var solenoidOnForShifter = false
 
-    private fun linearScaleDeadband(n: Double): Double {
-        return if (Math.abs(n) < kAxisDeadband) 0.0
-        else (n - Math.copySign(kAxisDeadband, n)) / (1 - kAxisDeadband)
-    }
+    private fun linearScaleDeadband(n: Double) = if (Math.abs(n) < kAxisDeadband) 0.0
+    else (n - Math.copySign(kAxisDeadband, n)) / (1 - kAxisDeadband)
 
     @Synchronized
     private fun setPercent(left: Double, right: Double) {

@@ -15,9 +15,9 @@ fun disableRobot() = ROBOT_RUNTIME.disableOutputs()
 fun robotController(port: Int, active: Boolean): RobotController = ROBOT_RUNTIME.getController(port, active)
 fun limit(value: Double, lim: Double): Double = Math.max(-1 * Math.abs(lim), Math.min(value, Math.abs(lim)))
 fun action(factory: IAction.API.() -> IAction): IAction = factory.invoke(ActionFactory())
-fun mode(factory: IAction.API.() -> IAction): () -> IAction = { action(factory) }
+fun autonomousMode(factory: IAction.API.() -> IAction): () -> IAction = { action(factory) }
 fun runRobotAuto(mode: () -> IAction, timeout: Double = 15.0) = ROBOT_RUNTIME.initAuto(mode, timeout)
-fun IAction.API.setState(subsystem: Subsystem, state: IAction, duration: Double = 0.0): IAction.API = exec { subsystem.state = state }.waitFor(duration)
+fun IAction.API.setState(subsystem: Subsystem, state: IAction): IAction.API = exec { subsystem.state = state }
 private class ActionFactory : IAction.HeadClass() {
     override fun head(): IAction.API = ActionMode.apiHead()
 }

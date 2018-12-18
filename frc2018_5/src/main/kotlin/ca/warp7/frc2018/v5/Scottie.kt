@@ -17,7 +17,6 @@ class Scottie : IterativeRobot() {
 
         Drive.setIdle()
         Superstructure.setIdle()
-        Superstructure.setIdle()
         Lift.setIdle()
         Climber.setIdle()
         Intake.setIdle()

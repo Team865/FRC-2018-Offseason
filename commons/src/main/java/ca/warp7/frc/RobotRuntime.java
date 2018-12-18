@@ -3,15 +3,12 @@ package ca.warp7.frc;
 import ca.warp7.action.IAction;
 import ca.warp7.action.impl.ActionMode;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class RobotRuntime {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
     private IAction mActionRunner;
-    private final List<RobotController.Instance> mControllers = new ArrayList<>();
+    private final List<RobotUtils.ControlInstance> mControls = new ArrayList<>();
     private List<Subsystem> mSubsystems = new ArrayList<>();
     private List<Input> mInputs = new ArrayList<>();
     private NetworkTable mSystemsTable;
@@ -39,19 +36,20 @@ public class RobotRuntime {
         double diff = time - mPreviousTime;
         mPreviousTime = time;
         synchronized (mRuntimeLock) {
-            for (RobotController.Instance instance : mControllers)
+            for (RobotUtils.ControlInstance instance : mControls)
                 if (instance.isActive()) {
-                    RobotController.collect(instance.getState(), instance.getController());
-                    RobotController.outputTelemetry(instance.getState(), mControllersTable, instance.getPort());
+                    RobotUtils.collect(instance.getState(), instance.getController());
+                    RobotUtils.sendObjectDescription(mControllersTable, instance.getState(),
+                            "Controller " + instance.getPort());
                 }
             mInputs.forEach(input -> {
                 input.onMeasure(diff);
-                sendObjectDescription(input);
+                RobotUtils.sendObjectDescription(mSystemsTable, input);
             });
             if (mEnabled) {
                 if (mControlLoop != null) mControlLoop.periodic();
                 mSubsystems.forEach(subsystem -> {
-                    sendObjectDescription(subsystem);
+                    RobotUtils.sendObjectDescription(mSystemsTable, subsystem);
                     subsystem.updateState();
                     subsystem.onOutput();
                 });
@@ -63,32 +61,6 @@ public class RobotRuntime {
         for (String error : errors) originalErr.println("ERROR " + error);
         errContent.reset();
     };
-
-    private void sendObjectDescription(Object system) {
-        String subTable = system.getClass().getSimpleName();
-        for (Method method : system.getClass().getMethods()) {
-            String name = method.getName();
-            if (name.startsWith("get")) {
-                String entry = subTable + "/" + name.substring(3);
-                try {
-                    sendNetworkTableValue(mSystemsTable.getEntry(entry), method.invoke(system));
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private static void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
-        if (value instanceof Number) {
-            double n = ((Number) value).doubleValue();
-            if (Math.abs(n) < 0.001) n = 0;
-            entry.setNumber(n);
-        } else if (value instanceof Boolean) entry.setBoolean((Boolean) value);
-        else if (value instanceof String) entry.setString((String) value);
-        else if (value.getClass().isEnum()) entry.setString(value.toString());
-        else entry.setString(value.getClass().getSimpleName() + " Object");
-    }
 
     public void registerInput(Input input) {
         synchronized (mRuntimeLock) {
@@ -115,10 +87,10 @@ public class RobotRuntime {
     public RobotController getController(int port, boolean isActive) {
         int port0 = isActive ? port : -1;
         synchronized (mRuntimeLock) {
-            for (RobotController.Instance instance : mControllers)
+            for (RobotUtils.ControlInstance instance : mControls)
                 if (instance.getPort() == port0) return instance.getState();
-            RobotController.Instance newInstance = new RobotController.Instance(port0);
-            mControllers.add(newInstance);
+            RobotUtils.ControlInstance newInstance = new RobotUtils.ControlInstance(port0);
+            mControls.add(newInstance);
             return newInstance.getState();
         }
     }
@@ -131,7 +103,7 @@ public class RobotRuntime {
             mControlLoop = null;
             mSubsystems.forEach(subsystem -> {
                 subsystem.onDisabled();
-                sendObjectDescription(subsystem);
+                RobotUtils.sendObjectDescription(mSystemsTable, subsystem);
             });
         }
     }

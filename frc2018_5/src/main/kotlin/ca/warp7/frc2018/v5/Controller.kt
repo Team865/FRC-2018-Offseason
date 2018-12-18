@@ -2,9 +2,9 @@ package ca.warp7.frc2018.v5
 
 
 import ca.warp7.frc.ControlLoop
-import ca.warp7.frc.ControlLoop.HeldDown
-import ca.warp7.frc.ControlLoop.Pressed
 import ca.warp7.frc.RobotController
+import ca.warp7.frc.RobotController.State.HeldDown
+import ca.warp7.frc.RobotController.State.Pressed
 import ca.warp7.frc2018.v5.constants.LiftConstants
 import ca.warp7.frc2018.v5.states.ManualClimb
 import ca.warp7.frc2018.v5.states.drive.CheesyDrive
@@ -27,16 +27,16 @@ object Controller : ControlLoop {
     private val controller0 = robotController(port = 0, active = true)
     private val controller1 = robotController(port = 1, active = true)
 
+    override fun periodic() {
+        controller0.updateDriver()
+        controller1.updateOperator()
+    }
+
     override fun setup() {
         Drive.state = CheesyDrive
         Intake.state = OpenPiston
         Superstructure.state = ReleasePosition
         Climber.setIdle()
-    }
-
-    override fun periodic() {
-        controller0.updateDriver()
-        controller1.updateOperator()
     }
 
     private fun RobotController.updateDriver() {
@@ -70,6 +70,8 @@ object Controller : ControlLoop {
             aButton -> {
                 Superstructure.state = GoToPosition
                 GoToPosition.liftHeight = leftYAxis
+            }
+            else -> {
             }
         }
         GoToPosition.wristSpeed = rightYAxis

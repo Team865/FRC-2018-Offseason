@@ -11,7 +11,7 @@ import ca.warp7.frc2018.v5.inputs.AutoInput.Side.Right
 import ca.warp7.frc2018.v5.states.intake.KeepCube
 import ca.warp7.frc2018.v5.states.intake.OuttakeCube
 import ca.warp7.frc2018.v5.subsystems.Intake
-import ca.warp7.frckt.mode
+import ca.warp7.frckt.autonomousMode
 import ca.warp7.frckt.setState
 
 @Suppress("unused")
@@ -47,7 +47,7 @@ object Autonomous {
     private val leftFarScale = baseline
     private val rightNearScale = baseline
     private val rightFarScale = baseline
-    private val leftMiddleSwitch = mode {
+    private val leftMiddleSwitch = autonomousMode {
         asyncAll(
                 setState(Intake, KeepCube),
                 SuperstructureCloseLoop(liftHeight = 0.5, wristAngle = 0.0),
@@ -57,7 +57,7 @@ object Autonomous {
                         DriveForDistance(distance = 1.35, stop = false),
                         DriveForAngle(angle = 80.0, stop = true)
                 )
-        ).setState(Intake, OuttakeCube, duration = 0.15).async(
+        ).setState(Intake, OuttakeCube).waitFor(0.5).async(
                 setState(Intake, KeepCube),
                 SuperstructureCloseLoop(liftHeight = 0.0, wristAngle = 0.0),
                 DriveForDistance(-90.0, stop = false)
