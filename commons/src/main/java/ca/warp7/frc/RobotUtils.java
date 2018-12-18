@@ -2,6 +2,7 @@ package ca.warp7.frc;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 
 import java.io.ByteArrayOutputStream;
@@ -21,29 +22,35 @@ class RobotUtils {
     private static final int kDownPOV = 180;
     private static final int kLeftPOV = 270;
 
-    private static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    private static final PrintStream originalOut = System.out;
-    private static final PrintStream originalErr = System.err;
+    private static final ByteArrayOutputStream sOutContent = new ByteArrayOutputStream();
+    private static final ByteArrayOutputStream sErrContent = new ByteArrayOutputStream();
+    private static final PrintStream sOriginalOut = System.out;
+    private static final PrintStream sOriginalErr = System.err;
+    private static NetworkTable sSystemsTable;
+    private static NetworkTable sControllersTable;
 
-    static void initSystemStream() {
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
+    static void initRuntimeUtils() {
+        Thread.currentThread().setName("Robot");
+        NetworkTableInstance instance = NetworkTableInstance.getDefault();
+        sSystemsTable = instance.getTable("Systems");
+        sControllersTable = instance.getTable("Controllers");
+        System.setOut(new PrintStream(sOutContent));
+        System.setErr(new PrintStream(sErrContent));
     }
 
     static void updateSystemStream() {
-        originalOut.println(outContent.toString());
-        outContent.reset();
-        String[] errors = errContent.toString().split(System.lineSeparator());
-        for (String error : errors) originalErr.println("ERROR " + error);
-        errContent.reset();
+        sOriginalOut.println(sOutContent.toString());
+        sOutContent.reset();
+        String[] errors = sErrContent.toString().split(System.lineSeparator());
+        for (String error : errors) sOriginalErr.println("ERROR " + error);
+        sErrContent.reset();
     }
 
-    static void sendObjectDescription(NetworkTable table, Object system) {
-        sendObjectDescription(table, system, system.getClass().getSimpleName());
+    static void sendObjectDescription(Object system) {
+        sendObjectDescription(sSystemsTable, system, system.getClass().getSimpleName());
     }
 
-    static void sendObjectDescription(NetworkTable table, Object system, String subTable) {
+    private static void sendObjectDescription(NetworkTable table, Object system, String subTable) {
         for (Method method : system.getClass().getMethods()) {
             String name = method.getName();
             if (name.startsWith("get")) {
@@ -73,7 +80,7 @@ class RobotUtils {
                 old == Released || old == KeptUp ? KeptUp : Released;
     }
 
-    static void collect(RobotController s, XboxController c) {
+    private static void collect(RobotController s, XboxController c) {
         int POV = c.getPOV();
         s.leftTriggerAxis = c.getTriggerAxis(kLeft);
         s.rightTriggerAxis = c.getTriggerAxis(kRight);
@@ -97,6 +104,13 @@ class RobotUtils {
         s.rightDPad = u(s.rightDPad, POV == kRightPOV);
         s.downDPad = u(s.downDPad, POV == kDownPOV);
         s.leftDPad = u(s.leftDPad, POV == kLeftPOV);
+    }
+
+    static void collectActiveControlInstance(ControlInstance instance) {
+        if (instance.isActive()) {
+            collect(instance.getState(), instance.getController());
+            sendObjectDescription(sControllersTable, instance.mState, "Controller " + instance.mPort);
+        }
     }
 
     private static void reset(RobotController s) {

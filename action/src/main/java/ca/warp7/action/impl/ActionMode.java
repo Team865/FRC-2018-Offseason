@@ -13,8 +13,4 @@ public abstract class ActionMode extends IAction.HeadClass implements IAction.Mo
     public API head() {
         return new Queue();
     }
-
-    public static API apiHead() {
-        return new Queue();
-    }
 }

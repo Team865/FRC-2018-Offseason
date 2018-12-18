@@ -2,7 +2,7 @@ package ca.warp7.action.impl;
 
 import ca.warp7.action.IAction;
 
-class Queue extends QueueBase implements IAction.API {
+public class Queue extends QueueBase implements IAction.API {
 
     @Override
     public API head() {
