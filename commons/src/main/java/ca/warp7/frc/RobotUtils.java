@@ -39,11 +39,12 @@ class RobotUtils {
     }
 
     static void updateSystemStream() {
-        sOriginalOut.println(sOutContent.toString());
-        sOutContent.reset();
-        String[] errors = sErrContent.toString().split(System.lineSeparator());
-        for (String error : errors) sOriginalErr.println("ERROR " + error);
-        sErrContent.reset();
+        //sOriginalOut.print(sOutContent.toString().trim());
+        //sOutContent.reset();
+        //sOriginalErr.print("hi");
+//        String[] errors = sErrContent.toString().split(System.lineSeparator());
+//        for (String error : errors) sOriginalErr.println("ERROR " + error);
+        //sErrContent.reset();
     }
 
     static void sendObjectDescription(Object system) {
@@ -65,6 +66,7 @@ class RobotUtils {
     }
 
     private static void sendNetworkTableValue(NetworkTableEntry entry, Object value) {
+        if (entry == null || value == null) return;
         if (value instanceof Number) {
             double n = ((Number) value).doubleValue();
             if (Math.abs(n) < 0.001) n = 0;

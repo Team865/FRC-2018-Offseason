@@ -23,4 +23,6 @@ public class DriveConstants {
     public static final boolean kRightSideInverted = false;
     public static final boolean kLefttSideEncodeReversed = false;
     public static final boolean kRightSideEncodeReversed = true;
+    public static final double kMaximumAcceleration = 10.0; // ft/s^2
+    public static final double kMaximumVelocity = 15.5; // ft/s
 }

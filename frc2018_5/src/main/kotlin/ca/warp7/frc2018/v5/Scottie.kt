@@ -12,17 +12,17 @@ class Scottie : IterativeRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
 
-        registerInput(DriveInput)
-        registerInput(LiftInput)
-        registerInput(NavX)
+//        registerInput(DriveInput)
+//        registerInput(LiftInput)
+//        registerInput(NavX)
         registerInput(PoseEstimator)
 
         Drive.setIdle()
-        Superstructure.setIdle()
-        Lift.setIdle()
-        Climber.setIdle()
-        Intake.setIdle()
-        Wrist.setIdle()
+//        Superstructure.setIdle()
+//        Lift.setIdle()
+//        Climber.setIdle()
+//        Intake.setIdle()
+//        Wrist.setIdle()
 
         startRobot(loopsPerSecond = 50)
     }
